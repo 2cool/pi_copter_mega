@@ -1,6 +1,6 @@
 #define PROG_VERSION "ver 2.170926_magic \n"
 
-#define ONLY_ONE_RUN
+//#define ONLY_ONE_RUN
 
 
 #include <cstdio>
@@ -214,9 +214,9 @@ void handler(int sig) { // can be called asynchronously
 
 int printHelp() {
 	printf("<-help> for this help\n");
-	printf(" <fly at start at hight in sm > <lower hight in sm> <f=write stdout to file > <log com and tel y/n> <esc calibr\n");
-	printf("example to write in log file : pi_copter 300 100 f n 1890 \n");
-	printf("example to write in stdout   : pi_copter 300 100 s n 0\n");
+	printf(" <fly at start at hight in sm > <lower hight in sm> <f=write stdout to file > <log com and tel y/n> \n");
+	printf("example to write in log file : pi_copter 300 100 f n \n");
+	printf("example to write in stdout   : pi_copter 300 100 s n\n");
 	return -1;
 }
 
@@ -315,8 +315,7 @@ int main(int argc, char *argv[]) {
 				Debug.out_stream = stdout;
 
 			
-			Log.writeTelemetry = (argv[4][0] == 'y' || argv[4][0] == 'Y');
-			Debug.escCalibr = atoi(argv[5]);
+			
 			
 
 		}
@@ -336,21 +335,14 @@ int main(int argc, char *argv[]) {
 	Pwm.on(0, pwm_MAX_THROTTLE);
 	string str = string(argv[0]);
 	str = str.substr(str.length() - 4, str.length());
+
+
 	if (str.compare("pter") == 0) {
-		int16_t buf[3];
-		Pwm.get_analog(buf);
-		if (buf[0] < 100) {
-			if (argv[3][0] == 'f' || argv[3][0] == 'F') {
-				fclose(Debug.out_stream);
-				remove(fname.c_str());
-			}
-			return 0;
-		}
+		
 	}
 
 	if (setup(counter) == 0) {
-		if (Telemetry.get_voltage() > 0)
-			Debug.escCalibr = false;
+		
 
 		old_time4loop = micros();
 

@@ -145,7 +145,6 @@ void start_video() {
 
 
 void AutopilotClass::init(){/////////////////////////////////////////////////////////////////////////////////////////////////
-	starts_cnt_after_powers_on = 0;
 	camera_mode = CAMMERA_OFF;
 	lowest_height = Debug.lowest_altitude_to_fly;
 	last_time_data_recived = 0;
@@ -615,11 +614,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 #else
 		Emu.init(WIND_X, WIND_Y, WIND_Z);
 #endif
-		if (Telemetry.power_is_on() == false) {
-			fprintf(Debug.out_stream,"!!! power is off !!!\n");
-			Telemetry.addMessage(e_CALIBRATING);
-			Pwm.beep_code(BEEPS_ON+(1<<1));
-		}
+		
 
 #define MAX_MACC 0.1f
 		if (Hmc.compas_motors_calibr == false && (abs(Mpu.maccX) > MAX_MACC || abs(Mpu.maccY) > MAX_MACC || abs(Mpu.maccZ) > MAX_MACC)) {
@@ -665,8 +660,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			aYaw_ = -Mpu.get_yaw();
 			//fflush(Debug.out_stream);
 			start_time = millis();
-			if (Telemetry.power_is_on())
-				starts_cnt_after_powers_on++;
+
 #ifdef DEBUG_MODE
 			fprintf(Debug.out_stream, "\nhome loc: %i %i \nhome alt set %i\n", GPS.loc.lat_, GPS.loc.lon_, (int)flyAtAltitude);
 #endif

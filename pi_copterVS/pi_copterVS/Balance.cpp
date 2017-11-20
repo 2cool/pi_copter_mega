@@ -236,21 +236,6 @@ float BalanceClass::powerK(){
 	return mid_powerK;
 }
 /////////////////////////////////////////////////////////////////////////////////////////
-int motors_off_i = 0;
-void BalanceClass::escCalibration() {
-	if (motors_off_i == 0 && Telemetry.power_is_on() == false) {
-		throttle = f_[0] = f_[1] = f_[2] = f_[3] = 1;
-		fprintf(Debug.out_stream,"!!!max power!!!\n");
-		motors_off_i++;
-	}else
-		if (motors_off_i == 1 && Telemetry.power_is_on()) {
-			throttle = f_[0] = f_[1] = f_[2] = f_[3] = 0;
-			fprintf(Debug.out_stream,"!!!off power!!!\n");
-			motors_off_i++;
-		}
-}
-
-
 
 #define MAX_ANGLE_SPEED 360
 #define MAX_YAW_SPEED 60
@@ -377,22 +362,7 @@ bool BalanceClass::loop()
 				f_[3] = 0;
 				f_[Hmc.motor_index] = 0.5;
 			}
-#ifndef FALSE_WIRE
-			else {
-				if (Autopilot.starts_cnt_after_powers_on == 1) {
-				//	if (acos(Mpu.cosPitch*Mpu.cosRoll)>0.122) {
-						//Autopilot.motors_do_on(false, e_ESK_ERROR);
-				//	}
-				//	else {
-						f_[0] = MIN_THROTTLE_;
-						f_[1] = MIN_THROTTLE_;
-						f_[2] = MIN_THROTTLE_;
-						f_[3] = MIN_THROTTLE_;
-						throttle = MIN_THROTTLE_;
-				//	}
-				}
-			}
-#endif
+
 
 		}
 		else
@@ -402,8 +372,7 @@ bool BalanceClass::loop()
 			pids[PID_YAW_RATE].reset_I();
 			c_pitch = c_roll = 0;
 
-			if (Debug.escCalibr>0)
-				escCalibration();
+			
 
 			if (Log.writeTelemetry) {
 				Log.loadByte(LOG::BAL);

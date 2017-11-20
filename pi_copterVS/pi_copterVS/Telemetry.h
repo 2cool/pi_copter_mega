@@ -41,7 +41,7 @@ class TelemetryClass
  public:
 	float b[3];
 	uint32_t get_power_on_time() { return power_on_time; }
-	bool power_is_on();
+
 
 	 uint8_t no_time_cnt = 0;
 	 void update_voltage();

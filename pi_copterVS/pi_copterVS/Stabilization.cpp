@@ -41,7 +41,7 @@ void StabilizationClass::init(){
 
 
 
-	accZ_stabKP = 1;єто било ошибочное решение. било 0.2 в прошлом году стояло 0.5. короче он улетел.
+	accZ_stabKP = 0.2;
 	accZ_stabKP_Rep = 1.0f / accZ_stabKP;
 
 

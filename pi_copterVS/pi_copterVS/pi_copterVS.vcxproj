@@ -130,6 +130,9 @@
     <Link>
       <LibraryDependencies>pthread</LibraryDependencies>
     </Link>
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <Link>

@@ -25,13 +25,7 @@
 #define MAX_UPD_COUNTER 100
 #define MAX_VOLTAGE_AT_START 406
 
-bool TelemetryClass::power_is_on() {
-#ifdef NO_BATTERY
-	return true;
-#else 
-	return (power_on_time > 0 && millis() - power_on_time > Debug.escCalibr);
-#endif 
-}
+
 
 void TelemetryClass::addMessage(const string msg){
 	fprintf(Debug.out_stream,"%s\n", msg.c_str());
@@ -187,11 +181,7 @@ void TelemetryClass::update_voltage(){
 	b[1] = a1 - a0;
 	if (buf[2] > 100)
 		b[2] = voltage - a1;
-	else {
-		b[2] = 0;
-		voltage = 0;
-		Autopilot.starts_cnt_after_powers_on = 0;
-	}
+	
 
 	if (Log.writeTelemetry) {
 		Log.loadByte(LOG::TELE);
@@ -353,13 +343,8 @@ void TelemetryClass::update_buf() {
 	loadBUF8(i, Mpu.get_roll());
 	loadBUF8(i, Balance.c_pitch);
 	loadBUF8(i, Balance.c_roll);
-	int16_t t;
-	t = (int16_t)b[0];
-	buf[i++] = ((byte*)&t)[0];
-	t = (int16_t)b[1];
-	buf[i++] = ((byte*)&t)[0];
-	t = (int16_t)b[2];
-	buf[i++] = ((byte*)&t)[0];
+	loadBUF16(i, b[0] * 4);
+
 	buf[i++] = (int8_t)Autopilot.getGimbalPitch();
 
 	
