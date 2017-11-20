@@ -21,7 +21,7 @@ D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MPU6050.cpp|/home/igor/pro
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mpu_umulator.cpp|/home/igor/projects/pi_copterVS/mpu_umulator.cpp
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MS5611.cpp|/home/igor/projects/pi_copterVS/MS5611.cpp
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Prog.cpp|/home/igor/projects/pi_copterVS/Prog.cpp
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Pwm.cpp|/home/igor/projects/pi_copterVS/Pwm.cpp
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mi2c.cpp|/home/igor/projects/pi_copterVS/mi2c.cpp
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\RC_Filter.cpp|/home/igor/projects/pi_copterVS/RC_Filter.cpp
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Settings.cpp|/home/igor/projects/pi_copterVS/Settings.cpp
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Stabilization.cpp|/home/igor/projects/pi_copterVS/Stabilization.cpp
@@ -54,7 +54,7 @@ D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MPU6050.h|/home/igor/proje
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mpu_umulator.h|/home/igor/projects/pi_copterVS/mpu_umulator.h
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MS5611.h|/home/igor/projects/pi_copterVS/MS5611.h
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Prog.h|/home/igor/projects/pi_copterVS/Prog.h
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Pwm.h|/home/igor/projects/pi_copterVS/Pwm.h
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mi2c.h|/home/igor/projects/pi_copterVS/mi2c.h
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\RC_Filter.h|/home/igor/projects/pi_copterVS/RC_Filter.h
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Settings.h|/home/igor/projects/pi_copterVS/Settings.h
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Stabilization.h|/home/igor/projects/pi_copterVS/Stabilization.h

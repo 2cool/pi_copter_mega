@@ -32,7 +32,7 @@
 
 #include "Autopilot.h"
 
-#include "Pwm.h"
+#include "mi2c.h"
 #include "I2Cdev.h"
 #include "MPU6050.h"
 #include "Balance.h"
@@ -134,7 +134,7 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	Telemetry.init_();
 	Telemetry.testBatteryVoltage();
 	fprintf(Debug.out_stream,"telemetry init OK \n");
-	Pwm.beep_code(BEEPS_ON);
+	mega_i2c.beep_code(BEEPS_ON);
 	GPS.init();
 	return 0;
 
@@ -332,7 +332,7 @@ int main(int argc, char *argv[]) {
 	}
 
 
-	Pwm.on(0, pwm_MAX_THROTTLE);
+	mega_i2c.on(0, pwm_MAX_THROTTLE);
 	string str = string(argv[0]);
 	str = str.substr(str.length() - 4, str.length());
 

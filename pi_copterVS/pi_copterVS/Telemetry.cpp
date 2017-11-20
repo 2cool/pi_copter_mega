@@ -17,8 +17,8 @@
 
 #define BALANCE_DELAY 120
 #define MAX_FLY_TIME 1200.0f
-#define BAT_ZERO (360.0f*3)
-#define BAT_50P (391.0f*3)
+#define BAT_ZERO (360.0f*4)
+#define BAT_50P (391.0f*4)
 #define BAT_timeout 1000
 #define BAT_timeoutRep  2
 #define BAT_100P 422
@@ -95,13 +95,8 @@ void TelemetryClass::init_()
 	low_voltage = voltage50P=false;
 	message = "";
 	next_battery_test_time = millis()+BAT_timeout;
-#ifdef NO_BATTERY
-	b[0] = b[1] = b[2] = BAT_100P;
-	voltage = BAT_100P * 3;
-#else
-	b[0] = b[1] = b[2] = BAT_100P;
 	update_voltage();
-#endif
+
 	newGPSData = false;
 	//Out.println("TELEMETRY INIT");
 	timeAtStart = 0;
@@ -149,69 +144,24 @@ int TelemetryClass::check_time_left_if_go_to_home(){
 
 }
 
-void TelemetryClass::update_voltage(){
-#ifdef NO_BATTERY
-	voltage = Emu.battery(b);
-
+void TelemetryClass::update_voltage() {
+#ifdef FALSE_WIRE
+	voltage = Emu.battery();
 #else
+	uint16_t data[5];
+	mega_i2c.getiiiiv((char*)data);
 
-	/*
-	3.83  2.92
-	7.72  2.86
-	11.67 2.85
-*/
-	int16_t buf[3];
-	//int t = micros();
-	Pwm.get_analog(buf);  //300 microsec
-
-	float a0 = (float)buf[0] / 2.31666f;
-	float a1 = (float)buf[1] / 1.1357143f;
-	voltage = (float)buf[2] / 0.75;
-
-
-
-
-	//int t2 = micros() - t;
-	//a2 = BAT_K2*(float)buf[2];// analogRead(A2);
-	
-	//float a0 = BAT_K0*(float)buf[0];// analogRead(A0);
-	//float a1 = BAT_K1*(float)buf[1];// analogRead(A1);
-
-	b[0] = a0;
-	b[1] = a1 - a0;
-	if (buf[2] > 100)
-		b[2] = voltage - a1;
-	
+	m_current[0] = 0.01953125*(float)(1024 - data[0]);
+	m_current[1] = 0.01953125*(float)(1024 - data[1]);
+	m_current[2] = 0.01953125*(float)(1024 - data[2]);
+	m_current[3] = 0.01953125*(float)(1024 - data[3]);
+	voltage = 1.725*(float)(data[4]);
 
 	if (Log.writeTelemetry) {
 		Log.loadByte(LOG::TELE);
-		Log.loadMem((uint8_t*)buf, 6, false);
-
+		Log.loadMem((uint8_t*)data, 10, false);
 	}
-	
-	//Serial.println("bat");
-	//Serial.println(a2);
-	//Debug.dump(b[0], b[1], b[2], 0);	
-	
-	
-
 #endif
-
-	if (Telemetry.b[2] == 0) {
-		if (power_on_time > 0) {
-			power_on_time = 0;
-			fprintf(Debug.out_stream,"power off\n");
-		}
-	}
-	else {
-		if (power_on_time == 0) {
-			power_on_time = millis();
-			fprintf(Debug.out_stream,"!!! power on !!!\n");
-		}
-	}
-
-
-
 }
 
 
@@ -236,7 +186,7 @@ void TelemetryClass::testBatteryVoltage(){
 		voltage_at_start = voltage;
 	}
 
-	if (voltage < BAT_ZERO && voltage>(150.0*3))
+	if (voltage < BAT_ZERO && voltage>(150.0*4))
 		lov_voltage_cnt++;
 	else
 		lov_voltage_cnt = 0;
@@ -246,14 +196,14 @@ void TelemetryClass::testBatteryVoltage(){
 
 
 
-	if (voltage>0 && voltage < 900){
-		voltage = 1110;
+	if (voltage>0 && voltage < 1200){
+		voltage = 1480;
 		addMessage(e_VOLT_MON_ERROR);
 	}
 	if (voltage == 0)
 		powerK = 1;
 	else {
-		powerK = (MAX_VOLTAGE_AT_START * 3) / (float)voltage;
+		powerK = (MAX_VOLTAGE_AT_START * 4) / (float)voltage;
 		powerK = constrain(powerK, 1, 1.35f);
 	}
 }
@@ -343,7 +293,7 @@ void TelemetryClass::update_buf() {
 	loadBUF8(i, Mpu.get_roll());
 	loadBUF8(i, Balance.c_pitch);
 	loadBUF8(i, Balance.c_roll);
-	loadBUF16(i, b[0] * 4);
+	loadBUF16(i, voltage);
 
 	buf[i++] = (int8_t)Autopilot.getGimbalPitch();
 

@@ -149,25 +149,9 @@ void LogClass::loadInt16t(int16_t i) {
 }
 
 
-void LogClass::loadGPS_full(NAV_POSLLH *gps) {
-	memcpy((uint8_t*)&log_buffer[log_bank][log_index], gps, sizeof(NAV_POSLLH));
-	log_index += sizeof(NAV_POSLLH);
-}
-
-
-void LogClass::loadGPS(NAV_POSLLH *gps) {
-	uint8_t *fp = (uint8_t*)&gps->lat;
-	log_buffer[log_bank][log_index++] = fp[0];
-	log_buffer[log_bank][log_index++] = fp[1];
-	log_buffer[log_bank][log_index++] = fp[2];
-	log_buffer[log_bank][log_index++] = fp[3];
-	fp = (uint8_t*)&gps->lon;
-	log_buffer[log_bank][log_index++] = fp[0];
-	log_buffer[log_bank][log_index++] = fp[1];
-	log_buffer[log_bank][log_index++] = fp[2];
-	log_buffer[log_bank][log_index++] = fp[3];
-	log_buffer[log_bank][log_index++] = gps->hAcc;
-	log_buffer[log_bank][log_index++] = gps->vAcc;
+void LogClass::loadSEND_I2C(SEND_I2C *p) {
+	memcpy((uint8_t*)&log_buffer[log_bank][log_index], p, sizeof(SEND_I2C));
+	log_index += sizeof(SEND_I2C);
 }
 
 void LogClass::loadMem(uint8_t*src, int len,bool write_mem_size) {

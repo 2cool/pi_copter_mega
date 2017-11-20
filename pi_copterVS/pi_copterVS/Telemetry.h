@@ -33,13 +33,14 @@ class TelemetryClass
 	 unsigned long next_battery_test_time;
 	  uint32_t pressure;
 	 float voltage,voltage_at_start;
+	 float m_current[4];
 	 uint32_t  time_at_start;
 	 long timeAtStart;
 	 
 	 string message;
 	 void update_buf();
  public:
-	float b[3];
+	
 	uint32_t get_power_on_time() { return power_on_time; }
 
 

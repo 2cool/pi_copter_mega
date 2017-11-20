@@ -10,7 +10,7 @@
 #endif
 #include "Hmc.h"
 
-#include "Pwm.h"
+#include "mi2c.h"
 #include "mpu.h"
 #include "I2Cdev.h"
 #include "MPU6050.h"

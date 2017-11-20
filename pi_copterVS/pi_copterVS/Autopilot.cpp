@@ -39,7 +39,7 @@ THG out of Perimetr high
 #include "define.h"
 #include "WProgram.h"
 
-#include "Pwm.h"
+#include "mi2c.h"
 #include "MS5611.h"
 #include "Autopilot.h"
 #include "Balance.h"
@@ -54,7 +54,7 @@ THG out of Perimetr high
 #include "debug.h"
 #include "Prog.h"
 #include "Wi_Fi.h"
-#include "Pwm.h"
+#include "mi2c.h"
 
 #include <cstdio>
 #include <signal.h>
@@ -177,7 +177,7 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 
 	gimBalPitchZero = gimBalRollZero= gimbalPitch=0;
 
-	Pwm.gimagl(gimBalPitchZero, gimBalRollZero);
+	mega_i2c.gimagl(gimBalPitchZero, gimBalRollZero);
 
 }
 
@@ -257,7 +257,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 #ifdef LOST_BEEP
 	if ( t - last_time_data_recived>3000 && t - last_beep_time > 3000) {
 		last_beep_time = t;
-		Pwm.beep_code(BEEPS_ON + (1 << 1));
+		mega_i2c.beep_code(BEEPS_ON + (1 << 1));
 	}
 #endif
 
@@ -360,7 +360,7 @@ void AutopilotClass::set(const float ar[]){
 		i++;
 		gimBalRollZero = -constrain(ar[i],-15,15);
 		i++;
-		Pwm.gimagl(gimBalPitchZero, gimBalRollZero);
+		mega_i2c.gimagl(gimBalPitchZero, gimBalRollZero);
 		if (error == 0){
 			int ii = 0;
 			fprintf(Debug.out_stream,"Safe set:\n");
@@ -619,7 +619,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 #define MAX_MACC 0.1f
 		if (Hmc.compas_motors_calibr == false && (abs(Mpu.maccX) > MAX_MACC || abs(Mpu.maccY) > MAX_MACC || abs(Mpu.maccZ) > MAX_MACC)) {
 			fprintf(Debug.out_stream, "ACC ERROR!!! \n");
-			Pwm.beep_code(BEEPS_ON + (2 << 1));
+			mega_i2c.beep_code(BEEPS_ON + (2 << 1));
 			return false;
 		}
 
@@ -628,13 +628,13 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			if (Telemetry.low_voltage){
 				Telemetry.addMessage(e_LOW_VOLTAGE);
 				fprintf(Debug.out_stream," LOW VOLTAGE\n");
-				Pwm.beep_code(BEEPS_ON + (3 << 1));
+				mega_i2c.beep_code(BEEPS_ON + (3 << 1));
 				return false;
 			}
 
 			if (Hmc.compas_motors_calibr==false && GPS.loc.accuracy_hor_pos_ > MIN_ACUR_HOR_POS_2_START ){
 				fprintf(Debug.out_stream," GPS error\n");
-				Pwm.beep_code(BEEPS_ON + (4 << 1));
+				mega_i2c.beep_code(BEEPS_ON + (4 << 1));
 				Telemetry.addMessage(e_GPS_ERROR);
 
 				//return false;
@@ -677,12 +677,12 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		else{
 			if (Hmc.calibrated == false){
 				fprintf(Debug.out_stream,"compas, ");
-				Pwm.beep_code(BEEPS_ON + (4 << 1));
+				mega_i2c.beep_code(BEEPS_ON + (4 << 1));
 
 			}
 			if (Mpu.gyro_calibratioan == false){
 				fprintf(Debug.out_stream,"gyro");
-				Pwm.beep_code(BEEPS_ON + (5 << 1));
+				mega_i2c.beep_code(BEEPS_ON + (5 << 1));
 
 			}
 			fprintf(Debug.out_stream," calibr FALSE\n");
@@ -870,7 +870,7 @@ bool AutopilotClass::selfTest(){////////////////////////////////////////////////
 
 void AutopilotClass::gimBalPitchADD(const float add){
 	if (!progState())
-		if (Pwm.gimagl(-(gimBalPitchZero + gimbalPitch + add), gimBalRollZero))
+		if (mega_i2c.gimagl(-(gimBalPitchZero + gimbalPitch + add), gimBalRollZero))
 			gimbalPitch += add;
 
 }

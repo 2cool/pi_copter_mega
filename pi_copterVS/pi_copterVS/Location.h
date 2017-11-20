@@ -9,22 +9,9 @@
 	#include "WProgram.h"
 #endif
 
+#include "define.h"
 
 const unsigned char UBX_HEADER[] = { 0xB5, 0x62 };
-
-struct NAV_POSLLH {
-	unsigned char cls;
-	unsigned char id;
-	unsigned short len;
-	unsigned long iTOW;
-	long lon;
-	long lat;
-	long height;
-	long hMSL;
-	unsigned long hAcc;
-	unsigned long vAcc;
-};
-
 
 class LocationClass
 {
@@ -63,7 +50,7 @@ public:
 
 	double distance_(const double lat, const double lon, const double lat2, const double lon2);
 	//---------------
-
+	void proceed(SEND_I2C *d);
 	void clearSpeedCorrection(){ lat_needV_ = lat_needR_; lon_needV_ = lon_needR_; }
 
 	double from_lat2X(const double lat){
@@ -86,8 +73,8 @@ private:
 	double lat_needV_, lon_needV_, lat_needR_, lon_needR_;
 	unsigned long old_iTOW;
 	double mspeedx, mspeedy;
-	void calcChecksum(unsigned char* CK);
-	NAV_POSLLH posllh;
+
+
 	double oldDist;
 	void update();
 	double kd_lon_, kd_lat_;

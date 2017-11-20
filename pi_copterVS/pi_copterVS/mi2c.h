@@ -1,4 +1,4 @@
-// Pwm.h
+// mega_i2c.h
 
 
 /*
@@ -31,14 +31,14 @@ timer5 	16 		C 			- 				46
 
 
 
-    ^
+^
 0   |    1
- \  |  /
-  \   /
-   000
-   000
-  /   \
- /     \
+\  |  /
+\   /
+000
+000
+/   \
+/     \
 2       3
 
 */
@@ -47,9 +47,9 @@ timer5 	16 		C 			- 				46
 #define _PWM_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
+#include "Arduino.h"
 #else
-	#include "WProgram.h"
+#include "WProgram.h"
 #endif
 
 /*
@@ -68,7 +68,7 @@ timer5 	16 		C 			- 				46
 
 
 
-
+#include "define.h"
 
 
 
@@ -97,61 +97,49 @@ timer5 	16 		C 			- 				46
 
 
 
- // 
+// 
 //#define OFF1_THROTTLE_ 2050 // 
 // //  максимальная мощность типпа 100 процентов. и дымок )
 //#define MAX1_THROTHLE_ 3800 //  750 грамма = 90%
 //#define MIN_THROTTLE_ 2150 //  33 грамма = 0%
 // 16000000 / 8 / 40000 = 50Hz
-  // 20 ms = 40000
+// 20 ms = 40000
 
 
 
 //10000
-class PwmClass
+class Megai2c
 {
- protected:
-	 
-
- public:
-	 static int on(const uint16_t COUNTER, const uint16_t throthle );
-
-	
-	 static bool gimagl(float pitch, float roll);
-	 static void get_analog(int16_t[]);
+protected:
 
 
-	 static void sound(const float);
-	 static void beep_code(uint8_t);
-	 static void throttle(const float n0, const float n1, const float n2, const float n3);
-	static void throttle_0(const float n);
-	static void throttle_1(const float n);
-	static void throttle_2(const float n);
-	static void throttle_3(const float n);
+public:
+	static int on(const uint16_t COUNTER, const uint16_t throthle);
 
 
-	static void setAll_(const uint16_t n){
-		throttle_0(n);
-		throttle_1(n);
-		throttle_2(n);
-		throttle_3(n);
-	}
+	static bool gimagl(float pitch, float roll);
 
-	static void throttle_0(const uint16_t n);
-	static void throttle_1(const uint16_t n);
-	static void throttle_2(const uint16_t n);
-	static void throttle_3(const uint16_t n);
+	static void sound(const float);
+	static void beep_code(uint8_t);
+	static void throttle(const float n0, const float n1, const float n2, const float n3);
+
+	void getiiiiv(char *iiiiv);
+
+	int get_gps(SEND_I2C *gps_d);
+
 	static void Buzzer(const bool on);
 
+	int gsm_loop();
 
 
 private:
 
 	static uint16_t correct(const float n);
-
+	int send2sim(char *str, int len);
+	int getsim(char * str);
 };
 
-extern PwmClass Pwm;
+extern Megai2c mega_i2c;
 
 #endif
 

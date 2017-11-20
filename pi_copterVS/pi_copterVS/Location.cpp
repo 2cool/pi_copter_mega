@@ -26,87 +26,12 @@
 #include "Autopilot.h"
 #include "Log.h"
 
-#define gps Serial2
 #define DELTA_ANGLE_C 0.001
 #define DELTA_A_RAD (DELTA_ANGLE_C*GRAD2RAD)
 #define DELTA_A_E7 (DELTA_ANGLE_C*10000000)
 
 
-
 int fd_loc;
-
-
-int set_interface_attribs(int fd_loc, int speed, int parity)
-{
-	struct termios tty;
-	memset(&tty, 0, sizeof tty);
-	if (tcgetattr(fd_loc, &tty) != 0)
-	{
-		fprintf(Debug.out_stream,"error %d from tcgetattr", errno);
-		return -1;
-	}
-
-	cfsetospeed(&tty, speed);
-	cfsetispeed(&tty, speed);
-
-	tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
-													// disable IGNBRK for mismatched speed tests; otherwise receive break
-													// as \000 chars
-	tty.c_iflag &= ~IGNBRK;         // disable break processing
-	tty.c_lflag = 0;                // no signaling chars, no echo,
-									// no canonical processing
-	tty.c_oflag = 0;                // no remapping, no delays
-	tty.c_cc[VMIN] = 0;            // read doesn't block
-	tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
-
-	tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
-
-	tty.c_cflag |= (CLOCAL | CREAD);// ignore modem controls,
-									// enable reading
-	tty.c_cflag &= ~(PARENB | PARODD);      // shut off parity
-	tty.c_cflag |= parity;
-	tty.c_cflag &= ~CSTOPB;
-	tty.c_cflag &= ~CRTSCTS;
-	tty.c_iflag &= ~(INLCR | ICRNL);   //resseting (Map NL to CR on input |  Map CR to NL on input) https://www.mkssoftware.com/docs/man5/struct_termios.5.asp
-
-	if (tcsetattr(fd_loc, TCSANOW, &tty) != 0)
-	{
-		fprintf(Debug.out_stream,"error %d from tcsetattr", errno);
-		return -1;
-	}
-	return 0;
-}
-
-void set_blocking(int fd_loc, int should_block)
-{
-	struct termios tty;
-	memset(&tty, 0, sizeof tty);
-	if (tcgetattr(fd_loc, &tty) != 0)
-	{
-		fprintf(Debug.out_stream,"error %d from tggetattr", errno);
-		return;
-	}
-
-	tty.c_cc[VMIN] = should_block ? 1 : 0;
-	tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
-
-	if (tcsetattr(fd_loc, TCSANOW, &tty) != 0)
-		fprintf(Debug.out_stream,"error %d setting term attributes", errno);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void LocationClass::xy(bool update_speed){
 
@@ -199,18 +124,56 @@ void LocationClass::updateXY(){
 }
 
 
+//////////////////////////////////////////////////////////////
+void LocationClass::proceed(SEND_I2C *d) {
+	last_gps_data_time = millis();
+	accuracy_hor_pos_ = d->hAcc;
+	if (accuracy_hor_pos_ > 99)accuracy_hor_pos_ = 99;
+	accuracy_ver_pos_ = d->vAcc;
+	if (accuracy_ver_pos_ > 99)accuracy_ver_pos_ = 99;
 
 
-
-
-
-void LocationClass::calcChecksum(unsigned char* CK) {
-	memset(CK, 0, 2);
-	for (int i = 0; i < (int)sizeof(NAV_POSLLH); i++) {
-		CK[0] += ((unsigned char*)(&posllh))[i];
-		CK[1] += CK[0];
+	if (old_iTOW == 0)
+		old_iTOW = last_gps_data_time - 100;
+	dt = DELTA_ANGLE_C*(double)(last_gps_data_time - old_iTOW);
+	if (dt< 0.16) {
+		dt = 0.1;
+		rdt = 10;
 	}
+	else {
+		//fprintf(Debug.out_stream, "\ngps dt error: %f, time= %i\n", dt, last_gps_data_time / 100);
+		dt = 0.2;
+		rdt = 5;
+	}
+	old_iTOW = last_gps_data_time;
+
+	lat_ = d->lat;
+	lon_ = d->lon;
+
+	updateXY();
+
+
+	if (Log.writeTelemetry) {
+		Log.loadByte(LOG::GpS);
+		Log.loadSEND_I2C(d);
+		Log.loadFloat((float)x2home);
+		Log.loadFloat((float)y2home);
+		Log.loadFloat((float)dX);
+		Log.loadFloat((float)dY);
+		Log.loadFloat((float)speedX);
+		Log.loadFloat((float)speedY);
+		Log.loadFloat((float)accX);
+		Log.loadFloat((float)accY);
+	}
+
+
 }
+
+
+
+#ifdef OLDPROCGPS
+
+
 
 
 int available_loc = 0, all_available_loc,buf_ind_loc;
@@ -329,7 +292,7 @@ bool LocationClass::processGPS() {
 }
 
 
-
+#endif
 
 
 void LocationClass::add2NeedLoc(const double speedX, const double speedY, const double dt){

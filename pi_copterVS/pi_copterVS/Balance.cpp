@@ -391,9 +391,9 @@ bool BalanceClass::loop()
 
 
 #ifdef MOTORS_OFF
-		Pwm.throttle(0, 0, 0, 0);  //670 micros
+		mega_i2c.throttle(0, 0, 0, 0);  //670 micros
 #else
-		Pwm.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros
+		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros
 #endif
 
 
@@ -417,7 +417,7 @@ void BalanceClass::set_off_th_() {
 #ifdef FALSE_WIRE
 	Emu.update(f_, Mpu.dt);
 #endif
-	Pwm.throttle(f_[0], f_[1], f_[2], f_[3]);
+	mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);
 }
 
 

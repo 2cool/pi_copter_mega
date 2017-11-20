@@ -63,7 +63,7 @@ void GPSClass::loop(){
 		return;
 	loc.accuracy_hor_pos_ = 0;
 	loc.accuracy_ver_pos_ = 1;
-	loc.altitude = MS5611.altitude();
+	loc.altitude = Emu.get_alt();
 
 
 
@@ -102,11 +102,12 @@ void GPSClass::loop(){
 
 			if (Log.writeTelemetry) {
 
-				NAV_POSLLH posllh;
+				SEND_I2C posllh;
 				posllh.lat = lat;
 				posllh.lon = lon;
+				posllh.height = Emu.get_alt();
 				Log.loadByte(LOG::GpS);
-				Log.loadGPS_full(&posllh);
+				Log.loadSEND_I2C(&posllh);
 				Log.loadFloat((float)loc.x2home);
 				Log.loadFloat((float)loc.y2home);
 				Log.loadFloat((float)loc.dX);
@@ -118,27 +119,6 @@ void GPSClass::loop(){
 
 			}
 
-
-		//loc.lat_ = lat;
-		//loc.lon_ = lon;
-
-
-
-		
-
-		/*
-		fullX += distX;
-		fullY += distY;
-		Out.fprintf(Debug.out_stream,fullX);
-		Out.fprintf(Debug.out_stream," ");
-		Out.println(fullY);
-		*/
-
-		//distX = distY = 0;
-		//Out.println("---------");
-		//Out.println( (loc.get_kd_lat()));
-	//	Debug.dump(lat, lon, 0, 0);
-		//Out.println(Location.get_kd_lat());
 }
 
 #else

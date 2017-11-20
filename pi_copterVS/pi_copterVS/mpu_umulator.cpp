@@ -25,7 +25,7 @@
 float false_time = 0;
 float false_voltage = BAT_100P;
 
-float EmuClass::battery(float b[]) {
+float EmuClass::battery() {
 
 	float voltage_sag = 0;
 	if (false_time == 0 && Autopilot.motors_is_on()) {
@@ -43,14 +43,8 @@ float EmuClass::battery(float b[]) {
 		false_voltage -= drawSpeed*dt;
 	}
 	const float a = false_voltage - voltage_sag;
-#ifdef NOISE_ON
-	b[0] = a + 1 - (2 * (float)rand() / (float)RAND_MAX);
-	b[1] = a + 1 - (2 * (float)rand() / (float)RAND_MAX);
-	b[2] = a + 1 - (2 * (float)rand() / (float)RAND_MAX);
-#else
-	b[0] = b[1] = b[2] = a;
-#endif
-	return (b[0] + b[1] + b[2]);
+
+	return a*4;
 }
 
 

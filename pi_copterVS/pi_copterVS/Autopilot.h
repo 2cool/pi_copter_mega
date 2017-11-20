@@ -9,7 +9,7 @@
 	#include "WProgram.h"
 #endif
 
-#include "Pwm.h"
+#include "mi2c.h"
 #include "MS5611.h"
 #include "Location.h"
 #include "AP_PID.h"
