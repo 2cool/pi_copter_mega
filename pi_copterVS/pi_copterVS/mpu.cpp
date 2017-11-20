@@ -46,8 +46,27 @@ float MpuClass::get_roll() { return roll; }
 
 
 
-//float DRAG_K =0.022;
+float aK = 19.6;
+float thr = 0.5;
+void MpuClass::do_magic4Z() {
+	if (Autopilot.motors_is_on() == false) {
+		e_accZ = e_speedZ = w_accZ =  0;
 
+		return;
+	}
+
+	thr += (Balance.get_true_throttle() - thr)*0.2;
+
+	e_accZ = thr*aK-9.8  - e_speedZ*abs(Location.speedZ)*0.232;
+	e_speedZ += e_accZ*dt;
+	e_speedZ += (Location.speedZ - e_speedZ)*0.1;
+
+	aK += (Location.accZ+9.8/thr - aK)*0.01;
+	aK = constrain(aK, 15.5, 23.5);
+
+}
+
+//float DRAG_K =0.022;
 void MpuClass::do_magic() {
 	if (Autopilot.motors_is_on() == false) {
 		e_accX = e_accY = e_speedX = e_speedY = w_accX = w_accY = m7_accX=m7_accY=0;
@@ -67,9 +86,11 @@ void MpuClass::do_magic() {
 	const float _p = sinPitch / cosPitch;
 	const float _r = sinRoll / cosRoll;
 
-	e_accX = -G*(-cosYaw*_p - sinYaw*_r) - e_speedX*abs(e_speedX)*DRAG_K-w_accX;
+	const float GP = G + e_accZ;
+
+	e_accX = -GP*(-cosYaw*_p - sinYaw*_r) - e_speedX*abs(e_speedX)*DRAG_K-w_accX;
 	e_accX = constrain(e_accX, -MAX_ACC, MAX_ACC);
-	e_accY = G*(-cosYaw*_r + sinYaw*_p) - e_speedY*abs(e_speedY)*DRAG_K-w_accY;
+	e_accY = GP*(-cosYaw*_r + sinYaw*_p) - e_speedY*abs(e_speedY)*DRAG_K-w_accY;
 	e_accY = constrain(e_accY, -MAX_ACC, MAX_ACC);
 	w_accX += (e_accX - GPS.loc.accX - w_accX)*0.01;
 	w_accY += (e_accY - GPS.loc.accY - w_accY)*0.01;
@@ -438,7 +459,10 @@ bool MpuClass::loop(){
 	cosYaw = cos(yaw);
 	sinYaw = sin(yaw);
 
+
+	do_magic4Z();
 	do_magic();
+	
 
 	yaw *= RAD2GRAD;
 	pitch *= RAD2GRAD;

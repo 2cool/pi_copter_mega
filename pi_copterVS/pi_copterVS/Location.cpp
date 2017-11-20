@@ -60,6 +60,15 @@ void LocationClass::xy(bool update_speed){
 		accX = (tspeedX - speedX)*rdt;
 		accX = constrain(accX, -MAX_ACC, MAX_ACC);
 		speedX=constrain(tspeedX,-25,25);
+		//update z
+		float tsz = (altitude - old_alt)*rdt;
+		old_alt = altitude;
+		accZ = (tsz - speedZ)*rdt;
+		speedZ = tsz;
+		//accZ = (accZ, -2, 6);
+
+
+		//
 	}
 	dY = form_lon2Y((double)(lon_needV_ - (double)lon_)) + (speedY*0.5);
 	dX = from_lat2X((double)(lat_needV_ - (double)lat_)) + (speedX*0.5f);
@@ -348,9 +357,14 @@ int LocationClass::init(){
 void LocationClass::setHomeLoc(){
 	lat_home = lat_;
 	lon_home = lon_;
+	old_alt=startAlt = altitude;
+
 	//Debug.dump(lat_, lon_, 0, 0);
-	speedX = speedY = x2home = y2home = 0;
-	setNeedLoc2HomeLoc();
+	dX=dY=speedZ=speedX = speedY = x2home = y2home = accX=accY=accZ=0;
+	lat_needR_ = lat_needV_ = (double)lat_home;
+	lon_needR_ = lon_needV_ = (double)lon_home;
+
+	//setNeedLoc2HomeLoc();
 }
 void LocationClass::setNeedLoc(long lat, long lon){
 	lat_needR_ = lat_needV_ = (double)lat;
@@ -364,7 +378,7 @@ void LocationClass::setNeedLoc2HomeLoc(){
 	//setNeedLoc(lat_home, lon_home);
 	lat_needR_ = lat_needV_ = (double)lat_home;
 	lon_needR_ = lon_needV_ = (double)lon_home;
-	xy(true);
+	xy(false);
 
 
 

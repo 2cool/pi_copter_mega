@@ -88,7 +88,7 @@ void BalanceClass::init()
 	
 
 	Stabilization.init();
-	throttle = MIN_THROTTLE_;
+	true_throttle = throttle = 0;
 	_max_angle_= MAX_ANGLE_;
 
 
@@ -263,7 +263,8 @@ bool BalanceClass::loop()
 
 			maxAngle = _max_angle_;
 			if (Autopilot.z_stabState()) {
-				throttle = pK*power_K*Stabilization.Z(false);
+				true_throttle=Stabilization.Z(false);
+				throttle = pK*power_K*true_throttle;
 				throttle = constrain(throttle, min_throttle, max_throttle);
 
 				const float thr = throttle / Mpu.tiltPower;
@@ -279,7 +280,8 @@ bool BalanceClass::loop()
 			else {
 
 				Stabilization.Z(true);
-				throttle = Autopilot.get_throttle();
+				true_throttle = Autopilot.get_throttle();
+				throttle = true_throttle;
 				throttle /= Mpu.tiltPower;
 				throttle = constrain(throttle, 0.3f, max_throttle);
 				//	Debug.load(0, throttle, f_[0]);
@@ -421,7 +423,7 @@ bool BalanceClass::loop()
 
 void BalanceClass::set_off_th_() { 
 	f_[0] = f_[1] = f_[2] = f_[3] = 0; 
-	throttle = 0; 
+	throttle = true_throttle = 0;
 #ifdef FALSE_WIRE
 	Emu.update(f_, Mpu.dt);
 #endif

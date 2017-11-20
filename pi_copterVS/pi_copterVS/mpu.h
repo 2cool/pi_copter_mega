@@ -35,6 +35,7 @@ class MpuClass
 	friend class HmcClass;
  protected:
 	 void do_magic();
+	 void do_magic4Z();
 	 void calc_corrected_ang();
 	 void log();
 
@@ -79,6 +80,9 @@ class MpuClass
 	MPU6050 accelgyro;
 	 float h_yaw;
 	uint8_t gLPF;
+
+
+	float e_accZ, e_speedZ, w_accZ;
 	//-----------------
 	float m7_accX, m7_accY;
 	float windFX, windFY;

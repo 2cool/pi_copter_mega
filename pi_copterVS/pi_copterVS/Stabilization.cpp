@@ -224,7 +224,19 @@ int tttcnt = 0;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+float StabilizationClass::hold_z_acc(float a) {
 
+
+
+	//aK += (Balance.get_throttle() / (Location.accZ + 9.8) - aK)*0.01;
+	//a += 9.8;
+	//Location.get
+	//float thr = aK*(a + 9.8);
+
+
+
+	return 0;
+}
 
 float StabilizationClass::Z(bool onlyUpdate){/////////////////////////////////////////////////////////////
 
