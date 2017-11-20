@@ -16,7 +16,7 @@
 #include "debug.h"
 #include "Log.h"
 
-#define DEFAULT_DEV "/dev/i2c-1"
+#define DEFAULT_DEV "/dev/i2c-0"
 
 void HmcClass::init()
 {

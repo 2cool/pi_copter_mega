@@ -125,15 +125,18 @@ void GPSClass::loop(){
 
 
 uint64_t last_gps_time1 = 0;
-
+SEND_I2C g_data;
 void GPSClass::loop(){
 
 	uint64_t ttt = micros();
-	if (micros() - last_gps_time1 >= 33000) {
+	if (micros() - last_gps_time1 >= 10000) {
 		last_gps_time1 = micros();
-		if (loc.processGPS()) {
-			loc.updateXY();
+
+		last_gps_time1 = ttt;
+		if (mega_i2c.get_gps(&g_data)) {
+			loc.proceed(&g_data);
 		}
+		
 		if ((last_gps_time1 > loc.last_gps_data_time) && (last_gps_time1 - loc.last_gps_data_time) > 1000000){//NO_GPS_TIME_TO_FALL) {
 			fprintf(Debug.out_stream,"gps update error  %i\n",millis()/1000);
 			loc.last_gps_data_time = micros();

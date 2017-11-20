@@ -607,8 +607,8 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		fprintf(Debug.out_stream, "\MS5611 err: %f\n",MS5611.getErrorsK());
 #ifndef FALSE_WIRE
 		fprintf(Debug.out_stream,"on ");
-		if (millis() < 30000) {
-			fprintf(Debug.out_stream,"\n!!!calibrating!!! to end:%i sec.\n", 30-millis()/1000);
+		if (millis() < 25000) {
+			fprintf(Debug.out_stream,"\n!!!calibrating!!! to end:%i sec.\n", 25-millis()/1000);
 			return false;
 		}
 #else

@@ -26,7 +26,7 @@ class TelemetryClass
 
 	 bool newGPSData;
 	
-	 
+	 double SN;
 	 
 	// uint8_t inner_clock_old_sec;
 	

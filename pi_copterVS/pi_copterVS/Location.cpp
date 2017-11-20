@@ -126,7 +126,7 @@ void LocationClass::updateXY(){
 
 //////////////////////////////////////////////////////////////
 void LocationClass::proceed(SEND_I2C *d) {
-	last_gps_data_time = millis();
+	last_gps_data_time = micros();
 	accuracy_hor_pos_ = d->hAcc;
 	if (accuracy_hor_pos_ > 99)accuracy_hor_pos_ = 99;
 	accuracy_ver_pos_ = d->vAcc;
@@ -318,17 +318,8 @@ void LocationClass::add2NeedLoc(const double speedX, const double speedY, const 
 
 int LocationClass::init(){
 #ifndef FALSE_WIRE
-//	close(fd_loc);
 
-	fd_loc = open("/dev/ttyS3", O_RDWR | O_NOCTTY | O_SYNC);
-	if (fd_loc < 0)
-	{
-		fprintf(Debug.out_stream,"error %d opening /dev/ttyS3: %s", errno, strerror(errno));
-		return -1;
-	}
-
-	set_interface_attribs(fd_loc, B9600, 0);  // set speed to 115,200 bps, 8n1 (no parity)
-	set_blocking(fd_loc, 0);                // set no blocking
+	
 #endif
 	mspeedx =  mspeedy = 0;
 	old_iTOW = 0;

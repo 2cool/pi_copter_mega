@@ -89,7 +89,7 @@ int MS5611Class::init(){
 #ifndef FALSE_WIRE
 
 	int fd4S;
-	if ((fd4S = open("/dev/i2c-1", O_RDWR)) < 0){
+	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0){
 		fprintf(Debug.out_stream,"Failed to open the bus.\n");
 		close(fd4S);
 		return -1;
@@ -232,7 +232,7 @@ void MS5611Class::phase0() {
 	bar_zero = 0;
 
 	
-	if ((fd4S = open("/dev/i2c-1", O_RDWR)) < 0) {
+	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
 		fprintf(Debug.out_stream,"Failed to open the bus.\n");
 		close(fd4S);
 		return;
@@ -261,7 +261,7 @@ void MS5611Class::phase1()
 	if (micros()  > b_timeDelay) {
 
 		int fd4S;
-		if ((fd4S = open("/dev/i2c-1", O_RDWR)) < 0) {
+		if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
 			fprintf(Debug.out_stream,"Failed to open the bus.\n");
 			close(fd4S);
 			bar_task = 0;
@@ -324,7 +324,7 @@ void MS5611Class::phase2() {
 	if (micros()  > b_timeDelay) 
 	{
 		int fd4S;
-		if ((fd4S = open("/dev/i2c-1", O_RDWR)) < 0) {
+		if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
 			fprintf(Debug.out_stream,"Failed to open the bus.\n");
 			close(fd4S);
 			bar_task = 0;

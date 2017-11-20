@@ -17,11 +17,11 @@
 
 #define BALANCE_DELAY 120
 #define MAX_FLY_TIME 1200.0f
-#define BAT_ZERO (360.0f*4)
-#define BAT_50P (391.0f*4)
+#define BAT_ZERO 360.0f
+#define BAT_50P 391.0f
 #define BAT_timeout 1000
 #define BAT_timeoutRep  2
-#define BAT_100P 422
+//#define BAT_100P 422
 #define MAX_UPD_COUNTER 100
 #define MAX_VOLTAGE_AT_START 406
 
@@ -96,6 +96,8 @@ void TelemetryClass::init_()
 	message = "";
 	next_battery_test_time = millis()+BAT_timeout;
 	update_voltage();
+	SN = ((voltage < 1200) ? 3 : 4);
+		
 
 	newGPSData = false;
 	//Out.println("TELEMETRY INIT");
@@ -127,7 +129,7 @@ int TelemetryClass::check_time_left_if_go_to_home(){
 	if (voltage_at_start > 0){
 		float work_time = 0.001f*(float)(millis() - timeAtStart);
 		if (work_time > BALANCE_DELAY && voltage_at_start > voltage){
-			max_fly_time = ((voltage - BAT_ZERO)*work_time / (voltage_at_start - voltage));
+			max_fly_time = ((voltage - BAT_ZERO*SN)*work_time / (voltage_at_start - voltage));
 		}
 		else{
 			max_fly_time = MAX_FLY_TIME - work_time;
@@ -171,41 +173,28 @@ void TelemetryClass::testBatteryVoltage(){
 
 
 	if (timeAtStart == 0){
-		if (Autopilot.motors_is_on() && voltage>900){
+		if (Autopilot.motors_is_on() && voltage>BAT_ZERO*SN){
 			timeAtStart = millis();
 		}
 		else {
 			timeAtStart = 0;
-			voltage_at_start = 0;
+			voltage_at_start = voltage;
 		}
 	}
 
-	
-
-	if (timeAtStart > 0 && millis() - timeAtStart < 15000){
-		voltage_at_start = voltage;
-	}
-
-	if (voltage < BAT_ZERO && voltage>(150.0*4))
+	if (voltage < BAT_ZERO*SN)
 		lov_voltage_cnt++;
 	else
 		lov_voltage_cnt = 0;
 
 	low_voltage = lov_voltage_cnt > 3;
-	voltage50P = voltage < BAT_50P;
+	voltage50P = voltage < BAT_50P*SN;
 
-
-
-	if (voltage>0 && voltage < 1200){
-		voltage = 1480;
+	if (low_voltage)
 		addMessage(e_VOLT_MON_ERROR);
-	}
-	if (voltage == 0)
-		powerK = 1;
-	else {
-		powerK = (MAX_VOLTAGE_AT_START * 4) / (float)voltage;
-		powerK = constrain(powerK, 1, 1.35f);
-	}
+
+	powerK = (MAX_VOLTAGE_AT_START * SN) / voltage;
+	powerK = constrain(powerK, 1, 1.35f);
 }
 
 bool newGPSData = false;
@@ -293,7 +282,7 @@ void TelemetryClass::update_buf() {
 	loadBUF8(i, Mpu.get_roll());
 	loadBUF8(i, Balance.c_pitch);
 	loadBUF8(i, Balance.c_roll);
-	loadBUF16(i, voltage);
+	loadBUF16(i, voltage/SN*4);
 
 	buf[i++] = (int8_t)Autopilot.getGimbalPitch();
 
