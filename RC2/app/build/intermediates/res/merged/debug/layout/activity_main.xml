@@ -1,0 +1,174 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="copter.rc2.MainActivity" >
+
+    <RelativeLayout
+        android:id="@+id/rl1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#ffffff"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+
+    </RelativeLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.5%"
+        android:id="@+id/b_power05"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="141dp"
+        android:layout_marginStart="141dp"
+        android:layout_marginBottom="28dp"
+        android:singleLine="true"
+        android:onClick="power05"
+        android:nestedScrollingEnabled="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Secure"
+        android:id="@+id/cb_secure"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="327dp"
+        android:layout_marginStart="327dp"
+        android:onClick="secure"/>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Horizont"
+        android:id="@+id/cb_horizont"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="227dp"
+        android:layout_marginStart="227dp"
+        android:onClick="horizont_on"/>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Direction"
+        android:id="@+id/cb_compass"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="127dp"
+        android:layout_marginStart="127dp"
+        android:checked="false"
+        android:onClick="compas_on"/>
+
+    <Button
+        android:id="@+id/b_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="Start"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/t_smartK"
+        android:layout_alignEnd="@+id/t_smartK"
+        android:layout_alignLeft="@+id/b_altHold"
+        android:layout_alignStart="@+id/b_altHold"
+        android:onClick="start_stop"/>
+
+    <ToggleButton
+        android:id="@+id/b_altHold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ToggleButton"
+        android:textOff="Alt. Hold"
+        android:textOn="Alt. Hold"
+        android:layout_below="@+id/b_start"
+        android:layout_alignLeft="@+id/b_minus"
+        android:layout_alignStart="@+id/b_minus"
+        android:onClick="altHold"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+"
+        android:id="@+id/b_plus"
+        android:layout_below="@+id/b_altHold"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="plus"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"
+        android:id="@+id/b_minus"
+        android:layout_alignBottom="@+id/b_plus"
+        android:layout_toLeftOf="@+id/b_plus"
+        android:layout_toStartOf="@+id/b_plus"
+        android:onClick="minus"/>
+
+    <ToggleButton
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="Smart Ctrl."
+        android:textOn="Smart Ctrl"
+        android:id="@+id/t_smartK"
+        android:layout_below="@+id/b_minus"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignLeft="@+id/b_minus"
+        android:layout_alignStart="@+id/b_minus"
+        android:onClick="smartCtrl"
+        android:checked="false" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text=""
+        android:id="@+id/b_compas_c"
+        android:layout_below="@+id/t_smartK"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignLeft="@+id/t_smartK"
+        android:layout_alignStart="@+id/t_smartK" />
+
+    <ToggleButton
+        android:id="@+id/b_toHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ToggleButton"
+        android:textOff="R.T.L."
+        android:textOn="R.T.L."
+        android:layout_below="@+id/b_compas_c"
+        android:layout_alignLeft="@+id/b_minus"
+        android:layout_alignStart="@+id/b_minus"
+        android:onClick="toHome"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <ToggleButton
+        android:id="@+id/b_Prog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Prog"
+        android:textOff="Prog"
+        android:textOn="Prog"
+        android:onClick="Prog"
+        android:layout_alignBaseline="@+id/b_toHome"
+        android:layout_alignBottom="@+id/b_toHome"
+        android:layout_toLeftOf="@+id/b_compas_c"
+        android:layout_toStartOf="@+id/b_compas_c" />
+
+
+
+</RelativeLayout>

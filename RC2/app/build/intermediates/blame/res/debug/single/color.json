@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_primary_text_material_light.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_primary_text_material_light.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_background_cache_hint_selector_material_light.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_background_cache_hint_selector_material_light.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_primary_text_disable_only_material_dark.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_primary_text_disable_only_material_dark.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_secondary_text_material_dark.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_secondary_text_material_dark.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_background_cache_hint_selector_material_dark.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_background_cache_hint_selector_material_dark.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_primary_text_material_dark.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_primary_text_material_dark.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_secondary_text_material_light.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_secondary_text_material_light.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_primary_text_disable_only_material_light.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_primary_text_disable_only_material_light.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\color\\abc_search_url_text.xml",
+        "source": "C:\\Users\\igor.DESKTOP\\.android\\build-cache\\09414251b9e67926da2c96bd569937236b9a8e14\\output\\res\\color\\abc_search_url_text.xml"
+    }
+]

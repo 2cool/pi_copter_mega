@@ -1,0 +1,57 @@
+﻿  copter_graph.cpp
+c:\users\tcool\desktop\copter\copter_graph\copter_graph\gps.h(12): warning C4244: '=': conversion from 'LONG' to 'Gdiplus::REAL', possible loss of data
+c:\users\tcool\desktop\copter\copter_graph\copter_graph\gps.h(13): warning C4244: '=': conversion from 'LONG' to 'Gdiplus::REAL', possible loss of data
+c:\users\tcool\desktop\copter\copter_graph\copter_graph\Text.h(10): warning C4244: '=': conversion from 'LONG' to 'Gdiplus::REAL', possible loss of data
+c:\users\tcool\desktop\copter\copter_graph\copter_graph\Text.h(11): warning C4244: '=': conversion from 'LONG' to 'Gdiplus::REAL', possible loss of data
+copter_graph.cpp(54): warning C4244: '=': conversion from 'int' to 'Gdiplus::REAL', possible loss of data
+copter_graph.cpp(55): warning C4244: '=': conversion from 'int' to 'Gdiplus::REAL', possible loss of data
+copter_graph.cpp(56): warning C4244: '=': conversion from 'LONG' to 'Gdiplus::REAL', possible loss of data
+copter_graph.cpp(57): warning C4244: '=': conversion from 'LONG' to 'Gdiplus::REAL', possible loss of data
+copter_graph.cpp(59): warning C4244: '=': conversion from 'int' to 'Gdiplus::REAL', possible loss of data
+copter_graph.cpp(97): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+copter_graph.cpp(98): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+copter_graph.cpp(107): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+copter_graph.cpp(108): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+copter_graph.cpp(304): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+copter_graph.cpp(337): warning C4244: '=': conversion from 'LPARAM' to 'int', possible loss of data
+copter_graph.cpp(344): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+copter_graph.cpp(377): warning C4244: '=': conversion from 'LPARAM' to 'int', possible loss of data
+copter_graph.cpp(417): warning C4244: '=': conversion from 'LPARAM' to 'int', possible loss of data
+copter_graph.cpp(437): warning C4477: 'sprintf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'LPARAM'
+  copter_graph.cpp(437): note: consider using '%lld' in the format string
+  copter_graph.cpp(437): note: consider using '%Id' in the format string
+  copter_graph.cpp(437): note: consider using '%I64d' in the format string
+copter_graph.cpp(437): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt\stdio.h(1772): note: see declaration of 'sprintf'
+copter_graph.cpp(438): warning C4996: 'mbstowcs': This function or variable may be unsafe. Consider using mbstowcs_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt\stdlib.h(931): note: see declaration of 'mbstowcs'
+  graph.cpp
+graph.cpp(254): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
+graph.cpp(356): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+graph.cpp(367): warning C4267: 'argument': conversion from 'size_t' to 'INT', possible loss of data
+graph.cpp(374): warning C4267: 'argument': conversion from 'size_t' to 'INT', possible loss of data
+graph.cpp(389): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+graph.cpp(401): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+graph.cpp(402): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+graph.cpp(427): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+graph.cpp(428): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+graph.cpp(431): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+graph.cpp(432): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+graph.cpp(433): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+graph.cpp(463): warning C4244: '=': conversion from 'double' to 'Gdiplus::REAL', possible loss of data
+graph.cpp(465): warning C4244: '=': conversion from 'double' to 'Gdiplus::REAL', possible loss of data
+graph.cpp(476): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+graph.cpp(551): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+graph.cpp(553): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+graph.cpp(555): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+graph.cpp(556): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+graph.cpp(560): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+graph.cpp(562): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+graph.cpp(564): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+  Generating code
+  23 of 202 functions (11.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  copter_graph.vcxproj -> C:\Users\tcool\Desktop\COPTER\copter_graph\x64\Release\copter_graph.exe

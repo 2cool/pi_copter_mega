@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\menu\\map_menu.xml",
+        "source": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\src\\main\\res\\menu\\map_menu.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_settings.xml",
+        "source": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\src\\main\\res\\menu\\menu_settings.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\menu\\main.xml",
+        "source": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\src\\main\\res\\menu\\main.xml"
+    }
+]
