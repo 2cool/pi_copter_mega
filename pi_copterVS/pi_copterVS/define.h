@@ -8,14 +8,8 @@
 
 #define DEFINE_H
 
-
 //------------------------------------------------
 #define FALSE_WIRE
-
-
-
-
-
 
 
 #define TEST_GPS_CCURACY

@@ -254,6 +254,8 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 		return;
 
 
+	gimBalRollCorrection();
+
 #ifdef LOST_BEEP
 	if ( t - last_time_data_recived>3000 && t - last_beep_time > 3000) {
 		last_beep_time = t;
@@ -868,13 +870,12 @@ bool AutopilotClass::selfTest(){////////////////////////////////////////////////
 	return false;
 }
 
-void AutopilotClass::gimBalPitchADD(const float add){
+void AutopilotClass::gimBalPitchADD(const float add) {
 	if (!progState())
-		if (mega_i2c.gimagl(-(gimBalPitchZero + gimbalPitch + add), gimBalRollZero))
+		if (mega_i2c.gimagl((gimBalPitchZero + gimbalPitch + add), gimBalRollZero))
 			gimbalPitch += add;
 
 }
-
 
 bool AutopilotClass::start_stop_program(const bool stopHere){
 	if (motors_is_on()) {
@@ -983,8 +984,19 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 
 	return true;
 }
-
-
+float old_g_roll = 1000;
+#define MAX_GIMBAL_ROLL 20
+void AutopilotClass::gimBalRollCorrection() {
+	const float roll = Mpu.get_roll();
+	if (abs(roll) > MAX_GIMBAL_ROLL)
+		gimBalRollZero = 2 * (roll - ((roll > 0) ? MAX_GIMBAL_ROLL : -MAX_GIMBAL_ROLL));
+	else
+		gimBalRollZero = 0;
+	if (old_g_roll != gimBalRollZero) {
+		mega_i2c.gimagl(-(gimBalPitchZero + gimbalPitch), gimBalRollZero);
+		old_g_roll = gimBalRollZero;
+	}
+}
 
 
 AutopilotClass Autopilot;

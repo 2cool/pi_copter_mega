@@ -297,6 +297,16 @@ bool BalanceClass::loop()
 
 			c_pitch = constrain(c_pitch, -maxAngle, maxAngle);
 			c_roll = constrain(c_roll, -maxAngle, maxAngle);
+
+			if (throttle < MIN_THROTTLE_) {
+				pids[PID_PITCH_RATE].reset_I();
+				pids[PID_ROLL_RATE].reset_I();
+				pids[PID_YAW_RATE].reset_I();
+				c_pitch = c_roll = 0;
+				Stabilization.resset_xy_integrator();
+				Stabilization.resset_z();
+			}
+
 			const float maxAngle07 = maxAngle*0.7f;
 			if (abs(c_pitch) > maxAngle07 || abs(c_roll) > maxAngle07) {
 				//	c_pitch = constrain(c_pitch, -maxAngle, maxAngle);
@@ -310,8 +320,6 @@ bool BalanceClass::loop()
 					c_roll *= k;
 				}
 			}
-
-		
 
 #define BCF 0.1
 
@@ -354,7 +362,7 @@ bool BalanceClass::loop()
 				Log.write_bank_cnt();
 				Log.loadMem((uint8_t*)f_, 16);
 			}
-
+			/*
 			if (Hmc.compas_motors_calibr) {
 				f_[0] = 0;
 				f_[1] = 0;
@@ -362,7 +370,7 @@ bool BalanceClass::loop()
 				f_[3] = 0;
 				f_[Hmc.motor_index] = 0.5;
 			}
-
+			*/
 
 		}
 		else
