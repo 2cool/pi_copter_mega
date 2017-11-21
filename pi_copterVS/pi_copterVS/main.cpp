@@ -135,7 +135,7 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	Telemetry.init_();
 	Telemetry.testBatteryVoltage();
 	fprintf(Debug.out_stream,"telemetry init OK \n");
-	mega_i2c.beep_code(BEEPS_ON);
+	//mega_i2c.beep_code(BEEPS_ON);
 	GPS.init();
 
 	//sim.start();

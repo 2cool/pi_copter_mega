@@ -259,7 +259,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 #ifdef LOST_BEEP
 	if ( t - last_time_data_recived>3000 && t - last_beep_time > 3000) {
 		last_beep_time = t;
-		mega_i2c.beep_code(BEEPS_ON + (1 << 1));
+		mega_i2c.beep_code(1);
 	}
 #endif
 
@@ -611,6 +611,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		fprintf(Debug.out_stream,"on ");
 		if (millis() < 25000) {
 			fprintf(Debug.out_stream,"\n!!!calibrating!!! to end:%i sec.\n", 25-millis()/1000);
+			mega_i2c.beep_code(3);
 			return false;
 		}
 #else
@@ -621,7 +622,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 #define MAX_MACC 0.1f
 		if (Hmc.compas_motors_calibr == false && (abs(Mpu.maccX) > MAX_MACC || abs(Mpu.maccY) > MAX_MACC || abs(Mpu.maccZ) > MAX_MACC)) {
 			fprintf(Debug.out_stream, "ACC ERROR!!! \n");
-			mega_i2c.beep_code(BEEPS_ON + (2 << 1));
+			mega_i2c.beep_code(2);
 			return false;
 		}
 
@@ -630,13 +631,13 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			if (Telemetry.low_voltage){
 				Telemetry.addMessage(e_LOW_VOLTAGE);
 				fprintf(Debug.out_stream," LOW VOLTAGE\n");
-				mega_i2c.beep_code(BEEPS_ON + (3 << 1));
+				mega_i2c.beep_code(3);
 				return false;
 			}
 
 			if (Hmc.compas_motors_calibr==false && GPS.loc.accuracy_hor_pos_ > MIN_ACUR_HOR_POS_2_START ){
 				fprintf(Debug.out_stream," GPS error\n");
-				mega_i2c.beep_code(BEEPS_ON + (4 << 1));
+				mega_i2c.beep_code(4);
 				Telemetry.addMessage(e_GPS_ERROR);
 
 				//return false;
@@ -679,12 +680,12 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		else{
 			if (Hmc.calibrated == false){
 				fprintf(Debug.out_stream,"compas, ");
-				mega_i2c.beep_code(BEEPS_ON + (4 << 1));
+				mega_i2c.beep_code(4);
 
 			}
 			if (Mpu.gyro_calibratioan == false){
 				fprintf(Debug.out_stream,"gyro");
-				mega_i2c.beep_code(BEEPS_ON + (5 << 1));
+				mega_i2c.beep_code(5);
 
 			}
 			fprintf(Debug.out_stream," calibr FALSE\n");

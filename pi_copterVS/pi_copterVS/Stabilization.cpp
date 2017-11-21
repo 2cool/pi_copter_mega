@@ -215,29 +215,15 @@ void StabilizationClass::init_Z(){
 	//Stabilization.resset_z();
 
 }
-float deltaZ = 0;
 
-
-int tttcnt = 0;
+//int tttcnt = 0;
 
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+float StabilizationClass::Zgps() {
 
-float StabilizationClass::hold_z_acc(float a) {
-
-
-
-	//aK += (Balance.get_throttle() / (Location.accZ + 9.8) - aK)*0.01;
-	//a += 9.8;
-	//Location.get
-	//float thr = aK*(a + 9.8);
-
-
-
-	return 0;
 }
-
 float StabilizationClass::Z(bool onlyUpdate){/////////////////////////////////////////////////////////////
 
 	float alt = MS5611.altitude();

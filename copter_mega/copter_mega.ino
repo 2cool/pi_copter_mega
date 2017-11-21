@@ -28,11 +28,47 @@
 #define OCR_GP OCR3C
 #define OCR_GR OCR5C
 
+volatile uint8_t beep_code = 0;
 
 uint8_t beeps_coder[] = { 0, B00001000,B00001001,B00001010,B00001011,B00001100,B00001101,B00001110,B00001111,B00000001,B00000010,B00000011,B00000100,B00000101,B00000110,B00000111 };//4 beeps if 0 short 1 long beep
 
 
 
+#define PAUSE_TIME 100
+#define LONG_BEEP 600
+#define SHORT_BEEP 200
+
+uint8_t beep_bit_n = 0;
+uint32_t beep_time = 0;
+void beep() {
+	if (beep_time == 0) {
+		beep_time = millis() + ((beeps_coder[beep_code] & 1) ? LONG_BEEP : SHORT_BEEP);
+		beep_bit_n = 0;
+		digitalWrite(BUZZER, HIGH);
+	}
+	else {
+		if (beep_bit_n & 1) { //pause
+			if (millis() > beep_time) {
+				digitalWrite(BUZZER, HIGH);
+				beep_bit_n++;
+				beep_time = millis() + (((beeps_coder[beep_code] >> (beep_bit_n >> 1)) & 1) ? LONG_BEEP : SHORT_BEEP);
+			}
+		}
+		else {	//beep
+			if (millis() > beep_time) {
+				digitalWrite(BUZZER, LOW);
+				beep_bit_n++;
+				if (beep_bit_n >= 8) {
+					beep_code = 0;
+					beep_time = 0;
+				}
+				else
+					beep_time = millis() + PAUSE_TIME;
+			}
+		}
+	}
+
+}
 
 void stop_motors() {
 	OCR0 = pwm_OFF_THROTTLE;
@@ -91,7 +127,7 @@ void throttle_3(const float n) {
 enum COMMANDS_BIT { SOUND_ON = 1, BEEP_CODE = 30 };
 
 
-volatile uint8_t beep_code = 0;
+
 volatile uint8_t cnt = 0;
 volatile bool beep_on = false;
 
@@ -145,7 +181,12 @@ void receiveEvent(int countToRead) {
 		}
 		break;
 	}
-
+	case 1:
+	{
+		beep_code=inBuf[1];
+		//Serial.println(beep_code);
+		break;
+	}
 	case 2: 
 	{
 		uint8_t len = countToRead-1;
@@ -287,20 +328,22 @@ void loop()
 	fb[2] += ((float)(analogRead(MI2)) - fb[2])*CF;
 	fb[3] += ((float)(analogRead(MI3)) - fb[3])*CF;
 	fb[4] += ((float)(analogRead(BAT)) - fb[4])*CF;
-	
-	bool ring = digitalRead(31) == LOW;
-	if (millis()>5000 && ring) {
 
-		digitalWrite(BUZZER, (micros() & (unsigned long)65536) == 0);
-	}
+	if (beep_code)
+		beep();
 	else {
-		bool alarm = (fb[4] > (1210.0 / 1.725) && fb[4] < (1320.0 / 1.725));
-		digitalWrite(BUZZER, alarm);
 
+		bool ring = digitalRead(31) == LOW;
+		if (millis() > 5000 && ring) {
+
+			digitalWrite(BUZZER, (micros() & (unsigned long)65536) == 0);
+		}
+		else {
+			bool alarm = (fb[4] > (1210.0 / 1.725) && fb[4] < (1320.0 / 1.725));
+			digitalWrite(BUZZER, alarm);
+
+		}
 	}
-	
-
-
 	//3.3 - alarm ;3.6 red
 
 	//Serial.print(fb[0]); Serial.print(" "); Serial.print(fb[1]); Serial.print(" "); Serial.print(fb[2]); Serial.print(" "); Serial.print(fb[3]); Serial.print(" "); Serial.println(fb[4]);
@@ -315,13 +358,7 @@ void loop()
 		err++;
 		if (err > 300) {
 			stop_motors();
-/*
-			if ((err_beep_cnt++) > 20) {
-				err_beep_f ^= true;
-				err_beep_cnt ^= err_beep_cnt;
-			}
-			digitalWrite(BUZZER, err_beep_f);
-			*/
+
 		}
 	}
 

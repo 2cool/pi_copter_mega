@@ -90,7 +90,8 @@ int Megai2c::init()
 }
 
 void Megai2c::beep_code(uint8_t c) {
-
+	char chBuf[] = { 1,c };
+	write(fd, chBuf, 2);
 }
 
 

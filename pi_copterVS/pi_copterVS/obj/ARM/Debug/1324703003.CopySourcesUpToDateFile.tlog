@@ -1,5 +1,5 @@
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\AP_PID.cpp|636388310270974270|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Autopilot.cpp|636468036236654627|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Autopilot.cpp|636468950928074588|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Balance.cpp|636468181130482601|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\commander.cpp|636467823074089004|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\debug.cpp|636399651426361322|~/projects/pi_copterVS|
@@ -14,17 +14,17 @@ D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\inv_mpu.cpp|63633253293800
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\inv_mpu_dmp_motion_driver.cpp|636332532938163925|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Location.cpp|636468754665875950|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Log.cpp|636467831279897919|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\main.cpp|636468778396551039|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\main.cpp|636468949062417569|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mpu.cpp|636468754670197734|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MPU6050.cpp|636467886709021595|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mpu_umulator.cpp|636468152551223241|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MS5611.cpp|636467886709555542|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Prog.cpp|636467823436285665|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mi2c.cpp|636468704827058906|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mi2c.cpp|636468949062647625|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\RC_Filter.cpp|636332532937695173|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Settings.cpp|636382172571434893|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\SIM800.cpp|636468777537149168|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Stabilization.cpp|636468182905747960|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Stabilization.cpp|636468850309925494|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Telemetry.cpp|636467906890452606|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Wi_Fi.cpp|636381522440498355|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\WProgram.cpp|636468736698616354|~/projects/pi_copterVS|
@@ -33,7 +33,7 @@ D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Autopilot.h|63646803623657
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Balance.h|636468181130322579|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\commander.h|636393769179484486|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\debug.h|636409847392854104|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\define.h|636468125825731243|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\define.h|636468949062037439|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Direction.h|636332532937695173|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\dmpKey.h|636332532938007672|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\dmpmap.h|636332532938007672|~/projects/pi_copterVS|
@@ -49,7 +49,7 @@ D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\inv_mpu_dmp_motion_driver.
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Location.h|636468754665785949|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Log.h|636467831280007933|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MotionSensor.h|636332532937695173|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mpu.h|636468160793124657|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mpu.h|636468818884887291|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MPU6050.h|636332532937695173|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mpu_umulator.h|636467827491981295|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\MS5611.h|636419486988079388|~/projects/pi_copterVS|
@@ -58,7 +58,7 @@ D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\mi2c.h|636468700558589466|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\RC_Filter.h|636332532937695173|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Settings.h|636381806505336943|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\SIM800.h|636468756512340009|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Stabilization.h|636468140804173564|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Stabilization.h|636468850309840481|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Telemetry.h|636467897885393876|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\Wi_Fi.h|636381507040434848|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\WProgram.h|636468736698536348|~/projects/pi_copterVS|

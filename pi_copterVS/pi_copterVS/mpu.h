@@ -80,9 +80,6 @@ class MpuClass
 	MPU6050 accelgyro;
 	 float h_yaw;
 	uint8_t gLPF;
-
-
-	float e_accZ, e_speedZ, w_accZ;
 	//-----------------
 	float m7_accX, m7_accY;
 	float windFX, windFY;
@@ -102,6 +99,7 @@ class MpuClass
 	uint64_t acc_callibr_time;
 	float DRAG_K,_0007;
  public:
+	 float e_accZ, e_speedZ, w_accZ;
 	 uint64_t mputime;
 	float e_accX, e_accY;
 	 float cor_c_pitch, cor_c_roll;
