@@ -36,7 +36,7 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 #include "Balance.h"
-
+#include "SIM800.h"
 
 bool loop();
 
@@ -127,6 +127,7 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	if (WiFi.init())
 		return -1;
 #endif
+
 	fprintf(Debug.out_stream,"commander init...\n");
 	Commander.init();
 	fprintf(Debug.out_stream,"Autopilot init...\n");
@@ -136,6 +137,9 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	fprintf(Debug.out_stream,"telemetry init OK \n");
 	mega_i2c.beep_code(BEEPS_ON);
 	GPS.init();
+
+	//sim.start();
+
 	return 0;
 
 }
@@ -194,7 +198,7 @@ bool loop()
 #endif
 		Commander.input();
 		Autopilot.loop();
-
+		mega_i2c.gsm_loop();
 #ifdef FALSE_WIRE
 		usleep(3000);
 #endif
@@ -332,7 +336,7 @@ int main(int argc, char *argv[]) {
 	}
 
 
-	mega_i2c.on(0, pwm_MAX_THROTTLE);
+	mega_i2c.init();
 	string str = string(argv[0]);
 	str = str.substr(str.length() - 4, str.length());
 

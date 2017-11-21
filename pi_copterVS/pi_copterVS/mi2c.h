@@ -114,7 +114,7 @@ protected:
 
 
 public:
-	static int on(const uint16_t COUNTER, const uint16_t throthle);
+	static int init();
 
 
 	static bool gimagl(float pitch, float roll);

@@ -40,16 +40,11 @@ int Megai2c::send2sim(char *str, int len) {
 	write(fd, gsm_send_buf, len + 1);
 	//	for (int i = 1; i<len+1; i++)
 	//	printf("%c", gsm_send_buf[i]);
-
-
-
 }
 
-
-char gsm_in_buf[32];
 int Megai2c::gsm_loop()
 {
-
+	char gsm_in_buf[18];
 	int a_in;
 	ioctl(fd_in, FIONREAD, &a_in);
 	if (a_in) {
@@ -69,16 +64,14 @@ int Megai2c::gsm_loop()
 
 }
 
-int Megai2c::on(const uint16_t COUNTER, const uint16_t throthle)
+int Megai2c::init()
 {
-
-	fprintf(Debug.out_stream, "arduino connection test\n");
 	if ((fd = open("/dev/i2c-0", O_RDWR)) < 0) {
-		fprintf(Debug.out_stream, "Failed to open the bus.\n");
+		fprintf(Debug.out_stream, "Failed to open /dev/i2c-0\n");
 		return -1;
 	}
 	if (ioctl(fd, I2C_SLAVE, ARDUINO_ADDR) < 0) {
-		fprintf(Debug.out_stream, "Failed to acquire bus access and/or talk to slave.\n");
+		fprintf(Debug.out_stream, "Failed to acquire /dev/i2c-0 access and/or talk to slave.\n");
 		return -1;
 	}
 

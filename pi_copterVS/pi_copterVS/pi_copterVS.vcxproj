@@ -86,6 +86,7 @@
     <ClCompile Include="mi2c.cpp" />
     <ClCompile Include="RC_Filter.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="SIM800.cpp" />
     <ClCompile Include="Stabilization.cpp" />
     <ClCompile Include="Telemetry.cpp" />
     <ClCompile Include="Wi_Fi.cpp" />
@@ -121,6 +122,7 @@
     <ClInclude Include="mi2c.h" />
     <ClInclude Include="RC_Filter.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="SIM800.h" />
     <ClInclude Include="Stabilization.h" />
     <ClInclude Include="Telemetry.h" />
     <ClInclude Include="Wi_Fi.h" />

@@ -57,11 +57,11 @@ void MpuClass::do_magic4Z() {
 
 	thr += (Balance.get_true_throttle() - thr)*0.2;
 
-	e_accZ = thr*aK-9.8  - e_speedZ*abs(Location.speedZ)*0.232;
+	e_accZ = thr*aK-9.8  - e_speedZ*abs(GPS.loc.speedZ)*0.232;
 	e_speedZ += e_accZ*dt;
-	e_speedZ += (Location.speedZ - e_speedZ)*0.1;
+	e_speedZ += (GPS.loc.speedZ - e_speedZ)*0.1;
 
-	aK += (Location.accZ+9.8/thr - aK)*0.01;
+	aK += (GPS.loc.accZ+9.8/thr - aK)*0.01;
 	aK = constrain(aK, 15.5, 23.5);
 
 }

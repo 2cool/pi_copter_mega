@@ -429,5 +429,5 @@ double LocationClass::distance_(const double lat, const double lon, const double
 
 }
 
-LocationClass Location;
+
 

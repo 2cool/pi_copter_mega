@@ -63,7 +63,7 @@ using namespace std;
 uint32_t millis(void);
 int64_t micros(void);
 void delay(unsigned long);
-
+std::string exec(const std::string s);
 
 /*
 const char * dtostre(float f, string ch[], int n, int fl=0){

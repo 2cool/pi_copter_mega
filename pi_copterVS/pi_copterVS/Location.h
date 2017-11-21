@@ -84,7 +84,6 @@ private:
 
 };
 
-extern LocationClass Location;
 
 #endif
 
