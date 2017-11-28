@@ -1,6 +1,6 @@
-#define PROG_VERSION "ver 2.170926_magic \n"
+#define PROG_VERSION "ver 3.171126_1 \n"
 
-//#define ONLY_ONE_RUN
+#define ONLY_ONE_RUN
 
 
 #include <cstdio>
@@ -135,7 +135,7 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	Telemetry.init_();
 	Telemetry.testBatteryVoltage();
 	fprintf(Debug.out_stream,"telemetry init OK \n");
-	//mega_i2c.beep_code(BEEPS_ON);
+
 	GPS.init();
 
 	//sim.start();
@@ -318,7 +318,7 @@ int main(int argc, char *argv[]) {
 			}else	
 				Debug.out_stream = stdout;
 
-			
+			Log.writeTelemetry = (argv[4][0] == 'y' || argv[4][0] == 'Y');
 			
 			
 
@@ -351,7 +351,7 @@ int main(int argc, char *argv[]) {
 		old_time4loop = micros();
 
 		Debug.run_main = true;
-		Debug.reboot = false;
+		Debug.reboot = 0;
 		while (Debug.run_main && flag == 0) {
 
 			if (loop()) {
@@ -380,12 +380,13 @@ int main(int argc, char *argv[]) {
 		fprintf(Debug.out_stream, "\n main Signal caught!\n");
 	Settings.write();
 
-	fflush(Debug.out_stream);
-	fclose(Debug.out_stream);
+	
 	Log.close();
 	usleep(3000000);
-
-	system(Debug.reboot?"reboot":"shutdown now");
+	fflush(Debug.out_stream);
+	fclose(Debug.out_stream);
+	if (Debug.reboot)
+		system(Debug.reboot==1?"reboot":"shutdown now");
 
 
 #ifdef ONLY_ONE_RUN

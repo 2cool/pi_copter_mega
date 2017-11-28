@@ -81,7 +81,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 	double aa_i=0;
 	long time_out=100;
-	
+    static boolean gpsON=false;
 	static public DrawView drawView=null;
     Button b_start;
     static ToggleButton b_altHold,b_smartCTRL,b_toHome,b_prog;
@@ -137,9 +137,6 @@ public class MainActivity extends Activity implements SensorEventListener {
     static protected boolean sensorUpdateSpeedFastest=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
 
         super.onCreate(savedInstanceState);
 
@@ -198,6 +195,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         drawView = new DrawView(MainActivity.this);
         drawView.setBackgroundColor(Color.WHITE);
         rl1.addView(drawView);
+
+
+       // startService(new Intent(MainActivity.this, GPSservice.class));
 
     }
     static boolean commands_off_full_th =false;
@@ -331,8 +331,14 @@ public class MainActivity extends Activity implements SensorEventListener {
                 command_bits_|=COMPASS_CALIBR;
                // Commander.button="CMC";
                 break;
-            case R.id.COMP_M_CAL:
-                command_bits_|=COMPASS_MOTOR_CALIBR;
+            case R.id.GPS:
+
+                if (gpsON==false)
+                    startService(new Intent(MainActivity.this, GPSservice.class));
+                else
+                    stopService(new Intent(MainActivity.this, GPSservice.class));
+                gpsON^=true;
+               // command_bits_|=COMPASS_MOTOR_CALIBR;
                // Commander.button="MCC";
                 break;
 
@@ -363,7 +369,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
 	int i=0;
-	
+
     static double heading_t;
 	@Override
 	public void onSensorChanged(SensorEvent event) {
@@ -371,10 +377,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 
         setButtons();
-		
 
-		
-		
+
+
+
 		long now=System.currentTimeMillis();
     	if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
 

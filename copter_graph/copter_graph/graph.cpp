@@ -301,12 +301,14 @@ int Graph::decode_Log() {
 	i += 2;
 	bool starPointOK = false;
 	gax = gay = gaz = 0;
+
 	if (indexes[LOG::MPU] == 0) {
 		do {
-
+			//if (indexes[LOG::MPU] > 157000) { lSize = i; break; }
 			switch (buffer[i]) {
 			case LOG::MPU: {
 				indexes[LOG::MPU]++;
+				
 
 				dt = (double)buffer[i + 1] * 0.001f;
 				pitch = *(float*)(&buffer[i + 2]);
@@ -323,6 +325,8 @@ int Graph::decode_Log() {
 				float accY = *(float*)(&buffer[i + 38]);
 				float accZ = *(float*)(&buffer[i + 42]);
 				i += 46;
+
+				
 				break;
 			}
 			case LOG::MPU_M: {
@@ -672,7 +676,7 @@ int Graph::decode_Log() {
 			float pressure = *(float*)(&buffer[i + 1]);
 #define PRESSURE_AT_0 101325
 			double tpressure_alt = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));
-			if (start_alt == -1 && def_mode&MOTORS_ON)
+			if (start_alt == -1)// && def_mode&MOTORS_ON)
 				start_alt = tpressure_alt;
 			tpressure_alt -= start_alt;
 
@@ -691,11 +695,13 @@ int Graph::decode_Log() {
 		case LOG::GpS: {
 
 			//old_z = 0, gspeedZ, old_gspeeZ = 0
-
+			static double first_alt = 0;
 
 			SEND_I2C*p = (SEND_I2C*)&buffer[i+1];
 			z = 0.001*p->height;
-
+			if (first_alt == 0 && z != 0)
+				first_alt = z;
+			z -= first_alt;
 			gspeedZ = (z - old_z) / 0.1;
 			old_z = z;
 			gaz = (gspeedZ - old_gspeeZ) / 0.1;
@@ -715,16 +721,19 @@ int Graph::decode_Log() {
 			double distance = mymath.distance_(n_lat, n_lon, lat, lon);
 			double bearing = mymath.bearing_(n_lat, n_lon, lat, lon);
 
-			gy = distance*sin(bearing);
+			static double old_distance = 0;
+
+			gy = (distance-old_distance)*sin(bearing);
+			old_distance = distance;
 			gspeedY = (gy)/0.1;
 			
 
-			gx = distance*cos(bearing);
+			gx = (distance - old_distance)*cos(bearing);
 			gspeedX = (gx) / 0.1;
 			
 
-			lat = n_lat;
-			lon = n_lon;
+		//	lat = n_lat;
+		//	lon = n_lon;
 
 
 
@@ -747,7 +756,7 @@ int Graph::decode_Log() {
 			int vacc = p->vAcc;
 			int hacc = p->hAcc;
 
-			if (dataI > 44467)
+			//if (dataI > 44467)
 			{
 				std::wstring str = L" " + std::to_wstring(p->lon*0.0000001) + L"," + std::to_wstring(p->lat * 0.0000001) + L"," + std::to_wstring(p->height * 0.001) + L" ";
 				fwrite(str.c_str(), str.length(), 2, klm);
@@ -783,6 +792,9 @@ int Graph::decode_Log() {
 			//rotate(gax, gay);
 			i += 8 * 4;
 
+
+			gy2home = distance *sin(bearing);
+			gx2home = distance*cos(bearing);
 
 
 			max_x = max(max_x, gx2home);

@@ -143,6 +143,7 @@
     <ClInclude Include="graph.h" />
     <ClInclude Include="Kalman.h" />
     <ClInclude Include="KK.h" />
+    <ClInclude Include="Mpu.h" />
     <ClInclude Include="myButton.h" />
     <ClInclude Include="MYfILTER.h" />
     <ClInclude Include="MyMath.h" />
@@ -157,6 +158,7 @@
     <ClCompile Include="graph.cpp" />
     <ClCompile Include="Kalman.cpp" />
     <ClCompile Include="KK.cpp" />
+    <ClCompile Include="Mpu.cpp" />
     <ClCompile Include="myButton.cpp" />
     <ClCompile Include="MYfILTER.cpp" />
     <ClCompile Include="MyMath.cpp" />

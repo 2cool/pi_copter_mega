@@ -434,6 +434,15 @@ public class DrawMap extends View {
         return xy;
     }
 
+    private void drawPhonePos(Canvas g){
+        if (GPSservice.mLastLocation != null){
+            Point xy=lon_lat_2_XY(GPSservice.mLastLocation.getLatitude(),GPSservice.mLastLocation.getLongitude());
+            red.setStyle(Paint.Style.FILL);
+            g.drawCircle(xy.x,xy.y,8,red);
+        }
+
+    }
+
     private void drawCopterPos(Canvas g){
         if (progLoaded==false ){
             startPos_lat=Telemetry.lat;
@@ -445,8 +454,8 @@ public class DrawMap extends View {
         int x=xy.x;
         int y=xy.y;
 
-
-
+        red.setStyle(Paint.Style.FILL);
+        g.drawCircle(xy.x,xy.y,5,red);
         //   g.drawArc(x-15, y-15, 30, 30, 0, 360);
         double direction=-Math.toRadians(Telemetry.heading);
 
@@ -616,6 +625,7 @@ public class DrawMap extends View {
         drawCross(c);
         fromPointToLatLng();
         drawCopterPos(c);
+        drawPhonePos(c);
         drawProgDots(c);
 
         Paint black=new Paint();

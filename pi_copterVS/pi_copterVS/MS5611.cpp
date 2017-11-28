@@ -5,7 +5,7 @@
 #include "debug.h"
 #include "Log.h"
 
-int fd4S;
+static int fd4S;
 unsigned int PROM_read(int DA, char PROM_CMD)
 {
 	uint16_t ret = 0;
@@ -24,39 +24,24 @@ unsigned int PROM_read(int DA, char PROM_CMD)
 	return ret;
 }
 
-long CONV_read(int DA, char CONV_CMD)
-{
-	long ret = 0;
-	uint8_t D[] = { 0, 0, 0 };
 
-	int  h;
-	char zero = 0x0;
-
-	if (write(DA, &CONV_CMD, 1) != 1) {
-		fprintf(Debug.out_stream,"write reg 8 bit Failed to write to the i2c bus.\n");
-	}
-
-	usleep(OSR_4096);
-
-	if (write(DA, &zero, 1) != 1) {
-		fprintf(Debug.out_stream,"write reset 8 bit Failed to write to the i2c bus.\n");
-	}
-
-	h = read(DA, &D, 3);
-
-	if (h != 3) {
-		fprintf(Debug.out_stream,"Failed to read from the i2c bus %d.\n", h);
-
-	}
-
-	ret = D[0] * (unsigned long)65536 + D[1] * (unsigned long)256 + D[2];
-
-	return ret;
-}
-	char RESET = 0x1E;
+char RESET = 0x1E;
 #define ALT_NOT_SET 0
 
 
+
+int MS5611Class::error(int e) {
+	return -1;
+}
+
+
+int MS5611Class::writeReg(char bar_zero) {
+	if (write(fd4S, &bar_zero, 1) != 1) {
+		fprintf(Debug.out_stream, "write reset 8 bit Failed to write to the i2c bus.\n");
+		bar_task = 0;
+		return error(2);
+	}
+}
 
 int MS5611Class::init(){
 	oldAltt = 100000;
@@ -79,49 +64,29 @@ int MS5611Class::init(){
 #endif
 	pressure = PRESSURE_AT_0;
 	ms5611_count = 0;
-	
-	
-	//----------------------------
-	
-	
-	
 
 #ifndef FALSE_WIRE
+	compensation = true;
 
-	int fd4S;
 	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0){
 		fprintf(Debug.out_stream,"Failed to open the bus.\n");
-		close(fd4S);
-		return -1;
+		return error(0);
 	}
 
 	if (ioctl(fd4S, I2C_SLAVE, MS5611_ADDRESS) < 0){
 		fprintf(Debug.out_stream,"Failed to acquire bus access and/or talk to slave.\n");
-		close(fd4S);
-		return -1;
+		return error(1);
 	}
    
-	if (write(fd4S, &RESET, 1) != 1) {
-		fprintf(Debug.out_stream,"write reg 8 bit Failed to write to the i2c bus.\n");
-		close(fd4S);
-		return -1;
-	}
+	writeReg(RESET);
 
-	usleep(10000);
-
+	usleep(100000);
 	for (i = 0; i < 6; i++){
-		usleep(1000);
-
-		C[i] = PROM_read(fd4S, CMD_PROM_READ + (i * 2));
-		//fprintf(Debug.out_stream,"C[%d] = %d\n", i, C[i]);
-
+		C[i] = PROM_read(fd4S, 0xA2 + (i * 2));
 	}
-	close(fd4S);
 
 #endif
-	return 0;
-	
-	
+	return 0;	
 }
 float MS5611Class::altitude() {
 	return altitude_ - altitude_error;
@@ -214,7 +179,6 @@ uint8_t MS5611Class::loop(){
 		break;
 	default:
 		phase2();
-
 	}
 
 	return 0;
@@ -229,248 +193,117 @@ uint8_t MS5611Class::loop(){
 
 void MS5611Class::phase0() {
 	bar_D[0] = bar_D[1] = bar_D[2] = 0;
-	bar_zero = 0;
 
-	
-	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
-		fprintf(Debug.out_stream,"Failed to open the bus.\n");
-		close(fd4S);
-		return;
-	}
-
-	if (ioctl(fd4S, I2C_SLAVE, MS5611_ADDRESS) < 0) {
-		fprintf(Debug.out_stream,"Failed to acquire bus access and/or talk to slave.\n");
-		close(fd4S);
-		return;
-	}
-	
-
-	char CONV_CMD = CONV_D1_4096;
-	if (write(fd4S, &CONV_CMD, 1) != 1) {
-		fprintf(Debug.out_stream,"write reg 8 bit Failed to write to the i2c bus.\n");
-		return;
-	}
-	close(fd4S);
+	writeReg(CONV_D2_4096);
 	b_timeDelay = micros() + ct;
-	bar_task=1;
+	bar_task = 1;
 }
-
+#define fc C
 void MS5611Class::phase1()
 {
-
 	if (micros()  > b_timeDelay) {
-
-		int fd4S;
-		if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
-			fprintf(Debug.out_stream,"Failed to open the bus.\n");
-			close(fd4S);
-			bar_task = 0;
-			return;
-		}
-
-		if (ioctl(fd4S, I2C_SLAVE, MS5611_ADDRESS) < 0) {
-			fprintf(Debug.out_stream,"Failed to acquire bus access and/or talk to slave.\n");
-			close(fd4S);
-			bar_task = 0;
-			return;
-		}
-
-
-
-
-
-		if (write(fd4S, &bar_zero, 1) != 1) {
-			fprintf(Debug.out_stream,"write reset 8 bit Failed to write to the i2c bus.\n");
-			bar_task = 0;
-			close(fd4S);
-			return;
-		}
-
-		bar_h = read(fd4S, &bar_D, 3);
-
-		if (bar_h != 3) {
-			fprintf(Debug.out_stream,"Failed to read from the i2c bus %d.\n", bar_h);
-			bar_task = 0;
-			close(fd4S);
-			return;
-		}
-
-		D1 = ((int32_t)bar_D[0] << 16) | ((int32_t)bar_D[1] << 8) | bar_D[2];
-		if (D1 == 0) {
-			bar_task = 0;
-			fprintf(Debug.out_stream,"D1 error\n");
-			close(fd4S);
-			return;
-		}
-		//-------------------------------------
-		bar_D[0] = bar_D[1] = bar_D[2] = 0;
+		bar_task = 2;
 		bar_zero = 0;
-		char CONV_CMD = CONV_D2_4096;
-		if (write(fd4S, &CONV_CMD, 1) != 1) {
-			fprintf(Debug.out_stream,"write reg 8 bit Failed to write to the i2c bus.\n");
-			bar_task = 0;
-			close(fd4S);
+		writeReg(bar_zero);
+		bar_h = read(fd4S, &bar_D, 3);
+		if (bar_h != 3) {
+			fprintf(Debug.out_stream, "Failed to read from the i2c bus %d.\n", bar_h);
+			error(3);
 			return;
 		}
+
+		D2 = ((int32_t)bar_D[0] << 16) | ((int32_t)bar_D[1] << 8) | bar_D[2];
+		int32_t dT = D2 - (uint32_t)fc[4] * 256;
+		int32_t TEMP = 2000 + ((int64_t)dT * fc[5]) / 8388608;
+		int32_t TEMP2 = 0;
+		if (compensation)
+		{
+			if (TEMP < 2000)
+			{
+				TEMP2 = (dT * dT) / (2 << 30);
+			}
+		}
+		TEMP = TEMP - TEMP2;
+		i_readTemperature = ((int8_t)(TEMP * 0.01));
+		writeReg(CONV_D1_4096);
 		b_timeDelay = micros() + ct;
-		bar_task=2;
-		close(fd4S);
 		
 	}
 }
-
 
 void MS5611Class::phase2() {
-	if (micros()  > b_timeDelay) 
+	if (micros()  > b_timeDelay)
 	{
-		int fd4S;
-		if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
-			fprintf(Debug.out_stream,"Failed to open the bus.\n");
-			close(fd4S);
-			bar_task = 0;
-			return;
-		}
-
-		if (ioctl(fd4S, I2C_SLAVE, MS5611_ADDRESS) < 0) {
-			fprintf(Debug.out_stream,"Failed to acquire bus access and/or talk to slave.\n");
-			close(fd4S);
-			bar_task = 0;
-			return;
-		}
-		if (write(fd4S, &bar_zero, 1) != 1) {
-			fprintf(Debug.out_stream,"write reset 8 bit Failed to write to the i2c bus.\n");
-			bar_task = 0;
-			close(fd4S);
-			return;
-		}
+		bar_task = 0;
+		//openDev();
+		bar_zero = 0;
+		writeReg(bar_zero);
 
 		bar_h = read(fd4S, &bar_D, 3);
 
-		if (bar_h != 3) {
-			fprintf(Debug.out_stream,"Failed to read from the i2c bus %d.\n", bar_h);
-			bar_task = 0;
-			close(fd4S);
-			return;
-		}
-		D2 = ((int32_t)bar_D[0] << 16) | ((int32_t)bar_D[1] << 8) | bar_D[2];
-		if (D2 == 0) {
-			bar_task = 0;
-			close(fd4S);
-			fprintf(Debug.out_stream,"D2 error\n");
-			return;
-		}
-		bar_task = 0;
-		close(fd4S);
-		phase3();
-	}
-}
+		if (bar_h != 3)
+			fprintf(Debug.out_stream, "Failed to read from the i2c bus %d.\n", bar_h);
 
-int cntt=0,err_cnt=0;
-double maxxx = 0;
-void MS5611Class::phase3() {
+		D1 = ((int32_t)bar_D[0] << 16) | ((int32_t)bar_D[1] << 8) | bar_D[2];
+		int32_t dT = D2 - (uint32_t)fc[4] * 256;
+		int64_t OFF = (int64_t)fc[1] * 65536 + (int64_t)fc[3] * dT / 128;
+		int64_t SENS = (int64_t)fc[0] * 32768 + (int64_t)fc[2] * dT / 256;
 
-	dT = D2 - (uint32_t)C[5] * 256;
-	TEMP = (2000 + ((int64_t)dT * (int64_t)C[5] / 8388608));
-	OFF = (int64_t)C[2] * 65536 + (dT*C[4]) / 128;
-	SENS = (int32_t)C[1] * 32768 + dT*C[3] / 256;
-	/*
-	SECOND ORDER TEMPARATURE COMPENSATION
-	*/
-	if (TEMP < 2000) // if temperature lower than 20 Celsius 
-	{
-		int32_t T1 = 0;
-		int64_t OFF1 = 0;
-		int64_t SENS1 = 0;
-
-		T1 = pow((double)dT, 2) / 2147483648;
-
-		OFF1 = 5 * ((TEMP - 2000) * (TEMP - 2000)) / 2;
-		SENS1 = 5 * ((TEMP - 2000) * (TEMP - 2000)) / 4;
-
-
-		if (TEMP < -1500) // if temperature lower than -15 Celsius 
+		if (compensation)
 		{
-			OFF1 = OFF1 + 7 * ((TEMP + 1500) * (TEMP + 1500));
-			SENS1 = SENS1 + 11 * ((TEMP + 1500) * (TEMP + 1500)) / 2;
+			int32_t TEMP = 2000 + ((int64_t)dT * fc[5]) / 8388608;
+			int64_t OFF2 = 0;
+			int64_t SENS2 = 0;
+			if (TEMP < 2000)
+			{
+				OFF2 = 5 * ((TEMP - 2000) * (TEMP - 2000)) / 2;
+				SENS2 = 5 * ((TEMP - 2000) * (TEMP - 2000)) / 4;
+			}
+			if (TEMP < -1500)
+			{
+				OFF2 = OFF2 + 7 * ((TEMP + 1500) * (TEMP + 1500));
+				SENS2 = SENS2 + 11 * ((TEMP + 1500) * (TEMP + 1500)) / 2;
+			}
+
+			OFF = OFF - OFF2;
+			SENS = SENS - SENS2;
 		}
 
-		TEMP -= T1;
-		OFF -= OFF1;
-		SENS -= SENS1;
-	}
-	P = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
-
-	const float dt = (micros() - old_time)*0.000001;
-	old_time = micros();
 
 
-	{
-		cntt++;
-		if (oldAltt == 100000)
-			oldAltt = getAltitude(P);
-		float alt = getAltitude(P);
-		float deltaS = abs(alt - oldAltt) / dt;
+
+
+		//float pr = (float)(D1 * SENS / 2097152 - OFF) * 0.000030517578125;
+
+		P = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
+		const float dt = (micros() - old_time)*0.000001;
+		old_time = micros();
 		
-		//Debug.load(0, deltaS, 0);
-		//Debug.dump();
-		if (maxxx < deltaS)
-		{
-			maxxx = deltaS;
-		//	printf("%f %i\n", maxxx,cntt);
+		if (pressure == PRESSURE_AT_0) {
+			pressure = (float)P;
+			altitude_ = getAltitude(pressure);
 		}
-		if (deltaS > 50) {
-			bar_task = 0;
-			err_cnt++;
-			fprintf(Debug.out_stream, "%f %i\n", deltaS, cntt);
-			close(fd4S);
-			oldAltt = 100000;
-			return;
-		}
-		oldAltt = alt;
-	}
 
-	if (pressure == PRESSURE_AT_0) {
-		pressure = (float)P;
-	}
-	
-	i_readTemperature = ((int8_t)(TEMP * 0.01));
+		pressure += ((float)P - pressure)*0.3;
+		log();
+		powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
+		const float new_altitude = getAltitude(pressure);
+		speed = (new_altitude - altitude_) / dt;
+		altitude_ = new_altitude;
 
-
-	pressure += ((float)P - pressure)*0.3;
-
-
-	
-	log();
-
-
-	powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
-
-
-
-
-	//fprintf(Debug.out_stream,"%f\n", dt);
-	const float new_altitude = getAltitude(pressure);
-
-
-	speed = (new_altitude - altitude_) / dt;
-	altitude_ = new_altitude;
 
 #ifdef Z_SAFE_AREA
-	if (Autopilot.motors_is_on() && (altitude_ - altitude_error) > Z_SAFE_AREA) {
-		Autopilot.control_falling(e_OUT_OF_PER_V);
-	}
+		if (Autopilot.motors_is_on() && (altitude_ - altitude_error) > Z_SAFE_AREA) {
+			Autopilot.control_falling(e_OUT_OF_PER_V);
+		}
 #endif
-//	if (tttalt == 0)
-	//	tttalt = new_altitude;
-	//tttalt += (new_altitude - tttalt)*0.01;
-	//Debug.load(0, MS_errors, 0);
-	//Debug.dump();
 
-	close(fd4S);
+		
+	}
 }
+
 void MS5611Class::update(){}
 
-float MS5611Class::getErrorsK() {return  (float)err_cnt/(float)cntt;}
 
 float MS5611Class::get_pressure(float h) {
 	return PRESSURE_AT_0 * pow(1 - h*2.25577e-5, 5.25588);

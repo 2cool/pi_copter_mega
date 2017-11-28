@@ -241,15 +241,16 @@ float BalanceClass::powerK(){
 #define MAX_YAW_SPEED 60
 //#define MAX_POWER_K_IF_MAX_ANGLE_30 1.12
 
-uint64_t hmc_last_time = 0;
+
 
 bool BalanceClass::loop()
 {
-	
+	static uint32_t hmc_last_time = 0;
+	uint32_t c_time = millis();
 	if (!Mpu.loop()) {
 		MS5611.loop();
-		if (micros() - hmc_last_time > 10000) {
-			hmc_last_time = micros();
+		if (c_time - hmc_last_time > 10) {
+			hmc_last_time = c_time;
 			Hmc.loop();
 		}
 		GPS.loop();
@@ -257,6 +258,7 @@ bool BalanceClass::loop()
 	}
 	else {
 		if (Autopilot.motors_is_on()) { 
+
 			const float pK = powerK();
 			const float min_throttle = constrain(MIN_THROTTLE_*pK*power_K, MIN_THROTTLE_,0.47);
 			const float max_throttle = constrain(MAX_THROTTLE_*pK*power_K, MAX_THROTTLE_,0.9);
@@ -299,15 +301,6 @@ bool BalanceClass::loop()
 
 			c_pitch = constrain(c_pitch, -maxAngle, maxAngle);
 			c_roll = constrain(c_roll, -maxAngle, maxAngle);
-
-			if (throttle < MIN_THROTTLE_) {
-				pids[PID_PITCH_RATE].reset_I();
-				pids[PID_ROLL_RATE].reset_I();
-				pids[PID_YAW_RATE].reset_I();
-				c_pitch = c_roll = 0;
-				Stabilization.resset_xy_integrator();
-				Stabilization.resset_z();
-			}
 
 			const float maxAngle07 = maxAngle*0.7f;
 			if (abs(c_pitch) > maxAngle07 || abs(c_roll) > maxAngle07) {
@@ -352,7 +345,18 @@ bool BalanceClass::loop()
 			f_[2] = f_constrain((throttle - roll_output + pitch_output + yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 			f_[0] = f_constrain((throttle - roll_output - pitch_output + m_yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 
-			//сделать коєфиц умнажения к примеру на 1.2 при полете с камерой.
+
+			if (throttle < MIN_THROTTLE_ || c_time- Autopilot.time_at_start < 3000) {
+				pids[PID_PITCH_RATE].reset_I();
+				pids[PID_ROLL_RATE].reset_I();
+				pids[PID_YAW_RATE].reset_I();
+				c_pitch = c_roll = 0;
+				Stabilization.resset_xy_integrator();
+				Stabilization.resset_z();
+				f_[0] = f_[1] = f_[2] = f_[3] = throttle = 0.2;
+			}
+
+
 
 			if (Log.writeTelemetry) {
 				Log.loadByte(LOG::BAL);
@@ -365,7 +369,7 @@ bool BalanceClass::loop()
 				Log.loadMem((uint8_t*)f_, 16);
 			}
 			/*
-			if (Hmc.compas_motors_calibr) {
+			if (Hmc.do_compass_motors_calibr) {
 				f_[0] = 0;
 				f_[1] = 0;
 				f_[2] = 0;

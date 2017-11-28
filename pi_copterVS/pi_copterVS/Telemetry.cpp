@@ -85,9 +85,7 @@ void TelemetryClass::getSettings(int n){
 void TelemetryClass::init_()
 {
 	uint32_t power_on_time = 0;
-	timeAtStart = 0;
 	buffer_size = 0;
-
 	powerK = 1;
 	minimumTelemetry = false;
 	lov_voltage_cnt = 0;
@@ -101,7 +99,6 @@ void TelemetryClass::init_()
 
 	newGPSData = false;
 	//Out.println("TELEMETRY INIT");
-	timeAtStart = 0;
 	voltage_at_start = 0;
 	
 }
@@ -127,7 +124,7 @@ void TelemetryClass::loop()
 int TelemetryClass::check_time_left_if_go_to_home(){
 	float max_fly_time=0;
 	if (voltage_at_start > 0){
-		float work_time = 0.001f*(float)(millis() - timeAtStart);
+		float work_time = 0.001f*(float)(millis() - Autopilot.time_at_start);
 		if (work_time > BALANCE_DELAY && voltage_at_start > voltage){
 			max_fly_time = ((voltage - BAT_ZERO*SN)*work_time / (voltage_at_start - voltage));
 		}
@@ -171,16 +168,9 @@ void TelemetryClass::testBatteryVoltage(){
 
 	update_voltage();
 
-
-	if (timeAtStart == 0){
-		if (Autopilot.motors_is_on() && voltage>BAT_ZERO*SN){
-			timeAtStart = millis();
-		}
-		else {
-			timeAtStart = 0;
-			voltage_at_start = voltage;
-		}
-	}
+	if (!Autopilot.motors_is_on())
+		voltage_at_start = voltage;
+	
 
 	if (voltage < BAT_ZERO*SN)
 		lov_voltage_cnt++;

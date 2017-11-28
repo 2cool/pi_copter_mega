@@ -34,8 +34,6 @@ class TelemetryClass
 	  uint32_t pressure;
 	 float voltage,voltage_at_start;
 	 float m_current[4];
-	 uint32_t  time_at_start;
-	 long timeAtStart;
 	 
 	 string message;
 	 void update_buf();

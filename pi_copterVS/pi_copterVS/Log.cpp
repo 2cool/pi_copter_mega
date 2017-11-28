@@ -4,7 +4,7 @@
 
 volatile  bool	run_loging = true;
 volatile int log_index, log_bank_, log_bank, old_bank,net_bank, error_bansk = 0;
-volatile bool log_file_closed;
+volatile bool log_file_closed=true;
 
 volatile int counter = 0;
 
@@ -126,6 +126,8 @@ bool LogClass::init(int counter_) {
 		thread t(loger);
 		t.detach();
 	}
+	else
+		log_file_closed = true;
 	return logfile.is_open();
 }
 void LogClass::loadFloat(float f) {

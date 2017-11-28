@@ -46,24 +46,24 @@ float MpuClass::get_roll() { return roll; }
 
 
 
-float aK = 19.6;
-float thr = 0.5;
 void MpuClass::do_magic4Z() {
+static float aK = 19.6;
+static float thr = 0.5;
+
 	if (Autopilot.motors_is_on() == false) {
 		e_accZ = e_speedZ = w_accZ =  0;
 
-		return;
 	}
+	else {
+		thr += (Balance.get_true_throttle() - thr)*0.2;
 
-	thr += (Balance.get_true_throttle() - thr)*0.2;
+		e_accZ = thr*aK - 9.8 - e_speedZ*abs(GPS.loc.speedZ)*0.232;
+		e_speedZ += e_accZ*dt;
+		e_speedZ += (GPS.loc.speedZ - e_speedZ)*0.1;
 
-	e_accZ = thr*aK-9.8  - e_speedZ*abs(GPS.loc.speedZ)*0.232;
-	e_speedZ += e_accZ*dt;
-	e_speedZ += (GPS.loc.speedZ - e_speedZ)*0.1;
-
-	aK += (GPS.loc.accZ+9.8/thr - aK)*0.01;
-	aK = constrain(aK, 15.5, 23.5);
-
+		aK += (GPS.loc.accZ + 9.8 / thr - aK)*0.01;
+		aK = constrain(aK, 15.5, 23.5);
+	}
 }
 
 //float DRAG_K =0.022;
@@ -536,12 +536,6 @@ static void toEulerianAngle(const Quaternion& q, float& roll, float& pitch, floa
 
 
 
-
-
-
-float old_gyro_pitch = 0;
-float old_gyro_roll = 0;
-
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
 
 	mputime = micros();
@@ -609,30 +603,14 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	sin_cos(yaw, sinYaw, cosYaw);
 	sin_cos(pitch, sinPitch, cosPitch);
 	sin_cos(roll, sinRoll, cosRoll);
-	if (abs(pitch)<=65*GRAD2RAD && abs(roll)<=65*GRAD2RAD)
+	if (abs(pitch) <= 65 * GRAD2RAD && abs(roll) <= 65 * GRAD2RAD) {
+		do_magic4Z();
 		do_magic();
-
-
-
+	}
 	tiltPower+=(constrain(cosPitch*cosRoll, 0.5f, 1)-tiltPower)*tiltPower_CF;
-
-	if (Balance.pids[PID_PITCH_RATE].kP() >= 0.0012) {
-		gyroPitch = -n006*(float)g[1] - agpitch;
-		gyroRoll = n006*(float)g[0] - agroll;
-	}
-	else {
-		float t_gyroPitch = -n006*(float)g[1] - agpitch;  //in grad
-		gyroPitch = (t_gyroPitch + old_gyro_pitch)*0.5;
-		old_gyro_pitch = t_gyroPitch;
-		float t_gyroRoll = n006*(float)g[0] - agroll;
-		gyroRoll = (t_gyroRoll + old_gyro_roll)*0.5;
-		old_gyro_roll = t_gyroRoll;
-	}
-
+	gyroPitch = -n006*(float)g[1] - agpitch;
+	gyroRoll = n006*(float)g[0] - agroll;
 	gyroYaw = -n006*(float)g[2] - agyaw;
-
-
-	
 
 	float x = n122*(float)a[0];
 	float y = -n122*(float)a[1]; 

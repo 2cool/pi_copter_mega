@@ -20,7 +20,7 @@
 
 void HmcClass::init()
 {
-	compas_motors_calibr = false;
+	do_compass_motors_calibr = false;
 	motor_index = 0;
 	startTime = 10000;
 
@@ -83,9 +83,9 @@ int baseI = 0;
 bool motors_is_on_ = false;
 
 void HmcClass::start_motor_compas_calibr(){
-	if (compas_motors_calibr == false && Autopilot.motors_is_on()==false){
+	if (do_compass_motors_calibr == false && Autopilot.motors_is_on()==false){
 		fprintf(Debug.out_stream,"START MOTOR COMPAS CAL\n");
-		compas_motors_calibr = true;
+		do_compass_motors_calibr = true;
 		motors_is_on_ = false;
 		baseX = baseY = baseZ = 0;
 		startTime = millis() + 5000;
@@ -94,22 +94,16 @@ void HmcClass::start_motor_compas_calibr(){
 	}
 }
 
-
-
 #define MAX_M_WORK_VOLTAGE 1250.0f
-
 
 float _base[3];
 void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 	if (millis() > startTime){
-
-
 		if (baseI < 1000){
 			_base[0] += fmx;
 			_base[1] += fmy;
 			_base[2] += fmz;
 			baseI++;
-			
 		}
 		else{
 			if (motors_is_on_){
@@ -125,56 +119,36 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 				base[index+2] = fv*(_base[2] - base[index+2])*0.001f;
 
 				fprintf(Debug.out_stream,"%f\t%f\t%f MOTOR ON\n", base[index] * 1000, base[index + 1] * 1000, base[index + 2] * 1000);
-
-
 				fprintf(Debug.out_stream,"compas test: 4 m %i %f\n", motor_index, Telemetry.get_voltage());
-
-				
-
 
 				if (motor_index < 3){
 					motor_index++;
 					startTime = millis() + (unsigned long)3000;
-					
 				}
 				else{
-					compas_motors_calibr = false;
+					do_compass_motors_calibr = false;
 					Autopilot.reset_compas_motors_calibr_bit();
 					Settings.saveCompasMotorSettings(base);
-
 				}
-				
-
 			}
 			else{
-				
 				int index = motor_index * 3;
 				base[index] =   _base[0];
 				base[index+1] = _base[1];
 				base[index+2] = _base[2];
-
 				fprintf(Debug.out_stream," MOTOR OFF\n");
 				fprintf(Debug.out_stream,"compas test: 4 m %i\n",motor_index);
-				
 				fprintf(Debug.out_stream,"%f\t%f\t%f\n",base[index],base[index + 1],base[index + 2]);
-
 				startTime = millis() + (unsigned long)3000;
 				Autopilot.motors_do_on(true, "CMT");
 				motors_is_on_ = true;
-
 			}
-			
-			
-			
 			baseI = 0;
 			_base[0] = _base[1] = _base[2] = 0;
 		}
 	}
 	
 }
-
-
-
 
 #ifdef FALSE_WIRE
 
@@ -192,14 +166,11 @@ void HmcClass::loop(){
 #ifndef WORK_WITH_WIFI
 	headingGrad = 0;
 #endif
-
 	calibrated = true;
-
 	log();
 }
 
 #else
-
 
 void HmcClass::loop(){
 	//бельіе ноги
@@ -210,32 +181,25 @@ void HmcClass::loop(){
 	mx = (((int16_t)buffer[0]) << 8) | buffer[1];
 	my = (((int16_t)buffer[4]) << 8) | buffer[5];
 	mz = (((int16_t)buffer[2]) << 8) | buffer[3];
-
-
-	fmx=(float)(mx - baseX)*dx;	
-	fmy=(float)(my - baseY)*dy;
-	fmz=(float)(mz - baseZ)*dz;
-
-
-
+	fmy = -(float)(mx - baseX)*dx;
+	fmx = -(float)(my - baseY)*dy;
+	fmz = -(float)(mz - baseZ)*dz;
 
 #ifndef SESOR_UPSIDE_DOWN
 	my = -my;
 	mz = -mz;
 #endif
 
-	if (compas_motors_calibr)
+	if (do_compass_motors_calibr)
 		motTest(fmx, fmy, fmz);
 
+	/*
 	if (Autopilot.motors_is_on() && motors_power_on){
 		float kx, ky, kz;
 		//m0;
 		//float pk = MS5611.pressure / 101663.0;
 
-
-	
 		const float ek = MS5611.pressure * (float)(1.0 / PRESSURE_AT_0) * (Telemetry.get_voltage() * (float)(1.0 / MAX_M_WORK_VOLTAGE));
-
 		float k = Balance.gf0() * 2;
 			k *= k;
 			k *= ek;
@@ -271,18 +235,14 @@ void HmcClass::loop(){
 			fmy -= ky;
 			fmz -= kz;
 	}
-
+	*/
 	// Tilt compensation
 	float Xh = fmx * Mpu.cosPitch - fmz * Mpu.sinPitch;
 	float Yh = fmx * Mpu.sinRoll * Mpu.sinPitch + fmy * Mpu.cosRoll - fmz * Mpu.sinRoll * Mpu.cosPitch;
 	
 	heading = (float)atan2(Yh, Xh);
-
 	log();
 	
-
-
-
 #ifdef SERIAL_PRINT
 	Out.fprintf(Debug.out_stream,"heading:\t");
 	Out.println(heading);
@@ -293,14 +253,10 @@ void HmcClass::loop(){
 
 #endif
 
-
-
-
 void HmcClass::newCalibration(int16_t sh[]){
 	//wdt_enable(WDTO_4S);
 	sh[0] = sh[1] = sh[2] = sh[3] = sh[4] = sh[5] = 0;
 	fprintf(Debug.out_stream,"START ROTATION\n");
-
 
 	delay(2000);
 	int16_t mx, my, mz;
@@ -363,10 +319,6 @@ bool HmcClass::calibration(const bool newc){
 	if (newc && Autopilot.motors_is_on())
 		return false;
 
-
-
-	
-
 	int16_t sh[6];
 
 	if (newc){
@@ -376,11 +328,10 @@ bool HmcClass::calibration(const bool newc){
 		fprintf(Debug.out_stream,"RESET HMC\n");
 	}
 
-
 	calibrated = Settings.readCompassSettings(sh);
 	if (calibrated == false) 
 		fprintf(Debug.out_stream, "! ! ! ! Comppas not Calibrated ! ! ! !\n");
-	bool mot_cal = Settings.readCompasMotorSettings(base);
+	bool mot_cal = true;// Settings.readCompasMotorSettings(base);
 	if (!mot_cal)
 		fprintf(Debug.out_stream, "! ! ! ! Comppas motors not Calibrated ! ! ! !\n");
 	calibrated &= mot_cal;
@@ -403,8 +354,6 @@ bool HmcClass::calibration(const bool newc){
 	return true;
 }
 
-
-
 bool HmcClass::selfTest(){
 	fprintf(Debug.out_stream,"COMPAS TEST\n");
 	if (ok){
@@ -425,7 +374,6 @@ bool HmcClass::selfTest(){
 			delay(10);
 		}
 		ok &= error < 10;
-
 	}
 	if (!ok)
 		fprintf(Debug.out_stream,"ERROR\n");

@@ -52,8 +52,8 @@
 class MS5611Class {
 	
 protected:
-
-
+	int writeReg(char bar_zero);
+	int error(int e = 0);
 	void log();
 	 int ct;
 	 float altitude_error;
@@ -62,11 +62,12 @@ protected:
 	  void phase1();
 	 
 	  void phase2();
-	  void phase3();
+
 
 	float altitude_;
 public:
-	float getErrorsK();
+	bool compensation;
+
 	float altitude();
 
 	uint8_t ms5611_count;

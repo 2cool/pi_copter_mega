@@ -94,7 +94,7 @@ class HmcClass
 	 void start_motor_compas_calibr();
 	 unsigned long startTime;
 	 int motor_index;
-	 bool compas_motors_calibr;
+	 bool do_compass_motors_calibr;
 	 float base[12];
 	 bool calibrated,motors_calibrated;
 	 string get_set();

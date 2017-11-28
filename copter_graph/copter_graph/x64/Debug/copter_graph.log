@@ -1,1 +1,90 @@
-﻿  copter_graph.vcxproj -> D:\Users\2cool\Desktop\COPTER\copter_graph\x64\Debug\copter_graph.exe
+﻿  graph.cpp
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(121): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(122): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(124): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(125): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(127): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(128): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(130): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(131): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(134): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(136): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(142): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(143): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(161): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(162): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(163): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(190): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(191): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(282): warning C4305: 'initializing': truncation from 'double' to 'float'
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(524): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(536): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(680): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(683): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(684): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(685): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(744): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(815): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(887): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(891): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(892): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(911): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(915): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(916): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(917): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(918): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(971): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(972): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(980): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(982): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(983): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(984): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1014): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1015): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(527): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1093): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1328): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1357): warning C4267: 'argument': conversion from 'size_t' to 'INT', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1359): warning C4267: 'argument': conversion from 'size_t' to 'INT', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1362): warning C4267: 'argument': conversion from 'size_t' to 'INT', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1365): warning C4267: 'argument': conversion from 'size_t' to 'INT', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1373): warning C4267: 'argument': conversion from 'size_t' to 'INT', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1385): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1404): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1405): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1411): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1412): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1427): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1428): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1461): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1462): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1466): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1467): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1468): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1484): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1485): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1487): warning C4552: '-': operator has no effect; expected operator with side-effect
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1488): warning C4552: '-': operator has no effect; expected operator with side-effect
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1492): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1493): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1494): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1545): warning C4244: '=': conversion from 'double' to 'Gdiplus::REAL', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1548): warning C4244: '=': conversion from 'double' to 'Gdiplus::REAL', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1562): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1641): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1652): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1654): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1660): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1670): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1675): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1701): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1703): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1705): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1706): warning C4244: 'initializing': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1710): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1712): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+d:\users\2cool\desktop\copter\copter_graph\copter_graph\graph.cpp(1714): warning C4244: '=': conversion from 'Gdiplus::REAL' to 'int', possible loss of data
+  copter_graph.vcxproj -> D:\Users\2cool\Desktop\COPTER\copter_graph\x64\Debug\copter_graph.exe

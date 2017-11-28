@@ -10,7 +10,7 @@
 
 //------------------------------------------------
 //#define FALSE_WIRE
-
+//#define MOTORS_OFF
 
 #define TEST_GPS_CCURACY
 
@@ -33,13 +33,13 @@
 #define LED_ON
 
 
-#define BEEPS_ON 0
-
+//#define BEEPS_ON
+#define LOST_BEEP
 
 
 
 #define STEP_DEBAGING
-#define LOST_BEEP
+
 
 
 //#define FASLE_GPS_STILL
