@@ -387,18 +387,12 @@ void LocationClass::setNeedLoc2HomeLoc(){
 
 double LocationClass::set_cos_sin_dir(){
 
-	if (dX == 0){
-		cosDirection = 0;
-		sinDirection = 1;
-		dir_angle_GRAD = 0;
-	}
-	else{
-		double angle =  atan(dY / dX);
-		dir_angle_GRAD = angle*RAD2GRAD;
-		//ErrorLog.println(angle*RAD2GRAD);
-		cosDirection = abs(cos(angle));
-		sinDirection = abs(sin(angle));
-	}
+	double angle = atan2(dY, dX);
+
+	dir_angle_GRAD = angle*RAD2GRAD;
+	//ErrorLog.println(angle*RAD2GRAD);
+	cosDirection = abs(cos(angle));
+	sinDirection = abs(sin(angle));
 	
 }
 

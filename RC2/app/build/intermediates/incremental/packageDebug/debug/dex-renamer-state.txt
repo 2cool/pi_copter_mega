@@ -1,4 +1,4 @@
-#Tue Nov 28 13:21:37 EET 2017
+#Tue Nov 28 19:14:25 EET 2017
 base.0=D\:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
 path.0=classes.dex
 renamed.0=classes.dex

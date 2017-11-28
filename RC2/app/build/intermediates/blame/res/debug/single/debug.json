@@ -12,12 +12,12 @@
         "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-xxhdpi\\abc_ic_commit_search_api_mtrl_alpha.png"
     },
     {
-        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_abc_ic_ab_back_mtrl_am_alpha.png.flat",
-        "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-mdpi\\abc_ic_ab_back_mtrl_am_alpha.png"
-    },
-    {
         "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\layout_abc_popup_menu_item_layout.xml.flat",
         "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\layout\\abc_popup_menu_item_layout.xml"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_abc_ic_ab_back_mtrl_am_alpha.png.flat",
+        "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-mdpi\\abc_ic_ab_back_mtrl_am_alpha.png"
     },
     {
         "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-ldrtl-mdpi_abc_ic_ab_back_mtrl_am_alpha.png.flat",
@@ -36,12 +36,12 @@
         "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-mdpi\\abc_ic_menu_paste_mtrl_am_alpha.png"
     },
     {
-        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi_abc_ic_menu_selectall_mtrl_alpha.png.flat",
-        "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-xxhdpi\\abc_ic_menu_selectall_mtrl_alpha.png"
-    },
-    {
         "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_abc_spinner_mtrl_am_alpha.9.png.flat",
         "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-mdpi\\abc_spinner_mtrl_am_alpha.9.png"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxhdpi_abc_ic_menu_selectall_mtrl_alpha.png.flat",
+        "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-xxhdpi\\abc_ic_menu_selectall_mtrl_alpha.png"
     },
     {
         "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\layout_abc_screen_simple_overlay_action_mode.xml.flat",
@@ -100,16 +100,16 @@
         "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-xxhdpi\\abc_spinner_mtrl_am_alpha.9.png"
     },
     {
-        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_abc_ic_go_search_api_mtrl_alpha.png.flat",
-        "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-xhdpi\\abc_ic_go_search_api_mtrl_alpha.png"
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_abc_cab_background_top_mtrl_alpha.9.png.flat",
+        "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-mdpi\\abc_cab_background_top_mtrl_alpha.9.png"
     },
     {
         "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xxxhdpi_abc_btn_radio_to_on_mtrl_000.png.flat",
         "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-xxxhdpi\\abc_btn_radio_to_on_mtrl_000.png"
     },
     {
-        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_abc_cab_background_top_mtrl_alpha.9.png.flat",
-        "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-mdpi\\abc_cab_background_top_mtrl_alpha.9.png"
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_abc_ic_go_search_api_mtrl_alpha.png.flat",
+        "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-xhdpi\\abc_ic_go_search_api_mtrl_alpha.png"
     },
     {
         "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_abc_menu_hardkey_panel_mtrl_mult.9.png.flat",
@@ -272,12 +272,12 @@
         "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\anim\\abc_slide_out_bottom.xml"
     },
     {
-        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\menu_menu_settings.xml.flat",
-        "source": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\src\\main\\res\\menu\\menu_settings.xml"
-    },
-    {
         "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_abc_ic_menu_cut_mtrl_alpha.png.flat",
         "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\31ea700669fbd680a12d011e3089dc90\\res\\drawable-xhdpi\\abc_ic_menu_cut_mtrl_alpha.png"
+    },
+    {
+        "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\menu_menu_settings.xml.flat",
+        "source": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\src\\main\\res\\menu\\menu_settings.xml"
     },
     {
         "merged": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi_abc_popup_background_mtrl_mult.9.png.flat",

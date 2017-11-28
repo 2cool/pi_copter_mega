@@ -576,7 +576,7 @@ int Graph::decode_Log() {
 			filter(accX, dataI, ACCX);
 			filter(accY, dataI, ACCY);
 			//sensors_data[dataI].sd[ACCX] = mccX.update(accX);
-			filter(accX, dataI, ACCY);
+			//filter(accX, dataI, ACCY);
 
 
 
@@ -1651,7 +1651,7 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 
 	y0 = (rect.Y + rect.Height);
 	mull = (double)rect.Height/150;
-	y0 -= mull * 0.5;
+	y0 -= mull * 100;
 	draw(g, rect, y0, mull, SZ);
 	draw(g, rect, y0, mull, PRESSURE);
 	draw(g, rect, y0, mull, GPS_Z);

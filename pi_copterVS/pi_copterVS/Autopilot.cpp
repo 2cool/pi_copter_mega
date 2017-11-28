@@ -471,7 +471,7 @@ bool AutopilotClass::go2HomeProc(const float dt){
 			   // led_prog = 4;
 			   GPS.loc.setNeedLoc2HomeLoc();
 			   go2homeIndex = TEST4HOME_LOC;
-			   aYaw_ = -GPS.loc.dir_angle_GRAD - 180;
+			   aYaw_ = -GPS.loc.dir_angle_GRAD;
 			   aYaw_ = wrap_180(aYaw_);
 			   break;
 	}
