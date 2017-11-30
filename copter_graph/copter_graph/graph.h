@@ -17,6 +17,8 @@ using namespace Gdiplus;
 #define RAD2GRAD 57.29578f
 #define GRAD2RAD 0.0174533f
 
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+
 enum {
 	MOTORS_ON = 1, CONTROL_FALLING = 2, Z_STAB = 4, XY_STAB = 8, GO2HOME = 0x10, PROGRAM = 0x20, COMPASS_ON = 0x40, HORIZONT_ON = 0x80,
 	MPU_ACC_CALIBR = 0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR = 0x400, COMPASS_MOTOR_CALIBR = 0x800, RESETING = 0x1000, GIMBAL_PLUS = 0x2000, GIMBAL_MINUS = 0x4000
@@ -69,19 +71,7 @@ private:
 
 
 	void correct_c_pitch_c_roll(int p);
-	double i_throthle = 0, i_pitch = 0, i_yaw = 0,i_yaw_offset, i_roll = 0,mc_pitch=0,mc_roll=0;
-	//double lat, lon;
-	float head;
-	double startPointX, startPointY;
-	double gx2home, gy2home, gdX, gdY, gspeedX, gspeed, gspeedY, z;
 
-	double gx=0, gy=0,lat=0,lon=0;
-
-
-	double old_z = 0, gspeedZ, old_gspeeZ = 0, old_sz;
-	double gax=0, gay=0, gaz=0;
-	double max_y, min_y, max_x, min_x;
-	double dt = 0.01;
 	uint16_t bat;
 	uint16_t mi[4];
 

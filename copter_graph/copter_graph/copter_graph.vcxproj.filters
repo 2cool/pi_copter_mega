@@ -60,6 +60,12 @@
     <ClInclude Include="Mpu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Pressure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GPS_Loger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +96,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pressure.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GPS_Loger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

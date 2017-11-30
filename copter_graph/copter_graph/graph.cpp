@@ -2,8 +2,10 @@
 #include "graph.h"
 #include <stdint.h>
 #include "KK.h"
-#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
+#include "Pressure.h"
+#include "GPS_Loger.h"
+#include "Mpu.h"
 #include "MyMath.h"
 //#define LOG_FILE_NAME "d:/tel_log10011.log"
 char *fname;
@@ -36,213 +38,98 @@ bool init_yaw = true;
 
 uint16_t log_bank_size;
 
-
-
-
-double cosYaw = 1, sinYaw = 0;
-
-void rotate(double &sx, double &sy) {
-	double x = (cosYaw*sx - sinYaw*sy);
-	double y = (cosYaw*sy + sinYaw*sx);
-
-
-	sx = x;
-	sy = y;
-}
-
-void rotateR(double &sx, double &sy, float yaw) {
-
-	double cosYaw = cos(yaw);
-	double sinYaw = sin(yaw);
-	double x = (cosYaw*sx + sinYaw*sy);
-	double y = (cosYaw*sy - sinYaw*sx);
-
-
-	sx = x;
-	sy = y;
-}
-
-
-
-
-
-float maxAngle = 35;
-float c_pitch, c_roll;
-
-float total_ax = 0, total_ay = 0;
-float speedX = 0, speedY = 0;
-
-inline void sin_cos(const float a, float &s, float &c) {
-	s = (float)sin(a);
-	c = (float)cos(a);
-	/*
-	const double ss = s*s;
-	c = (float)sqrt(1 - min(1.0f, ss));
-	//30.7.2017 corected
-	if (abs(a) > 90)
-	c = -c;
-	*/
-}
-
-#define NEED_ANGLE_4_SPEED_10_MS 20.0f
-float cS = (float)tan(NEED_ANGLE_4_SPEED_10_MS * GRAD2RAD)*0.02f;
-
-
-
-
-
-
-
-
-//сделать чтоби нераскачивлся а именно попробовать усиливать при низкой мощности. типпа k=0.5/0.4 а пото перемножать питч рол и яв
-
-
-#define DRAG_K 0.0052
-//#define DRAG_K 6.2353829072479582566988068294211e-4
-
-
-
-
-
-
-void Graph::do_magic() {
-	sin_cos(yaw*GRAD2RAD, _sinYaw, _cosYaw);
-	//---calc acceleration on angels------
-	sin_cos(pitch*GRAD2RAD, sinPitch, cosPitch);
-	sin_cos(roll*GRAD2RAD, sinRoll, cosRoll);
-
-#define WIND_SPEED_X sqrt(abs(w_accX / DRAG_K))*((w_accX>=0)?1:-1)
-#define WIND_SPEED_Y sqrt(abs(w_accY / DRAG_K))*((w_accY>=0)?1:-1)
-
-//	float windX = e_speedX;/// +WIND_SPEED_X;
-//	float windY = e_speedY;// +WIND_SPEED_Y;
-
-
-	e_accX = -G*(-_cosYaw*sinPitch - _sinYaw*sinRoll) - e_speedX*abs(e_speedX)*DRAG_K-w_accX;
-	e_accY = G*(-_cosYaw*sinRoll + _sinYaw*sinPitch) - e_speedY*abs(e_speedY)*DRAG_K-w_accY;
-
-	w_accX += (e_accX - gax - w_accX)*0.01;
-	w_accY += (e_accY - gay - w_accY)*0.01;
-
-	e_speedX += e_accX*dt;
-	e_speedX += (gspeedX - e_speedX)*0.1;
-
-	e_speedY += e_accY*dt;
-	e_speedY += (gspeedY - e_speedY)*0.1;
-
-	//-----calc real angels------
-	m7_accX += ((_cosYaw*e_accX + _sinYaw*e_accY) - m7_accX)*0.007;
-	m7_accX = constrain(m7_accX, -MAX_ACC / 2, MAX_ACC / 2);
-	m7_accY += ((_cosYaw*e_accY - _sinYaw*e_accX) - m7_accY)*0.007;
-	m7_accY = constrain(m7_accY, -MAX_ACC / 2, MAX_ACC / 2);
-
-	f_pitch = pitch;
-	f_roll = roll;
-
-	pitch = RAD2GRAD*atan2((sinPitch + m7_accX*cosPitch / G), cosPitch);// +abs(gaccX*sinPitch));
-	roll = RAD2GRAD*atan2((sinRoll - m7_accY*cosRoll / G), cosRoll);// +abs(gaccY*sinRoll));
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-void Graph::correct_c_pitch_c_roll(int p) {
-
-
-	float _cosYaw = cos(GRAD2RAD*sensors_data[p].sd[YAW]);
-	float _sinYaw = sin(GRAD2RAD*sensors_data[p].sd[YAW]);
-	float dt = sensors_data[p].sd[DT];
-
-
-	//c_pitch = constrain(sensors_data[p].sd[TC_PITCH], -maxAngle, maxAngle);
-//	c_roll = constrain(sensors_data[p].sd[TC_ROLL], -maxAngle, maxAngle);
-	const float maxAngle07 = maxAngle*0.7f;
-	if (abs(c_pitch) > maxAngle07 || abs(c_roll) > maxAngle07) {
-		//	c_pitch = constrain(c_pitch, -maxAngle, maxAngle);
-		//c_roll = constrain(c_roll, -maxAngle, maxAngle);
-		float k = (float)(RAD2GRAD*acos(cos(c_pitch*GRAD2RAD)*cos(c_roll*GRAD2RAD)));
-		if (k == 0)
-			k = maxAngle;
-		if (k > maxAngle) {
-			k = maxAngle / k;
-			c_pitch *= k;
-			c_roll *= k;
-		}
-	}
-
-	if (true) {
-		float c_cosPitch, c_sinPitch, c_cosRoll, c_sinRoll;
-		sin_cos(c_pitch*GRAD2RAD, c_sinPitch, c_cosPitch);
-		sin_cos(c_roll*GRAD2RAD, c_sinRoll, c_cosRoll);
-		if (c_cosRoll == 0 || c_cosPitch == 0)
-			return;
-
-#ifndef MOTORS_OFF
-		speedY = sensors_data[p].sd[SPEED_Y];
-		speedX = sensors_data[p].sd[SPEED_X];
-
-		float rspeedX = _cosYaw*speedX - _sinYaw*speedY;
-		float rspeedY = _cosYaw*speedY + _sinYaw*speedX;
-
-#define CF 0.007f
-
-		//c_pitch
-		float break_fx = 0.5f*abs(rspeedX)*rspeedX*(cS + cS*abs(c_sinPitch));
-		float force_ax = c_sinPitch / c_cosPitch - break_fx;
-		total_ax += ((force_ax*c_cosPitch) - total_ax)*CF;
-
-		const float false_pitch = RAD2GRAD*(float)atan((total_ax - c_sinPitch) / c_cosPitch);
-		c_pitch = -false_pitch;
-
-		//c_roll
-		float break_fy = 0.5f*abs(rspeedY)*rspeedY*(cS + cS*abs(c_sinRoll));
-		float force_ay = c_sinRoll / c_cosRoll - break_fy;
-		total_ay += ((force_ay*c_cosRoll) - total_ay)*CF;
-
-		const float false_roll = RAD2GRAD*(float)atan((total_ay - c_sinRoll) / c_cosRoll);
-		c_roll = -false_roll;
-
-
-
-		
-#endif
-
-	}
-	
-
-	c_pitch = constrain(c_pitch, -maxAngle, maxAngle);
-	c_roll = constrain(c_roll, -maxAngle, maxAngle);
-
-		sensors_data[p].sd[M_C_PITCH] = c_pitch;
-		sensors_data[p].sd[M_C_ROLL] = c_roll;
-
-}
-
-
-
-
-
-
-
-
-
-
-float startZ = 0;
 void Graph::filter(float src, int dataI, int elementi,float max) {
 	
 	if (isnan(src) || abs(src) > max)
 		src = 0;
 	sensors_data[dataI].sd[elementi] = (flags[FILTER] && kalman[elementi].initialized == 77777) ? kalman[elementi].update(src):src;
 }
+
+
+#define SOME_K 0.9
+int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
+
+	Graphics g(hdc);
+
+	g.Clear(Color(255, 255, 255, 255));
+
+	p = lSize*pos;
+	step = (double)(lSize - p)*zoom / rect.Width;
+	double mull_y = SOME_K* (double)rect.Height / (gps_log.max_y - gps_log.min_y);
+	double mull_x = SOME_K*(double)rect.Width / (gps_log.max_x - gps_log.min_x);
+	mull_x = mull_y = min(mull_x, mull_y);
+	int startX, startY;
+	{
+		int dy[2], dx[2];
+		int y0 = 0;
+		int x0 = 0;
+
+
+
+		int ind = 1;
+
+		if (p < gpsI)
+			p = gpsI;
+		startY = dy[0] = y0 + (sensors_data[(int)p].sd[Y] - gps_log.min_y) * mull_y;
+		startX = dx[0] = x0 + (sensors_data[(int)p].sd[X] - gps_log.min_x) * mull_x;
+
+
+		Pen pen(Color(255, 0, 0, 0));
+		for (int x = rect.X + 1, i = 1; x < rect.X + rect.Width; x++, i++) {
+			dy[ind & 1] = y0 + (sensors_data[(int)(p + (step*i))].sd[Y] - gps_log.min_y) * mull_y;
+			dx[ind & 1] = x0 + (sensors_data[(int)(p + (step*i))].sd[X] - gps_log.min_x) * mull_x;
+
+			int x1 = dx[(ind - 1) & 1];
+			int x2 = dx[ind & 1];
+			int y1 = dy[(ind - 1) & 1];
+			int y2 = dy[ind & 1];
+			if ( sqrt((x1-x2)*(x1 - x2)+(y1-y2)*(y1 - y2))<10)
+				g.DrawLine(&pen, x1, y1, x2, y2);
+			ind++;
+
+
+		}
+	}
+	if (flags[SX] || flags[SY]) {
+		int dy[2], dx[2];
+		int y0 = 0;
+		int x0 = 0;
+
+
+		int ind = 1;
+
+		dy[0] = y0 + (sensors_data[(int)p].sd[SY] - gps_log.min_y) * mull_y;
+		dx[0] = x0 + (sensors_data[(int)p].sd[SX] - gps_log.min_x) * mull_x;
+
+		startX - dx[0];
+		startY - dy[0];
+
+
+		Pen pen(Color(255, 255, 0, 0));
+		for (int x = rect.X + 1, i = 1; x < rect.X + rect.Width; x++, i++) {
+			dy[ind & 1] = y0 + (sensors_data[(int)(p + (step*i))].sd[SY] - gps_log.min_y) * mull_y;
+			dx[ind & 1] = x0 + (sensors_data[(int)(p + (step*i))].sd[SX] - gps_log.min_x) * mull_x;
+
+			g.DrawLine(&pen, dx[(ind - 1) & 1], dy[(ind - 1) & 1], dx[ind & 1], dy[ind & 1]);
+			ind++;
+
+
+		}
+	}
+
+
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
 
 #define wrap_180(x) (x < -180 ? x+360 : (x > 180 ? x - 360: x))
 float old_speedX = 0, old_speedY = 0;
@@ -252,24 +139,8 @@ boolean new_mode_ver = false;
 int indexes[] = { 0,0,0,0,0,0,0,0,0,0,0 };
 
 int Graph::decode_Log() {
-
-	
-	//maccY=  MYfILTER(0.14);
-
-	pitch = roll = sinPitch = sinRoll = yaw=_sinYaw= 0;
-	cosPitch = cosRoll = _cosYaw =1;
-	e_speedX = e_speedY = e_accX = e_accY = m7_accX = m7_accY = f_pitch = f_roll = w_accX = w_accY = 0;
-
-
-	gspeedX = gspeedY = 0;
-
-
-
-
-
-
-	
-
+	press.init();
+	gps_log.init();
 
 
 
@@ -296,37 +167,18 @@ int Graph::decode_Log() {
 
 	modesI = 0;
 	
-	long i = 0;
+	int i = 0;
 	log_bank_size = *(uint16_t*)buffer;
 	i += 2;
 	bool starPointOK = false;
-	gax = gay = gaz = 0;
+
 
 	if (indexes[LOG::MPU] == 0) {
 		do {
 			//if (indexes[LOG::MPU] > 157000) { lSize = i; break; }
 			switch (buffer[i]) {
 			case LOG::MPU: {
-				indexes[LOG::MPU]++;
-				
-
-				dt = (double)buffer[i + 1] * 0.001f;
-				pitch = *(float*)(&buffer[i + 2]);
-				roll = *(float*)(&buffer[i + 6]);
-				float к_pitch = *(float*)(&buffer[i + 10]);
-				float к_roll = *(float*)(&buffer[i + 14]);
-
-
-				yaw = *(float*)(&buffer[i + 18]);
-				float gyroPitch = *(float*)(&buffer[i + 22]);
-				float gyroRoll = *(float*)(&buffer[i + 26]);
-				float gyroYaw = *(float*)(&buffer[i + 30]);
-				float accX = *(float*)(&buffer[i + 34]);
-				float accY = *(float*)(&buffer[i + 38]);
-				float accZ = *(float*)(&buffer[i + 42]);
-				i += 46;
-
-				
+				mpu.view(indexes[LOG::MPU], buffer, i);
 				break;
 			}
 			case LOG::MPU_M: {
@@ -335,10 +187,6 @@ int Graph::decode_Log() {
 			}
 			case LOG::TELE: {
 				i += 11;
-
-
-
-
 				break;
 			}
 			case LOG::AUTO: {
@@ -350,10 +198,7 @@ int Graph::decode_Log() {
 				i += 17;
 				break;
 			case LOG::MS5: {
-				indexes[LOG::MS5]++;
-
-				float pressur = *(float*)(&buffer[i + 1]);
-				i += 5;
+				press.view(indexes[LOG::MS5], buffer, i);
 				break;
 			}
 			case LOG::GpS:
@@ -372,52 +217,25 @@ int Graph::decode_Log() {
 			case LOG::STABXY: {
 				indexes[LOG::STABXY]++;
 
-				float sX = *(float*)(&buffer[i + 1]);
-				float speedX = *(float*)(&buffer[i + 5]);
-				float sY = *(float*)(&buffer[i + 9]);
-				float speedY = *(float*)(&buffer[i + 13]);
+			
 
 				i += 17;
 				break;
 			}
 			case LOG::STABZ: {
 				indexes[LOG::STABZ]++;
-				float sZ = *(float*)(&buffer[i + 1]);
-				float speedZ = *(float*)(&buffer[i + 5]);
+				
 				i += 9;
 				break;
 			}
 
 			case  LOG::BAL: {
 				indexes[LOG::BAL]++;
-
-				float t_c_pitch = *(float*)(&buffer[i + 1]);
-				float t_c_roll = *(float*)(&buffer[i + 5]);
-				float c_pitch = *(float*)(&buffer[i + 9]);
-				float c_roll = *(float*)(&buffer[i + 13]);
-				float throttle = *(float*)(&buffer[i + 17]);
-
-				//	time_index = *(int*)(&buffer[i + 23]);
-				float f0 = *(float*)(&buffer[i + 27]);
-				float f1 = *(float*)(&buffer[i + 31]);
-				float f2 = *(float*)(&buffer[i + 35]);
-				float f3 = *(float*)(&buffer[i + 39]);
-
 				i += 43;
 				log_bank_size = *(uint16_t*)(buffer + i);
 				i += 2;
 				break;
 			}
-
-
-
-
-
-
-
-
-
-
 			case LOG::EMU: {
 				indexes[LOG::EMU]++;
 				i += buffer[i + 1] + 2;
@@ -442,38 +260,10 @@ int Graph::decode_Log() {
 	}
 	i = 2;
 	int dataI = 0;
-	
-
-
-	max_x =  -20000000000000;
-	min_x =  20000000000000;
-	max_y =  -20000000000000;
-	min_y =  20000000000000;
-
-
 
 	modes[modesI].mode = def_mode;
 	modes[modesI].index = dataI;
 	modesI++;
-
-	float accXC = 0, accYC = 0, accZC = 0;
-	float gpitch = 0, groll = 0, gyaw = 0;
-	
-
-	
-
-	float f[] = { 0.5, 0.5, 0.5, 0.5 };
-	float thr = 0.5;
-	float pressure_alt=100000;
-	float pressure_speed=0;
-	float pressure_acc = 0;
-	float start_alt = -1;
-	float start_gps_alt = -1;
-	float time = 0;
-
-
-
-
 
 	kalman[GACCX] = Kalman(300, 0);
 	kalman[GACCY] = Kalman(300, 0);
@@ -525,134 +315,29 @@ int Graph::decode_Log() {
 
 
 	FILE *klm = fopen("d:/klm.txt", "w");
-	lat = lon =gx=gy=0;
+;
 	do {
-
+		if (i > 3050)
+			i = i;
 		switch (buffer[i]) {
 		
 		case LOG::MPU: {
-			
-			dt = (float)buffer[i+1] * 0.001;
-			time += dt;
-			gdt += dt;
-			press_dt += dt;
-			sensors_data[dataI].sd[TIME] = time;
-			sensors_data[dataI].sd[DT] = dt;
-			
-			pitch = *(float*)(&buffer[i + 2]);
-			roll = *(float*)(&buffer[i + 6]);
-			//yaw = (*(float*)(&buffer[i + 18]));
-			float rpitch, rroll;
-			filter(*(float*)(&buffer[i +2]), dataI, PITCH);
-			filter(*(float*)(&buffer[i+6]), dataI, ROLL);
-			filter(rpitch=*(float*)(&buffer[i +10]), dataI, R_PITCH);
-			filter(rroll=*(float*)(&buffer[i +14]), dataI, R_ROLL);
-			filter(acos(cos(rpitch*GRAD2RAD)*cos(rroll*GRAD2RAD))*RAD2GRAD, dataI, ANGLE);
+			mpu.decode(buffer, i);
 
-			float rPitch = *(float*)(&buffer[i + 10]);
-			float rRoll = *(float*)(&buffer[i + 14]);
-		//	filter(acos(cos(rPitch*GRAD2RAD)*cos(rRoll*GRAD2RAD))*RAD2GRAD, dataI, PITCH);
-
-			
-
-			float yaw;
-			filter(yaw= (*(float*)(&buffer[i +18])), dataI, YAW);
-			float accX, accY;
-
-
-			//sensors_data[dataI].sd[GYRO_ROLL]=mgroll.update(*(float*)(&buffer[i + 26]));
-			//sensors_data[dataI].sd[GYRO_PITCH] = *(float*)(&buffer[i + 26]);
-
-			filter(*(float*)(&buffer[i +22]), dataI, GYRO_PITCH);
-			filter(*(float*)(&buffer[i +26]), dataI, GYRO_ROLL);
-
-
-
-			filter(*(float*)(&buffer[i +30]), dataI, GYRO_YAW);
-			accX = *(float*)(&buffer[i + 34]);
-			accY = *(float*)(&buffer[i + 38]);
-
-
-			filter(accX, dataI, ACCX);
-			filter(accY, dataI, ACCY);
-			//sensors_data[dataI].sd[ACCX] = mccX.update(accX);
-			//filter(accX, dataI, ACCY);
-
-
-
-			filter(*(float*)(&buffer[i +42]), dataI, ACCZ);
-			
-
-
-
-			i += 46;
-			if (flags[ROTATE]) {
-				cosYaw = cos(yaw*GRAD2RAD);
-				sinYaw = sin(yaw*GRAD2RAD);
-			}
-			else {
-				cosYaw = 1;
-				sinYaw = 0;
-			}
-			//------------------------------------------------------------------
-//#define _MPU_M
-
-#ifndef _MPU_M	
-			do_magic();
-
-			filter(e_speedX, dataI, EXP0);
-			filter(e_speedY, dataI, EXP1);
-			filter(e_accX, dataI, EXP2);
-			filter(e_accY, dataI, EXP3);
-			
-			filter(pitch, dataI, R_PITCH);
-			filter(roll, dataI, R_ROLL);
-#endif
-		//	filter(-spx, dataI, EXP0);
-			//filter(-spy, dataI, EXP1);
-
-
-			//rotate(ax, ay);filter(-ax, dataI, EXP2);filter(-ay, dataI, EXP3);
-
-		//	rotate(expAX, expAY);filter(expAX, dataI, EXP2);filter(expAY, dataI, EXP3);
-
-			//------------------------------------------------------------------
-			
 			break;
 		}
 		case LOG::MPU_M: {
 
 #ifdef _MPU_M
-			e_accX= -*(float*)(&buffer[i + 1]);
-			e_accY =- *(float*)(&buffer[i + 5]);
-			e_speedX= *(float*)(&buffer[i + 9]);
-			//e_speedX = sqrt(abs(e_speedX) / 0.022)*(e_speedX>=0?1:-1);
-			e_speedY = *(float*)(&buffer[i + 13]);
-			//e_speedY = sqrt(abs(e_speedY) / 0.022)*(e_speedY >= 0 ? 1 : -1);
-		//	e_accX += e_speedX;
-		//	e_accY += e_speedY;
-			filter(e_speedX, dataI, EXP0);
-			filter(e_speedY, dataI, EXP1);
-			filter(e_accX, dataI, EXP2);
-			filter(e_accY, dataI, EXP3);
-		//	filter(sqrt(e_accX*e_accX + e_accY*e_accY), dataI, ACC);
 #endif
-			
 			i += 17;
 			break;
 		}
 		case LOG::TELE: {
-			
-			mi[0] = *(uint16_t*)(&buffer[i + 1]);
-			mi[1]= *(uint16_t*)(&buffer[i + 3]);
-			mi[2] = *(uint16_t*)(&buffer[i + 5]);
-			mi[3] = *(uint16_t*)(&buffer[i + 7]);
-			bat= *(uint16_t*)(&buffer[i + 9]);
 			i += 11;
 			break;
 		}
 		case LOG::AUTO: {
-
 			new_mode_ver = true;
 			def_mode = *(uint32_t*)(&buffer[i + 1]);
 			modes[modesI].mode = def_mode;
@@ -664,213 +349,29 @@ int Graph::decode_Log() {
 			break;
 		}
 		case LOG::HMC:
-			head= *(float*)(&buffer[i + 13]);
-			head *= RAD2GRAD;
-		
 			i += 17;
 			break;
 		case LOG::MS5: {
-
-			if (dataI > 24802)
-				i = i;
-			float pressure = *(float*)(&buffer[i + 1]);
-#define PRESSURE_AT_0 101325
-			double tpressure_alt = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));
-			if (start_alt == -1)// && def_mode&MOTORS_ON)
-				start_alt = tpressure_alt;
-			tpressure_alt -= start_alt;
-
-			float tpressure_speed = (tpressure_alt - pressure_alt) / press_dt;
-			pressure_alt = tpressure_alt;
-			pressure_acc = (tpressure_speed - pressure_speed) / press_dt;
-			pressure_speed = tpressure_speed;
-
-
-
-			press_dt = 0;
-
-			i += 5;
+			press.decode(buffer, i);
 			break;
 		}
 		case LOG::GpS: {
-
-			//old_z = 0, gspeedZ, old_gspeeZ = 0
-			static double first_alt = 0;
-
-			SEND_I2C*p = (SEND_I2C*)&buffer[i+1];
-			z = 0.001*p->height;
-			if (first_alt == 0 && z != 0)
-				first_alt = z;
-			z -= first_alt;
-			gspeedZ = (z - old_z) / 0.1;
-			old_z = z;
-			gaz = (gspeedZ - old_gspeeZ) / 0.1;
-			old_gspeeZ =gspeedZ;
-
-			if (dataI > 24463)
-				i = i;
-
-			double n_lat = p->lat*0.0000001*GRAD2RAD;
-			double n_lon = p->lon*0.0000001*GRAD2RAD;
-
-			if (lat == 0 || lon == 0) {
-				lat = n_lat;
-				lon = n_lon;
-			}
-
-			double distance = mymath.distance_(n_lat, n_lon, lat, lon);
-			double bearing = mymath.bearing_(n_lat, n_lon, lat, lon);
-
-			static double old_distance = 0;
-
-			gy = (distance-old_distance)*sin(bearing);
-			old_distance = distance;
-			gspeedY = (gy)/0.1;
-			
-
-			gx = (distance - old_distance)*cos(bearing);
-			gspeedX = (gx) / 0.1;
-			
-
-		//	lat = n_lat;
-		//	lon = n_lon;
-
-
-
-
-
-
-			if (startZ == 0 && def_mode&MOTORS_ON)
-				startZ = z;
-			z -= startZ;
-			i += 1 + sizeof(SEND_I2C);
-			gx2home = *(float*)(&buffer[i]);
-			gy2home = *(float*)(&buffer[i+4]);
-			gdX= *(float*)(&buffer[i + 8]);
-			gdY = *(float*)(&buffer[i + 12]);
-		//	gspeedX = *(float*)(&buffer[i + 16]);
-		//	gspeedY = *(float*)(&buffer[i + 20]);
-			gspeed = sqrt(gspeedX*gspeedX + gspeedY*gspeedY)*3.6;
-			gax= *(float*)(&buffer[i + 24]);
-			gay = *(float*)(&buffer[i + 28]);
-			int vacc = p->vAcc;
-			int hacc = p->hAcc;
-
-			//if (dataI > 44467)
-			{
-				std::wstring str = L" " + std::to_wstring(p->lon*0.0000001) + L"," + std::to_wstring(p->lat * 0.0000001) + L"," + std::to_wstring(p->height * 0.001) + L" ";
-				fwrite(str.c_str(), str.length(), 2, klm);
-			}
-
-			/*
-
-			double angle = GRAD2RAD*(180-((dataI / 4) % 360));
-			gax =  sin(angle) * 1;
-
-
-
-	
-
-			
-			double tttt = (1 - 2 * (double)rand() / RAND_MAX);
-			gax += constrain(tttt,-2,2);
-
-			*/
-	//	gay = gax;	
-		//gay = maccY.update(gay);
-		//	gax=maccX.update(gax);
-
-			//gay= *(float*)(&buffer[i + 28]);
-
-
-			//double ang=atan2(gax, gay);
-
-
-		
-			//rotate(gspeedX, gspeedY);
-			
-			//rotate(gax, gay);
-			i += 8 * 4;
-
-
-			gy2home = distance *sin(bearing);
-			gx2home = distance*cos(bearing);
-
-
-			max_x = max(max_x, gx2home);
-			min_x = min(min_x, gx2home);
-			max_y = max(max_y, gy2home);
-			min_y = min(min_y, gy2home);
+			gps_log.decode(buffer, i);
+			//i += 1 + sizeof(SEND_I2C);
+			//i += 8 * 4;
 
 			break;
 		}
 
 		case LOG::COMM: {
 
-			//int mode_mask = *(uint32_t*)(&buffer[i + 3]);
-			//mode_mask &= 0x00ffffff;
-			int16_t t = *(int16_t*)(&buffer[i + 7]);
-			i_throthle = 0.00003125f*(double)t;
-			t = *(int16_t*)(&buffer[i + 9]);
-			if (def_mode&(COMPASS_ON |  GO2HOME) == COMPASS_ON)
-				i_yaw = ANGK*(double)t;
-			else
-				i_yaw = 0;
-			t = *(int16_t*)(&buffer[i + 11]);
-			i_yaw_offset = ANGK*(double)t;
-			t = *(int16_t*)(&buffer[i + 13]);
-
-
-			if ((def_mode&(HORIZONT_ON |   GO2HOME)) == HORIZONT_ON) {
-				i_pitch = ANGK*(double)t;
-				t = *(int16_t*)(&buffer[i + 15]);
-				i_roll = ANGK*(double)t;
-			}
-			else
-				i_pitch = i_roll = 0;
-
-			//отключить со следующие версии.
-		/*	if (new_mode_ver==false)
-				if (mode_mask) {
-					def_mode ^= mode_mask;
-					modes[modesI].mode = def_mode;
-					modes[modesI].index = dataI;
-					modesI++;
-				}
-				*/
+			
 			unsigned short len = *(unsigned short*)(buffer + i + 1);
 			i += len + 3;
 			break;
 		}
 		case LOG::STABXY: {
-			float speedX, speedY;
-
-//filter(gx2home,dataI,SX);
-//filter(gy2home,dataI,SY);
-
-
-			filter(*(float*)(&buffer[i + 1]),dataI,SX);
-			filter(speedX=*(float*)(&buffer[i + 5]),dataI,SPEED_X);
-			filter(*(float*)(&buffer[i + 9]),dataI,SY);
-			filter(speedY=*(float*)(&buffer[i + 13]),dataI,SPEED_Y);
-
-
-
-
-
-
-
-
-
-
-
-
-			rotate(sensors_data[dataI].sd[SX], sensors_data[dataI].sd[SY]);
-			rotate(sensors_data[dataI].sd[SPEED_X], sensors_data[dataI].sd[SPEED_Y]);
-		//	gax = (speedX - old_speedX) / dt;
-			old_speedX = speedX;
-
-
+			
 			i += 17;
 			break;
 		}
@@ -884,157 +385,19 @@ int Graph::decode_Log() {
 			break;
 		}
 		case LOG::BAL: {
-				filter(i_throthle, dataI, I_THROTHLE);
-
-				sensors_data[dataI].sd[I_YAW] = i_yaw;
-				sensors_data[dataI].sd[I_YAW_OFFSET] = i_yaw_offset;
-				filter(i_pitch, dataI, I_PITCH);
-				filter(i_roll, dataI, I_ROLL);
-				//sensors_data[dataI].sd[HEADING] = head;
-				filter(head, dataI, HEADING);
-				if (pressure_alt!=100000)
-					filter(pressure_alt, dataI, PRESSURE);
-				else
-					filter(0, dataI, PRESSURE);
-
-				filter(pressure_acc, dataI, PRESSURE_ACC);
-
-				filter(pressure_speed, dataI, PRESSURE_SPEED);
-
-			
-
-				sensors_data[dataI].sd[X] = gx2home;
-				sensors_data[dataI].sd[Y] = gy2home;
-				sensors_data[dataI].sd[GPS_Z] = z;
-
-				
-				filter((float)bat *0.01725, dataI, BAT_F);
 
 
 
-				filter(0.01953125 * (1024.0 - mi[0]), dataI, MI0);
-				filter(0.01953125 * (1024.0 - mi[1]), dataI, MI1);
-				filter(0.01953125 * (1024.0 - mi[2]), dataI, MI2);
-				filter(0.01953125 * (1024.0 - mi[3]), dataI, MI3);
-	
-
-
-
-
-			//	gax = ((dataI % 200) > 99) ? 2 : -2;
-
-			//	gax += ((dataI % 10) > 4) ? 2 : -2;
-
-
-/*
-
-				bufkk0[bufff0I & 127] = -gax;
-				int shift = 4;
-				if (bufff0I >= shift) {
-
-					filter(bufkk0[(bufff0I - shift) & 127], dataI, GACCY);
-
-				}else
-					filter(0, dataI, GACCY);
-				
-				
-				//filter(-gax, dataI, GACCY);
-				float res=0;
-				
-
-				//if (dataI<10)
-				//	res=kk0.update(gax, 0.01);
-				//else
-				//	res = kk0.update(0, 0.01);
-
-			//	bufkk0[bufff0I&127]=kk0.update(-gax, 0.01);
-				
-				float kk = 0.16;
-				res += kk0.update(-gax*kk, 0.01);
-				res += kk1.update(-gax*kk, 0.01);
-				res += kk2.update(-gax*kk, 0.01);
-				res += kk3.update(-gax*kk, 0.01);
-				res += kk4.update(-gax*kk, 0.01);
-				res += kk5.update(-gax*kk, 0.01);
-				*/
-			//	sensors_data[dataI].sd[GACCX] = res;// +kk0.update(-gax, 0.01) - bufkk0[(bufff0I - shift) & 127];
-			//	filter(sensors_data[dataI].sd[GACCX], dataI, GACCX);
-
-
-			//	bufff0I++;
-
-
-				//filter(res, dataI, GACCX);
-
-				//tgaccx += (gax - tgaccx)*0.1;
-				//sensors_data[dataI].sd[GACCX] = tgaccx;
-				filter(gax, dataI, GACCX);
-				filter(gay, dataI, GACCY);
-
-				
-
-
-
-				//filter(sqrt(gax*gax + gay*gay), dataI, GACC);
-
-				filter(gaz, dataI, GACCZ);
-
-				filter(gspeedX, dataI, G_SPEED_X);
-				filter(gspeedY, dataI, G_SPEED_Y);
-				filter(gspeed, dataI, G_SPEED);
-
-
-
-				float c_pitch = *(float*)(&buffer[i + 1]);
-				float c_roll = *(float*)(&buffer[i + 5]);
-
-				float maxAngle = 35;
-				c_pitch = constrain(c_pitch, -maxAngle, maxAngle);
-				c_roll = constrain(c_roll, -maxAngle, maxAngle);
-				const float maxAngle07 = maxAngle*0.7f;
-				if (abs(c_pitch) > maxAngle07 || abs(c_roll) > maxAngle07) {
-
-					float k = (float)(RAD2GRAD*acos(cos(c_pitch*GRAD2RAD)*cos(c_roll*GRAD2RAD)));
-					if (k == 0)
-						k = maxAngle;
-					if (k > maxAngle) {
-						k = maxAngle / k;
-						c_pitch *= k;
-						c_roll *= k;
-					}
-				}
-
-			//	filter(c_pitch, dataI, TC_PITCH);
-			//	filter(c_roll, dataI, TC_ROLL);
-				mc_pitch += (*(float*)(&buffer[i + 9]) - mc_pitch)*1;
-
-				mc_roll += (*(float*)(&buffer[i + 13]) - mc_roll)*1;
-
-
-				filter(mc_pitch, dataI, C_PITCH);
-				filter(mc_roll, dataI, C_ROLL);
-
-				filter(*(float*)(&buffer[i + 17]), dataI, THROTTLE);
-
-				filter(*(float*)(&buffer[i + 27]), dataI, F0);
-				filter(*(float*)(&buffer[i + 31]), dataI, F1);
-				filter(*(float*)(&buffer[i + 35]), dataI, F2);
-				filter(*(float*)(&buffer[i + 39]), dataI, F3);
-
-				correct_c_pitch_c_roll(dataI);
-				//filter(sensors_data[dataI].sd[M_C_PITCH], dataI, M_C_PITCH);
-				//filter(sensors_data[dataI].sd[M_C_ROLL], dataI, M_C_ROLL);
-
-				//rotate(sensors_data[dataI].sd[M_C_PITCH], sensors_data[dataI].sd[M_C_ROLL]);
-				//	rotate(sensors_data[dataI].sd[M_C_ROLL], sensors_data[dataI].sd[M_C_ROLL]);
+			sensors_data[dataI].sd[TIME] = mpu.time;
+			sensors_data[dataI].sd[DT] = mpu.dt;
+			filter(press.alt, dataI, PRESSURE);
+			sensors_data[dataI].sd[X] = gps_log.gx2home;
+			sensors_data[dataI].sd[Y] = gps_log.gy2home;
+			sensors_data[dataI].sd[GPS_Z] = gps_log.z;
 
 
 
 				
-
-
-
-
 				i += 43;
 				i += 2;
 
@@ -1042,12 +405,8 @@ int Graph::decode_Log() {
 				break;
 		}
 
-
-
-
 		case LOG::EMU: {
-			filter(*(float*)(&buffer[i + 2]), dataI, EMU_PITCH);
-			filter(*(float*)(&buffer[i + 6]), dataI, EMU_ROLL);
+			
 			i += buffer[i + 1]+2;
 			break;
 		}
@@ -1079,15 +438,6 @@ int Graph::readLog(){
 
 	FILE * pFile;
 	size_t result;
-
-
-
-	
-	
-	
-
-
-
 
 
 	pFile = fopen(fname, "rb");
@@ -1306,11 +656,6 @@ Graph::Graph(char*fn)
 //	color[ROLL] =  Color(180,  255,    0,    0);
 	//color[YAW] =   Color(100,    0,    0,  255);
 
-	
-
-
-
-
 
 }
 
@@ -1378,7 +723,7 @@ int Graph::drawText(HDC hdc, RectF rect, double pos) {
 }
 
 
-#define SOME_K 0.9
+
 int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 
 	Graphics g(hdc);
@@ -1397,19 +742,19 @@ int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 
 	
 	Pen pen(Color(255, 0, 0, 0));
-	double mull_y = SOME_K* (double)rect.Height / (max_y - min_y);
-	double mull_x = SOME_K*(double)rect.Width / (max_x - min_x);
+	double mull_y = SOME_K* (double)rect.Height / (gps_log.max_y - gps_log.min_y);
+	double mull_x = SOME_K*(double)rect.Width / (gps_log.max_x - gps_log.min_x);
 	mull_x = mull_y = min(mull_x, mull_y);
 	int ind = 1;
-	int y = (sensors_data[_p].sd[Y] - min_y) * mull_y;
-	int x = (sensors_data[_p].sd[X] - min_x) * mull_x;
+	int y = (sensors_data[_p].sd[Y] - gps_log.min_y) * mull_y;
+	int x = (sensors_data[_p].sd[X] - gps_log.min_x) * mull_x;
 
 	g.DrawLine(&pen, x - 10, y, x + 10, y);
 	g.DrawLine(&pen, x, y - 10, x, y + 10);
 
 
-	y = (startPointY - min_y) * mull_y;
-	x = (startPointX - min_x) * mull_x;
+	y = (0 - gps_log.min_y) * mull_y;
+	x = (0 - gps_log.min_x) * mull_x;
 
 	Pen penr(Color(255, 0, 0, 255));
 	penr.SetWidth(3);
@@ -1424,8 +769,8 @@ int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 	
 	if (flags[SX] || flags[SY]) {
 		Pen pen(Color(255, 255, 0, 0));
-		int y = (sensors_data[_p].sd[SY] - min_y) * mull_y;
-		int x = (sensors_data[_p].sd[SX] - min_x) * mull_x;
+		int y = (sensors_data[_p].sd[SY] - gps_log.min_y) * mull_y;
+		int x = (sensors_data[_p].sd[SX] - gps_log.min_x) * mull_x;
 
 		g.DrawLine(&pen, x - 10, y, x + 10, y);
 		g.DrawLine(&pen, x, y - 10, x, y + 10);
@@ -1435,77 +780,6 @@ int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 
 	return 0;
 }
-
-int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
-	Graphics g(hdc);
-
-	g.Clear(Color(255, 255, 255, 255));
-
-	p = lSize*pos;
-	step = (double)(lSize - p)*zoom / rect.Width;
-	double mull_y = SOME_K* (double)rect.Height / (max_y - min_y);
-	double mull_x = SOME_K*(double)rect.Width / (max_x - min_x);
-	mull_x = mull_y = min(mull_x, mull_y);
-	int startX, startY;
-	{
-		int dy[2], dx[2];
-		int y0 = 0;
-		int x0 = 0;
-
-		
-		
-		int ind = 1;
-
-		if (p < gpsI)
-			p = gpsI;
-		startY=dy[0] = y0 + (sensors_data[(int)p].sd[Y] - min_y) * mull_y;
-		startX=dx[0] = x0 + (sensors_data[(int)p].sd[X] - min_x) * mull_x;
-
-
-		Pen pen(Color(255, 0, 0, 0));
-		for (int x = rect.X + 1, i = 1; x < rect.X + rect.Width; x++, i++) {
-			dy[ind & 1] = y0 + (sensors_data[(int)(p + (step*i))].sd[Y] - min_y) * mull_y;
-			dx[ind & 1] = x0 + (sensors_data[(int)(p + (step*i))].sd[X] - min_x) * mull_x;
-
-			g.DrawLine(&pen, dx[(ind - 1) & 1], dy[(ind - 1) & 1], dx[ind & 1], dy[ind & 1]);
-			ind++;
-
-
-		}
-	}
-	if (flags[SX] || flags[SY]) {
-		int dy[2], dx[2];
-		int y0 = 0;
-		int x0 = 0;
-
-		
-		int ind = 1;
-
-		dy[0] = y0 + (sensors_data[(int)p].sd[SY] - min_y) * mull_y;
-		dx[0] = x0 + (sensors_data[(int)p].sd[SX] - min_x) * mull_x;
-
-		startX - dx[0];
-		startY - dy[0];
-
-	
-		Pen pen(Color(255, 255, 0, 0));
-		for (int x = rect.X + 1, i = 1; x < rect.X + rect.Width; x++, i++) {
-			dy[ind & 1] = y0 + (sensors_data[(int)(p + (step*i))].sd[SY] - min_y) * mull_y;
-			dx[ind & 1] = x0 + (sensors_data[(int)(p + (step*i))].sd[SX] - min_x) * mull_x;
-
-			g.DrawLine(&pen, dx[(ind - 1) & 1], dy[(ind - 1) & 1], dx[ind & 1], dy[ind & 1]);
-			ind++;
-
-
-		}
-	}
-
-
-
-	return 0;
-}
-
-
 
 
 
@@ -1528,10 +802,6 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 		int gg = pow + ((modes[i].mode&PROGRAM) ? 20 : 0) + ((modes[i].mode&GO2HOME) ? 40 : 0);
 		int B = pow + ((modes[i].mode&HORIZONT_ON)?50:0);
 
-
-
-
-
 			SolidBrush coloredBrush(Color(100,R, gg, B));
 			double t0 = (modes[i].index - p)/ step;
 			double t1 = (i+1==modesI)?rect.Width:(modes[i+1].index - p) / step;
@@ -1551,8 +821,7 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 				r.Width = rect.X + rect.Width - r.X;
 			}
 			r.Height = rect.Height - 4;
-			g.FillRectangle(&coloredBrush, r);
-			
+			g.FillRectangle(&coloredBrush, r);		
 	}
 	
 #define MUL_4_ANG 45
@@ -1625,9 +894,9 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 
 
 
-	mull = (double)rect.Height / 2 / (max_x-min_x);
+//	mull = (double)rect.Height / 2 / (max_x-min_x);
 	draw(g, rect, y0, mull, SX);
-	mull = (double)rect.Height / 2 / (max_y - min_y);
+//	mull = (double)rect.Height / 2 / (max_y - min_y);
 	draw(g,  rect, y0, mull, SY);
 
 
@@ -1653,7 +922,15 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 	mull = (double)rect.Height/150;
 	y0 -= mull * 100;
 	draw(g, rect, y0, mull, SZ);
+
+
+	y0 = (rect.Y + rect.Height);
+	mull = (double)rect.Height / 70;// press.max_alt;
 	draw(g, rect, y0, mull, PRESSURE);
+
+
+//	y0 = (rect.Y + rect.Height + 100);
+	//mull = (double)rect.Height / 50;// press.max_alt;
 	draw(g, rect, y0, mull, GPS_Z);
 
 	mull = (double)rect.Height / 2 / 300; 
