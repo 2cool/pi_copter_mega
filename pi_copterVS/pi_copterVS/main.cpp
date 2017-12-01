@@ -1,7 +1,7 @@
 #define PROG_VERSION "ver 3.171201_1 \n"
 
 #define ONLY_ONE_RUN
-
+//#define SIM800
 
 #include <cstdio>
 #include <signal.h>
@@ -138,8 +138,9 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 
 	GPS.init();
 
+#ifdef SIM800
 	sim.start();
-
+#endif
 	return 0;
 
 }

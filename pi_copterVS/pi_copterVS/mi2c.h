@@ -111,32 +111,34 @@ timer5 	16 		C 			- 				46
 class Megai2c
 {
 protected:
-
+	 int sms_received;
 
 public:
-	static int init();
+	 int init();
 
 
-	static bool gimagl(float pitch, float roll);
+	 bool gimagl(float pitch, float roll);
 
-	static void sound(const float);
-	static void beep_code(uint8_t);
-	static void throttle(const float n0, const float n1, const float n2, const float n3);
+	 void sound(const float);
+	 void beep_code(uint8_t);
+	 void throttle(const float n0, const float n1, const float n2, const float n3);
 
-	void getiiiiv(char *iiiiv);
+	 void getiiiiv(char *iiiiv);
 
-	int get_gps(SEND_I2C *gps_d);
+	 int get_gps(SEND_I2C *gps_d);
 
-	static void Buzzer(const bool on);
+	 void Buzzer(const bool on);
 
-	int gsm_loop();
+	 int gsm_loop();
+	
 
 
 private:
-
-	static uint16_t correct(const float n);
-	int send2sim(char *str, int len);
-	int getsim(char * str);
+	
+	 void m_parser(char *str, int len);
+	 uint16_t correct(const float n);
+	 int send2sim(char *str, int len);
+	 int getsim(char * str);
 };
 
 extern Megai2c mega_i2c;

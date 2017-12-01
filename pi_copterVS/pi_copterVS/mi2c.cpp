@@ -42,6 +42,29 @@ int Megai2c::send2sim(char *str, int len) {
 	//	printf("%c", gsm_send_buf[i]);
 }
 
+
+void Megai2c::m_parser(char *str, int len) {
+	/*
+	+CMTI: "SM",1
+	+CMTI: "SM",2
+	приходят смски
+	*/
+const static char sms[] = "+CMTI: \"SM\",";
+static int  smsi = 0;
+
+	for (int i = 0; i < len; i++) {
+		if (str[i] == sms[smsi++]) {
+			if (smsi == 12) {
+				sms_received++;
+				smsi ^= smsi;
+			}
+		}
+		else
+			smsi ^= smsi;
+	}
+
+}
+
 int Megai2c::gsm_loop()
 {
 	char gsm_in_buf[18];
@@ -56,7 +79,12 @@ int Megai2c::gsm_loop()
 		send2sim(gsm_in_buf, a_in);
 	}
 	int res = getsim(gsm_in_buf);
+
+
+	
+
 	if (res) {
+		m_parser(gsm_in_buf, res);
 		write(fd_in, gsm_in_buf, res);
 	}
 
@@ -66,6 +94,9 @@ int Megai2c::gsm_loop()
 
 int Megai2c::init()
 {
+	sms_received = 0;
+
+
 	if ((fd = open("/dev/i2c-0", O_RDWR)) < 0) {
 		fprintf(Debug.out_stream, "Failed to open /dev/i2c-0\n");
 		return -1;
@@ -78,7 +109,7 @@ int Megai2c::init()
 	fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd_in < 0)
 	{
-		printf("error %d opening /dev/tnt0: %s", errno, strerror(errno));
+		printf("error %d opening /dev/tnt1: %s", errno, strerror(errno));
 		return -1;
 	}
 
