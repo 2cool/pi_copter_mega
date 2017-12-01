@@ -73,6 +73,7 @@ enum { B_CONNECTION_LOST = 1, B_MS611_ERROR, B_ACC_ERROR, B_LOW_VOLTAGE, B_GPS_A
 #include <string>
 
 #include  "Log.h"
+#include "SIM800.h"
 
 using namespace std;
 
@@ -254,7 +255,10 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 	if (dt < 0.05)
 		return;
 
-
+	uint sim_com = sim.get_commande();
+	if (sim_com) 
+		set_control_bits(sim_com);
+	
 	gimBalRollCorrection();
 
 #ifdef LOST_BEEP

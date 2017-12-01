@@ -60,16 +60,14 @@ class AutopilotClass
 	// float get_dist();
 	 float lowest_height;
 	
-	enum {MOTORS_ON=1,CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=0x10,PROGRAM=0x20,COMPASS_ON=0x40,HORIZONT_ON=0x80,
-		MPU_ACC_CALIBR=0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR=0x400, COMPASS_MOTOR_CALIBR=0x800, SHUTDOWN=0x1000, GIMBAL_PLUS=0x2000,GIMBAL_MINUS=0x4000,REBOOT=0x8000
-	};
+	
 
 	 
  public:
 	 uint32_t  time_at_start;
 	 void gimBalRollCorrection();
 	 bool busy() { return (control_bits & (MPU_ACC_CALIBR | MPU_GYRO_CALIBR | COMPASS_CALIBR)); }
-	 uint32_t last_time_data_recived;
+	 volatile uint32_t last_time_data_recived;
 	 void setYaw(const float yaw){aYaw_ = yaw;}
 	 float getGimbalPitch(){ return gimbalPitch; }
 	 void control_falling(const string msg);

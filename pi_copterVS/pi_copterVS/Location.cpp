@@ -155,7 +155,7 @@ void LocationClass::proceed(SEND_I2C *d) {
 		rdt = 5;
 	}
 	old_iTOW = last_gps_data_time;
-
+	altitude = (double)d->height*0.001;
 	lat_ = d->lat;
 	lon_ = d->lon;
 
@@ -177,132 +177,6 @@ void LocationClass::proceed(SEND_I2C *d) {
 
 
 }
-
-
-
-#ifdef OLDPROCGPS
-
-
-
-
-int available_loc = 0, all_available_loc,buf_ind_loc;
-char buf_loc[72];
-
-bool LocationClass::processGPS_1() {
-	buf_ind_loc = 0;
-	const int payloadSize = sizeof(NAV_POSLLH);
-	static unsigned char checksum[2];
-	static int fpos = 0;
-	while (available_loc) {
-
-		//fprintf(Debug.out_stream,"%#.2X,", c);
-		if (fpos < 2) {
-			if (buf_loc[buf_ind_loc] == UBX_HEADER[fpos])
-				fpos++;
-			else
-				fpos = 0;
-		}
-		else {
-			if ((fpos - 2) < payloadSize)
-				((unsigned char*)(&posllh))[fpos - 2] = buf_loc[buf_ind_loc];
-			fpos++;
-			if (fpos == (payloadSize + 2)) {
-				calcChecksum(checksum);
-			}
-			else if (fpos == (payloadSize + 3)) {
-				if (buf_loc[buf_ind_loc] != checksum[0]) {
-					fpos = 0;
-					
-				}
-			}
-			else if (fpos == (payloadSize + 4)) {
-				fpos = 0;
-				if (buf_loc[buf_ind_loc] == checksum[1]) {
-
-					
-
-					accuracy_hor_pos_ = DELTA_ANGLE_C*(double)posllh.hAcc;
-					if (accuracy_hor_pos_ > 99)accuracy_hor_pos_ = 99;
-					accuracy_ver_pos_ = DELTA_ANGLE_C*(double)posllh.vAcc;
-					if (accuracy_ver_pos_ > 99)accuracy_ver_pos_ = 99;
-
-					if (Log.writeTelemetry) {
-						Log.loadByte(LOG::GpS);
-						Log.loadGPS_full(&posllh);
-						Log.loadFloat((float)x2home);
-						Log.loadFloat((float)y2home);
-						Log.loadFloat((float)dX);
-						Log.loadFloat((float)dY);
-						Log.loadFloat((float)speedX);
-						Log.loadFloat((float)speedY);
-						Log.loadFloat((float)accX);
-						Log.loadFloat((float)accY);
-
-
-					}
-
-					mseconds = posllh.iTOW;
-					if (old_iTOW == 0)
-						old_iTOW = posllh.iTOW - 100;
-					dt = DELTA_ANGLE_C*(double)(posllh.iTOW - old_iTOW);
-					if (dt > 0.18 || dt < 0.06)
-						fprintf(Debug.out_stream,"\ngps dt error: %f, time= %i\n", dt, millis() / 1000);
-					dt = constrain(dt, 0.1, 0.2);
-					rdt = 1.0 / dt;
-					old_iTOW = posllh.iTOW;
-					last_gps_data_time = micros();
-
-					lat_ = posllh.lat;
-					lon_ = posllh.lon;
-
-					//Debug.load(0, lat_, lon_);
-					//Debug.dump();
-
-					buf_ind_loc++;
-					available_loc--;
-					
-				//	fprintf(Debug.out_stream,"\t\tOK\n");
-					return true;
-				}
-
-			}
-			else if (fpos > (payloadSize + 4)) {
-				fpos = 0;
-			}
-		}
-		available_loc--;
-		buf_ind_loc++;
-		//ioctl(fd_loc, FIONREAD, &available_loc);
-	}
-	//fprintf(Debug.out_stream,"________error\n");
-	return false;
-}
-
-bool LocationClass::processGPS() {
-
-	bool ret = false;
-
-	ioctl(fd_loc, FIONREAD, &all_available_loc);
-
-	if ((available_loc+all_available_loc) < 36){
-		return false;
-	}
-
-	if (all_available_loc)
-		available_loc+=read(fd_loc, &buf_loc[available_loc], 72 - available_loc);
-
-	int t_available_loc = available_loc;
-	ret =  processGPS_1();
-
-	if (available_loc) {
-		memmove(buf_loc, &buf_loc[buf_ind_loc], available_loc);
-	}
-	return ret;
-}
-
-
-#endif
-
 
 void LocationClass::add2NeedLoc(const double speedX, const double speedY, const double dt){
 	//double t = (add_lat_need+= from_X2Lat(speedX*dt));

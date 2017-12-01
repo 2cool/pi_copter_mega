@@ -1,19 +1,40 @@
-#include "SIM800.h"
+
+//#define PPP_INET
+
 
 //------------------------------------------------------
+#include "SIM800.h"
+#include "Autopilot.h"
+#include "Telemetry.h"
+
 #define SIM_UPD_P 5000
-enum { sim_GO2HOME = 1 };
 
+static volatile int error = -1;
+volatile uint32_t command = 0;
 
-static volatile int error = 0;
-int last_update = 0;
-std::string head = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/";
+static bool first_false_command = true;
+
+static const std::string head =  "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/";
+static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_id=241349746&text=";
+
+int SIM800::get_error() { return error; }
+
+uint32_t SIM800::get_commande() {
+	const uint32_t com = command;
+	command ^= command;
+	return com; }
+
 
 void loop_t()
 {
-	static int last_time_loc_send = 0;
+	static int old_message_data=0,last_alt=0;
+	static uint32_t last_update = millis(), last_time_loc_send=0;
+	static double last_dist2home2 = 0;
+
 	//poff - off ppp0
 	std::string ret;
+#ifdef PPP_INET
+	
 	usleep(10000000);
 //	fprintf(Debug.out_stream, "pop rnet\n");
 	ret = exec("pon rnet");
@@ -37,6 +58,7 @@ void loop_t()
 		error = 3;
 		return;
 	}
+#endif
 	delay(5000);
 	int n = 4;
 	do {
@@ -54,9 +76,12 @@ void loop_t()
 	} while (true);
 	fprintf(Debug.out_stream, "internet OK!\n");
 	error = 0;
-
+	//-------------------------------------------
 	while (sim._loop) {
-		int time = millis();
+		delay(1000);
+		
+		uint32_t time = millis();
+		//commander
 		if (time - last_update > SIM_UPD_P) {
 			last_update = time;
 			std::string upd = exec(head + "getUpdates\"");
@@ -66,47 +91,58 @@ void loop_t()
 				int dat_pos = 6 + upd.rfind("date\":");
 				int mes_pos = upd.rfind(",\"text\":\"");
 				int data = std::stoi(upd.substr(dat_pos, mes_pos - dat_pos));
-				if (sim.old_message_data != data) {
-					sim.old_message_data = data;
+				if (old_message_data != data) {
+					old_message_data = data;
 					mes_pos += 9;
-					std::string message = upd.substr(mes_pos, upd.rfind("\"}}") - mes_pos);
-					if (message.find("go2home") == 0) {
-						sim.command = sim_GO2HOME;
-						fprintf(Debug.out_stream, "recived mess - go2home\n");
-						std::string send = exec(head + "sendMessage?chat_id=241349746&text=go2home OK\"");
+					if (first_false_command == false) {
+						std::string send = htext;
+						std::string message = upd.substr(mes_pos, upd.rfind("\"}}") - mes_pos);
+						if (message.find("go2home") == 0) {
+							if (Autopilot.go2homeState() == false) {
+								command = GO2HOME;
+								fprintf(Debug.out_stream, "recived mess - go2home\n");
+								send += "go2home OK\"";
+							}else
+								send += "already on the way to home\"";
+						}else if (message.find("stat") == 0) {
+							if (Autopilot.motors_is_on()) {
+								send += "m_on,";
+								if (Autopilot.go2homeState())
+									send += "go2home,";
+								else if (Autopilot.progState())
+									send += "prog,";
+							}
+							else
+								send += "m_off,";
+							send += "b" + std::to_string((int)Telemetry.get_voltage4one_cell())+",";
+						}
+						else {
+							send += "?";
+							fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
+						}
+						send = exec(send+" \"");
 					}
-					else
-						std::string send = exec(head + "sendMessage?chat_id=241349746&text=?\"");
-					fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
 				}
 			}
-			if (GPS.loc.dist2home_2 - sim.last_dist2home > 625 || abs(GPS.loc.altitude - sim.last_alt) > 10 || (time - last_time_loc_send) > 30000) {
-				last_time_loc_send = time;
-				sim.last_dist2home = GPS.loc.dist2home_2;
-				sim.last_alt = GPS.loc.altitude;
-
-				std::string req = head + "sendMessage?chat_id=241349746&text=" + \
-					std::to_string(GPS.loc.lat_) + " " + std::to_string(GPS.loc.lon_) + " " + std::to_string((int)GPS.loc.altitude) + "\"";
-				std::string send = exec(req.c_str());
-				
-			}
-			
-
+			first_false_command = false;
 		}
-		delay(1000);
+		//send location
+		if ((time - Autopilot.last_time_data_recived) > 1000) {
+			if (GPS.loc.dist2home_2 - last_dist2home2 > 625 || abs(GPS.loc.altitude - last_alt) > 10 || (time - last_time_loc_send) > 30000) {
+				last_time_loc_send = time;
+				last_dist2home2 = GPS.loc.dist2home_2;
+				last_alt = GPS.loc.altitude;
+
+				std::string req = htext + \
+					std::to_string(GPS.loc.lat_) + "," + std::to_string(GPS.loc.lon_) + "," + std::to_string((int)GPS.loc.altitude) + "\"";
+				std::string send = exec(req.c_str());
+			}
+		}
 	}
 
 }
 
-int SIM800::getCommand() {
-	if (command == -1)
-		return -1;
-	else {
-		int c = command;
-		command = -1;
-		return c;
-	}
-}
+
 void SIM800::stop() {
 	_loop = false;
 }
@@ -114,13 +150,7 @@ void SIM800::stop() {
 void SIM800::start()
 {
 	error = -1;
-	last_update = millis();
-	last_dist2home = -100;
-	last_alt = -1000;
-	command = -1;
-	old_message_data = 0;
-
-
+	command = 0;
 	_loop = true;
 	thread t(loop_t);
 	t.detach();

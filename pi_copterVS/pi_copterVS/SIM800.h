@@ -9,10 +9,11 @@ class SIM800
 private:
 	
 public:
+	
 	volatile bool _loop;
-	int last_update, last_dist2home, last_alt,command,old_message_data;
 	void start();
 	void stop();
-	int getCommand();
+	int get_error();
+	uint32_t get_commande();
 };
 extern SIM800 sim;

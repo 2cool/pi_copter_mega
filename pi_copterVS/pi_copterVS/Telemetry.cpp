@@ -120,6 +120,7 @@ void TelemetryClass::loop()
 	update_buf();
 }
 
+int TelemetryClass::get_voltage4one_cell() { return (int)(voltage / SN); }
 
 int TelemetryClass::check_time_left_if_go_to_home(){
 	float max_fly_time=0;
@@ -229,9 +230,6 @@ void TelemetryClass::loadBUF(int &i, const float fval)
 
 bool gps_or_acuracy = false;
 
-enum {MOTORS_ON=1,CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=0x10,PROGRAM=0x20,COMPASS_ON=0x40,HORIZONT_ON=0x80,
-		MPU_ACC_CALIBR=0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR=0x400, COMPASS_MOTOR_CALIBR=0x800, RESETING=0x1000, GIMBAL_PLUS=0x2000,GIMBAL_MINUS=0x4000
-	};
 
 int TelemetryClass::read_buf(byte *buffer) {
 	if (Autopilot.busy())

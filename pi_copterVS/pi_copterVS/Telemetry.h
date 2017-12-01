@@ -26,7 +26,7 @@ class TelemetryClass
 
 	 bool newGPSData;
 	
-	 double SN;
+	 float SN;
 	 
 	// uint8_t inner_clock_old_sec;
 	
@@ -65,7 +65,7 @@ class TelemetryClass
 	 void loop();
 
 	 float get_voltage(){ return voltage; }
-
+	 int get_voltage4one_cell();
 	
 	 int read_buf(byte *buf);
 	// string getSport();
