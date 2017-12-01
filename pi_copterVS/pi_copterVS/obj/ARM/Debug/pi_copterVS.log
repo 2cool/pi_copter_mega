@@ -3,7 +3,7 @@
   Copying sources remotely to '192.168.1.178'
   Starting remote build
   Compiling sources:
-  Autopilot.cpp
-  Location.cpp
+  main.cpp
+  SIM800.cpp
   Linking objects
   pi_copterVS.vcxproj -> D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

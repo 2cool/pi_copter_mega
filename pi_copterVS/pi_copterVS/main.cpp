@@ -1,4 +1,4 @@
-#define PROG_VERSION "ver 3.171126_1 \n"
+#define PROG_VERSION "ver 3.171201_1 \n"
 
 #define ONLY_ONE_RUN
 
@@ -138,7 +138,7 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 
 	GPS.init();
 
-	//sim.start();
+	sim.start();
 
 	return 0;
 
