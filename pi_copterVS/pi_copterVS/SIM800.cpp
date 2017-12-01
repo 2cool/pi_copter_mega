@@ -11,6 +11,7 @@ std::string head = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbL
 
 void loop_t()
 {
+	static int last_time_loc_send = 0;
 	//poff - off ppp0
 	std::string ret;
 	usleep(10000000);
@@ -79,7 +80,8 @@ void loop_t()
 					fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
 				}
 			}
-			if (GPS.loc.dist2home_2 - sim.last_dist2home > 625 || abs(GPS.loc.altitude - sim.last_alt) > 10) {
+			if (GPS.loc.dist2home_2 - sim.last_dist2home > 625 || abs(GPS.loc.altitude - sim.last_alt) > 10 || (time - last_time_loc_send) > 30000) {
+				last_time_loc_send = time;
 				sim.last_dist2home = GPS.loc.dist2home_2;
 				sim.last_alt = GPS.loc.altitude;
 
@@ -88,6 +90,7 @@ void loop_t()
 				std::string send = exec(req.c_str());
 				
 			}
+			
 
 		}
 		delay(1000);
