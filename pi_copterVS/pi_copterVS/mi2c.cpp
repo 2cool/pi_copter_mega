@@ -42,27 +42,72 @@ int Megai2c::send2sim(char *str, int len) {
 	//	printf("%c", gsm_send_buf[i]);
 }
 
-
-void Megai2c::m_parser(char *str, int len) {
 	/*
 	+CMTI: "SM",1
 	+CMTI: "SM",2
+	...
+
+	+CMTI: "ME",21
 	приходят смски
+
+	RING
+
+	NO CARRIER
 	*/
+void Megai2c::m_parser(char *str, int len) {
+const static char no_carrier[] = "NO CARRIER";
+const static char ring[] = "RING";
 const static char sms[] = "+CMTI: \"SM\",";
-static int  smsi = 0;
+static int smsi = 0, ringi=0, no_carrieri=0;
+static int smsN = 0;
 
 	for (int i = 0; i < len; i++) {
-		if (str[i] == sms[smsi++]) {
-			if (smsi == 12) {
-				sms_received++;
-				smsi ^= smsi;
+
+
+		if (sms_received == -1) {
+			if (str[i] >= '0' && str[i] <= '9') {
+				smsN = smsN * 10 + str[i] - '0';
+			}
+			else {
+				sms_received = smsN;
+				fprintf(Debug.out_stream, "SMS %i\n",sms_received);
+				smsN ^= smsN;
 			}
 		}
-		else
-			smsi ^= smsi;
-	}
+		else {
+			if (str[i] == sms[smsi++]) {
+				if (smsi == sizeof(sms) - 1) {
+					sms_received = -1;
+					smsi ^= smsi;
+				}
+			}
+			else
+				smsi ^= smsi;
 
+			if (ring_received == false) {
+				if (str[i] == ring[ringi++]) {
+					if (ringi == sizeof(ring) - 1) {
+						ring_received = true;
+						fprintf(Debug.out_stream, "RING\n");
+						ringi ^= ringi;
+					}
+				}
+				else
+					ringi ^= ringi;
+			}
+			else {
+				if (str[i] == no_carrier[no_carrieri++]) {
+					if (no_carrieri == sizeof(no_carrier) - 1) {
+						ring_received = false;
+						fprintf(Debug.out_stream, "NO CARRIER\n");
+						no_carrieri ^= no_carrieri;
+					}
+				}
+				else
+					no_carrieri ^= no_carrieri;
+			}
+		}
+	}
 }
 
 int Megai2c::gsm_loop()
@@ -84,7 +129,8 @@ int Megai2c::gsm_loop()
 	
 
 	if (res) {
-		m_parser(gsm_in_buf, res);
+		//if no ppp
+		//m_parser(gsm_in_buf, res);
 		write(fd_in, gsm_in_buf, res);
 	}
 
@@ -95,7 +141,7 @@ int Megai2c::gsm_loop()
 int Megai2c::init()
 {
 	sms_received = 0;
-
+	ring_received = false;
 
 	if ((fd = open("/dev/i2c-0", O_RDWR)) < 0) {
 		fprintf(Debug.out_stream, "Failed to open /dev/i2c-0\n");
@@ -109,7 +155,7 @@ int Megai2c::init()
 	fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd_in < 0)
 	{
-		printf("error %d opening /dev/tnt1: %s", errno, strerror(errno));
+		fprintf(Debug.out_stream, "error %d opening /dev/tnt1: %s", errno, strerror(errno));
 		return -1;
 	}
 

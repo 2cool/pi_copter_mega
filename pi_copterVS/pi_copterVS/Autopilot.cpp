@@ -196,8 +196,9 @@ void AutopilotClass::add_2_need_yaw(float speed, const float dt){
 
 
 void AutopilotClass::add_2_need_altitude(float speed, const float dt){
-
+	static bool set_alt = false;
 	if (speed != 0) {
+		set_alt = true;
 		if (speed > 0) {
 			if (speed > MAX_VER_SPEED_PLUS)
 				speed = MAX_VER_SPEED_PLUS;
@@ -217,7 +218,11 @@ void AutopilotClass::add_2_need_altitude(float speed, const float dt){
 		//fprintf(Debug.out_stream,"f@alt %f\n", flyAtAltitude);
 	}
 	else {
-		flyAtAltitude = tflyAtAltitude;
+		if (set_alt) {
+			set_alt = false;
+			flyAtAltitude = tflyAtAltitude= MS5611.altitude();
+
+		}
 	}
 }
 //-------------------------------------------------------------------------
@@ -718,7 +723,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 
 void AutopilotClass::control_falling(const string msg){
 	if (motors_is_on() && (control_bits & CONTROL_FALLING) == 0){
-		throttle = FALLING_THROTTLE*Balance.powerK();
+		throttle = Mpu.fall_thr*Balance.powerK();
 		aPitch = aRoll = 0;
 #ifdef DEBUG_MODE
 		fprintf(Debug.out_stream, "CNTROLL FALLING\n");

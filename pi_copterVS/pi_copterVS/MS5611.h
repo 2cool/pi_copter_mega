@@ -82,6 +82,7 @@ public:
 	int8_t i_readTemperature;
 	
 	float speed;
+
 	
 
 

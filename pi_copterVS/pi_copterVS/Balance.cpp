@@ -102,11 +102,11 @@ void BalanceClass::init()
 
 	pids[PID_PITCH_RATE].kP(0.001);  //if >=0.001 No gyro filters? yes noise
 	pids[PID_PITCH_RATE].kI(0.003);
-	pids[PID_PITCH_RATE].imax(0.2);
+	pids[PID_PITCH_RATE].imax(0.4);
 
 	pids[PID_ROLL_RATE].kP(0.001);
 	pids[PID_ROLL_RATE].kI(0.003);
-	pids[PID_ROLL_RATE].imax(0.2);
+	pids[PID_ROLL_RATE].imax(0.4);
 
 	yaw_stabKP = 2;
 
@@ -260,7 +260,7 @@ bool BalanceClass::loop()
 		if (Autopilot.motors_is_on()) { 
 
 			const float pK = powerK();
-			const float min_throttle = constrain(MIN_THROTTLE_*pK*power_K, MIN_THROTTLE_,0.47);
+			const float min_throttle = Mpu.min_thr*pK*power_K;
 			const float max_throttle = constrain(MAX_THROTTLE_*pK*power_K, MAX_THROTTLE_,0.9);
 
 			maxAngle = _max_angle_;
@@ -346,14 +346,15 @@ bool BalanceClass::loop()
 			f_[0] = f_constrain((throttle - roll_output - pitch_output + m_yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 
 
-			if (throttle < MIN_THROTTLE_ || c_time- Autopilot.time_at_start < 3000) {
+			if (throttle < 0.3 || c_time- Autopilot.time_at_start < 3000) {
+
 				pids[PID_PITCH_RATE].reset_I();
 				pids[PID_ROLL_RATE].reset_I();
 				pids[PID_YAW_RATE].reset_I();
 				c_pitch = c_roll = 0;
 				Stabilization.resset_xy_integrator();
 				Stabilization.resset_z();
-				f_[0] = f_[1] = f_[2] = f_[3] = throttle = 0.2;
+				f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.2;
 			}
 
 

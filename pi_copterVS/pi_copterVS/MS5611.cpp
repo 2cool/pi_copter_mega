@@ -43,51 +43,7 @@ int MS5611Class::writeReg(char bar_zero) {
 	}
 }
 
-int MS5611Class::init(){
-	oldAltt = 100000;
 
-	old_time = micros();
-	bar_task = 0;
-	bar_zero = 0x0;
-	ct=10000;
-	
-	speed=altitude_=0;
-	altitude_error = ALT_NOT_SET;
-
-	powerK = 1;
-
-#ifndef FALSE_WIRE
-
-    fprintf(Debug.out_stream,"Initialize High resolution: MS5611\n");
-	
-
-#endif
-	pressure = PRESSURE_AT_0;
-	ms5611_count = 0;
-
-#ifndef FALSE_WIRE
-	compensation = true;
-
-	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0){
-		fprintf(Debug.out_stream,"Failed to open the bus.\n");
-		return error(0);
-	}
-
-	if (ioctl(fd4S, I2C_SLAVE, MS5611_ADDRESS) < 0){
-		fprintf(Debug.out_stream,"Failed to acquire bus access and/or talk to slave.\n");
-		return error(1);
-	}
-   
-	writeReg(RESET);
-
-	usleep(100000);
-	for (i = 0; i < 6; i++){
-		C[i] = PROM_read(fd4S, 0xA2 + (i * 2));
-	}
-
-#endif
-	return 0;	
-}
 float MS5611Class::altitude() {
 	return altitude_ - altitude_error;
 }
@@ -309,4 +265,50 @@ float MS5611Class::get_pressure(float h) {
 	return PRESSURE_AT_0 * pow(1 - h*2.25577e-5, 5.25588);
 }
 
+//-------------------------------------------init-------------------------
+int MS5611Class::init() {
+	oldAltt = 100000;
+
+	old_time = micros();
+	bar_task = 0;
+	bar_zero = 0x0;
+	ct = 10000;
+
+	speed = altitude_ = 0;
+	altitude_error = ALT_NOT_SET;
+
+	powerK = 1;
+
+#ifndef FALSE_WIRE
+
+	fprintf(Debug.out_stream, "Initialize High resolution: MS5611\n");
+
+
+#endif
+	pressure = PRESSURE_AT_0;
+	ms5611_count = 0;
+
+#ifndef FALSE_WIRE
+	compensation = true;
+
+	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
+		fprintf(Debug.out_stream, "Failed to open the bus.\n");
+		return error(0);
+	}
+
+	if (ioctl(fd4S, I2C_SLAVE, MS5611_ADDRESS) < 0) {
+		fprintf(Debug.out_stream, "Failed to acquire bus access and/or talk to slave.\n");
+		return error(1);
+	}
+
+	writeReg(RESET);
+
+	usleep(100000);
+	for (i = 0; i < 6; i++) {
+		C[i] = PROM_read(fd4S, 0xA2 + (i * 2));
+	}
+
+#endif
+	return 0;
+}
 MS5611Class MS5611;

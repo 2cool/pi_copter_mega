@@ -83,7 +83,7 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 			int x2 = dx[ind & 1];
 			int y1 = dy[(ind - 1) & 1];
 			int y2 = dy[ind & 1];
-			if ( sqrt((x1-x2)*(x1 - x2)+(y1-y2)*(y1 - y2))<10)
+			//if ( sqrt((x1-x2)*(x1 - x2)+(y1-y2)*(y1 - y2))<10)
 				g.DrawLine(&pen, x1, y1, x2, y2);
 			ind++;
 
@@ -139,7 +139,7 @@ boolean new_mode_ver = false;
 int indexes[] = { 0,0,0,0,0,0,0,0,0,0,0 };
 
 int Graph::decode_Log() {
-	press.init();
+	
 	gps_log.init();
 
 
@@ -295,9 +295,10 @@ int Graph::decode_Log() {
 	kalman[EXP2] = Kalman(100, 0);
 	kalman[EXP3] = Kalman(100, 0);
 	kalman[G_SPEED] = Kalman(100, 0);
-	kalman[PRESSURE] = Kalman(30, 0);
-	kalman[PRESSURE_SPEED] = Kalman(30, 0);
-	kalman[PRESSURE_ACC] = Kalman(300, 0);
+
+	kalman[PRESSURE] = Kalman(30000, 0);
+	kalman[PRESSURE_SPEED] = Kalman(30000, 0);
+	kalman[PRESSURE_ACC] = Kalman(30000, 0);
 
 
 	//	kalman[HEADING] = Kalman(10, 0);
@@ -312,6 +313,10 @@ int Graph::decode_Log() {
 	mi[0] = mi[1] = mi[2] = mi[3] = 0;
 	bat = 0;
 	cf = flags[FILTER] ? 0.1 : 1;
+
+
+
+	press.init(flags[FILTER], 1, 0.01, 0.01);
 
 
 	FILE *klm = fopen("d:/klm.txt", "w");
@@ -387,10 +392,15 @@ int Graph::decode_Log() {
 		case LOG::BAL: {
 
 
-
+			//------------------------------------------------------------------------------------
 			sensors_data[dataI].sd[TIME] = mpu.time;
 			sensors_data[dataI].sd[DT] = mpu.dt;
-			filter(press.alt, dataI, PRESSURE);
+
+
+			sensors_data[dataI].sd[PRESSURE] = press.alt;
+			sensors_data[dataI].sd[PRESSURE_SPEED] = press.speed;
+			sensors_data[dataI].sd[PRESSURE_ACC] = press.acc;
+
 			sensors_data[dataI].sd[X] = gps_log.gx2home;
 			sensors_data[dataI].sd[Y] = gps_log.gy2home;
 			sensors_data[dataI].sd[GPS_Z] = gps_log.z;
@@ -830,7 +840,7 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 
 	int y0 = (rect.Y + rect.Height / 2);
 	double mull = (double)rect.Height / 2 / 45;
-
+#ifdef DKDKDKDKDK
 	draw(g, rect, y0,mull, PITCH);
 	draw(g,  rect, y0, mull, ROLL);
 	draw(g, rect, y0, mull, R_PITCH);
@@ -922,22 +932,23 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 	mull = (double)rect.Height/150;
 	y0 -= mull * 100;
 	draw(g, rect, y0, mull, SZ);
+#endif
+	//----------------------------------------------------------
 
+	draw(g, rect, press.max_alt, press.min_alt, PRESSURE);
+	draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
+	draw(g, rect, press.max_sp, press.min_sp, PRESSURE_SPEED);
 
-	y0 = (rect.Y + rect.Height);
-	mull = (double)rect.Height / 70;// press.max_alt;
-	draw(g, rect, y0, mull, PRESSURE);
-
-
+#ifdef DKDKDOOOdo
 //	y0 = (rect.Y + rect.Height + 100);
 	//mull = (double)rect.Height / 50;// press.max_alt;
 	draw(g, rect, y0, mull, GPS_Z);
 
 	mull = (double)rect.Height / 2 / 300; 
 	y0 = (rect.Y + rect.Height / 2);
-	draw(g, rect, y0, mull, PRESSURE_ACC);
+	
 	mull = (double)rect.Height / 2 / 5;
-	draw(g, rect, y0, mull, PRESSURE_SPEED);
+	
 
 	mull = (double)rect.Height / 3;
 //	y0 = (rect.Y + rect.Height / 2);
@@ -958,7 +969,7 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 
 
 
-
+#endif
 
 
 
@@ -966,16 +977,20 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 	return 0;
 }
 
-void Graph::draw(Graphics &g, RectF rect, int y0, double mull, int sdi) {
+void Graph::draw(Graphics &g, RectF rect, float max, float min, int sdi) {
 	//void Graph::draw_ang(Graphics &g, Pen &pen, RectF rect, double zoom, double pos, int sdi) {
 
+	int y0 = (rect.Y + rect.Height/2);
+	float base = min + (max - min) / 2;
+
+	float mull = (double)rect.Height / (max - min);
 
 	if (flags[sdi]) {
 		int dy[2];
 		int index = 0;
 
 
-		dy[0] = y0 - sensors_data[(int)(p)].sd[sdi] * mull;
+		dy[0] = y0 - (sensors_data[(int)(p)].sd[sdi]-base) * mull;
 		if (dy[0] > rect.Height)
 			dy[0] = rect.Height;
 		if (dy[0] < rect.Y)
@@ -984,7 +999,7 @@ void Graph::draw(Graphics &g, RectF rect, int y0, double mull, int sdi) {
 			int in = (int)((p)+(step*i));
 			if (in >= lSize)
 				return;
-			dy[index & 1] = y0 - sensors_data[in].sd[sdi] * mull;
+			dy[index & 1] = y0 - (sensors_data[in].sd[sdi]-base) * mull;
 			if (dy[index & 1] > rect.Height + rect.Y)
 				dy[index & 1] = rect.Height + rect.Y;
 			if (dy[index & 1] < rect.Y)

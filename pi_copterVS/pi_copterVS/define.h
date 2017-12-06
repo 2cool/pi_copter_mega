@@ -10,7 +10,7 @@
 
 //------------------------------------------------
 #define FALSE_WIRE
-//#define MOTORS_OFF
+#define MOTORS_OFF
 
 #define TEST_GPS_CCURACY
 

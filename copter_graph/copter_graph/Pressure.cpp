@@ -1,14 +1,22 @@
 #include "stdafx.h"
 #include "Pressure.h"
 #include <math.h>
-void Pressure::init()
+void Pressure::init(bool filter, double cf1, double cf2, double cf3)
 {
-	max_alt = -10000;
-	start_alt = 10101010;
+	f = filter;
+	cf_alt = cf1;
+	cf_sp = cf2;
+	cf_acc = cf3;
+	min_alt = min_sp=min_a=10000;
+	max_alt = max_sp=max_a=-10000;
+
 	acc = 0;
 	speed = 0;
 	dt = 0;
 	alt = 0;
+
+	t_alt = 0;
+	t_sp = 0;
 }
 int Pressure::view(int &indexes, char buffer[], int &i) {
 	indexes++;
@@ -19,21 +27,46 @@ int Pressure::view(int &indexes, char buffer[], int &i) {
 	return 0;
 }
 
+
 int Pressure::decode(char buffer[], int &i)
 {
+
 	float pressure = *(float*)(&buffer[i + 1]);
 	
 #define PRESSURE_AT_0 101325
-	double t_alt = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));
-	if (start_alt == 10101010)
-		start_alt = t_alt;
-	t_alt -= start_alt;
-	max_alt = max(max_alt, t_alt);
-	float tpressure_speed = (t_alt - alt) / dt;
-	alt = t_alt;
-	acc = (tpressure_speed - speed) / dt;
-	speed = tpressure_speed;
+	double t = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));
 
+	if (f && cf_alt*(dt * 100)<=1)
+		t_alt += (t - t_alt)*cf_alt*(dt * 100);
+	else
+		t_alt = t;
+
+	max_alt = max(max_alt, t_alt);
+	min_alt = min(min_alt, t_alt);
+	if (dt < 0.02)
+		dt = 0.02;
+	if (f && cf_sp*(dt * 100)<=1)
+		t_sp += ((t_alt - alt) / dt - t_sp)*cf_sp*(dt*100);
+	else
+		t_sp = (t_alt - alt) / dt;
+	if (t_sp > 10)
+		t_sp = 10;
+	if (t_sp < -5)
+		t_sp = -5;
+	min_sp = min(min_sp, t_sp);
+	max_sp = max(max_sp, t_sp);
+	alt = t_alt;
+	if (f && cf_acc*(dt * 100)<=1)
+		acc += ((t_sp - speed) / dt - acc)*cf_acc*(dt * 100);
+	else
+		acc = (t_sp - speed) / dt;
+	if (acc > 20)
+		acc = 20;
+	if (acc < -10)
+		acc = -10;
+	min_a = min(min_a, acc);
+	max_a = max(max_a, acc);
+	speed = t_sp;
 	dt = 0;
 	i += 5;
 	return 0;

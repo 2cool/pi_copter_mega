@@ -99,6 +99,7 @@ class MpuClass
 	uint64_t acc_callibr_time;
 	float DRAG_K,_0007;
  public:
+	 float hower_thr, min_thr, fall_thr;
 	 float e_accZ, e_speedZ, w_accZ;
 	 uint64_t mputime;
 	float e_accX, e_accY;

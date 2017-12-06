@@ -8,6 +8,7 @@
 #include "Balance.h"
 #include "Telemetry.h"
 
+#define MOTOR_FORCE 0.6
 
 //#define NOISE_ON
 
@@ -75,7 +76,7 @@ double tracc[3] = { 0,0,0 };
 
 double f_ang[3] = { 0,0,0 };
 double wind_f[3][4];
-const double f_speed_k[3] = { 0.021,0.021,0.24 };  //12.5  grad pri 10/m/s
+const double f_speed_k[3] = { 0.021,0.021,0.232 };  //12.5  grad pri 10/m/s
 
 const double f_gyro_k[3] = { 0.05,0.05,3.8 };
 
@@ -253,7 +254,7 @@ void EmuClass::update(float fm_[4], double dt) {
 
 
 
-	const double MCF = 1;
+	const double MCF = 0.2;
 	//fm_[0] = 0.6;
 	//fm_[1] = 0.5;
 	//fm_[2] = 0.6;
@@ -261,10 +262,11 @@ void EmuClass::update(float fm_[4], double dt) {
 
 	if (dt > 0.02)
 		dt = 0.02;
-	fm[0] += ((fm_[0] + fm_[1])*0.5 - fm[0])*MCF;
-	fm[1] += ((fm_[1] + fm_[3])*0.5 - fm[1])*MCF;
-	fm[2] += ((fm_[2] + fm_[0])*0.5 - fm[2])*MCF;
-	fm[3] += ((fm_[3] + fm_[2])*0.5 - fm[3])*MCF;
+
+	fm[0] += ((fm_[0] + fm_[1])*MOTOR_FORCE - fm[0])*MCF;
+	fm[1] += ((fm_[1] + fm_[3])*MOTOR_FORCE - fm[1])*MCF;
+	fm[2] += ((fm_[2] + fm_[0])*MOTOR_FORCE - fm[2])*MCF;
+	fm[3] += ((fm_[3] + fm_[2])*MOTOR_FORCE - fm[3])*MCF;
 
 
 	fmr[0] += (fm_[0] - fmr[0])*MCF;

@@ -112,7 +112,7 @@ class Megai2c
 {
 protected:
 	 int sms_received;
-
+	 bool ring_received;
 public:
 	 int init();
 

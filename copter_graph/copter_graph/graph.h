@@ -88,7 +88,7 @@ private:
 	char * buffer;
 	int  sensorsData;
 	long lSize;
-	void draw(Graphics &g, RectF rect, int y0, double mul, int sdi);
+	void draw(Graphics &g, RectF rect, float max, float min, int sdi);
 	MODE modes[100];
 	uint32_t def_mode =  Z_STAB + XY_STAB;
 	int modesI = 0;
