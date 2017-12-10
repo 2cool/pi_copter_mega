@@ -1,7 +1,7 @@
 #define PROG_VERSION "ver 3.171201_1 \n"
 
 #define ONLY_ONE_RUN
-//#define SIM800_F
+#define SIM800_F
 
 #include <cstdio>
 #include <signal.h>

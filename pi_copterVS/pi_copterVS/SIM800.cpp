@@ -1,5 +1,5 @@
 
-#define PPP_INET
+
 
 
 //------------------------------------------------------
@@ -8,6 +8,8 @@
 #include "Telemetry.h"
 
 #define SIM_UPD_P 5000
+//#define PPP_INET
+
 
 static volatile int error = -1;
 volatile uint32_t command = 0;
@@ -101,9 +103,9 @@ void loop_t()
 							if (Autopilot.go2homeState() == false) {
 								command = GO2HOME;
 								fprintf(Debug.out_stream, "recived mess - go2home\n");
-								send += "go2home OK\"";
+								send += "go2home OK";
 							}else
-								send += "already on the way to home\"";
+								send += "already on the way to home";
 						}else if (message.find("stat") == 0) {
 							if (Autopilot.motors_is_on()) {
 								send += "m_on,";
