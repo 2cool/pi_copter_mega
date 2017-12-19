@@ -13,6 +13,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -27,13 +28,8 @@ public class DrawMap extends View {
     static public int type=7;
 
 
-    static MYButton bZoom_out,bAddDot,bProgLoad, bEdit,bDelite;
+    static MYButton bZoom_out,bAddDot,bProgLoad, bEdit,bDelite,bMenu;
     static MySlider sDirection;
-
-
-
-
-
 
 
     static public UPD_MON monitor=new UPD_MON();
@@ -45,7 +41,9 @@ public class DrawMap extends View {
     Paint black = new Paint();
 
     public DrawMap(Context context) {
+
         super(context);
+
     }
     private int oldtx=0, oldty=0;
     private void dragImgM(final Point c){
@@ -109,14 +107,14 @@ public class DrawMap extends View {
         }
     }
     private void init(Canvas c){
-
+        Rect r=c.getClipBounds();
         updater();
         bZoom_out=new MYButton(45,45,40,"zoom",Color.GRAY);
-        bAddDot=new MYButton(440,500,40,"add",Color.GREEN);
-        bEdit=new MYButton(440,400,40,"edit",Color.YELLOW);
-        bDelite=new MYButton(440,300,40,"del",Color.RED);
-
-        bProgLoad=new MYButton(440,45,40,"load",Color.RED);;
+        bAddDot=new MYButton(r.width()-80,500,40,"add",Color.GREEN);
+        bEdit=new MYButton(r.width()-80,400,40,"edit",Color.YELLOW);
+        bDelite=new MYButton(r.width()-80,300,40,"del",Color.RED);
+        bMenu=new MYButton(r.width()-80,r.height()-200,40,"menu",Color.WHITE);
+        bProgLoad=new MYButton(r.width()-80,45,40,"load",Color.RED);;
        // bProgStart=new MYButton(440,300,40);;
 
 
@@ -126,7 +124,8 @@ public class DrawMap extends View {
         int sx=(c.getWidth()+512)>>8;
         int sy=(c.getHeight()+512)>>8;
         imgM=new MyTile[sx][sy];
-        sDirection=new MySlider(40,700,400,0.5);
+
+        sDirection=new MySlider(40,r.height()-100,r.width()-80,0.5);
         for (int y = 0; y < sy; y++)
             for (int x = 0; x < sx; x++)
                 imgM[x][y] = new MyTile();
@@ -241,7 +240,7 @@ public class DrawMap extends View {
     long timeDown=0,timeUp=0;
     int tap=0;
     final long tap_max_time = 300;
-    final int DRAG_LEN=32;
+    final int DRAG_LEN=1;//      32;
     static public boolean progLoaded=false;
     @TargetApi(Build.VERSION_CODES.FROYO)
     @Override
@@ -269,6 +268,14 @@ public class DrawMap extends View {
             if (bAddDot.pressed() && progLoaded==false){
                 addDot();
                 progLoaded=false;
+
+            }
+            invalidate();
+            return true;
+        }
+        if (bMenu.onTouchEvent(event)){
+            if (bMenu.pressed()){
+                Map.openMenu=true;
 
             }
             invalidate();
@@ -340,8 +347,8 @@ public class DrawMap extends View {
                 int deltaX=(int)(xDown-x);
                 int deltaY=(int)(yDown-y);
                 if (Math.abs(deltaX)>=DRAG_LEN || Math.abs(deltaY)>=DRAG_LEN) {
-                    int addx=(int) (xDown - x)>>2;
-                    int addy=(int) (yDown - y)>>2;
+                    int addx=(int) (xDown - x);//>>2;
+                    int addy=(int) (yDown - y);//>>2;
                     if (addx==0 && addy==0)
                         return true;
                     screenP.x += addx;
@@ -620,6 +627,7 @@ public class DrawMap extends View {
         bProgLoad.draw(c);
         bEdit.draw(c);
         bDelite.draw(c);
+        bMenu.draw(c);
 
         sDirection.draw(c);
         drawCross(c);

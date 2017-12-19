@@ -9,7 +9,14 @@ class SIM800
 private:
 	
 public:
-	
+	bool pppstoped();
+	string sms;
+	volatile bool sms_done;
+	void sendSMS(string message);
+	void readSMS(int n, bool and_del=false);
+
+
+
 	volatile bool _loop;
 	void start();
 	void stop();

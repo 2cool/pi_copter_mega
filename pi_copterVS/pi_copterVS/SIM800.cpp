@@ -1,6 +1,9 @@
 
-
-
+#include <linux/i2c-dev.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <linux/types.h>
 
 //------------------------------------------------------
 #include "SIM800.h"
@@ -19,6 +22,83 @@ static bool first_false_command = true;
 static const std::string head =  "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/";
 static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_id=241349746&text=";
 
+
+int _sms_n;
+bool _delite_sms_n;
+
+
+int send_command(string &mes, int timeout = 1000) {
+	int fd_in = open("/dev/tnt0", O_RDWR | O_NOCTTY | O_SYNC);
+	if (fd_in < 0)
+	{
+		fprintf(Debug.out_stream, "error %d opening /dev/tnt0: %s", errno, strerror(errno));
+		mes = "error";
+		return -1;
+	}
+	write(fd_in, mes.c_str(), mes.length());
+	mes = "";
+	int tcur;
+	int tlast_upd = tcur = millis();
+	while (tcur - tlast_upd < timeout) {
+		int a_in;
+		delay(10);
+		tcur = millis();
+		ioctl(fd_in, FIONREAD, &a_in);
+		if (a_in) {
+			tlast_upd = tcur;
+			char buf[256];
+			int av = read(fd_in, &buf, a_in);
+
+			
+
+			mes += string(buf, av);
+
+			int pos = max(0, mes.length() - 5);
+			int ok = mes.find("OK\r\n",pos);
+			pos = max(0, mes.length() - 8);
+			int err = mes.find("ERROR\r\n",pos);
+			 
+			if ( ok>=0 || err >=0) {
+				
+				for (int i = 0; i < mes.length(); i++)
+				if (mes[i] == '\r')// || mes[i] == '\n')
+					mes[i] = ' ';
+				//printf("%s\n",mes.c_str());
+				break;
+			}
+		}
+	}
+
+
+	close(fd_in);
+	return mes.length();
+}
+
+void readsms() {
+	string mes = "AT+CMGF=1\r";
+	int res=send_command(mes);
+	mes = "AT+CMGR=" + to_string(_sms_n) + "\r";
+	res=send_command(mes);
+	printf("%s\n", mes.c_str());
+	sim.sms_done = true;
+}
+
+void SIM800::sendSMS(string message) {
+
+	
+}
+void SIM800::readSMS(int n, bool and_del) {
+	if (sms_done) {
+		sms_done = false;
+		_sms_n = n;
+		_delite_sms_n = and_del;
+		thread t(readsms);
+		t.detach();
+	}
+}
+
+
+
 int SIM800::get_error() { return error; }
 
 uint32_t SIM800::get_commande() {
@@ -26,7 +106,15 @@ uint32_t SIM800::get_commande() {
 	command ^= command;
 	return com; }
 
+//-----------------------------------------------
+string getLocation() {
+	std::string req = 	std::to_string(GPS.loc.lat_) + "," + std::to_string(GPS.loc.lon_) + "," + std::to_string((int)GPS.loc.altitude) ;
+	return req;
+}
+//-----------------------------------------------
 
+volatile bool ppp_stoped = true;
+bool SIM800::pppstoped() { return ppp_stoped; }
 void loop_t()
 {
 	static int old_message_data=0,last_alt=0;
@@ -35,8 +123,8 @@ void loop_t()
 
 	//poff - off ppp0
 	std::string ret;
+	ppp_stoped = true;
 #ifdef PPP_INET
-	
 	usleep(10000000);
 //	fprintf(Debug.out_stream, "pop rnet\n");
 	ret = exec("pon rnet");
@@ -45,8 +133,9 @@ void loop_t()
 		error = 1;
 		return;
 	}
-	usleep(10000000);
-	//fprintf(Debug.out_stream, "ifconfig | grep ppp0\n");
+	ppp_stoped = false;
+	usleep(5000000);
+	fprintf(Debug.out_stream, "ifconfig | grep ppp0\n");
 	ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
 	if (ret.length() == 0) {
 		fprintf(Debug.out_stream, "ERROR no ppp0\n");
@@ -99,6 +188,7 @@ void loop_t()
 					if (first_false_command == false) {
 						std::string send = htext;
 						std::string message = upd.substr(mes_pos, upd.rfind("\"}}") - mes_pos);
+						
 						if (message.find("go2home") == 0) {
 							if (Autopilot.go2homeState() == false) {
 								command = GO2HOME;
@@ -106,7 +196,8 @@ void loop_t()
 								send += "go2home OK";
 							}else
 								send += "already on the way to home";
-						}else if (message.find("stat") == 0) {
+						}else if (message.find("stat") == 0) 
+						{
 							if (Autopilot.motors_is_on()) {
 								send += "m_on,";
 								if (Autopilot.go2homeState())
@@ -117,6 +208,7 @@ void loop_t()
 							else
 								send += "m_off,";
 							send += "b" + std::to_string((int)Telemetry.get_voltage4one_cell())+",";
+							send += getLocation() + ",";
 						}
 						else {
 							send += "?";
@@ -129,19 +221,25 @@ void loop_t()
 			first_false_command = false;
 		}
 		//send location
-		if ((time - Autopilot.last_time_data_recived) > 1000) {
-			if (GPS.loc.dist2home_2 - last_dist2home2 > 625 || abs(GPS.loc.altitude - last_alt) > 10 || (time - last_time_loc_send) > 30000) {
+		if ((time - Autopilot.last_time_data_recived) > 1000) 
+		{
+			if (GPS.loc.dist2home_2 - last_dist2home2 > 625 || abs(GPS.loc.altitude - last_alt) > 10 || (time - last_time_loc_send) > 300000) 
+			{
 				last_time_loc_send = time;
 				last_dist2home2 = GPS.loc.dist2home_2;
 				last_alt = GPS.loc.altitude;
 
-				std::string req = htext + \
-					std::to_string(GPS.loc.lat_) + "," + std::to_string(GPS.loc.lon_) + "," + std::to_string((int)GPS.loc.altitude) + "\"";
-				std::string send = exec(req.c_str());
+				std::string send = exec(htext + getLocation() + "\"");
 			}
 		}
 	}
-
+#ifdef PPP_INET
+	
+	std:string ret=exec("poff");
+	fprintf(Debug.out_stream, "%s\n",ret);
+#endif
+	delay(1000);
+	ppp_stoped = true;
 }
 
 
@@ -151,6 +249,12 @@ void SIM800::stop() {
 
 void SIM800::start()
 {
+	sms_done = true;
+	readSMS(1, false);
+	readSMS(2, false);
+
+
+
 	error = -1;
 	command = 0;
 	_loop = true;

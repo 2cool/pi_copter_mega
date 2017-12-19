@@ -1465,7 +1465,7 @@ public final class R {
     public static final int always=0x7f07001d;
     public static final int b_Prog=0x7f07001e;
     public static final int b_altHold=0x7f07001f;
-    public static final int b_compas_c=0x7f070020;
+    public static final int b_menu=0x7f070020;
     public static final int b_minus=0x7f070021;
     public static final int b_plus=0x7f070022;
     public static final int b_power05=0x7f070023;

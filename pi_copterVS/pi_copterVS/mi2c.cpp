@@ -33,7 +33,7 @@ int Megai2c::getsim(char * str) {
 
 char gsm_send_buf[32];
 
-int Megai2c::send2sim(char *str, int len) {
+int Megai2c::send2sim(const char *str, int len) {
 	gsm_send_buf[0] = 2;
 	memcpy(gsm_send_buf + 1, str, len);
 	//usleep(50);
@@ -121,6 +121,12 @@ int Megai2c::gsm_loop()
 			a_in = 16;
 
 		int av = read(fd_in, &gsm_in_buf, a_in);
+
+/*		printf("<-");
+		for (int i = 0; i < av; i++)
+			printf("%c", (char)gsm_in_buf[i]);
+		printf("\n");
+		*/
 		send2sim(gsm_in_buf, a_in);
 	}
 	int res = getsim(gsm_in_buf);
@@ -131,6 +137,11 @@ int Megai2c::gsm_loop()
 	if (res) {
 		//if no ppp
 		//m_parser(gsm_in_buf, res);
+/*		printf("->");
+		for (int i = 0; i < res; i++)
+			printf("%c%i", (char)gsm_in_buf[i],(int)gsm_in_buf[i]);
+		printf("\n");
+		*/
 		write(fd_in, gsm_in_buf, res);
 	}
 
@@ -138,10 +149,17 @@ int Megai2c::gsm_loop()
 
 }
 
+
+bool Megai2c::ppp(bool f) {
+	ppp_on = true;
+	return ppp_on;
+}
+
 int Megai2c::init()
 {
 	sms_received = 0;
 	ring_received = false;
+	ppp_on = false;
 
 	if ((fd = open("/dev/i2c-0", O_RDWR)) < 0) {
 		fprintf(Debug.out_stream, "Failed to open /dev/i2c-0\n");

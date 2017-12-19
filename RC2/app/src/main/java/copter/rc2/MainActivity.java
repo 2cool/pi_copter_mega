@@ -85,6 +85,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	static public DrawView drawView=null;
     Button b_start;
     static ToggleButton b_altHold,b_smartCTRL,b_toHome,b_prog;
+    static Button b_menu;
     static public CheckBox ch_secure,cb_compass,cb_horizont;
     RelativeLayout rl1;
 
@@ -170,8 +171,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.activity_main);
 
         b_altHold=(ToggleButton)findViewById(R.id.b_altHold);
-        b_smartCTRL=(ToggleButton)findViewById(R.id.t_smartK);;
+        b_smartCTRL=(ToggleButton)findViewById(R.id.t_smartK);
         b_toHome=(ToggleButton)findViewById(R.id.b_toHome);
+        b_menu= (Button)findViewById(R.id.b_menu);
         b_start=(Button)findViewById(R.id.b_start);
         b_prog= (ToggleButton)findViewById(R.id.b_Prog);
 
@@ -211,6 +213,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     static private MenuItem compass_cal=null;
     static private MenuItem speed_r=null;
     static private MenuItem map=null;
+
 
 
 
@@ -500,7 +503,7 @@ public class MainActivity extends Activity implements SensorEventListener {
             //    old_control_bits=control_bits;
             // else
             //   return;
-
+            b_menu.setEnabled(true);
             b_start.setText(((control_bits & MOTORS_ON)!=0) ? "Stop" : "Start");
             b_start.setEnabled(secure_flug && Commander.link);
             b_toHome.setChecked((control_bits & GO2HOME) != 0);
@@ -522,7 +525,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         //Commander.button="SCT";
 
     }
-
+public void openMenu(View view){
+    openOptionsMenu();
+}
 
     public void Prog(View view){
         b_prog.setChecked(!b_prog.isChecked());

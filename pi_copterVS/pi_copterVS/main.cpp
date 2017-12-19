@@ -1,6 +1,6 @@
-#define PROG_VERSION "ver 3.171201_1 \n"
+#define PROG_VERSION "ver 3.171218_1 \n"
 
-#define ONLY_ONE_RUN
+//#define ONLY_ONE_RUN
 #define SIM800_F
 
 #include <cstdio>
@@ -353,8 +353,8 @@ int main(int argc, char *argv[]) {
 
 		Debug.run_main = true;
 		Debug.reboot = 0;
-		while (Debug.run_main && flag == 0) {
-
+		
+		while (flag == 0){
 			if (loop()) {
 				//usleep(5400);
 			//	int ttt = micros();
@@ -371,25 +371,35 @@ int main(int argc, char *argv[]) {
 				//Debug.dump();
 			}
 
+
+			if (Debug.run_main == false) {
+#ifdef SIM800_F
+				if (sim._loop) {
+					fprintf(Debug.out_stream, "try run poff...\n");
+					sim.stop();
+				}
+				if (sim.pppstoped())
+					break;
+#else
+				break;
+#endif
+			}
 		}
 	}
-	
-	WiFi.stopServer();
-	if (Debug.run_main==false)
-		fprintf(Debug.out_stream, "\n exit\n");
 	if (flag!=0)
 		fprintf(Debug.out_stream, "\n main Signal caught!\n");
+	WiFi.stopServer();
 	Settings.write();
-
-	
 	Log.close();
-	usleep(3000000);
-	fflush(Debug.out_stream);
-	fclose(Debug.out_stream);
+	usleep(5000000);
+
+	if (Debug.run_main==false)
+		fprintf(Debug.out_stream, "\n exit\n");
 	if (Debug.reboot)
 		system(Debug.reboot==1?"reboot":"shutdown now");
 
-
+	fflush(Debug.out_stream);
+	fclose(Debug.out_stream);
 #ifdef ONLY_ONE_RUN
 
 	if (-1 == semctl(semid, 0, IPC_RMID, 0))

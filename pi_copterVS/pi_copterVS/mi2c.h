@@ -113,9 +113,10 @@ class Megai2c
 protected:
 	 int sms_received;
 	 bool ring_received;
+	 bool ppp_on;
 public:
 	 int init();
-
+	 bool ppp(bool f);
 
 	 bool gimagl(float pitch, float roll);
 
@@ -131,14 +132,14 @@ public:
 
 	 int gsm_loop();
 	
-
+	 int send2sim(const char *str, int len);
+	 int getsim(char * str);
 
 private:
 	
 	 void m_parser(char *str, int len);
 	 uint16_t correct(const float n);
-	 int send2sim(char *str, int len);
-	 int getsim(char * str);
+
 };
 
 extern Megai2c mega_i2c;

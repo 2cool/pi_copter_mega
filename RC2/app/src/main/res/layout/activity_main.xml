@@ -130,17 +130,17 @@
         android:checked="false" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/b_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text=""
-        android:id="@+id/b_compas_c"
-        android:layout_below="@+id/t_smartK"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignLeft="@+id/t_smartK"
-        android:layout_alignStart="@+id/t_smartK" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignStart="@+id/t_smartK"
+        android:layout_below="@+id/t_smartK"
+        android:enabled="false"
+        android:onClick="openMenu"
+        android:text="menu" />
 
     <ToggleButton
         android:id="@+id/b_toHome"
@@ -149,7 +149,7 @@
         android:text="ToggleButton"
         android:textOff="R.T.L."
         android:textOn="R.T.L."
-        android:layout_below="@+id/b_compas_c"
+        android:layout_below="@+id/b_menu"
         android:layout_alignLeft="@+id/b_minus"
         android:layout_alignStart="@+id/b_minus"
         android:onClick="toHome"
@@ -166,8 +166,8 @@
         android:onClick="Prog"
         android:layout_alignBaseline="@+id/b_toHome"
         android:layout_alignBottom="@+id/b_toHome"
-        android:layout_toLeftOf="@+id/b_compas_c"
-        android:layout_toStartOf="@+id/b_compas_c" />
+        android:layout_toLeftOf="@+id/b_menu"
+        android:layout_toStartOf="@+id/b_menu" />
 
 
 

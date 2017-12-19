@@ -7,6 +7,7 @@ package copter.rc2;
 
 
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,7 +36,7 @@ public class Map extends Activity {
     static public DrawMap drawmap=null;
 
     static public Programmer prog=new Programmer();
-
+    static public boolean openMenu=false;
     @Override
     protected  void onStart() {
         super.onStart();
@@ -111,7 +113,9 @@ public class Map extends Activity {
 
 
 
-
+    public  void openMenu(){
+        openOptionsMenu();
+    }
 
     void add2menu_prog_loading(Menu menu){
         SubMenu fileMenu = menu.addSubMenu("Load prog");
@@ -283,6 +287,7 @@ public class Map extends Activity {
 
                 alertDialog.setPositiveButton("YES",
                         new DialogInterface.OnClickListener() {
+                            @TargetApi(Build.VERSION_CODES.HONEYCOMB)
                             public void onClick(DialogInterface dialog, int which) {
                                 String fn = input.getText().toString();
                                 try {
