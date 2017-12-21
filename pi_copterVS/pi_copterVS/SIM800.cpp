@@ -27,7 +27,7 @@ int _sms_n;
 bool _delite_sms_n;
 
 
-int send_command(string &mes, int timeout = 1000) {
+int send_command(string &mes, bool resp_more=false, int timeout = 5000) {
 	int fd_in = open("/dev/tnt0", O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd_in < 0)
 	{
@@ -39,7 +39,9 @@ int send_command(string &mes, int timeout = 1000) {
 	mes = "";
 	int tcur;
 	int tlast_upd = tcur = millis();
+	int ok;
 	while (tcur - tlast_upd < timeout) {
+		ok = -1;
 		int a_in;
 		delay(10);
 		tcur = millis();
@@ -52,12 +54,17 @@ int send_command(string &mes, int timeout = 1000) {
 			
 
 			mes += string(buf, av);
-
-			int pos = max(0, mes.length() - 5);
-			int ok = mes.find("OK\r\n",pos);
-			pos = max(0, mes.length() - 8);
-			int err = mes.find("ERROR\r\n",pos);
-			 
+			int  err = ok = -1;
+			if (resp_more) {
+				int pos = max(0, mes.length() - 3);
+				ok = mes.find("> ", pos);
+			}
+			else {
+				int pos = max(0, mes.length() - 5);
+				ok = mes.find("OK\r\n", pos);
+				pos = max(0, mes.length() - 8);
+				err = mes.find("ERROR\r\n", pos);
+			}
 			if ( ok>=0 || err >=0) {
 				
 				for (int i = 0; i < mes.length(); i++)
@@ -71,7 +78,7 @@ int send_command(string &mes, int timeout = 1000) {
 
 
 	close(fd_in);
-	return mes.length();
+	return (ok>=0)?0:-1;
 }
 
 void readsms() {
@@ -83,9 +90,46 @@ void readsms() {
 	sim.sms_done = true;
 }
 
-void SIM800::sendSMS(string message) {
+string mes2send;
+string telNumber;
 
-	
+void sendsms() {
+/*
+	AT+CMGF=1
+	AT+CMGS="+380661140320\r"
+	>
+	"hello world"+char(26)
+	+CMGS: 62
+	*/
+	string mes = "AT+CMGF=1\r";
+	int res = send_command(mes);
+	if (res == 0) {
+		printf("%s\n", mes.c_str());
+		mes = "AT+CMGS=\"+380661140320\"\r\n";
+		res = send_command(mes, true);
+		if (res == 0) {
+			printf("%s ", mes.c_str());
+			mes = mes2send + char(26);
+			res = send_command(mes);
+			if (res == 0) {
+				printf("%s\n", mes.c_str());
+				
+			}else
+				printf("ERROR\n");
+		}else
+			printf("ERROR\n");
+	}
+	else
+		printf("ERROR\n");
+	sim.sms_done = true;
+}
+void SIM800::sendSMS(string message) {
+	if (sms_done) {
+		sms_done = false;
+		mes2send = message;
+		thread t(sendsms);
+		t.detach();
+	}
 }
 void SIM800::readSMS(int n, bool and_del) {
 	if (sms_done) {
@@ -250,16 +294,17 @@ void SIM800::stop() {
 void SIM800::start()
 {
 	sms_done = true;
-	readSMS(1, false);
-	readSMS(2, false);
+	sendSMS("hi2all");
+	//readSMS(1, false);
+	//readSMS(2, false);
 
 
 
 	error = -1;
 	command = 0;
 	_loop = true;
-	thread t(loop_t);
-	t.detach();
+	//thread t(loop_t);
+	//t.detach();
 
 }
 

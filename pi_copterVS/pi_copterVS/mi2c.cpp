@@ -121,12 +121,12 @@ int Megai2c::gsm_loop()
 			a_in = 16;
 
 		int av = read(fd_in, &gsm_in_buf, a_in);
-
-/*		printf("<-");
+/*
+		printf("<-");
 		for (int i = 0; i < av; i++)
-			printf("%c", (char)gsm_in_buf[i]);
+			printf("%c (%i) ", (char)gsm_in_buf[i],(int)gsm_in_buf[i]);
 		printf("\n");
-		*/
+	*/	
 		send2sim(gsm_in_buf, a_in);
 	}
 	int res = getsim(gsm_in_buf);
@@ -137,9 +137,10 @@ int Megai2c::gsm_loop()
 	if (res) {
 		//if no ppp
 		//m_parser(gsm_in_buf, res);
-/*		printf("->");
+		/*
+		printf("->");
 		for (int i = 0; i < res; i++)
-			printf("%c%i", (char)gsm_in_buf[i],(int)gsm_in_buf[i]);
+			printf("%c (%i) ", (char)gsm_in_buf[i], (int)gsm_in_buf[i]);
 		printf("\n");
 		*/
 		write(fd_in, gsm_in_buf, res);
