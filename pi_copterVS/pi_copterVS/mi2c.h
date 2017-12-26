@@ -111,15 +111,16 @@ timer5 	16 		C 			- 				46
 class Megai2c
 {
 protected:
-	 int sms_received;
+	
+public:
+	bool _ring_bit_high;
 	 bool ring_received;
 	 bool ppp_on;
-public:
 	 int init();
 	 bool ppp(bool f);
 
 	 bool gimagl(float pitch, float roll);
-
+	 void set_led_color(uint8_t n, uint8_t r, uint8_t g, uint8_t b);  // n form 1 to 8
 	 void sound(const float);
 	 void beep_code(uint8_t);
 	 void throttle(const float n0, const float n1, const float n2, const float n3);

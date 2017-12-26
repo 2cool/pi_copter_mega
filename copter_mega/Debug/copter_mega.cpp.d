@@ -13,4 +13,5 @@ C:\Users\igor.DESKTOP\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\De
  C:\arduino\hardware\arduino\avr\variants\mega/pins_arduino.h \
  C:\arduino\hardware\arduino\avr\libraries\Wire\src/Wire.h \
  C:\arduino\hardware\arduino\avr\cores\arduino/Stream.h \
+ C:\arduino\libraries/Adafruit_NeoPixel-master\Adafruit_NeoPixel.h \
  C:\Users\igor.DESKTOP\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\gps.h

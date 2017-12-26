@@ -9,7 +9,7 @@
 #define DEFINE_H
 
 //------------------------------------------------
-#define FALSE_WIRE
+//#define FALSE_WIRE
 #define MOTORS_OFF
 
 #define TEST_GPS_CCURACY
@@ -33,7 +33,6 @@
 #define LED_ON
 
 
-//#define BEEPS_ON
 #define LOST_BEEP
 
 

@@ -10,6 +10,35 @@
 #include "Autopilot.h"
 #include "Telemetry.h"
 
+
+string cyr[] = { 
+	"A","B","V","G","D","E","ZH","Z","I","J","K","L","M","N","O","P","R","S","T","U","F","X","C","CH","SH","SHH","\"","Y","'","EH","YU","YA",
+	"a", "b", "v", "g", "d", "e", "zh", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "x", "c", "ch", "sh", "shh", "\"", "y", "'", "eh", "yu", "ya" };
+
+string unicod2trasns(string text) {
+	if (text.length() < 4)
+		return "";
+	int pos;
+	string out = "";
+	for (int p = 0; p < text.length(); p += 4) {
+		if (text.substr(p, 2).compare("04")==0) {
+			int c = stoi(text.substr(p + 1, 3), nullptr,16)-0x410;
+			if (c < 0 || c >= 64) if (c < 0 || c >= 64) {
+				//out += text.substr(p, 4);
+				out += "?";
+				continue;
+			}
+			out += cyr[c];
+		}
+		else if (text.substr(p, 2).compare("00") == 0) {
+			char c = (char)(stoi(text.substr(p + 1, 3), nullptr,16)-0x400);
+			out += c;
+		}
+	}
+	return out;
+}
+
+
 #define SIM_UPD_P 5000
 //#define PPP_INET
 
@@ -22,9 +51,8 @@ static bool first_false_command = true;
 static const std::string head =  "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/";
 static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_id=241349746&text=";
 
-
 int _sms_n;
-bool _delite_sms_n;
+bool _delite_sms_n, _just_do_it;
 
 
 int send_command(string &mes, bool resp_more=false, int timeout = 5000) {
@@ -81,14 +109,182 @@ int send_command(string &mes, bool resp_more=false, int timeout = 5000) {
 	return (ok>=0)?0:-1;
 }
 
-void readsms() {
-	string mes = "AT+CMGF=1\r";
-	int res=send_command(mes);
-	mes = "AT+CMGR=" + to_string(_sms_n) + "\r";
-	res=send_command(mes);
-	printf("%s\n", mes.c_str());
-	sim.sms_done = true;
+inline bool space(char c) {
+	return std::isspace(c);
 }
+
+inline bool notspace(char c) {
+	return !std::isspace(c);
+}
+
+
+
+
+
+string get_next_sms(string mes)
+{
+	static int pos = 0;
+	if (pos == 0)
+		pos = mes.find("+CMGL: ");
+	if (pos == -1)
+		return "";
+	int next = mes.substr(pos+8).find("+CMGL: ")+pos+9;
+
+
+	return mes;
+}
+
+void readallsms() {
+	string mes = "AT+CMGF=1\r";
+	int res = send_command(mes);
+	if (res == 0) {
+		mes = "AT+CMGL=\"ALL\"\r";
+		res = send_command(mes);
+		if (res == 0) {
+			
+			fprintf(Debug.out_stream, "%s\n", mes.c_str());
+
+			if (_delite_sms_n) {
+				mes = "AT+CMGDA=\"DEL ALL\"\r";
+				res = send_command(mes);
+				if (res == 0) {
+					fprintf(Debug.out_stream, "%s\n", mes.c_str());
+				}
+			}
+		}
+	}
+	sim.sms_done = true;
+
+
+}
+string sms_phone_number;
+string sms_mes;
+int parse_sms_msg(string mes) {
+	int pos = mes.find("+CMGR:")+1;
+	if (pos > 0) {
+		int num_pos = mes.substr(pos).find("\",\"");
+		if (num_pos >= 0) {
+			int num_end= mes.substr(pos+num_pos+3).find("\",\"");
+			if (num_end >= 0) {
+				sms_phone_number = mes.substr(pos + num_pos + 3, num_end);
+				fprintf(Debug.out_stream, "%s:\t",sms_phone_number.c_str());
+				pos += num_pos + 3 + num_end;
+				int mes_beg = mes.substr(pos).find("\n") + 1;
+				if (mes_beg >= 1) {
+					int end_beg = mes.substr(pos + mes_beg).find("\nOK") - 2;
+					if (end_beg > 0) {
+						sms_mes = mes.substr(pos + mes_beg, end_beg);
+						if (sms_mes.length()>4 && sms_mes.c_str()[0] == '0' && (sms_mes.c_str()[1] == '0' || sms_mes.c_str()[1] == '4')) {
+							string text = unicod2trasns(sms_mes);
+							if (text.length() > 0 && sms_mes.length() / text.length() >= 3) {
+								sms_mes = text;
+								end_beg = text.length();
+							}
+						}
+						fprintf(Debug.out_stream, "%s", sms_mes.c_str());
+						return  end_beg;
+					}
+				}
+			}
+		}
+	}
+	sms_phone_number = "";
+	sms_mes = "";
+	return -1;
+}
+//-----------------------------------------------
+string getLocation() {
+	std::string req = std::to_string(GPS.loc.lat_) + "," + std::to_string(GPS.loc.lon_) + "," + std::to_string((int)GPS.loc.altitude);
+	return req;
+}
+//-----------------------------------------------------------------------------
+void parse_messages_(const string message, string &send) {
+
+	if (message.find("go2home") == 0) {
+		if (Autopilot.go2homeState() == false) {
+			command = GO2HOME;
+			fprintf(Debug.out_stream, "recived mess - go2home\n");
+			send += "go2home OK";
+		}
+		else
+			send += "already on the way to home";
+	}
+	else if (message.find("stat") == 0)
+	{
+		if (Autopilot.motors_is_on()) {
+			send += "m_on,";
+			if (Autopilot.go2homeState())
+				send += "go2home,";
+			else if (Autopilot.progState())
+				send += "prog,";
+		}
+		else
+			send += "m_off,";
+		send += "b" + std::to_string((int)Telemetry.get_voltage4one_cell()) + ",";
+		send += getLocation() + ",";
+	}
+	else {
+		send += "?";
+		fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
+	}
+
+
+}
+//-----------------------------------------------------------------------------
+void parse_sms_command() {
+	if (_just_do_it) {
+		string out = "";
+		parse_messages_(sms_mes, out);
+		_just_do_it = false;
+		sms_phone_number = "";
+		sms_mes = "";
+	}
+}
+
+int readsms_n() {
+	int ret = -1;
+	string mes = "AT+CMGF=1\r";
+	int res = send_command(mes);
+	if (res == 0) {
+		mes = "AT+CMGR=" + to_string(_sms_n) + "\r";
+		res = send_command(mes);
+		if (res == 0) {
+			ret = parse_sms_msg(mes);
+			//fprintf(Debug.out_stream, "%s\n", mes.c_str());
+
+			if (ret != -1) {
+				parse_sms_command();
+				if (_delite_sms_n) {
+					mes = "AT+CMGD=" + to_string(_sms_n) + "\r";
+					res = send_command(mes);
+					if (res == 0) {
+						fprintf(Debug.out_stream, " - del");
+						//fprintf(Debug.out_stream, "%s\n", mes.c_str());
+					}
+				}
+				fprintf(Debug.out_stream, "\n");
+			}
+
+		}
+
+	}
+	sim.sms_done = true;
+	return ret;
+}
+
+void readsms() {
+	if (_sms_n > 0)
+		readsms_n();
+	else {//read all
+		fprintf(Debug.out_stream, "\n");
+		for (int i = 1; i <= 20; i++) {
+			_sms_n = i;
+			readsms_n();
+		}
+	}
+}
+
+
 
 string mes2send;
 string telNumber;
@@ -104,23 +300,23 @@ void sendsms() {
 	string mes = "AT+CMGF=1\r";
 	int res = send_command(mes);
 	if (res == 0) {
-		printf("%s\n", mes.c_str());
+		fprintf(Debug.out_stream, "%s\n", mes.c_str());
 		mes = "AT+CMGS=\"+380661140320\"\r\n";
 		res = send_command(mes, true);
 		if (res == 0) {
-			printf("%s ", mes.c_str());
+			fprintf(Debug.out_stream, "%s ", mes.c_str());
 			mes = mes2send + char(26);
 			res = send_command(mes);
 			if (res == 0) {
-				printf("%s\n", mes.c_str());
+				fprintf(Debug.out_stream, "%s\n", mes.c_str());
 				
 			}else
-				printf("ERROR\n");
+				fprintf(Debug.out_stream, "ERROR\n");
 		}else
-			printf("ERROR\n");
+			fprintf(Debug.out_stream, "ERROR\n");
 	}
 	else
-		printf("ERROR\n");
+		fprintf(Debug.out_stream, "ERROR\n");
 	sim.sms_done = true;
 }
 void SIM800::sendSMS(string message) {
@@ -131,16 +327,24 @@ void SIM800::sendSMS(string message) {
 		t.detach();
 	}
 }
-void SIM800::readSMS(int n, bool and_del) {
+void SIM800::readSMS(int n, bool and_del,  bool just_do_it) {
 	if (sms_done) {
 		sms_done = false;
 		_sms_n = n;
 		_delite_sms_n = and_del;
+		_just_do_it = just_do_it;
 		thread t(readsms);
 		t.detach();
 	}
 }
-
+void SIM800::readAllSMS(bool and_del) {
+	if (sms_done) {
+		sms_done = false;
+		_delite_sms_n = and_del;
+		thread t(readallsms);
+		t.detach();
+	}
+}
 
 
 int SIM800::get_error() { return error; }
@@ -148,14 +352,15 @@ int SIM800::get_error() { return error; }
 uint32_t SIM800::get_commande() {
 	const uint32_t com = command;
 	command ^= command;
-	return com; }
+	return com; 
+}
+
 
 //-----------------------------------------------
-string getLocation() {
-	std::string req = 	std::to_string(GPS.loc.lat_) + "," + std::to_string(GPS.loc.lon_) + "," + std::to_string((int)GPS.loc.altitude) ;
-	return req;
-}
-//-----------------------------------------------
+
+
+
+
 
 volatile bool ppp_stoped = true;
 bool SIM800::pppstoped() { return ppp_stoped; }
@@ -170,7 +375,7 @@ void loop_t()
 	ppp_stoped = true;
 #ifdef PPP_INET
 	usleep(10000000);
-//	fprintf(Debug.out_stream, "pop rnet\n");
+//	printf("pop rnet\n");
 	ret = exec("pon rnet");
 	if (ret.length()) {
 		fprintf(Debug.out_stream, "%s\n",ret.c_str());
@@ -232,32 +437,9 @@ void loop_t()
 					if (first_false_command == false) {
 						std::string send = htext;
 						std::string message = upd.substr(mes_pos, upd.rfind("\"}}") - mes_pos);
-						
-						if (message.find("go2home") == 0) {
-							if (Autopilot.go2homeState() == false) {
-								command = GO2HOME;
-								fprintf(Debug.out_stream, "recived mess - go2home\n");
-								send += "go2home OK";
-							}else
-								send += "already on the way to home";
-						}else if (message.find("stat") == 0) 
-						{
-							if (Autopilot.motors_is_on()) {
-								send += "m_on,";
-								if (Autopilot.go2homeState())
-									send += "go2home,";
-								else if (Autopilot.progState())
-									send += "prog,";
-							}
-							else
-								send += "m_off,";
-							send += "b" + std::to_string((int)Telemetry.get_voltage4one_cell())+",";
-							send += getLocation() + ",";
-						}
-						else {
-							send += "?";
-							fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
-						}
+
+						parse_messages_(message, send);
+
 						send = exec(send+" \"");
 					}
 				}
@@ -291,15 +473,19 @@ void SIM800::stop() {
 	_loop = false;
 }
 
+
+
+
 void SIM800::start()
 {
+
 	sms_done = true;
-	sendSMS("hi2all");
-	//readSMS(1, false);
-	//readSMS(2, false);
-
-
-
+	//sendSMS("hi2all");
+	//readSMS(1, true);
+	readSMS(0, true, false);
+	//readAllSMS();
+	//string cyr=unicod2trasns("041204380020043A043E044004380441044204430454044204350441044C0020043E0431043C043504360435043D0438043C00200434043E044104420443043F043E043C00200434043E00200406043D044204350440043D043504420443002E00200414043B044F0020043F04560434043A043B044E04470435043D043D044F002004320441");
+	//printf("%s\n", cyr.c_str());
 	error = -1;
 	command = 0;
 	_loop = true;

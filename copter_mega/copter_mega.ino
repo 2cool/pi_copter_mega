@@ -5,6 +5,19 @@
 
 #include <stdint.h>
 #include <Wire.h>
+#include "Adafruit_NeoPixel-master\Adafruit_NeoPixel.h"
+#ifdef __AVR__
+#include <avr/power.h>
+#endif
+
+
+#define PIN           27
+
+#define NUMPIXELS      8
+
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+
 #include "gps.h"
 
 
@@ -33,6 +46,31 @@ volatile uint8_t beep_code = 0;
 uint8_t beeps_coder[] = { 0, B00001000,B00001001,B00001010,B00001011,B00001100,B00001101,B00001110,B00001111,B00000001,B00000010,B00000011,B00000100,B00000101,B00000110,B00000111 };//4 beeps if 0 short 1 long beep
 
 
+#define b10 {100,0,0}
+#define b01 {0,100,0}
+#define b00 {0,0,0}
+#define b11 {100,100,0}
+uint8_t beeps_led[][2][3]{ {b00,b00}, { b10,b00},{b10,b01},{ b10,b01 },{b10,b11},{b11,b00},{b11,b01},{b11,b10},{b11,b11},{b00,b01,},{b00,b11},{b01,b00},{b01,b01},{b01,b10},{b01,b11} };
+
+volatile bool ring=false;
+
+
+
+
+
+volatile uint8_t pi_copter_color[8][3]={ {0,1,0},{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 } };
+
+
+
+enum {eNO_CON,eRING};
+volatile uint8_t col[][3] = { { 1,0,0 },{255,0,0} };
+volatile bool  do_sound = true;
+
+
+
+
+volatile uint8_t new_colors_i = 0;
+bool ring_was = false;
 
 #define PAUSE_TIME 100
 #define LONG_BEEP 600
@@ -40,16 +78,29 @@ uint8_t beeps_coder[] = { 0, B00001000,B00001001,B00001010,B00001011,B00001100,B
 
 uint8_t beep_bit_n = 0;
 uint32_t beep_time = 0;
+uint8_t old_beep_code = 255;
 void beep() {
+
+	if (old_beep_code != beep_code)
+	{
+		old_beep_code = beep_code;
+		for (int i = 0; i < 8; i += 2)
+		{
+			pixels.setPixelColor(i, pixels.Color(beeps_led[beep_code][0][0], beeps_led[beep_code][0][1], beeps_led[beep_code][0][2]));
+			pixels.setPixelColor(i + 1, pixels.Color(beeps_led[beep_code][1][0], beeps_led[beep_code][1][1], beeps_led[beep_code][1][2]));
+		}
+		pixels.show();
+
+	}
 	if (beep_time == 0) {
 		beep_time = millis() + ((beeps_coder[beep_code] & 1) ? LONG_BEEP : SHORT_BEEP);
 		beep_bit_n = 0;
-		digitalWrite(BUZZER, HIGH);
+		digitalWrite(BUZZER, HIGH&do_sound);
 	}
 	else {
 		if (beep_bit_n & 1) { //pause
 			if (millis() > beep_time) {
-				digitalWrite(BUZZER, HIGH);
+				digitalWrite(BUZZER, HIGH&do_sound);
 				beep_bit_n++;
 				beep_time = millis() + (((beeps_coder[beep_code] >> (beep_bit_n >> 1)) & 1) ? LONG_BEEP : SHORT_BEEP);
 			}
@@ -61,6 +112,10 @@ void beep() {
 				if (beep_bit_n >= 8) {
 					beep_code = 0;
 					beep_time = 0;
+					old_beep_code = 255;
+					for (int i = 0; i<8; i++)
+						pixels.setPixelColor(i, pixels.Color(pi_copter_color[i][0], pi_copter_color[i][1], pi_copter_color[i][2]));
+					pixels.show();
 				}
 				else
 					beep_time = millis() + PAUSE_TIME;
@@ -176,7 +231,7 @@ void receiveEvent(int countToRead) {
 			OCR_GP = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
 			temp = *((uint16_t*)&inBuf[3]);
 			OCR_GR = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
-			Serial.print(OCR_GR); Serial.print(" "); Serial.println(OCR_GP);
+			//Serial.print(OCR_GR); Serial.print(" "); Serial.println(OCR_GP);
 
 		}
 		break;
@@ -193,6 +248,22 @@ void receiveEvent(int countToRead) {
 		SIM800.write(&inBuf[1], len);
 		//Serial.println(2);
 		break;
+	}
+	case 3: 
+	{   new_colors_i = inBuf[0] >> 3;
+		pi_copter_color[new_colors_i - 1][0] = *(uint8_t*)&inBuf[1];
+		pi_copter_color[new_colors_i - 1][1] = *(uint8_t*)&inBuf[2];
+		pi_copter_color[new_colors_i - 1][2] = *(uint8_t*)&inBuf[3];
+	}
+	default: //setup
+	{
+		if (countToRead == 7)
+		{
+			enum { eNO_CON, eRING };
+			uint8_t mask = inBuf[0] >> 3;
+			do_sound = (mask & 1);
+			memcpy((uint8_t*)col, (uint8_t*)&inBuf[1], 6);
+		}
 	}
 	}
 	cnt++;
@@ -236,18 +307,20 @@ void requestEvent() {
 	}
 	case 1: 
 	{
-		ret = 0;
+		ret = ring;
 		while (gps.available()) {
 			uint8_t r = processGPS();
 			if (r>0 && r!=old_gps_c) {
 				old_gps_c = r;
-				ret = sizeof(SEND_I2C);
+				//ret = sizeof(SEND_I2C);
+				ret |= 2;
 				//Serial.println(ret);
 				reg = 2;
 				break;
 			}
 		}
-		Wire.write(ret);
+	
+		Wire.write(sizeof(SEND_I2C));
 		break;
 	}
 	case 2: 
@@ -275,6 +348,8 @@ void requestEvent() {
 		
 		//Serial.println("sended");
 	}
+	
+
 	}
 }
 
@@ -289,8 +364,8 @@ void setup()
 #else
 	on(48000, pwm_OFF_THROTTLE);
 #endif
-	Serial.begin(9600);
-	while (!Serial);
+	//Serial.begin(9600);
+	//while (!Serial);
 	SIM800.begin(9600);
 	gps_setup();
 	pinMode(BUZZER, OUTPUT);
@@ -301,6 +376,14 @@ void setup()
 	Wire.begin(9);
 	Wire.onRequest(requestEvent); // data request to slave
 	Wire.onReceive(receiveEvent); // data slave received
+	pixels.begin(); // This initializes the NeoPixel library.
+
+
+
+	for (int i=0; i<8; i++)
+		pixels.setPixelColor(i, pixels.Color(0, 1, 0)); // Moderately bright green pi_copter_color.
+	pixels.show();
+
 
 }
 ///thr0 = m1
@@ -333,12 +416,22 @@ void loop()
 		beep();
 	else {
 
-		bool ring = digitalRead(31) == LOW;
-		if (millis() > 5000 && ring) {
+		ring = digitalRead(31) == LOW;
 
-			digitalWrite(BUZZER, (micros() & (unsigned long)65536) == 0);
+		if (millis() > 5000 && ring) {
+			bool puls = (micros() & (unsigned long)65536) == 0;
+			for (int i = 0; i<8; i++)
+				if (puls)
+					pixels.setPixelColor(i, pixels.Color(col[eRING][0], col[eRING][1], col[eRING][2])); // Moderately bright green pi_copter_color.
+				else
+					pixels.setPixelColor(i, pixels.Color(col[eRING][1],col[eRING][0],  col[eRING][2])); // Moderately bright green pi_copter_color.
+			pixels.show();
+			if (do_sound)
+				digitalWrite(BUZZER, puls);
+			ring_was = true;
 		}
-		else {
+		else 
+		{
 			bool alarm = (fb[4] > (1210.0 / 1.725) && fb[4] < (1320.0 / 1.725));
 			digitalWrite(BUZZER, alarm);
 
@@ -358,9 +451,30 @@ void loop()
 		err++;
 		if (err > 300) {
 			stop_motors();
-
+			for (int i = 0; i<8; i++)
+				pixels.setPixelColor(i, pixels.Color(col[eNO_CON][0], col[eNO_CON][1], col[eNO_CON][2]));
+			pixels.show();
 		}
 	}
+
+	if (ring_was && !ring) {
+		for (int i=0; i<8; i++)
+			pixels.setPixelColor(i, pixels.Color(pi_copter_color[i][0], pi_copter_color[i][1], pi_copter_color[i][2]));
+		pixels.show();
+		ring_was = false;
+	}
+
+	if (new_colors_i) {
+		new_colors_i--;
+		pixels.setPixelColor(new_colors_i, pixels.Color(pi_copter_color[new_colors_i][0], pi_copter_color[new_colors_i][1], pi_copter_color[new_colors_i][2]));
+		pixels.show();
+		
+		new_colors_i = 0;
+	}
+
+	
+
+	
 
 
 	//------------------------------------------------------------------------------------------------------------------------------

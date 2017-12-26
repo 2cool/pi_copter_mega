@@ -146,6 +146,14 @@ void start_video() {
 
 
 void AutopilotClass::init(){/////////////////////////////////////////////////////////////////////////////////////////////////
+
+	for (int i = 0; i < 8; i++) {
+		b[i] = 0;
+		g[i] = r[i] = 2;
+	}
+	color_i = 0;
+
+
 	time_at_start = 0;
 	camera_mode = CAMMERA_OFF;
 	lowest_height = Debug.lowest_altitude_to_fly;
@@ -254,6 +262,14 @@ uint32_t last_beep_time = 0;
 
 
 void AutopilotClass::loop(){/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	if (color_i < 8) {
+		mega_i2c.set_led_color(color_i+1, r[color_i], g[color_i], b[color_i]);
+		color_i++;
+	}
+
+
 	
 	const uint32_t t = millis();
 	const float dt = 0.001f*(float)(t - controlDeltaTime); 
@@ -265,6 +281,9 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 		set_control_bits(sim_com);
 	
 	gimBalRollCorrection();
+
+	
+
 
 #ifdef LOST_BEEP
 	if ( t - last_time_data_recived>3000 && t - last_beep_time > 3000) {
@@ -613,6 +632,7 @@ beep codes
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 bool AutopilotClass::motors_do_on(const bool start, const string msg){////////////////////////  M O T O R S  D O  ON  /////////////////////////////////////////////////////////////////////////
+
 	fprintf(Debug.out_stream,"%s - ",msg.c_str());
 	
 	if (start){

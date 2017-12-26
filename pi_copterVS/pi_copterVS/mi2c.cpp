@@ -9,11 +9,13 @@
 #include "define.h"
 #include "mi2c.h"
 #include "mpu.h"
+#include "SIM800.h"
 
 #define pwm_MAX_THROTTLE 32000
 #define pwm_OFF_THROTTLE 16000
 
 #define  ARDUINO_ADDR 9
+#define  DO_SOUND 1
 
 int fd, fd_in;
 
@@ -60,7 +62,7 @@ const static char ring[] = "RING";
 const static char sms[] = "+CMTI: \"SM\",";
 static int smsi = 0, ringi=0, no_carrieri=0;
 static int smsN = 0;
-
+static int sms_received = 0;
 	for (int i = 0; i < len; i++) {
 
 
@@ -70,8 +72,9 @@ static int smsN = 0;
 			}
 			else {
 				sms_received = smsN;
-				fprintf(Debug.out_stream, "SMS %i\n",sms_received);
+				fprintf(Debug.out_stream, "SMS %i\n", sms_received);
 				smsN ^= smsN;
+				sim.readSMS(sms_received, true, true);
 			}
 		}
 		else {
@@ -136,7 +139,7 @@ int Megai2c::gsm_loop()
 
 	if (res) {
 		//if no ppp
-		//m_parser(gsm_in_buf, res);
+		m_parser(gsm_in_buf, res);
 		/*
 		printf("->");
 		for (int i = 0; i < res; i++)
@@ -158,7 +161,7 @@ bool Megai2c::ppp(bool f) {
 
 int Megai2c::init()
 {
-	sms_received = 0;
+	_ring_bit_high = false;
 	ring_received = false;
 	ppp_on = false;
 
@@ -177,8 +180,20 @@ int Megai2c::init()
 		fprintf(Debug.out_stream, "error %d opening /dev/tnt1: %s", errno, strerror(errno));
 		return -1;
 	}
+	//--------------------------------init sound & colors 
+	char buf[7];
 
+	buf[0] = 7 + (DO_SOUND << 3);
+	// no connection RGB
+	buf[1] = 1;
+	buf[2] = 0;
+	buf[3] = 0;
+	// ring RGB
+	buf[4] = 255;
+	buf[5] = 0;
+	buf[6] = 0;
 
+	write(fd, buf, 7);
 
 	return 0;
 
@@ -186,10 +201,10 @@ int Megai2c::init()
 }
 
 void Megai2c::beep_code(uint8_t c) {
-#ifdef BEEPS_ON
+
 	char chBuf[] = { 1,c };
 	write(fd, chBuf, 2);
-#endif
+
 }
 
 
@@ -216,6 +231,15 @@ void Megai2c::throttle(const float n0, const float n1, const float n2, const flo
 	write(fd, chBuf + 1, 9);
 }
 
+void Megai2c::set_led_color(uint8_t n, uint8_t r, uint8_t g, uint8_t b) {
+	char buf[4];
+	buf[0] = 3 + (n << 3);
+	buf[1] = *(char*)&r;
+	buf[2] = *(char*)&g;
+	buf[3] = *(char*)&b;
+	write(fd, buf, 4);
+
+}
 
 //0.35555555555555555555555555555556 = 1град
 bool Megai2c::gimagl(float pitch, float roll) {  // добавить поворот вмесете с коптером пра опред обст
@@ -241,11 +265,22 @@ bool Megai2c::gimagl(float pitch, float roll) {  // добавить поворот вмесете с к
 int Megai2c::get_gps(SEND_I2C *gps_d) {
 
 	char reg = 1;
-	char gps_count;
+	char bit_field;
 	write(fd, &reg, 1);
-	int res = read(fd, &gps_count, 1);
-	if (res>0 && gps_count == 14) {
-		res = read(fd, (char*)gps_d, gps_count);
+	int res = read(fd, &bit_field, 1);
+
+
+
+	if (bit_field & 1) {
+		if (_ring_bit_high == false) {
+			_ring_bit_high = true;
+			fprintf(Debug.out_stream, "RINGk_BIT\n");
+		}
+	}else
+		_ring_bit_high = false;
+
+	if (bit_field & 2) {
+		res = read(fd, (char*)gps_d, sizeof(SEND_I2C));
 		return res;
 	}
 	else {
