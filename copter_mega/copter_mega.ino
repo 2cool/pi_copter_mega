@@ -320,7 +320,7 @@ void requestEvent() {
 			}
 		}
 	
-		Wire.write(sizeof(SEND_I2C));
+		Wire.write(ret);
 		break;
 	}
 	case 2: 

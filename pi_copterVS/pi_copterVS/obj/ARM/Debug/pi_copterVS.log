@@ -3,35 +3,6 @@
   Copying sources remotely to '192.168.1.178'
   Starting remote build
   Compiling sources:
-  AP_PID.cpp
-  Autopilot.cpp
-  Balance.cpp
-  commander.cpp
-  debug.cpp
-  Direction.cpp
-  Filter.cpp
-  FIND.cpp
-  GeoDot.cpp
-  GPS.cpp
-  Hmc.cpp
-  I2Cdev.cpp
-  inv_mpu.cpp
-  inv_mpu_dmp_motion_driver.cpp
-  Location.cpp
-  Log.cpp
-  main.cpp
-  mpu.cpp
-  MPU6050.cpp
-  mpu_umulator.cpp
-  MS5611.cpp
-  Prog.cpp
   mi2c.cpp
-  RC_Filter.cpp
-  Settings.cpp
-  SIM800.cpp
-  Stabilization.cpp
-  Telemetry.cpp
-  Wi_Fi.cpp
-  WProgram.cpp
   Linking objects
   pi_copterVS.vcxproj -> D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

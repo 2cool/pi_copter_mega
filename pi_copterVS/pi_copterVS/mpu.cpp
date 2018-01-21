@@ -47,12 +47,8 @@ float MpuClass::get_roll() { return roll; }
 
 
 void MpuClass::do_magic4Z() {
-
 static float aK = 19.6;
 static float thr = 0.5;
-
-
-
 	if (Balance.get_true_throttle() < 0.3) {
 		e_accZ = e_speedZ = w_accZ =  0;
 		thr = HOVER_THROTHLE;
@@ -62,25 +58,16 @@ static float thr = 0.5;
 	}
 	else {
 		thr += (Balance.get_true_throttle() - thr)*0.2;
-
 		e_accZ = thr*aK - 9.8 - e_speedZ*abs(e_speedZ)*0.232;
-		
 	//	e_accZ += (accZ - e_accZ)*0.01;//?
-
-
 		e_speedZ += e_accZ*dt;
 		e_speedZ += (MS5611.speed - e_speedZ)*0.01;
-
-
 		if (Autopilot.z_stabState() && Commander.getThrottle() == HOVER_THROTHLE) {
 			aK += (e_accZ + 9.8 / thr - aK)*0.002;
 			aK = constrain(aK, 16, 25);
 			hower_thr = 9.8 / aK;
 			min_thr = hower_thr*0.8;
 			fall_thr = hower_thr*0.9;
-
-
-
 		//	printf("%f\n", aK);
 		}
 	}

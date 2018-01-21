@@ -371,6 +371,7 @@ static void startlogThread(){
 		int ilon=load_int32(buf,i);
 		i+=4;
 		lon=0.0000001*(double)ilon;
+		//Log.i("DKDKD",Double.toString(lat)+ " "+Double.toHexString(lon));
 		//---------------------------
 		if (connected == false) {
 			if (MainActivity.motorsOnF()){

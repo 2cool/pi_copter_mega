@@ -15,7 +15,7 @@
 #define pwm_OFF_THROTTLE 16000
 
 #define  ARDUINO_ADDR 9
-#define  DO_SOUND 1
+#define  DO_SOUND 0
 
 int fd, fd_in;
 

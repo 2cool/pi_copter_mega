@@ -233,8 +233,9 @@ void parse_messages_(const string message, string &send) {
 //-----------------------------------------------------------------------------
 void parse_sms_command() {
 	if (_just_do_it) {
-		string out = "";
-		parse_messages_(sms_mes, out);
+		mes2send = "";
+		parse_messages_(sms_mes, mes2send);
+		sendsms();
 		_just_do_it = false;
 		sms_phone_number = "";
 		sms_mes = "";
