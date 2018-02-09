@@ -192,13 +192,29 @@ public class Disk {
        // autoLat=0,autoLon=0;
     }
     public static String[] getIP(String myIP){
+
         try {
             String out[]=new String[10];
             int outI=0;
             String ip=myIP.substring(0,myIP.lastIndexOf('.'));
+
+            File f = new File("/sdcard/RC");
+            if (f.exists()==false) {
+                File folder = new File("/sdcard/RC");
+                folder.mkdirs();
+            }
+
             final File file = new File("/sdcard/RC/ip.set");
-            if (!file.exists()) {
-               return null;
+            if ( file.exists()==false) {
+                try {
+                    FileOutputStream stream = new FileOutputStream("/sdcard/RC/ip.set");
+                    stream.write("192.168.1.248:9876".getBytes());
+                    stream.close();
+
+                }
+                catch (Exception e) {
+
+                }
             }
 
             InputStream is=new FileInputStream(file);

@@ -100,7 +100,7 @@ void TelemetryClass::init_()
 	newGPSData = false;
 	//Out.println("TELEMETRY INIT");
 	voltage_at_start = 0;
-	
+	full_power = 0;
 }
 
 
@@ -156,7 +156,7 @@ void TelemetryClass::update_voltage() {
 	m_current[2] = 0.01953125*(float)(1024 - data[2]);
 	m_current[3] = 0.01953125*(float)(1024 - data[3]);
 	voltage = 1.725*(float)(data[4]);
-
+	full_power += ( (m_current[0] + m_current[1] + m_current[2] + m_current[3]) * voltage - full_power)*0.2;  //152 вата  - 274, 9.24 amper
 	if (Log.writeTelemetry) {
 		Log.loadByte(LOG::TELE);
 		Log.loadMem((uint8_t*)data, 10, false);

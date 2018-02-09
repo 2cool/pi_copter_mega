@@ -57,6 +57,10 @@ static float thr = 0.5;
 		fall_thr = FALLING_THROTTLE;
 	}
 	else {
+		//Telemetry.get_full_power();
+		e_accZ = 0;
+		/*
+		
 		thr += (Balance.get_true_throttle() - thr)*0.2;
 		e_accZ = thr*aK - 9.8 - e_speedZ*abs(e_speedZ)*0.232;
 	//	e_accZ += (accZ - e_accZ)*0.01;//?
@@ -70,6 +74,7 @@ static float thr = 0.5;
 			fall_thr = hower_thr*0.9;
 		//	printf("%f\n", aK);
 		}
+		*/
 	}
 }
 

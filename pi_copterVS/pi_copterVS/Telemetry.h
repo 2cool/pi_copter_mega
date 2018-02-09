@@ -37,8 +37,9 @@ class TelemetryClass
 	 
 	 string message;
 	 void update_buf();
+	 float full_power;
  public:
-	
+	 float get_full_power() { return full_power; }
 	uint32_t get_power_on_time() { return power_on_time; }
 
 
