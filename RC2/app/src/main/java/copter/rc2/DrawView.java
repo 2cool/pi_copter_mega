@@ -97,7 +97,7 @@ import android.widget.Toast;
 
             zoom=(float)(1.0/(Math.sin(MainActivity.zoomN)));
 
-			if (Commander.link && menu==false){
+			if (/*Commander.link && */menu==false){
 				canvas=c;
 				Rect bounds=new Rect();
 				black.getTextBounds("11", 0, 1, bounds);
@@ -248,8 +248,17 @@ import android.widget.Toast;
 
 	    	 float x,y;
 			if (MainActivity.toHomeF()==false && MainActivity.progF()==false ) {
-				x = cx - zoom * (float) Commander.sended_ay * _R;
-				y = cy - zoom * (float) Commander.sended_ax * _R;
+
+
+
+			//	x = cx - zoom * (float) Commander.ay * _R;
+			//	y = cy - zoom * (float) Commander.ax * _R;
+
+				x = cx - zoom * (float) Commander.roll * _R;
+				y = cy - zoom * (float) Commander.pitch * _R;
+
+			//	x = cx - zoom * (float) Commander.sended_ay * _R;
+			//	y = cy - zoom * (float) Commander.sended_ax * _R;
 				c.drawCircle(x, y, 20, ((MainActivity.control_bits&MainActivity.HORIZONT_ON)!=0) ? red : black);
 				c.drawCircle(x, y, 16, black);
 			}

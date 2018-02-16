@@ -71,18 +71,19 @@ public class MainActivity extends Activity implements SensorEventListener {
     private static boolean secure_flug=false;
 
     public static double zoomN=0.17453292519943295769236907684886*2;//0.69813170079773183076947630739545;
-//private static boolean game_speed=false;
-	private SensorManager mSensorManager;
-	private Sensor accelerometer;
-	private Sensor magnetic_field;
-	//float az;
+    //private static boolean game_speed=false;
+    private SensorManager mSensorManager;
+    private Sensor accelerometer;
+    private Sensor gyroscop;
+    private Sensor magnetic_field;
+    //float az;
 
-	long acc_t=0,compas_t=0;
+    long acc_t=0,compas_t=0;
 
-	double aa_i=0;
-	long time_out=100;
+    double aa_i=0;
+    long time_out=100;
     static boolean gpsON=false;
-	static public DrawView drawView=null;
+    static public DrawView drawView=null;
     Button b_start;
     static ToggleButton b_altHold,b_smartCTRL,b_toHome,b_prog;
     static Button b_menu;
@@ -142,7 +143,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
 
 
-       if (shouldAskPermissions()) {
+        if (shouldAskPermissions()) {
             askPermissions();
         }
 
@@ -150,9 +151,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
         sensorUpdateSpeedFastest=settings.getBoolean("sensorUpdateSpeedFastest", false);
-       // static private Point screenP=new Point();
-       // static public int zoom=1;
-       // static public int type=3;
+        // static private Point screenP=new Point();
+        // static public int zoom=1;
+        // static public int type=3;
 
         DrawMap.zoom=settings.getInt("zoom",3);
         DrawMap.screenP.x=settings.getInt("screenPX",0);
@@ -162,10 +163,10 @@ public class MainActivity extends Activity implements SensorEventListener {
         Telemetry.startlogThread();
         Net.net_runing=true;
 
-       // setWifiTetheringEnabled(true);
+        // setWifiTetheringEnabled(true);
         Net.context=this;
         net=new Net(9876,1000);
-        
+
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
@@ -182,15 +183,18 @@ public class MainActivity extends Activity implements SensorEventListener {
         ch_secure=(CheckBox)findViewById(R.id.cb_secure);
         cb_compass=(CheckBox)findViewById(R.id.cb_compass);
         cb_horizont=(CheckBox)findViewById(R.id.cb_horizont);
-        
+
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-	    accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-	    magnetic_field=mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-       
-        
+        accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetic_field=mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        gyroscop=mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+
         int speed=(sensorUpdateSpeedFastest)?SensorManager.SENSOR_DELAY_FASTEST:SensorManager.SENSOR_DELAY_NORMAL;
-		mSensorManager.registerListener(this, accelerometer,speed );
-	    mSensorManager.registerListener(this, magnetic_field, speed);
+        mSensorManager.registerListener(this, accelerometer,speed );
+        mSensorManager.registerListener(this, magnetic_field, speed);
+        mSensorManager.registerListener(this, gyroscop, speed);
+
 
         net.start();
 
@@ -199,7 +203,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         rl1.addView(drawView);
 
 
-       // startService(new Intent(MainActivity.this, GPSservice.class));
+        // startService(new Intent(MainActivity.this, GPSservice.class));
 
     }
     static boolean commands_off_full_th =false;
@@ -236,7 +240,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         map             =menu.getItem(8);
 
 
-      //  max_thhrotle_menu.setEnabled(commands_off_full_th == 0);
+        //  max_thhrotle_menu.setEnabled(commands_off_full_th == 0);
         boolean secure=Commander.link;
 
         compass_cal.setEnabled(secure);
@@ -275,7 +279,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) { 
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -285,9 +289,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 
             case R.id.SETTINGS: {
 
-                    Intent myIntent = new Intent(this, Settings.class);
-                    this.startActivity(myIntent);
-                    return true;
+                Intent myIntent = new Intent(this, Settings.class);
+                this.startActivity(myIntent);
+                return true;
 
             }
 
@@ -316,15 +320,15 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
             case R.id.SHUTDOWN:{
                 command_bits_|=SHUTDOWN;
-               // Commander.button = "SHD";
-              //  Commander.exit_main=true;
+                // Commander.button = "SHD";
+                //  Commander.exit_main=true;
 
                 break;
             }
             case R.id.REBOOT:{
                 command_bits_|=REBOOT;
                 // Commander.button = "SHD";
-               // Commander.exit_main=true;
+                // Commander.exit_main=true;
 
                 break;
             }
@@ -332,7 +336,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
             case R.id.COMP_CAL:
                 command_bits_|=COMPASS_CALIBR;
-               // Commander.button="CMC";
+                // Commander.button="CMC";
                 break;
             case R.id.GPS:
 
@@ -341,8 +345,8 @@ public class MainActivity extends Activity implements SensorEventListener {
                 else
                     stopService(new Intent(MainActivity.this, GPSservice.class));
                 gpsON^=true;
-               // command_bits_|=COMPASS_MOTOR_CALIBR;
-               // Commander.button="MCC";
+                // command_bits_|=COMPASS_MOTOR_CALIBR;
+                // Commander.button="MCC";
                 break;
 
             case R.id.GYRRO_CAL:
@@ -359,7 +363,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
                 finish();
 
-               // speed_r.setTitle((game_speed)?"NORMAL":"FASTEST");
+                // speed_r.setTitle((game_speed)?"NORMAL":"FASTEST");
                 break;
             case R.id.MAP:
                 Intent myIntent = new Intent(this, Map.class);
@@ -371,29 +375,69 @@ public class MainActivity extends Activity implements SensorEventListener {
         return super.onOptionsItemSelected(item);
     }
 
-	int i=0;
+    int i=0;
 
+    static long old_time=0;
     static double heading_t;
-	@Override
-	public void onSensorChanged(SensorEvent event) {
+    static double pitch=0,roll=0;
+
+
+    boolean gyro_flag=false;
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
 
 
 
         setButtons();
 
 
+        long now=System.currentTimeMillis();
+        if (old_time==0)
+            old_time=now;
 
 
-		long now=System.currentTimeMillis();
-    	if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+/*
+SensorEvent.values[0]	Rate of rotation around the x axis.	rad/s
+SensorEvent.values[1]	Rate of rotation around the y axis.
+SensorEvent.values[2]	Rate of rotation around the z axis.
+ */
+
+        if (event.sensor.getType()==Sensor.TYPE_GYROSCOPE){
+            gyro_flag=true;
+            float dt=0.001f*(now-old_time);
+            old_time=now;
+            pitch-=event.values[1]*dt;
+            roll+=event.values[0]*dt;
+            Commander.yaw-=event.values[2]*dt;
+
+           // Log.i("MATHr","roll="+(int)(Commander.roll*56.3)+", pitch="+(int)(Commander.pitch*57.3)+", yaw="+(int)(Commander.yaw*57.3));
+        }
+
+        if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+            if (gyro_flag){
+                gyro_flag=false;
+                double aRoll = Math.atan2(event.values[1], event.values[2]);
+                double aPitch = Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2]));
+
+                pitch+=(aPitch-pitch)*0.003;
+                roll+=(aRoll-roll)*0.003;
+
+                double k=(float)(zoomN/0.69813170079773183076947630739545);
+                Commander.pitch=(float)(pitch*k);
+                Commander.roll=(float)(roll*k);
+
+
+              //  Log.i("MATH","aroll="+(int)(aRoll*56.3)+", apitch="+(int)(aPitch*57.3));
+            }
 
             double k=(float)(zoomN/0.69813170079773183076947630739545);
-    		Commander.ax+=((event.values[0]*k/9.8)-Commander.ax)*0.1;
-    		Commander.ay+=((event.values[1]*k/9.8)-Commander.ay)*0.1;
+            Commander.ax+=((event.values[0]*k/9.8)-Commander.ax)*0.1;
+            Commander.ay+=((event.values[1]*k/9.8)-Commander.ay)*0.1;
 
-  //Log.d("SENhD", "Andr "+Double.toString(event.values[0]));
+            //Log.d("SENhD", "Andr "+Double.toString(event.values[0]));
 
-    		//az=midZ.get(event.values[2]*k/10f);
+            //az=midZ.get(event.values[2]*k/10f);
 
             new Thread() {
                 @Override
@@ -402,7 +446,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                         MainActivity.drawView.postInvalidate();
                 }
             }.start();
-    	}
+        }
 
         if (event.sensor.getType()==Sensor.TYPE_ORIENTATION){
             heading_t = ((double)event.values[0]+90);
@@ -410,40 +454,26 @@ public class MainActivity extends Activity implements SensorEventListener {
             if (heading_t>180)
                 heading_t-=360;
 
-          //  Log.d("SENhD", "Andr "+Double.toString(heading_t));
-           // double heading=heading_t/180*3.1415926;
 
-           // Log.i("COMP", "@ " + heading_t);
-		//	if (heading<0)
-			//	heading+=2*Math.PI;
+            Commander.heading=(float)heading_t;
 
-          //  if (heading>Math.PI)
-          //      heading-=2*Math.PI;
+            //Log.d("SENhD", "Andr "+Double.toString(heading));
 
-         //   while (Commander.heading-heading  > Math.PI)
-        //        heading += 2*Math.PI;
-         //   while (Commander.heading-heading < -Math.PI)
-         //       heading -= 2*Math.PI;
-			
-			Commander.heading=(float)heading_t;
+        }
 
-    		//Log.d("SENhD", "Andr "+Double.toString(heading));
-    		
-    	}
 
-		
-	}
+    }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             //Log.i("KEY","DOWN "+Integer.toString(keyCode));
             command_bits_|=GIMBAL_MINUS;
-         //   Commander.button="CDN";
+            //   Commander.button="CDN";
             return true;
         }else
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             //Log.i("KEY","DOWN "+Integer.toString(keyCode));
-           // Commander.button="CUP";
+            // Commander.button="CUP";
             command_bits_|=GIMBAL_PLUS;
             return true;
         }
@@ -463,18 +493,18 @@ public class MainActivity extends Activity implements SensorEventListener {
         return super.onKeyUp(keyCode, event);
     }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void start_stop(View view) {
         if (secure_flug) {
             ch_secure.setChecked(false);
             secure_flug=false;
             b_start.setEnabled(false);
             commands_off_full_th=true;
-         //   Commander.button = "S_S";
+            //   Commander.button = "S_S";
             command_bits_|=MOTORS_ON;
             Commander.heading=(float)heading_t;
 
-       }
+        }
     }
 
     public static final double sin10g = 0.17453292519943295769236907684886;
@@ -519,15 +549,15 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 
     public void smartCtrl(View view){
-      //  cb_horizont.setChecked(horizont_on=control_bits==XY_STAB);
+        //  cb_horizont.setChecked(horizont_on=control_bits==XY_STAB);
         b_smartCTRL.setChecked(!b_smartCTRL.isChecked());
         command_bits_|=XY_STAB;
         //Commander.button="SCT";
 
     }
-public void openMenu(View view){
-    openOptionsMenu();
-}
+    public void openMenu(View view){
+        openOptionsMenu();
+    }
 
     public void Prog(View view){
         b_prog.setChecked(!b_prog.isChecked());
@@ -539,16 +569,16 @@ public void openMenu(View view){
     public void toHome(View view) {
         b_toHome.setChecked(!b_toHome.isChecked());
         command_bits_|=GO2HOME;
-  }
+    }
 
     public void altHold(View view){
         b_altHold.setChecked(!b_altHold.isChecked());
         command_bits_|=Z_STAB;
-       // Commander.button="AHD";
+        // Commander.button="AHD";
     }
 
 
-   // public void setCompCalibr(View view) {
+    // public void setCompCalibr(View view) {
 
     //    Commander.setCompassCalibration();
     //}
@@ -565,19 +595,19 @@ public void openMenu(View view){
     public void horizont_on(View view){
         cb_horizont.setChecked(!cb_horizont.isChecked());
         command_bits_|=HORIZONT_ON;
-       // Commander.button="HRT";
+        // Commander.button="HRT";
     }
     public void compas_on(View view){
         cb_compass.setChecked(!cb_compass.isChecked());
         command_bits_|=COMPASS_ON;
-       // Commander.button="CMP";
+        // Commander.button="CMP";
     }
 
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // TODO Auto-generated method stub
+
+    }
 
 
 

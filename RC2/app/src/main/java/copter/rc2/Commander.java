@@ -17,7 +17,8 @@ public class Commander {
 
 
 	static public boolean settings=false;
-	static public float heading=0,ax=0,ay=0, throttle =0.5f,c_heading=0,headingOffset=0;
+	static public float heading=0,yaw=0,roll=0,pitch=0,ax=0,ay=0, throttle =0.5f,c_heading=0,headingOffset=0;
+	static public float gx=0,gy=0,gz=0;
     static public float k0 =1, k1 =1, k4 =1, k3 =1, k5 =1,k6=1,k7=1,k8=1,k9=1,k10=1;
     static public int n=0;
     static public boolean link=false;
@@ -31,7 +32,7 @@ public class Commander {
     static private void init(){
         copter_is_busy=true;
         settings=false;
-        heading=ax=ay=0;
+        heading=ax=ay=roll=pitch=yaw=0;
         throttle =0.5f;
         c_heading=headingOffset=0;
         k0 =k1 =k4 =k3 =k5 =k6=k7=k8=k9=k10=1;

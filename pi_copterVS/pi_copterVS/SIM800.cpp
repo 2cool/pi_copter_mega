@@ -117,8 +117,40 @@ inline bool notspace(char c) {
 	return !std::isspace(c);
 }
 
+string mes2send;
+string telNumber;
+void sendsms() {
+	/*
+	AT+CMGF=1
+	AT+CMGS="+380661140320\r"
+	>
+	"hello world"+char(26)
+	+CMGS: 62
+	*/
+	string mes = "AT+CMGF=1\r";
+	int res = send_command(mes);
+	if (res == 0) {
+		fprintf(Debug.out_stream, "%s\n", mes.c_str());
+		mes = "AT+CMGS=\"+380661140320\"\r\n";
+		res = send_command(mes, true);
+		if (res == 0) {
+			fprintf(Debug.out_stream, "%s ", mes.c_str());
+			mes = mes2send + char(26);
+			res = send_command(mes);
+			if (res == 0) {
+				fprintf(Debug.out_stream, "%s\n", mes.c_str());
 
-
+			}
+			else
+				fprintf(Debug.out_stream, "ERROR\n");
+		}
+		else
+			fprintf(Debug.out_stream, "ERROR\n");
+	}
+	else
+		fprintf(Debug.out_stream, "ERROR\n");
+	sim.sms_done = true;
+}
 
 
 string get_next_sms(string mes)
@@ -230,6 +262,9 @@ void parse_messages_(const string message, string &send) {
 
 
 }
+
+
+
 //-----------------------------------------------------------------------------
 void parse_sms_command() {
 	if (_just_do_it) {
@@ -287,39 +322,9 @@ void readsms() {
 
 
 
-string mes2send;
-string telNumber;
 
-void sendsms() {
-/*
-	AT+CMGF=1
-	AT+CMGS="+380661140320\r"
-	>
-	"hello world"+char(26)
-	+CMGS: 62
-	*/
-	string mes = "AT+CMGF=1\r";
-	int res = send_command(mes);
-	if (res == 0) {
-		fprintf(Debug.out_stream, "%s\n", mes.c_str());
-		mes = "AT+CMGS=\"+380661140320\"\r\n";
-		res = send_command(mes, true);
-		if (res == 0) {
-			fprintf(Debug.out_stream, "%s ", mes.c_str());
-			mes = mes2send + char(26);
-			res = send_command(mes);
-			if (res == 0) {
-				fprintf(Debug.out_stream, "%s\n", mes.c_str());
-				
-			}else
-				fprintf(Debug.out_stream, "ERROR\n");
-		}else
-			fprintf(Debug.out_stream, "ERROR\n");
-	}
-	else
-		fprintf(Debug.out_stream, "ERROR\n");
-	sim.sms_done = true;
-}
+
+
 void SIM800::sendSMS(string message) {
 	if (sms_done) {
 		sms_done = false;
