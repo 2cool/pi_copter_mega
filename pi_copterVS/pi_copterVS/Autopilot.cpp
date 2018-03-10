@@ -104,7 +104,16 @@ int get_pid(const char* name) {
 	return -1;
 }
 
+/*
+chtoby zapustit' strim
+python  Camera_video_stream.py
+ffmpeg -rtsp_transport udp -i "rtsp://192.168.42.1:554/live" -c copy -f h264 udp://android_phone_address:5544
 
+pn android run
+ffplay udp://android_address:5544
+
+
+*/
 
 void stop_video() {
 

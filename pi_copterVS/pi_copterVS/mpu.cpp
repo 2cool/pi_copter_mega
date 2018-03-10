@@ -11,6 +11,18 @@
 #include "Log.h"
 
 
+/*
+
+пользоватся только гироскопом если акселерометр показивает меньший угол. (но временно) и акселерометр и гироскоп должни бить отфильтровані
+при снижении резком. надо тоже обдумть  логику.
+
+
+*/
+
+
+
+
+
 //#include "Mem.h"
 
 
@@ -155,6 +167,10 @@ void MpuClass::log() {
 		Log.loadFloat(accX);
 		Log.loadFloat(accY);
 		Log.loadFloat(accZ);
+
+		//Log.loadInt16t(a[0]);
+		//Log.loadInt16t(a[1]);
+		//Log.loadInt16t(a[2]);
 
 	}
 
@@ -630,6 +646,22 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	float x = n122*(float)a[0];
 	float y = -n122*(float)a[1]; 
 	float z = n122*(float)a[2];
+
+
+	/*
+
+	static float fx = 0, fy = 0, fz = 0;
+
+	fx += (x - fx)*0.01;
+	fy += (y - fy)*0.01;
+	fz += (z - fz)*0.01;
+
+
+	float acc=sqrt(fx*fx + fy * fy + fz * fz);
+	Debug.load(0, acc, 0, 0);
+	Debug.dump();
+	*/
+
 
 	accZ = z*cosPitch + sinPitch*x;
 	accZ = 9.8f*(accZ*cosRoll - sinRoll*y - 1) - ac_accZ;

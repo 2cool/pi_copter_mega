@@ -302,8 +302,10 @@ int main(int argc, char *argv[]) {
 				}
 				remove(LOG_COUNTER_NAME);
 			}
-			else
+			else {
+				printf("no counter file");
 				return 0;
+			}
 			
 			set = fopen(LOG_COUNTER_NAME, "w+");
 			fprintf(set, "%i\n", counter + 1);

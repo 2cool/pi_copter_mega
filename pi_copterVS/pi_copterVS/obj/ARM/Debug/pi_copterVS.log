@@ -1,8 +1,8 @@
 ﻿  Validating architecture
   Validating sources
-  Copying sources remotely to '192.168.1.178'
+  Copying sources remotely to '192.168.0.105'
   Starting remote build
   Compiling sources:
-  SIM800.cpp
+  mpu.cpp
   Linking objects
   pi_copterVS.vcxproj -> D:\Users\2cool\Desktop\COPTER\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

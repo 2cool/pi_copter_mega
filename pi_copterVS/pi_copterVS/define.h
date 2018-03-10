@@ -33,7 +33,7 @@
 #define LED_ON
 
 
-#define LOST_BEEP
+//#define LOST_BEEP
 
 
 
