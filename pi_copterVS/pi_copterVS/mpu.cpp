@@ -661,9 +661,6 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	Debug.load(0, acc, 0, 0);
 	Debug.dump();
 	*/
-
-
-
 	accZ = z*cosPitch + sinPitch*x;
 	accZ = 9.8f*(accZ*cosRoll - sinRoll*y - 1) - ac_accZ;
 
