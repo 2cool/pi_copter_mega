@@ -97,7 +97,7 @@ import android.widget.Toast;
 
             zoom=(float)(1.0/(Math.sin(MainActivity.zoomN)));
 
-			if (/*Commander.link && */menu==false){
+			if (Commander.link && menu==false){
 				canvas=c;
 				Rect bounds=new Rect();
 				black.getTextBounds("11", 0, 1, bounds);

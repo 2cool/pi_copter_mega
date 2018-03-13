@@ -168,9 +168,9 @@ void MpuClass::log() {
 		Log.loadFloat(accY);
 		Log.loadFloat(accZ);
 
-		//Log.loadInt16t(a[0]);
-		//Log.loadInt16t(a[1]);
-		//Log.loadInt16t(a[2]);
+		Log.loadInt16t(a[0]);
+		Log.loadInt16t(a[1]);
+		Log.loadInt16t(a[2]);
 
 	}
 
@@ -661,6 +661,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	Debug.load(0, acc, 0, 0);
 	Debug.dump();
 	*/
+
 	accZ = z*cosPitch + sinPitch*x;
 	accZ = 9.8f*(accZ*cosRoll - sinRoll*y - 1) - ac_accZ;
 

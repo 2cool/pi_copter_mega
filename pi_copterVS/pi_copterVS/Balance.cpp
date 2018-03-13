@@ -357,7 +357,7 @@ bool BalanceClass::loop()
 				f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.2;
 			}
 
-
+		//	Debug.dump(f_[0], f_[1], f_[2], f_[3]);
 
 			if (Log.writeTelemetry) {
 				Log.loadByte(LOG::BAL);

@@ -1,6 +1,6 @@
 #pragma once
 #include "graph.h"
-
+enum { mPITCH, mROLL, mrPITCH, mrROLL, mYAW, mGYRO_PITCH, mGYRO_ROLL, mGYRO_YAW, mACCX, mACCY, mACCZ,mMAXACC ,mALL_E };
 class Mpu
 {
 private:
@@ -8,7 +8,11 @@ private:
 public:
 
 	double dt, time, gdt;
-	double pitch, roll, yaw, accX, accY, gyro_pitch, gyro_roll, rPitch, rRoll;
+
+	double f[mALL_E];
+	double _max[mALL_E];
+	double _min[mALL_E];
+
 	double cosYaw, sinYaw;
 	float e_speedX, e_speedY;
 	float e_accX, e_accY, _sinYaw, _cosYaw;

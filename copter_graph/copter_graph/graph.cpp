@@ -7,6 +7,7 @@
 #include "GPS_Loger.h"
 #include "Mpu.h"
 #include "MyMath.h"
+#include "Balance.h"
 //#define LOG_FILE_NAME "d:/tel_log10011.log"
 char *fname;
 enum LOG { MPU, HMC, MS5, GpS, COMM, STABXY, STABZ, BAL , EMU, AUTO, TELE, MPU_M, mMPU = 1, mHMC = 2, mMS5 = 4, mGpS = 8, mCOMM = 16, mSTABXY = 32, mSTABZ = 64, mBAL = 128
@@ -231,7 +232,8 @@ int Graph::decode_Log() {
 
 			case  LOG::BAL: {
 				indexes[LOG::BAL]++;
-				i += 43;
+				bal.decode(buffer, i, false);
+				//i += 43;
 				log_bank_size = *(uint16_t*)(buffer + i);
 				i += 2;
 				break;
@@ -328,7 +330,6 @@ int Graph::decode_Log() {
 		
 		case LOG::MPU: {
 			mpu.decode(buffer, i);
-
 			break;
 		}
 		case LOG::MPU_M: {
@@ -395,7 +396,17 @@ int Graph::decode_Log() {
 			//------------------------------------------------------------------------------------
 			sensors_data[dataI].sd[TIME] = mpu.time;
 			sensors_data[dataI].sd[DT] = mpu.dt;
+			sensors_data[dataI].sd[PITCH] = mpu.f[mPITCH];
+			sensors_data[dataI].sd[ROLL] = mpu.f[mROLL];
+			sensors_data[dataI].sd[GYRO_PITCH] = mpu.f[mGYRO_PITCH];
+			sensors_data[dataI].sd[F0] = bal.f[bF0];
 
+
+
+
+
+			sensors_data[dataI].sd[MAXACC] = mpu.f[mMAXACC];
+			
 
 			sensors_data[dataI].sd[PRESSURE] = press.alt;
 			sensors_data[dataI].sd[PRESSURE_SPEED] = press.speed;
@@ -558,6 +569,13 @@ Graph::Graph(char*fn)
 	name[EMU_ROLL] = L"e_roll";
 	color[EMU_PITCH] = Color(100, 0, 200, 0);
 	name[EMU_PITCH] = L"e_pitch";
+
+
+	color[MAXACC] = Color(100, 0, 0, 0);
+	name[MAXACC] = L"e_maxacc";
+
+
+
 
 	color[PITCH] = Color(255, 0,200, 0);
 	name[PITCH] = L"pitch";
@@ -840,8 +858,12 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 
 	int y0 = (rect.Y + rect.Height / 2);
 	double mull = (double)rect.Height / 2 / 45;
+#
+
+	
 #ifdef DKDKDKDKDK
-	draw(g, rect, y0,mull, PITCH);
+
+
 	draw(g,  rect, y0, mull, ROLL);
 	draw(g, rect, y0, mull, R_PITCH);
 	draw(g, rect, y0, mull, R_ROLL);
@@ -935,6 +957,22 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 #endif
 	//----------------------------------------------------------
 
+
+	//draw(g, rect, y0, mull, PITCH);
+	draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
+	draw(g, rect, mpu._max[mROLL], mpu._min[mROLL], ROLL);
+	draw(g, rect, mpu._max[mGYRO_PITCH], mpu._min[mGYRO_PITCH], GYRO_PITCH);
+
+
+	draw(g, rect, 1, 0, F0);
+
+
+
+
+	draw(g, rect, mpu._max[mMAXACC], mpu._min[mMAXACC], MAXACC);
+	//draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
+
+
 	draw(g, rect, press.max_alt, press.min_alt, PRESSURE);
 	draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
 	draw(g, rect, press.max_sp, press.min_sp, PRESSURE_SPEED);
@@ -978,6 +1016,7 @@ int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {////////////////
 }
 
 void Graph::draw(Graphics &g, RectF rect, float max, float min, int sdi) {
+	//if (true)return;
 	//void Graph::draw_ang(Graphics &g, Pen &pen, RectF rect, double zoom, double pos, int sdi) {
 
 	int y0 = (rect.Y + rect.Height/2);

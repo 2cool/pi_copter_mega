@@ -16,10 +16,10 @@ inline void sin_cos(const float a, float &s, float &c) {
 }
 #define DRAG_K 0.0052
 void Mpu::do_magic() {
-	sin_cos(yaw*GRAD2RAD, _sinYaw, _cosYaw);
+	sin_cos(f[mYAW] *GRAD2RAD, _sinYaw, _cosYaw);
 	//---calc acceleration on angels------
-	sin_cos(pitch*GRAD2RAD, sinPitch, cosPitch);
-	sin_cos(roll*GRAD2RAD, sinRoll, cosRoll);
+	sin_cos(f[mPITCH] *GRAD2RAD, sinPitch, cosPitch);
+	sin_cos(f[mROLL] *GRAD2RAD, sinRoll, cosRoll);
 
 #define WIND_SPEED_X sqrt(abs(w_accX / DRAG_K))*((w_accX>=0)?1:-1)
 #define WIND_SPEED_Y sqrt(abs(w_accY / DRAG_K))*((w_accY>=0)?1:-1)
@@ -46,11 +46,11 @@ void Mpu::do_magic() {
 	m7_accY += ((_cosYaw*e_accY - _sinYaw*e_accX) - m7_accY)*0.007;
 	m7_accY = constrain(m7_accY, -MAX_ACC / 2, MAX_ACC / 2);
 
-	f_pitch = pitch;
-	f_roll = roll;
+	f_pitch = f[mPITCH];
+	f_roll = f[mROLL];
 
-	pitch = RAD2GRAD*atan2((sinPitch + m7_accX*cosPitch / G), cosPitch);// +abs(gaccX*sinPitch));
-	roll = RAD2GRAD*atan2((sinRoll - m7_accY*cosRoll / G), cosRoll);// +abs(gaccY*sinRoll));
+	f[mPITCH] = RAD2GRAD*atan2((sinPitch + m7_accX*cosPitch / G), cosPitch);// +abs(gaccX*sinPitch));
+	f[mROLL] = RAD2GRAD*atan2((sinRoll - m7_accY*cosRoll / G), cosRoll);// +abs(gaccY*sinRoll));
 
 }
 
@@ -63,51 +63,79 @@ void Mpu::do_magic() {
 
 void Mpu::init() {
 	time = gdt = 0;
+	for (int i = 0; i < mALL_E; i++) {
+		_max[i] = -1000;
+		_min[i] = 1000;
+	}
 }
 
 
 
 int Mpu::decode(char buffer[], int &i, bool rotate) {
 
+	static float t_pitch = 0, t_roll = 0;
 
-	dt = (double)buffer[i + 1] * 0.001;
+	dt = (double)buffer[i + 1] * 0.01;
 	time += dt;
 	gdt += dt;
 
 	press.dt += dt;
 
-	pitch = *(float*)(&buffer[i + 2]);
-	roll = *(float*)(&buffer[i + 6]);
-	rPitch = *(float*)(&buffer[i + 10]);
-	rRoll = *(float*)(&buffer[i + 14]);
-	yaw = *(float*)(&buffer[i + 18]);
-	gyro_pitch = *(float*)(&buffer[i + 22]);
-	gyro_roll = *(float*)(&buffer[i + 26]);
-	accX = *(float*)(&buffer[i + 34]);
-	accY = *(float*)(&buffer[i + 38]);
+	int j;
+	for (j = 0; j < mALL_E-1; j++) {
+
+		f[j] = *(float*)(&buffer[i + 2+j*4]);
+		_max[j] = max(_max[j], f[j]);
+		_min[j] = min(_min[j], f[j]);
+
+	}
+	const float n122 = 1.220740379e-4;
+	j = j * 4;
+	float ax= n122 * *(int16_t*)(&buffer[i + 2 + j]);
+	float ay = n122 * *(int16_t*)(&buffer[i + 2 + j +2]);
+	float az = n122 * *(int16_t*)(&buffer[i + 2 + j + 4]);
+
+	f[mMAXACC]=sqrt(ax*ax + ay * ay + az * az);
+
+	if (f[mMAXACC] > 1.2) {
+		t_pitch += f[mGYRO_PITCH]*0.01;
+		t_roll += f[mGYRO_ROLL] * 0.01;
+		//f[mPITCH] = t_pitch;
+		//f[mROLL] = t_roll;
+
+	}
+	else {
+		t_pitch = f[mPITCH];
+		t_roll = f[mROLL];
+	}
+
+
+	_max[mMAXACC] = max(_max[mMAXACC], f[mMAXACC]);
+	_min[mMAXACC] = min(_min[mMAXACC], f[mMAXACC]);
 
 
 	if (rotate) {
-		cosYaw = cos(yaw*GRAD2RAD);
-		sinYaw = sin(yaw*GRAD2RAD);
+		cosYaw = cos(f[mYAW]*GRAD2RAD);
+		sinYaw = sin(f[mYAW] *GRAD2RAD);
 	}
 	else {
 		cosYaw = 1;
 		sinYaw = 0;
 	}
 	//------------------------------------------------------------------
-	//#define _MPU_M
+
+#define _MPU_M
 
 #ifndef _MPU_M	
 	do_magic();
 #endif
 
-	i += 46;
+	i += 52;
 	return 0;
 }
 int Mpu::view(int &indexes, char buffer[], int &i) {
 	indexes++;
-	i += 46;
+	i += 52;
 	return 0;
 }
 Mpu mpu;

@@ -288,6 +288,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mi2 ", gr, MI2);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mi3 ", gr, MI3);
 
+	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"maxacc ", gr, MAXACC);
 
 
 	//tb[tbuttons++] = new TButton(10, yButton += yButoonStep, L"roll", gr, ROLL);
