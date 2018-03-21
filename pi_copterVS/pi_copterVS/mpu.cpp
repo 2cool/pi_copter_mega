@@ -137,23 +137,22 @@ void MpuClass::do_magic() {
 	pitch = atan2((sinPitch + m7_accX*cosPitch / G), cosPitch);// +abs(gaccX*sinPitch));
 	roll = atan2((sinRoll - m7_accY*cosRoll / G), cosRoll);// +abs(gaccY*sinRoll));
 
-
-
-	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::MPU_M);
-
-		Log.loadFloat(w_accX);
-		Log.loadFloat(w_accY);
-		Log.loadFloat(e_accX);
-		Log.loadFloat(e_accY);
-	}
-
 }
 
 //-----------------------------------------------------
+
+void MpuClass::log_sens() {
+	Log.loadByte(LOG::MPU_SENS);
+	Log.loadByte(36);
+	Log.loaduint64t(oldmpuTime);
+	Log.loadMem((uint8_t*)g, 6, false);
+	Log.loadMem((uint8_t*)a, 6, false);
+	Log.loadMem((uint8_t*)_q, 16, false);
+}
 void MpuClass::log() {
 	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::MPU);
+		Log.loadByte(LOG::MPU_EMU);
+		Log.loadByte(45);
 		Log.loadByte((uint8_t)(dt * 1000));
 		Log.loadFloat(f_pitch * RAD2GRAD);
 		Log.loadFloat(f_roll * RAD2GRAD);
@@ -167,11 +166,6 @@ void MpuClass::log() {
 		Log.loadFloat(accX);
 		Log.loadFloat(accY);
 		Log.loadFloat(accZ);
-
-		Log.loadInt16t(a[0]);
-		Log.loadInt16t(a[1]);
-		Log.loadInt16t(a[2]);
-
 	}
 
 
@@ -698,7 +692,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 //	mgaccX += (GPS.loc.accX - mgaccX)*gpsACC_F;
 //	mgaccY += (GPS.loc.accY - mgaccY)*gpsACC_F;
 
-	log();
+	log_sens();
 
 
 

@@ -2,6 +2,9 @@
 #include "debug.h"
 #include "Autopilot.h"
 
+
+#define LOG_VER "log001"
+
 volatile  bool	run_loging = true;
 volatile int log_index, log_bank_, log_bank, old_bank,net_bank, error_bansk = 0;
 volatile bool log_file_closed=true;
@@ -120,6 +123,10 @@ bool LogClass::init(int counter_) {
 		this_log_fname = convert.str();
 		fprintf(Debug.out_stream, "log 2 %s\n", this_log_fname.c_str());
 		logfile.open(this_log_fname.c_str(), fstream::in | fstream::out | fstream::trunc);
+
+		char ver[] = LOG_VER;
+		logfile.write(ver, 6);
+
 		log_file_closed = false;
 		log_bank_ = old_bank = log_bank = net_bank=0;
 		log_index = 2;
@@ -137,6 +144,19 @@ void LogClass::loadFloat(float f) {
 	log_buffer[log_bank][log_index++] = fp[2];
 	log_buffer[log_bank][log_index++] = fp[3];
 }
+
+void LogClass::loaduint64t(uint64_t ui) {
+	uint8_t *fp = (uint8_t*)&ui;
+	log_buffer[log_bank][log_index++] = fp[0];
+	log_buffer[log_bank][log_index++] = fp[1];
+	log_buffer[log_bank][log_index++] = fp[2];
+	log_buffer[log_bank][log_index++] = fp[3];
+	log_buffer[log_bank][log_index++] = fp[4];
+	log_buffer[log_bank][log_index++] = fp[5];
+	log_buffer[log_bank][log_index++] = fp[6];
+	log_buffer[log_bank][log_index++] = fp[7];
+}
+
 void LogClass::loaduint32t(uint32_t ui) {
 	uint8_t *fp = (uint8_t*)&ui;
 	log_buffer[log_bank][log_index++] = fp[0];

@@ -159,6 +159,7 @@ void TelemetryClass::update_voltage() {
 	full_power += ( (m_current[0] + m_current[1] + m_current[2] + m_current[3]) * voltage - full_power)*0.2;  //152 вата  - 274, 9.24 amper
 	if (Log.writeTelemetry) {
 		Log.loadByte(LOG::TELE);
+		Log.loadByte(10);
 		Log.loadMem((uint8_t*)data, 10, false);
 	}
 #endif

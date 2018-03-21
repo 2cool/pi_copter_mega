@@ -54,7 +54,7 @@ class MS5611Class {
 protected:
 	int writeReg(char bar_zero);
 	int error(int e = 0);
-	void log();
+	void log_sens();
 	 int ct;
 	 float altitude_error;
 

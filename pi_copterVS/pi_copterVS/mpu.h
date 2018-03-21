@@ -38,6 +38,7 @@ class MpuClass
 	 void do_magic4Z();
 	 void calc_corrected_ang();
 	 void log();
+	 void log_sens();
 
 	 int ms_open();
 	 // MPU control/status vars

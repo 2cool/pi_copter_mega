@@ -361,13 +361,9 @@ bool BalanceClass::loop()
 
 			if (Log.writeTelemetry) {
 				Log.loadByte(LOG::BAL);
-				Log.loadFloat(0);
-				Log.loadFloat(0);
-				Log.loadFloat(c_pitch);
-				Log.loadFloat(c_roll);
-				Log.loadFloat(throttle);
+				Log.loadByte(20);
 				Log.write_bank_cnt();
-				Log.loadMem((uint8_t*)f_, 16);
+				Log.loadMem((uint8_t*)f_, 16, false);
 			}
 			/*
 			if (Hmc.do_compass_motors_calibr) {
@@ -391,13 +387,9 @@ bool BalanceClass::loop()
 
 			if (Log.writeTelemetry) {
 				Log.loadByte(LOG::BAL);
-				Log.loadFloat(0);
-				Log.loadFloat(0);
-				Log.loadFloat(0);
-				Log.loadFloat(0);
-				Log.loadFloat(0);
+				Log.loadByte(20);
 				Log.write_bank_cnt();
-				Log.loadMem((uint8_t*)f_, 16);
+				Log.loadMem((uint8_t*)f_, 16,false);
 			}
 
 		}

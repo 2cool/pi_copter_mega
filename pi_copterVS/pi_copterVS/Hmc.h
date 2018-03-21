@@ -83,9 +83,11 @@
 class HmcClass
 {
  protected:
+	 void log_sens();
+	 void log_base();
 	 void log();
 	 void motTest(const float, const float, const float);
-	 int16_t baseX, baseY, baseZ;
+	 int16_t c_base[3];
 	 
 	float   dx, dy, dz;
 

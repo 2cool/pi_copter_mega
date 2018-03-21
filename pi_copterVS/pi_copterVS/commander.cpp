@@ -275,6 +275,7 @@ bool CommanderClass::input(){
 
 			if (Log.writeTelemetry) {
 				Log.loadByte(LOG::COMM);
+				Log.loadByte(0); // if 0 nex two byte is size of next mem block
 				Log.loadMem(buf, data_size);
 			}
 

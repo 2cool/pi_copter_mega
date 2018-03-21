@@ -361,6 +361,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 void AutopilotClass::log() {
 	if (old_control_bits != control_bits && Log.writeTelemetry) {
 		Log.loadByte(LOG::AUTO);
+		Log.loadByte(4);
 		Log.loaduint32t(control_bits);
 		old_control_bits = control_bits;
 	}

@@ -67,9 +67,10 @@ double MS5611Class::getAltitude(const float pressure) {
 }
 
 
-void MS5611Class::log() {
+void MS5611Class::log_sens() {
 	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::MS5);
+		Log.loadByte(LOG::MPU_SENS);
+		Log.loadByte(i_readTemperature);
 		Log.loadFloat(pressure);
 	}
 }
@@ -112,7 +113,7 @@ uint8_t MS5611Class::loop(){
 
 
 	
-	log();
+	log_sens();
 
 	powerK = PRESSURE_AT_0 / pressure;
 
@@ -241,7 +242,7 @@ void MS5611Class::phase2() {
 		}
 
 		pressure += ((float)P - pressure)*0.3;
-		log();
+		log_sens();
 		powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
 		const float new_altitude = getAltitude(pressure);
 		speed = (new_altitude - altitude_) / dt;

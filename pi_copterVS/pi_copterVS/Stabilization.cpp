@@ -131,13 +131,13 @@ void StabilizationClass::XY(float &pitch, float&roll,bool onlyUpdate){
 	sY += (GPS.loc.dY - sY)*XY_KF_DIST;
 	speedY += (GPS.loc.speedY - speedY)*XY_KF_SPEED;
 
-	if (Log.writeTelemetry) {
+/*	if (Log.writeTelemetry) {
 		Log.loadByte(LOG::STABXY);
 		Log.loadFloat(sX);
 		Log.loadFloat(speedX);
 		Log.loadFloat(sY);
 		Log.loadFloat(speedY);
-	}
+	}*/
 
 	if (onlyUpdate) {
 		mc_pitch = mc_roll = 0;
@@ -232,13 +232,14 @@ float StabilizationClass::Z(bool onlyUpdate){///////////////////////////////////
 
 	speedZ += Mpu.accZ*Mpu.dt;
 	speedZ += (MS5611.speed - speedZ)*Z_CF_SPEED;
-
+	/*
 	if (Log.writeTelemetry) {
 		Log.loadByte(LOG::STABZ);
 		Log.loadFloat(sZ);
 		Log.loadFloat(speedZ);
 
 	}
+	*/
 	if (onlyUpdate) {
 		mc_z = 0;
 		return 0;

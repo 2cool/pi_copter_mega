@@ -163,16 +163,9 @@ void LocationClass::proceed(SEND_I2C *d) {
 
 
 	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::GpS);
+		Log.loadByte(LOG::GPS_SENS);
+		Log.loadByte(sizeof(SEND_I2C));
 		Log.loadSEND_I2C(d);
-		Log.loadFloat((float)x2home);
-		Log.loadFloat((float)y2home);
-		Log.loadFloat((float)dX);
-		Log.loadFloat((float)dY);
-		Log.loadFloat((float)speedX);
-		Log.loadFloat((float)speedY);
-		Log.loadFloat((float)accX);
-		Log.loadFloat((float)accY);
 	}
 
 

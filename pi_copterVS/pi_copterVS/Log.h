@@ -15,7 +15,7 @@ MS5=6b
 comm=1024
 
 */
-enum LOG { MPU, HMC, MS5, GpS, COMM, STABXY, STABZ, BAL,EMU,AUTO,TELE,MPU_M};
+enum LOG { MPU_EMU,MPU_SENS,HMC_BASE,HMC_SENS, HMC_EMU,GPS_SENS, TELE,COMM,    EMU,AUTO,BAL};
 class LogClass
 {
 private:
@@ -30,6 +30,8 @@ public:
 	void end();
 	void loadSEND_I2C(SEND_I2C *p);
 
+
+	void loaduint64t(uint64_t ui);
 	void loaduint32t(uint32_t ui);
 	void loadFloat(float f);
 	void loadInt16t(int16_t i);

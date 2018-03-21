@@ -18,6 +18,9 @@
 
 #define DEFAULT_DEV "/dev/i2c-0"
 
+
+
+enum{X,Y,Z};
 void HmcClass::init()
 {
 	do_compass_motors_calibr = false;
@@ -30,7 +33,7 @@ void HmcClass::init()
 	motors_power_on = true;
 #endif
 
-	baseX = baseY = baseZ = 0;
+	c_base[X] = c_base[Y] = c_base[Z] = 0;
 	dx = dy = dz = 0;
 	heading = 0;
 	ok = true;
@@ -64,21 +67,27 @@ void HmcClass::set(const float buf[]){
 //---------------------------------------------------------
 
 void HmcClass::log() {
+	Log.loadByte(LOG::HMC_EMU);
+	Log.loadByte(4);
+	Log.loadFloat(heading);
+}
+void HmcClass::log_base() {
+	Log.loadByte(LOG::HMC_BASE);
+	Log.loadByte(6);
+	Log.loadMem((uint8_t*)c_base, 6, false);
+
+}
+void HmcClass::log_sens() {
 	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::HMC);
-		Log.loadInt16t(buffer[0]);
-		Log.loadInt16t(buffer[1]);
-		Log.loadInt16t(buffer[2]);
-		Log.loadInt16t(buffer[3]);
-		Log.loadInt16t(buffer[4]);
-		Log.loadInt16t(buffer[5]);
-		Log.loadFloat(heading);
+		Log.loadByte(LOG::HMC_SENS);
+		Log.loadByte(6);
+		Log.loadMem(buffer, 6, false);
 	}
 }
 
 
 
-float baseX = 0, baseY = 0, baseZ = 0;
+
 int baseI = 0;
 bool motors_is_on_ = false;
 
@@ -87,7 +96,7 @@ void HmcClass::start_motor_compas_calibr(){
 		fprintf(Debug.out_stream,"START MOTOR COMPAS CAL\n");
 		do_compass_motors_calibr = true;
 		motors_is_on_ = false;
-		baseX = baseY = baseZ = 0;
+		c_base[X] = c_base[Y] = c_base[Z] = 0;
 		startTime = millis() + 5000;
 		motor_index = 0;
 
@@ -181,9 +190,9 @@ void HmcClass::loop(){
 	mx = (((int16_t)buffer[0]) << 8) | buffer[1];
 	my = (((int16_t)buffer[4]) << 8) | buffer[5];
 	mz = (((int16_t)buffer[2]) << 8) | buffer[3];
-	fmy = -(float)(mx - baseX)*dx;
-	fmx = -(float)(my - baseY)*dy;
-	fmz = -(float)(mz - baseZ)*dz;
+	fmy = -(float)(mx - c_base[X])*dx;
+	fmx = -(float)(my - c_base[Y])*dy;
+	fmz = -(float)(mz - c_base[Z])*dz;
 
 #ifndef SESOR_UPSIDE_DOWN
 	my = -my;
@@ -338,19 +347,22 @@ bool HmcClass::calibration(const bool newc){
 
 	
 	dx = (float)(sh[0] - sh[1])*0.5f;
-	baseX = (int16_t)(dx + sh[1]);
+	c_base[X] = (int16_t)(dx + sh[1]);
 	fprintf(Debug.out_stream,"%i\t%i\n", sh[0], sh[1]);
 	dx = 1.0f / dx;
 
 	dy = (float)(sh[2] - sh[3])*0.5f;
-	baseY = (int16_t)(dy + sh[3]);
+	c_base[Y] = (int16_t)(dy + sh[3]);
 	fprintf(Debug.out_stream,"%i\t%i\n", sh[2], sh[3]);
 	dy = 1.0f / dy;
 
 	dz = (float)(sh[4] - sh[5])*0.5f;
-	baseZ = (int16_t)(dz + sh[5]);
+	c_base[Z] = (int16_t)(dz + sh[5]);
 	fprintf(Debug.out_stream,"%i\t%i\n",sh[4],sh[5]);
 	dz = 1.0f / dz;
+
+	log_base();
+
 	return true;
 }
 
