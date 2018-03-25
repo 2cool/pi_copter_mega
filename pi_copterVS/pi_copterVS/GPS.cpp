@@ -106,17 +106,11 @@ void GPSClass::loop(){
 				posllh.lat = lat;
 				posllh.lon = lon;
 				posllh.height = Emu.get_alt();
-				Log.loadByte(LOG::GpS);
-				Log.loadSEND_I2C(&posllh);
-				Log.loadFloat((float)loc.x2home);
-				Log.loadFloat((float)loc.y2home);
-				Log.loadFloat((float)loc.dX);
-				Log.loadFloat((float)loc.dY);
-				Log.loadFloat((float)loc.speedX);
-				Log.loadFloat((float)loc.speedY);
-				Log.loadFloat((float)loc.accX);
-				Log.loadFloat((float)loc.accY);
 
+
+				Log.loadByte(LOG::GPS_SENS);
+				Log.loadByte(sizeof(SEND_I2C));
+				Log.loadSEND_I2C(&posllh);
 			}
 
 }

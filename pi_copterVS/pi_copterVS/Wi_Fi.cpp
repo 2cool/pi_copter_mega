@@ -87,8 +87,13 @@ void server(){
 		  const uint32_t t = millis();
 		  const uint32_t dt = t - wifiold_t;
 		  wifiold_t = t;
+		
 		  if (dt < 33)
-			  usleep(33 - dt);
+			  delay(33 - dt);
+
+		  //if (dt > 35)
+			//  fprintf(Debug.out_stream,"too long %i\n", dt);
+
 		  if (run)
 			n = read(newsockfd,inbuffer, TELEMETRY_BUF_SIZE);
 

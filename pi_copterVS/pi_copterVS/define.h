@@ -169,6 +169,7 @@
 #define m_UPLOAD_SETTINGS "UPS"
 #define m_PROGRAM	   "PRG"
 
+enum { X, Y, Z };
 
 enum {
 	MOTORS_ON = 1, CONTROL_FALLING = 2, Z_STAB = 4, XY_STAB = 8, GO2HOME = 0x10, PROGRAM = 0x20, COMPASS_ON = 0x40, HORIZONT_ON = 0x80,

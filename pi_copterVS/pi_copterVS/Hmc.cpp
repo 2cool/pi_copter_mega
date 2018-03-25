@@ -20,7 +20,7 @@
 
 
 
-enum{X,Y,Z};
+//enum{X,Y,Z};
 void HmcClass::init()
 {
 	do_compass_motors_calibr = false;

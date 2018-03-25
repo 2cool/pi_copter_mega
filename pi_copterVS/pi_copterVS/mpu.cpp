@@ -570,10 +570,11 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 		return false;
 
 	dt = (float)(mputime - oldmpuTime)*0.000001f;// *div;
-	//if (dt > 0.015)
-	//	printf("MPU DT too long\n");
-
-
+	/*if (dt > 0.012)
+		printf("MPU DT too long %f\n",dt);
+	if (dt < 0.008)
+		printf("MPU DT too short %f\n", dt);
+*/
 
 
 	rdt = 1.0f / dt;
