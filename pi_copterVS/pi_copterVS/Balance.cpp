@@ -361,9 +361,15 @@ bool BalanceClass::loop()
 
 			if (Log.writeTelemetry) {
 				Log.loadByte(LOG::BAL);
-				Log.loadByte(20);
+				Log.loadByte(32);
+				
 				Log.write_bank_cnt();
 				Log.loadMem((uint8_t*)f_, 16, false);
+				Log.loadFloat(c_roll);
+				Log.loadFloat(c_pitch);
+				Log.loadFloat(Autopilot.get_yaw());
+
+
 			}
 			/*
 			if (Hmc.do_compass_motors_calibr) {
