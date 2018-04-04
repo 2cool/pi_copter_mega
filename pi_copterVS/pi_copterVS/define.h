@@ -23,8 +23,9 @@
 #define G 9.8
 #define MAX_ACC 7
 #define DEBUG_MODE
-
-
+#define GPS_ALT_MAX_ERROR 30
+#define MAX_BAROMETR_ERRORS 10
+#define MAX_BAROMETR_ERROR 10
 //#define OFF_MOTOR_IF_LOST_CONNECTION  
 
 
@@ -145,6 +146,8 @@
 #define e_SYSTEM_MALFUNCTION "WDT"
 #define e_ESK_ERROR			"ESK"
 #define e_CALIBRATING		"CLB"
+#define e_BARROMETR_FAULT   "BFT"
+#define e_BARROMETR_FAULT_COPTER_AT_HOME "BCH"
 #define i_OFF_MOTORS     "MD0"
 #define i_CONTROL_FALL   "CNF"
 #define i_MAX_THR        "MXT"

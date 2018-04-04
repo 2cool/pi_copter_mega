@@ -229,6 +229,23 @@ string getLocation() {
 	std::string req = std::to_string(GPS.loc.lat_) + "," + std::to_string(GPS.loc.lon_) + "," + std::to_string((int)GPS.loc.altitude);
 	return req;
 }
+
+
+void add_stat(string &send) {
+	if (Autopilot.motors_is_on()) {
+		send += "m_on,";
+		if (Autopilot.go2homeState())
+			send += "go2home,";
+		else if (Autopilot.progState())
+			send += "prog,";
+	}
+	else
+		send += "m_off,";
+	send += "b" + std::to_string((int)Telemetry.get_voltage4one_cell()) + ",";
+	send += getLocation() + ",";
+
+}
+
 //-----------------------------------------------------------------------------
 void parse_messages_(const string message, string &send) {
 
@@ -243,17 +260,7 @@ void parse_messages_(const string message, string &send) {
 	}
 	else if (message.find("stat") == 0)
 	{
-		if (Autopilot.motors_is_on()) {
-			send += "m_on,";
-			if (Autopilot.go2homeState())
-				send += "go2home,";
-			else if (Autopilot.progState())
-				send += "prog,";
-		}
-		else
-			send += "m_off,";
-		send += "b" + std::to_string((int)Telemetry.get_voltage4one_cell()) + ",";
-		send += getLocation() + ",";
+		add_stat(send);
 	}
 	else {
 		send += "?";
@@ -501,6 +508,13 @@ void SIM800::start()
 }
 
 
+void SIM800::send_sos(string msg) {
+	sos_msg = msg;
+	mes2send = msg + ":";
+	add_stat(mes2send);
+	sendsms();
+	//..............
+}
 
 
 

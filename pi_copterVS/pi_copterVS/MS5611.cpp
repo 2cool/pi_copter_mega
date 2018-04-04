@@ -4,6 +4,7 @@
 #include "Autopilot.h"
 #include "debug.h"
 #include "Log.h"
+#include "GPS.h"
 
 static int fd4S;
 unsigned int PROM_read(int DA, char PROM_CMD)
@@ -61,9 +62,25 @@ void MS5611Class::copterStarted(){
 
 #define MAX_D_PRESSURE 300.0
 
-
+bool MS5611Class::fault() {
+	return wrong_altitude_cnt > MAX_BAROMETR_ERRORS;
+}
 double MS5611Class::getAltitude(const float pressure) {
-	return (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка
+	if (fault()) {
+			return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
+	}
+	else {
+		double alt = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка 4.4.2018-вот она
+		if (altitude_ != 0) {
+			if (abs(alt - altitude_) > MAX_BAROMETR_ERROR) {
+				wrong_altitude_cnt++;
+				return altitude_;
+			}
+		}
+		gps_barometr_alt_dif = GPS.loc.altitude - alt;
+
+		return alt;
+	}
 }
 
 
@@ -274,7 +291,9 @@ int MS5611Class::init() {
 	bar_task = 0;
 	bar_zero = 0x0;
 	ct = 10000;
+	if (wrong_altitude_cnt > MAX_BAROMETR_ERRORS) {
 
+	wrong_altitude_cnt = 0;
 	speed = altitude_ = 0;
 	altitude_error = ALT_NOT_SET;
 

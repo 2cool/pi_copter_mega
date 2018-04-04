@@ -91,7 +91,7 @@ void server(){
 		  if (dt < 33)
 			  delay(33 - dt);
 
-		  //if (dt > 35)
+		 // if (dt > 35)
 			//  fprintf(Debug.out_stream,"too long %i\n", dt);
 
 		  if (run)
@@ -112,7 +112,7 @@ void server(){
 
 			
 
-			if (true)
+			//if (true)
 				n = write(newsockfd,outbuffer,buf_len);
 
 

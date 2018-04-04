@@ -304,6 +304,14 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 	controlDeltaTime = t;
 	uint8_t smart = 0;
 
+
+	if (MS5611.fault() && go2homeState() == 0) {
+		sim.send_sos(e_BARROMETR_FAULT);
+		going2HomeON(true);
+	}
+
+
+
 	if (control_bits&CONTROL_FALLING){
 		aYaw_ = Mpu.get_yaw();
 		off_throttle(false,"cntr_fall");
@@ -470,57 +478,57 @@ bool AutopilotClass::go2HomeProc(const float dt){
 
 	case JUMP:{	
 #ifdef FALL_IF_STRONG_WIND
-				  dist2home_at_begin2 = GPS.loc.dist2home_2;
+		dist2home_at_begin2 = GPS.loc.dist2home_2;
 #endif
-				  if (MS5611.altitude() < 3)
-					  holdAltitude(3);
-				  go2homeIndex=HOWER;
-				  break;
+		if (MS5611.altitude() < 3)
+			holdAltitude(3);
+		go2homeIndex=HOWER;
+		break;
 	}
 
 	case HOWER:{	//висеть 20 секунд
-			   f_go2homeTimer += dt;
-			   if (f_go2homeTimer > ((howeAt2HOME)?HOWER_TIME:4)){ //for stabilization and connection
-				   go2homeIndex = GO_UP_OR_NOT;
-			   }
-			   break;
+		f_go2homeTimer += dt;
+		if (f_go2homeTimer > ((howeAt2HOME)?HOWER_TIME:4)){ //for stabilization and connection
+			go2homeIndex = GO_UP_OR_NOT;
+		}
+		break;
 
 	}
 	case GO_UP_OR_NOT:{
-			   const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
-			   if (fabs(GPS.loc.x2home) <= accuracy && fabs(GPS.loc.y2home) <= accuracy){
-				   f_go2homeTimer = 6; //min time for stab
-				   go2homeIndex = (MS5611.altitude() <= (FAST_DESENDING_TO_HIGH)) ? SLOW_DESENDING : START_FAST_DESENDING;
-				   GPS.loc.setNeedLoc2HomeLoc();
-				   break;
-			   }	
-			   //поднятся  на высоту  X м от стартовой высоты или опуститься
-			   tflyAtAltitude=flyAtAltitude = height_to_lift_to_fly_to_home;
-			   go2homeIndex = TEST_ALT1;
-			   break;
+		const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
+		if (fabs(GPS.loc.x2home) <= accuracy && fabs(GPS.loc.y2home) <= accuracy){
+			f_go2homeTimer = 6; //min time for stab
+			go2homeIndex = (MS5611.altitude() <= (FAST_DESENDING_TO_HIGH)) ? SLOW_DESENDING : START_FAST_DESENDING;
+			GPS.loc.setNeedLoc2HomeLoc();
+			break;
+		}	
+		//поднятся  на высоту  X м от стартовой высоты или опуститься
+		tflyAtAltitude=flyAtAltitude = height_to_lift_to_fly_to_home;
+		go2homeIndex = TEST_ALT1;
+		break;
 	}
 	case TEST_ALT1:{
-			   if (fabs(MS5611.altitude() - flyAtAltitude) <= (ACCURACY_Z)){
-				   go2homeIndex = GO2HOME_LOC;
-			   }
-			   break;
+		if (fabs(MS5611.altitude() - flyAtAltitude) <= (ACCURACY_Z)){
+			go2homeIndex = GO2HOME_LOC;
+		}
+		break;
 	}
 	case GO2HOME_LOC:{//перелететь на место старта
-			   // led_prog = 4;
-			   GPS.loc.setNeedLoc2HomeLoc();
-			   go2homeIndex = TEST4HOME_LOC;
-			   aYaw_ = -GPS.loc.dir_angle_GRAD;
-			   aYaw_ = wrap_180(aYaw_);
-			   break;
+		// led_prog = 4;
+		GPS.loc.setNeedLoc2HomeLoc();
+		go2homeIndex = TEST4HOME_LOC;
+		aYaw_ = -GPS.loc.dir_angle_GRAD;
+		aYaw_ = wrap_180(aYaw_);
+		break;
 	}
 	case TEST4HOME_LOC:{//прилет на место старта
 			   
-			   const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
-			   if (fabs(GPS.loc.x2home) <= accuracy && fabs(GPS.loc.y2home) <= accuracy){
-				   go2homeIndex = START_FAST_DESENDING;
-				   f_go2homeTimer = 0;
-			   }
-			   break;
+		const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
+		if (fabs(GPS.loc.x2home) <= accuracy && fabs(GPS.loc.y2home) <= accuracy){
+			go2homeIndex = START_FAST_DESENDING;
+			f_go2homeTimer = 0;
+		}
+		break;
 	}
 	case START_FAST_DESENDING:
 		f_go2homeTimer += dt;
@@ -532,27 +540,32 @@ bool AutopilotClass::go2HomeProc(const float dt){
 
 
 	case TEST_ALT2:{//спуск до FAST_DESENDING_TO_HIGH метров
-			   if (fabs(MS5611.altitude() - flyAtAltitude) < (ACCURACY_Z)){
-				   go2homeIndex = SLOW_DESENDING;
-				}
+		if (fabs(MS5611.altitude() - flyAtAltitude) < (ACCURACY_Z)){
+			go2homeIndex = SLOW_DESENDING;
+		}
 			   
-			   break;
+		break;
 	}
 	case SLOW_DESENDING:
 	{ 
+		if (MS5611.fault()) {
+			control_falling(e_BARROMETR_FAULT);
+			sim.send_sos(e_BARROMETR_FAULT_COPTER_AT_HOME);
+			return false;
+		}
 		//плавній спуск
-				if (MS5611.altitude()>lowest_height){
-					float k = MS5611.altitude()*0.05f;
-					if (k < 0.1f)
-						k = 0.1f;
-					flyAtAltitude -= (dt*k);
-					tflyAtAltitude = flyAtAltitude;
-				}
-				else{
-					tflyAtAltitude = flyAtAltitude = lowest_height;
-				}
+		if (MS5611.altitude()>lowest_height){
+			float k = MS5611.altitude()*0.05f;
+			if (k < 0.1f)
+				k = 0.1f;
+			flyAtAltitude -= (dt*k);
+			tflyAtAltitude = flyAtAltitude;
+		}
+		else{
+			tflyAtAltitude = flyAtAltitude = lowest_height;
+		}
 						   
-			   break;
+		break;
 	}
  }
 #ifdef FALL_IF_STRONG_WIND

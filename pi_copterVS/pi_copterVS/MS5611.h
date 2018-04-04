@@ -54,6 +54,8 @@ class MS5611Class {
 protected:
 	int writeReg(char bar_zero);
 	int error(int e = 0);
+	int wrong_altitude_cnt;
+	float gps_barometr_alt_dif;
 	void log_sens();
 	 int ct;
 	 float altitude_error;
@@ -66,6 +68,7 @@ protected:
 
 	float altitude_;
 public:
+	bool fault();
 	bool compensation;
 
 	float altitude();
