@@ -142,30 +142,33 @@ void MpuClass::do_magic() {
 //-----------------------------------------------------
 
 void MpuClass::log_sens() {
-	Log.loadByte(LOG::MPU_SENS);
-	Log.loadByte(36);
+	Log.block_start(LOG::MPU_SENS);
+
 	Log.loaduint64t(oldmpuTime);
 	Log.loadMem((uint8_t*)g, 6, false);
 	Log.loadMem((uint8_t*)a, 6, false);
 	Log.loadMem((uint8_t*)_q, 16, false);
+
+	Log.block_end();
 }
-void MpuClass::log() {
+void MpuClass::log_emu() {
 	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::MPU_EMU);
-		Log.loadByte(45);
+		Log.block_start(LOG::MPU_EMU);
+
 		Log.loadByte((uint8_t)(dt * 1000));
 		Log.loadFloat(f_pitch * RAD2GRAD);
 		Log.loadFloat(f_roll * RAD2GRAD);
 		Log.loadFloat(pitch);
 		Log.loadFloat(roll);
 		Log.loadFloat(yaw);
-
 		Log.loadFloat(gyroPitch);
 		Log.loadFloat(gyroRoll);
 		Log.loadFloat(gyroYaw);
 		Log.loadFloat(accX);
 		Log.loadFloat(accY);
 		Log.loadFloat(accZ);
+
+		Log.block_end();
 	}
 
 

@@ -359,18 +359,7 @@ bool BalanceClass::loop()
 
 		//	Debug.dump(f_[0], f_[1], f_[2], f_[3]);
 
-			if (Log.writeTelemetry) {
-				Log.loadByte(LOG::BAL);
-				Log.loadByte(32);
-				
-				Log.write_bank_cnt();
-				Log.loadMem((uint8_t*)f_, 16, false);
-				Log.loadFloat(c_roll);
-				Log.loadFloat(c_pitch);
-				Log.loadFloat(Autopilot.get_yaw());
-
-
-			}
+			
 			/*
 			if (Hmc.do_compass_motors_calibr) {
 				f_[0] = 0;
@@ -388,20 +377,23 @@ bool BalanceClass::loop()
 			pids[PID_ROLL_RATE].reset_I();
 			pids[PID_YAW_RATE].reset_I();
 			c_pitch = c_roll = 0;
-
-			
-
-			if (Log.writeTelemetry) {
-				Log.loadByte(LOG::BAL);
-				Log.loadByte(20);
-				Log.write_bank_cnt();
-				Log.loadMem((uint8_t*)f_, 16,false);
-			}
-
 		}
-		if (Log.writeTelemetry)
-			Log.end();            //               Nepishetca poslednie secundy loga?..  filtruemye dannye proverat na oshibku
 
+		if (Log.writeTelemetry) {
+			Log.block_start(LOG::BAL);
+
+			Log.write_bank_cnt();
+			Log.loadMem((uint8_t*)f_, 16, false);
+			Log.loadInt16t((int)c_roll*16);
+			Log.loadInt16t((int)c_pitch*16);
+			Log.loadInt16t((int)Autopilot.get_yaw()*16);
+
+			//при лагах в св€зи c_pitch,c_roll обнул€ютс€.
+
+
+			Log.block_end();
+			Log.end();
+		}
 
 #ifdef MOTORS_OFF
 		mega_i2c.throttle(0, 0, 0, 0);  //670 micros

@@ -37,7 +37,7 @@ class MpuClass
 	 void do_magic();
 	 void do_magic4Z();
 	 void calc_corrected_ang();
-	 void log();
+	 void log_emu();
 	 void log_sens();
 
 	 int ms_open();

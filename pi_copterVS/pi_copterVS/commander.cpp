@@ -17,6 +17,7 @@
 #include "debug.h"
 #include "Wi_Fi.h"
 #include "Log.h"
+#include "define.h"
 
 void CommanderClass::init()
 {
@@ -232,6 +233,13 @@ float CommanderClass::getPitch(){ return Autopilot.horizont_onState() ? pitch : 
 float CommanderClass::getRoll(){ return Autopilot.horizont_onState() ? roll : 0; }
 
 
+
+void CommanderClass::data_reset() {
+	pitch = roll = 0;
+	throttle = MIDDLE_POSITION;
+}
+
+
 void CommanderClass::new_data(byte *buffer, int n) {
 	//control_bits |= (MPU_ACC_CALIBR | MPU_GYRO_CALIBR)
 	if (n > 4 && !Autopilot.busy()) {
@@ -274,9 +282,9 @@ bool CommanderClass::input(){
 		if (data_size >= 12) {
 
 			if (Log.writeTelemetry) {
-				Log.loadByte(LOG::COMM);
-				Log.loadByte(0); // if 0 nex two byte is size of next mem block
-				Log.loadMem(buf, data_size);
+				Log.block_start(LOG::COMM,true);
+				Log.loadMem(buf, data_size,false);
+				Log.block_end(true);
 			}
 
 

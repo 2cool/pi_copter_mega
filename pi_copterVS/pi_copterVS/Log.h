@@ -37,6 +37,8 @@ public:
 	void loadInt16t(int16_t i);
 	void loadMem(uint8_t*buf, int len,bool write_mem_size=true);
 	void loadByte(uint8_t b);
+	void block_start(int type, bool two_byte_size_block=false);
+	void block_end(bool two_byte_size_block = false);
 	bool init(int counter);
 	bool close();
 };

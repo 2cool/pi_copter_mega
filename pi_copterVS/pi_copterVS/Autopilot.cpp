@@ -151,7 +151,7 @@ void start_video() {
 
 //каждий новий режим работі добовляется в месадж
 
-#define MIDDLE_POSITION 0.5f
+
 
 
 void AutopilotClass::init(){/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -302,7 +302,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 #endif
 
 	controlDeltaTime = t;
-	uint8_t smart = 0;
+
 
 
 	if (MS5611.fault() && go2homeState() == 0) {
@@ -326,18 +326,19 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 				go2HomeProc(dt);
 			}
 			else{
-				if (motors_is_on() && millis() - last_time_data_recived > 3000) {
+				uint32_t timelag = millis() - last_time_data_recived;
+				if (motors_is_on() && timelag > CONNECTION_LOST_TIMEOUT) {
 					connectionLost_();
 					return;
 				}
 
-				const bool timeLag = (millis() - last_time_data_recived > 100);
+				if ((timelag > TIMEOUT_LAG))
+					Commander.data_reset();
 
 				if (compass_onState())
 					aYaw_ = Commander.get_yaw_minus_offset();
 				if (control_bits & Z_STAB){
-					smart++;
-					const float thr = timeLag ? MIDDLE_POSITION : Commander.getThrottle();
+					const float thr = Commander.getThrottle();
 					const float speed = (thr - MIDDLE_POSITION) * sens_z;
 					add_2_need_altitude(speed, dt);
 				}
@@ -345,20 +346,13 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 					throttle = Commander.getThrottle();
 				}
 				if (control_bits & XY_STAB){
-					smart++;
 					smart_commander(dt);
 				}
 				else{
-					if (timeLag){
-						aPitch = aRoll = 0;
-					}
-					else{
-						aPitch = Commander.getPitch();
-						aRoll = Commander.getRoll();
-					}
+					aPitch = Commander.getPitch();
+					aRoll = Commander.getRoll();
 				}
 			}
-			
 		}
 			
 	}
@@ -368,10 +362,10 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 void AutopilotClass::log() {
 	if (old_control_bits != control_bits && Log.writeTelemetry) {
-		Log.loadByte(LOG::AUTO);
-		Log.loadByte(4);
+		Log.block_start(LOG::AUTO);
 		Log.loaduint32t(control_bits);
 		old_control_bits = control_bits;
+		Log.block_end();
 	}
 }
 string AutopilotClass::get_set(){

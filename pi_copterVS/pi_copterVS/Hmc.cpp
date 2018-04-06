@@ -66,22 +66,25 @@ void HmcClass::set(const float buf[]){
 }
 //---------------------------------------------------------
 
-void HmcClass::log() {
-	Log.loadByte(LOG::HMC_EMU);
-	Log.loadByte(4);
-	Log.loadFloat(heading);
+void HmcClass::log_emu() {
+	if (Log.writeTelemetry) {
+		Log.block_start(LOG::HMC_EMU);
+		Log.loadFloat(heading);
+		Log.block_end();
+	}
 }
 void HmcClass::log_base() {
-	Log.loadByte(LOG::HMC_BASE);
-	Log.loadByte(6);
-	Log.loadMem((uint8_t*)c_base, 6, false);
-
+	if (Log.writeTelemetry) {
+		Log.block_start(LOG::HMC_BASE);
+		Log.loadMem((uint8_t*)c_base, 6, false);
+		Log.block_end();
+	}
 }
 void HmcClass::log_sens() {
 	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::HMC_SENS);
-		Log.loadByte(6);
+		Log.block_start(LOG::HMC_SENS);
 		Log.loadMem(buffer, 6, false);
+		Log.block_end();
 	}
 }
 
@@ -250,7 +253,8 @@ void HmcClass::loop(){
 	float Yh = fmx * Mpu.sinRoll * Mpu.sinPitch + fmy * Mpu.cosRoll - fmz * Mpu.sinRoll * Mpu.cosPitch;
 	
 	heading = (float)atan2(Yh, Xh);
-	log();
+	log_sens();
+
 	
 #ifdef SERIAL_PRINT
 	Out.fprintf(Debug.out_stream,"heading:\t");

@@ -436,10 +436,10 @@ void EmuClass::update(float fm_[4], double dt) {
 	//Debug.load(0, pos[X], pos[Y]);
 	//Debug.dump();
 	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::EMU);
-		Log.loadByte(8);
+		Log.block_start(LOG::EMU);
 		Log.loadFloat(RAD2GRAD*ang[PITCH]);
 		Log.loadFloat(RAD2GRAD*ang[ROLL]);
+		Log.block_end();
 	}
 
 }

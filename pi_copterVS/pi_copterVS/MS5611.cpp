@@ -86,9 +86,10 @@ double MS5611Class::getAltitude(const float pressure) {
 
 void MS5611Class::log_sens() {
 	if (Log.writeTelemetry) {
-		Log.loadByte(LOG::MPU_SENS);
+		Log.block_start(LOG::MPU_SENS);
 		Log.loadByte(i_readTemperature);
 		Log.loadFloat(pressure);
+		Log.block_end();
 	}
 }
 
@@ -291,7 +292,7 @@ int MS5611Class::init() {
 	bar_task = 0;
 	bar_zero = 0x0;
 	ct = 10000;
-	if (wrong_altitude_cnt > MAX_BAROMETR_ERRORS) {
+	
 
 	wrong_altitude_cnt = 0;
 	speed = altitude_ = 0;

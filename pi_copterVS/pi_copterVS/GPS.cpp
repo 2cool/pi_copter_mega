@@ -108,9 +108,9 @@ void GPSClass::loop(){
 				posllh.height = Emu.get_alt();
 
 
-				Log.loadByte(LOG::GPS_SENS);
-				Log.loadByte(sizeof(SEND_I2C));
+				Log.block_start(LOG::GPS_SENS);
 				Log.loadSEND_I2C(&posllh);
+				Log.block_end();
 			}
 
 }

@@ -38,6 +38,7 @@ class CommanderClass
 	 float getThrottle(){ return throttle; }
 	 float getPitch();
 	 float getRoll();
+	 void data_reset();
 
 	
 	 bool ret;

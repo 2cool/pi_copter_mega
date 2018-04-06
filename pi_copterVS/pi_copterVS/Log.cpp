@@ -124,8 +124,8 @@ bool LogClass::init(int counter_) {
 		fprintf(Debug.out_stream, "log 2 %s\n", this_log_fname.c_str());
 		logfile.open(this_log_fname.c_str(), fstream::in | fstream::out | fstream::trunc);
 
-		char ver[] = LOG_VER;
-		logfile.write(ver, 6);
+		//char ver[] = LOG_VER;
+		//logfile.write(ver, 6);
 
 		log_file_closed = false;
 		log_bank_ = old_bank = log_bank = net_bank=0;
@@ -185,6 +185,31 @@ void LogClass::loadMem(uint8_t*src, int len,bool write_mem_size) {
 	memcpy(&(log_buffer[log_bank][log_index]), src, len);
 	log_index += len;
 }
+
+static int start_block;
+void LogClass::block_start(int type, bool two_byte_size_block) {
+	loadByte(type);
+	start_block = log_index;
+	if (two_byte_size_block) {
+		log_buffer[log_bank][log_index] = 0;
+		log_index += 3;
+	}
+	else {
+		log_index++;
+	}
+}
+void LogClass::block_end(bool two_byte_size_block) {
+	if (two_byte_size_block) {
+		int i = (log_index - start_block-1);
+		uint8_t *ip = (uint8_t*)&i;
+		log_buffer[log_bank][start_block] = ip[0];
+		log_buffer[log_bank][start_block+1] = ip[1];
+	}
+	else {
+		log_buffer[log_bank][start_block] = log_index - start_block-1;
+	}
+}
+
 void LogClass::loadByte(uint8_t b)
 {
 	log_buffer[log_bank][log_index++] = b;
