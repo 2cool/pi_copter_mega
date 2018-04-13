@@ -74,7 +74,7 @@ static int sms_received = 0;
 				sms_received = smsN;
 				fprintf(Debug.out_stream, "SMS %i\n", sms_received);
 				smsN ^= smsN;
-				sim.readSMS(sms_received, true, true);
+				sim.readSMS(sms_received,  true, true);
 			}
 		}
 		else {

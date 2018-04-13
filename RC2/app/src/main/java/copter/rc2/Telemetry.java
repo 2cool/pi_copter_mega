@@ -22,7 +22,7 @@ public class Telemetry {
 	static public double lat=47.9;
 	static public double lon=33.2523;
 	static public int r_accuracy_hor_pos=99,r_acuracy_ver_pos=99;//когда включаем смартконтрол мощность меняестя. (исправить)
-	static public double roll=0,pitch=0;
+	static public double roll=0,pitch=0,yaw=0;
 	static public double autoLat=0,autoLon=0;
 	static private double oldlat,oldlon;
 	static public double dist=0,speed=0,v_speed=0,alt_time=0 ,speed_time=0,alt_speed;
@@ -58,6 +58,13 @@ public class Telemetry {
 	static public float settings[]=new float[10];
 	static public int n_settings;
 	static private int old_control_bits=0;
+
+
+
+
+
+
+
 
 
 
@@ -249,6 +256,18 @@ public class Telemetry {
 
 
 
+	static long loaduint64t(byte buf[],int i){
+		long vall=       (long)load_uint8(buf,i);
+		vall+=    0x100L*(long)load_uint8(buf,i+1);
+		vall+=  0x10000L*(long)load_uint8(buf,i+2);
+		vall+=0x1000000L*(long)buf[i+3];
+
+		vall+=0x100000000L*(long)buf[i+4];
+		vall+=0x10000000000L*(long)buf[i+5];
+		vall+=0x1000000000000L*(long)buf[i+6];
+		vall+=0x100000000000000L*(long)buf[i+7];
+		return vall;
+	}
 
 
 
@@ -344,8 +363,157 @@ static void startlogThread(){
 	thread.start();
 }
 
+	static final int MPU_EMU=0;
+	static final int MPU_SENS=1;
+	static final int HMC_BASE=2;
+	static final int HMC_SENS=3;
+	static final int HMC_EMU=4;
+	static final int GPS_SENS=5;
+	static final int TELE = 6;
+	static final int COMM = 7;
+	static final int EMU = 8;
+	static final int AUTO = 9;
+	static final int BAL = 10;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+	static float M_PI=3.14159265358979323846f;
+
+
+
+    static double RAD2GRAD =57.29578;
+
+
+	static float qw,qx,qy,qz;
+
+	static public double copysign(double x, double y){
+		x=Math.abs(x);
+		if (y<0)
+			x=-x;
+		return x;
+	}
+	static public void toEulerianAngle()
+	{
+		// roll (x-axis rotation)
+		double sinr = +2.0 * (qw * qx + qy * qz);
+		double cosr = +1.0 - 2.0 * (qx * qx + qy * qy);
+
+		roll =RAD2GRAD * Math.atan2(sinr, cosr);
+
+		// pitch (y-axis rotation)
+		double sinp = +2.0 * (qw * qy - qz * qx);
+		if (Math.abs(sinp) >= 1)
+			pitch = RAD2GRAD * copysign(M_PI / 2, sinp); // use 90 degrees if out of range
+		else
+			pitch = RAD2GRAD * Math.asin(sinp);
+
+		// yaw (z-axis rotation)
+		double siny = +2.0 * (qw * qz + qx * qy);
+		double cosy = +1.0 - 2.0 * (qy * qy + qz * qz);
+		yaw = RAD2GRAD * Math.atan2(siny, cosy);
+	}
+
+
+
+	static public void mpu_parser(byte buf[],int n){
+		int j=n;
+		long time =loaduint64t(buf, j);
+		j+=8;
+
+		int g[]= new int[3];
+		int a[]= new int [3];
+		int q[] = new int[4];
+
+
+		g[0] = load_int16(buf, j);
+		j+=2;
+		g[1] = load_int16(buf, j);
+		j+=2;
+		g[2] = load_int16(buf, j);
+		j+=2;
+
+		a[0] = load_int16(buf, j);
+		j+=2;
+		a[1] = load_int16(buf, j);
+		j+=2;
+		a[2] = load_int16(buf, j);
+		j+=2;
+
+
+		q[0]=load_int32(buf,j);
+		j+=4;
+		q[1]=load_int32(buf,j);
+		j+=4;
+		q[2]=load_int32(buf,j);
+		j+=4;
+		q[3]=load_int32(buf,j);
+		j+=4;
+
+
+		qw = 1.5259e-5f*(float)q[0] / 16384.0f;
+		qx = 1.5259e-5f*(float)q[1] / 16384.0f;
+		qy = 1.5259e-5f*(float)q[2] / 16384.0f;
+		qz = 1.5259e-5f*(float)q[3] / 16384.0f;
+
+		toEulerianAngle();
+
+	}
+
+	static public void barom_parser(byte buf[],int n){
+
+	}
+
+	static public void bal_parser(byte buf[],int i){
+		int bank_counter=load_int32(buf,i);
+		i+=4;
+		i+=16;
+		ap_roll=(float)load_int16(buf,i)/16.0;
+		i+=2;
+		ap_pitch=(float)load_int16(buf,i)/16.0;
+	//	i+=2;
+
+
+
+
+	}
+	static public void parser(byte buf[],int i){
+
+		int f_len=i+load_int16(buf,i);
+		i+=4;
+		while(i<f_len) {
+			int b = buf[i++];
+			int len = load_uint8(buf, i);
+			i++;
+			if (len == 0) {
+				len = load_int16(buf, i);
+				i += 2;
+			}
+			switch (b) {
+
+				case MPU_SENS: {
+					mpu_parser(buf,i);
+					break;
+				}
+				case HMC_BASE: {
+
+					break;
+				}
+				case BAL: {
+					bal_parser(buf,i);
+					return;
+				}
+			}
+			i += len;
+		}
+
+	}
+
+
+
+
+
+
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	static public void bufferReader_(byte buf[],int buf_len){
 
 		int i=0;
@@ -441,8 +609,12 @@ static void startlogThread(){
 			}
 		pitch=buf[i++];
 		roll=buf[i++];
+
 		ap_pitch=buf[i++];
 		ap_roll=buf[i++];
+
+		//i+=4;
+
 		int batVolt=load_int16(buf,i);
 		i+=2;
 		//int b0= 256+load_uint8(buf,i++);
@@ -462,6 +634,7 @@ static void startlogThread(){
 		}
 		i+=mes_len;
 		mes_len=load_int16(buf,i);
+		//parser(buf,i);
 		i+=2;
 		block_cnt=0;
 		while (mes_len>0){
@@ -474,8 +647,10 @@ static void startlogThread(){
 
 			i+=mes_len;
 			mes_len=load_int16(buf,i);
+
 			i+=2;
 		}
+
 		//if (block_cnt>1)
 		//Log.i("DISK","W... "+Integer.toString(log_s)+"  blocks  "+Integer.toString(block_cnt));
 

@@ -142,14 +142,16 @@ void MpuClass::do_magic() {
 //-----------------------------------------------------
 
 void MpuClass::log_sens() {
-	Log.block_start(LOG::MPU_SENS);
+	if (Log.writeTelemetry) {
+		Log.block_start(LOG::MPU_SENS);
 
-	Log.loaduint64t(oldmpuTime);
-	Log.loadMem((uint8_t*)g, 6, false);
-	Log.loadMem((uint8_t*)a, 6, false);
-	Log.loadMem((uint8_t*)_q, 16, false);
+		Log.loaduint64t(oldmpuTime);
+		Log.loadMem((uint8_t*)g, 6, false);
+		Log.loadMem((uint8_t*)a, 6, false);
+		Log.loadMem((uint8_t*)_q, 16, false);
 
-	Log.block_end();
+		Log.block_end();
+	}
 }
 void MpuClass::log_emu() {
 	if (Log.writeTelemetry) {
@@ -503,7 +505,7 @@ bool MpuClass::loop(){
 	delay(4);
 	gyro_calibratioan = true;
 
-	log();
+	log_emu();
 	return true;
 }
 

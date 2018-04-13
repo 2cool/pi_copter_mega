@@ -39,14 +39,15 @@ string unicod2trasns(string text) {
 }
 
 
-#define SIM_UPD_P 5000
-//#define PPP_INET
+
 
 
 static volatile int error = -1;
 volatile uint32_t command = 0;
+static int messages_counter = 0;
 
-static bool first_false_command = true;
+string sms_phone_number;
+string sms_mes;
 
 static const std::string head =  "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/";
 static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_id=241349746&text=";
@@ -82,6 +83,10 @@ int send_command(string &mes, bool resp_more=false, int timeout = 5000) {
 			
 
 			mes += string(buf, av);
+
+			//fprintf(Debug.out_stream, "%s", mes.c_str());
+
+
 			int  err = ok = -1;
 			if (resp_more) {
 				int pos = max(0, mes.length() - 3);
@@ -131,24 +136,25 @@ void sendsms() {
 	int res = send_command(mes);
 	if (res == 0) {
 		fprintf(Debug.out_stream, "%s\n", mes.c_str());
-		mes = "AT+CMGS=\"+380661140320\"\r\n";
+		mes = "AT+CMGS=\""+ sms_phone_number +"\"\r\n";
 		res = send_command(mes, true);
 		if (res == 0) {
 			fprintf(Debug.out_stream, "%s ", mes.c_str());
 			mes = mes2send + char(26);
 			res = send_command(mes);
+			fprintf(Debug.out_stream, "%s\n", mes.c_str());
 			if (res == 0) {
-				fprintf(Debug.out_stream, "%s\n", mes.c_str());
+				;// fprintf(Debug.out_stream, "%s\n", mes.c_str());
 
 			}
 			else
-				fprintf(Debug.out_stream, "ERROR\n");
+				fprintf(Debug.out_stream, "ERROR3\n");
 		}
 		else
-			fprintf(Debug.out_stream, "ERROR\n");
+			fprintf(Debug.out_stream, "ERROR2\n");
 	}
 	else
-		fprintf(Debug.out_stream, "ERROR\n");
+		fprintf(Debug.out_stream, "ERROR1\n");
 	sim.sms_done = true;
 }
 
@@ -189,8 +195,7 @@ void readallsms() {
 
 
 }
-string sms_phone_number;
-string sms_mes;
+
 int parse_sms_msg(string mes) {
 	int pos = mes.find("+CMGR:")+1;
 	if (pos > 0) {
@@ -226,7 +231,7 @@ int parse_sms_msg(string mes) {
 }
 //-----------------------------------------------
 string getLocation() {
-	std::string req = std::to_string(GPS.loc.lat_) + "," + std::to_string(GPS.loc.lon_) + "," + std::to_string((int)GPS.loc.altitude);
+	std::string req = "lat:"+std::to_string(GPS.loc.lat_) + " lon:" + std::to_string(GPS.loc.lon_) + " alt:" + std::to_string((int)GPS.loc.altitude) + " hor:" + std::to_string((int)GPS.loc.accuracy_hor_pos_);
 	return req;
 }
 
@@ -263,7 +268,7 @@ void parse_messages_(const string message, string &send) {
 		add_stat(send);
 	}
 	else {
-		send += "?";
+		send = "";
 		fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
 	}
 
@@ -277,7 +282,8 @@ void parse_sms_command() {
 	if (_just_do_it) {
 		mes2send = "";
 		parse_messages_(sms_mes, mes2send);
-		sendsms();
+		if (mes2send.length()>0)
+			sendsms();
 		_just_do_it = false;
 		sms_phone_number = "";
 		sms_mes = "";
@@ -435,10 +441,12 @@ void loop_t()
 		
 		uint32_t time = millis();
 		//commander
+		
 		if (time - last_update > SIM_UPD_P) {
+			printf("upd\n");
 			last_update = time;
-			std::string upd = exec(head + "getUpdates\"");
-
+			std::string upd = "" + exec(head + "getUpdates\"");
+		//	printf(upd.c_str());
 			int res = upd.find("{\"ok\":true,\"result\":[]}");
 			if (res != 0) {
 				int dat_pos = 6 + upd.rfind("date\":");
@@ -447,7 +455,7 @@ void loop_t()
 				if (old_message_data != data) {
 					old_message_data = data;
 					mes_pos += 9;
-					if (first_false_command == false) {
+					if (messages_counter > 0) {
 						std::string send = htext;
 						std::string message = upd.substr(mes_pos, upd.rfind("\"}}") - mes_pos);
 
@@ -457,17 +465,24 @@ void loop_t()
 					}
 				}
 			}
-			first_false_command = false;
+			messages_counter ++;
 		}
+		
 		//send location
-		if ((time - Autopilot.last_time_data_recived) > 1000) 
+		if (messages_counter <= 1) {
+			printf("snd1\n");
+			std::string send = exec(htext + "copter bot started"+"\"");
+			messages_counter = 2;
+		}
+		if (GPS.loc.accuracy_hor_pos_< 99 && (time - Autopilot.last_time_data_recived) > 1000)
 		{
+		
 			if (GPS.loc.dist2home_2 - last_dist2home2 > 625 || abs(GPS.loc.altitude - last_alt) > 10 || (time - last_time_loc_send) > 300000) 
 			{
 				last_time_loc_send = time;
 				last_dist2home2 = GPS.loc.dist2home_2;
 				last_alt = GPS.loc.altitude;
-
+				printf("snd2\n");
 				std::string send = exec(htext + getLocation() + "\"");
 			}
 		}
@@ -502,9 +517,10 @@ void SIM800::start()
 	error = -1;
 	command = 0;
 	_loop = true;
-	//thread t(loop_t);
-	//t.detach();
-
+#ifdef TELEGRAM_BOT_RUN
+	thread t(loop_t);
+	t.detach();
+#endif
 }
 
 

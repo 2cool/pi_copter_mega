@@ -179,7 +179,7 @@ void HmcClass::loop(){
 	headingGrad = 0;
 #endif
 	calibrated = true;
-	log();
+	log_emu();
 }
 
 #else
