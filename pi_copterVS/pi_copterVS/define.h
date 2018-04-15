@@ -13,6 +13,7 @@
 #define TELEGRAM_BOT_RUN
 
 //------------------------------------------------
+#define MPU_MAGIC
 //#define FALSE_WIRE
 //#define MOTORS_OFF
 
@@ -29,7 +30,7 @@
 #define DEBUG_MODE
 #define GPS_ALT_MAX_ERROR 30
 #define MAX_BAROMETR_ERRORS 10
-#define MAX_BAROMETR_ERROR 10
+#define MAX_BAROMETR_ERROR 100
 //#define OFF_MOTOR_IF_LOST_CONNECTION  
 
 
@@ -110,7 +111,7 @@
 
 
 #define CONNECTION_LOST_TIMEOUT 3000
-#define TIMEOUT_LAG 100
+#define TIMEOUT_LAG 2000
 
 #define MIDDLE_POSITION 0.5f
 #define HOVER_THROTHLE 0.5

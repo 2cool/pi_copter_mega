@@ -94,7 +94,7 @@ void BalanceClass::init()
 
 	pitch_roll_stabKP = 2;
 	
-
+	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
 	//pitch_roll_rateKP = 0.0007;
 	//pitch_roll_rateKI = 0.001;
 	//pitch_roll_rateIMAX = 0.05;
@@ -102,11 +102,11 @@ void BalanceClass::init()
 
 	pids[PID_PITCH_RATE].kP(0.001);  //if >=0.001 No gyro filters? yes noise
 	pids[PID_PITCH_RATE].kI(0.003);
-	pids[PID_PITCH_RATE].imax(0.4);
+	pids[PID_PITCH_RATE].imax(0.2);
 
 	pids[PID_ROLL_RATE].kP(0.001);
 	pids[PID_ROLL_RATE].kI(0.003);
-	pids[PID_ROLL_RATE].imax(0.4);
+	pids[PID_ROLL_RATE].imax(0.2);
 
 	yaw_stabKP = 2;
 
@@ -398,6 +398,13 @@ bool BalanceClass::loop()
 #ifdef MOTORS_OFF
 		mega_i2c.throttle(0, 0, 0, 0);  //670 micros
 #else
+
+		if (propeller_lost[0] || propeller_lost[3]) {
+		//	f_[0]=f_[3] = 0;
+		}
+		if (propeller_lost[1] || propeller_lost[2]) {
+		//	f_[1] = f_[2] = 0;
+		}
 		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros
 #endif
 

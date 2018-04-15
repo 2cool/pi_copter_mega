@@ -156,13 +156,7 @@ void start_video() {
 
 void AutopilotClass::init(){/////////////////////////////////////////////////////////////////////////////////////////////////
 
-	for (int i = 0; i < 8; i++) {
-		b[i] = 0;
-		g[i] = r[i] = 2;
-	}
-	color_i = 0;
-
-
+	
 	time_at_start = 0;
 	camera_mode = CAMMERA_OFF;
 	lowest_height = Debug.lowest_altitude_to_fly;
@@ -272,13 +266,7 @@ uint32_t last_beep_time = 0;
 
 void AutopilotClass::loop(){/////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-	if (color_i < 8) {
-		mega_i2c.set_led_color(color_i+1, r[color_i], g[color_i], b[color_i]);
-		color_i++;
-	}
-
-
+	
 	
 	const uint32_t t = millis();
 	const float dt = 0.001f*(float)(t - controlDeltaTime); 
@@ -306,8 +294,8 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 
 	if (MS5611.fault() && go2homeState() == 0) {
-		sim.send_sos(e_BARROMETR_FAULT);
-		going2HomeON(true);
+		//sim.send_sos(e_BARROMETR_FAULT);
+		//going2HomeON(true);
 	}
 
 
@@ -356,6 +344,29 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 		}
 			
 	}
+
+	if (Mpu.mputime<30000000 || Mpu.acc_callibr_time > Mpu.mputime)
+		mega_i2c.set_led_mode(2, 5, true);
+	else {
+
+		if (motors_is_on() == false) {
+			mega_i2c.set_led_mode(0, 100, false);
+		}
+		else {
+			if (control_bits&CONTROL_FALLING)
+				mega_i2c.set_led_mode(2, 200, false);
+			else
+				mega_i2c.set_led_mode(1, 200, (control_bits & GO2HOME) | (control_bits & PROGRAM));
+
+		}
+	}
+
+
+
+
+
+
+
 	log();
 
 }
@@ -1003,9 +1014,11 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 		horizont_tr();
 	//-----------------------------------------------
 	if (bits & (MPU_ACC_CALIBR | MPU_GYRO_CALIBR)) {
-		control_bits |= (MPU_ACC_CALIBR | MPU_GYRO_CALIBR);
-		Mpu.new_calibration(!(bits&MPU_ACC_CALIBR));
-		control_bits &= (0xffffffff ^ (MPU_ACC_CALIBR | MPU_GYRO_CALIBR));
+		if (millis() > 25000) {
+			control_bits |= (MPU_ACC_CALIBR | MPU_GYRO_CALIBR);
+			Mpu.new_calibration(!(bits&MPU_ACC_CALIBR));
+			control_bits &= (0xffffffff ^ (MPU_ACC_CALIBR | MPU_GYRO_CALIBR));
+		}
 	}
 	if (bits & COMPASS_MOTOR_CALIBR) {
 		//Hmc.start_motor_compas_calibr();

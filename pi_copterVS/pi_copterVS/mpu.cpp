@@ -489,10 +489,10 @@ bool MpuClass::loop(){
 	cosYaw = cos(yaw);
 	sinYaw = sin(yaw);
 
-
+#ifdef MPU_MAGIC
 	do_magic4Z();
 	do_magic();
-	
+#endif
 
 	yaw *= RAD2GRAD;
 	pitch *= RAD2GRAD;
@@ -634,10 +634,13 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	sin_cos(yaw, sinYaw, cosYaw);
 	sin_cos(pitch, sinPitch, cosPitch);
 	sin_cos(roll, sinRoll, cosRoll);
+
+#ifdef MPU_MAGIC
 	if (abs(pitch) <= 65 * GRAD2RAD && abs(roll) <= 65 * GRAD2RAD) {
 		do_magic4Z();
 		do_magic();
 	}
+#endif
 	tiltPower+=(constrain(cosPitch*cosRoll, 0.5f, 1)-tiltPower)*tiltPower_CF;
 	gyroPitch = -n006*(float)g[1] - agpitch;
 	gyroRoll = n006*(float)g[0] - agroll;

@@ -19,7 +19,7 @@
 #define MAX_FLY_TIME 1200.0f
 #define BAT_ZERO 360.0f
 #define BAT_50P 391.0f
-#define BAT_timeout 1000
+#define BAT_timeout 100
 #define BAT_timeoutRep  2
 //#define BAT_100P 422
 #define MAX_UPD_COUNTER 100
@@ -155,6 +155,19 @@ void TelemetryClass::update_voltage() {
 	m_current[1] = 0.01953125*(float)(1024 - data[1]);
 	m_current[2] = 0.01953125*(float)(1024 - data[2]);
 	m_current[3] = 0.01953125*(float)(1024 - data[3]);
+
+#define WORK_I 1.5
+
+	if (Autopilot.motors_is_on() && Autopilot.get_throttle()>MIN_THROTTLE_ && (m_current[0] > WORK_I || m_current[1] > WORK_I || m_current[2] > WORK_I || m_current[3] > WORK_I)) {
+		Balance.propeller_lost[0] = (m_current[0] < WORK_I);
+		Balance.propeller_lost[1] = (m_current[1] < WORK_I);
+		Balance.propeller_lost[2] = (m_current[2] < WORK_I);
+		Balance.propeller_lost[3] = (m_current[3] < WORK_I);
+		//printf("propeller lost\n");
+	}
+
+
+	//Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
 	voltage = 1.725*(float)(data[4]);
 	full_power += ( (m_current[0] + m_current[1] + m_current[2] + m_current[3]) * voltage - full_power)*0.2;  //152 вата  - 274, 9.24 amper
 	if (Log.writeTelemetry) {

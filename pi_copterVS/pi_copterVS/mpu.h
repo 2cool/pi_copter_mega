@@ -97,9 +97,10 @@ class MpuClass
 	void calibrationF0(int16_t ar[]);
 	void calibrationPrint(int16_t ar[],const bool onlyGyro);
 	float yaw,yaw_offset;
-	uint64_t acc_callibr_time;
+	
 	float DRAG_K,_0007;
  public:
+	 uint64_t acc_callibr_time;
 	 float hower_thr, min_thr, fall_thr;
 	 float e_accZ, e_speedZ, w_accZ;
 	 uint64_t mputime;

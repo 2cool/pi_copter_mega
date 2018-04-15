@@ -102,11 +102,14 @@ void loger() {
 int LogClass::counter_() { return counter; }
 
 bool LogClass::close() {
-	fprintf(Debug.out_stream, "close tel log\n");
-	fprintf(Debug.out_stream, "banks: %i\twrited banks: %i\terrors:%i\n", log_bank_, old_bank, error_bansk);
-	run_loging = false;
-	while (log_file_closed == false)
-		usleep(100000);
+	if (writeTelemetry) {
+		fprintf(Debug.out_stream, "close tel log\n");
+		fprintf(Debug.out_stream, "banks: %i\twrited banks: %i\terrors:%i\n", log_bank_, old_bank, error_bansk);
+		run_loging = false;
+		while (log_file_closed == false)
+			usleep(100000);
+		return true;
+	}
 	return true;
 
 

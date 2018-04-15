@@ -34,6 +34,8 @@ void delay(unsigned long t){
 }
 
 std::string exec(const std::string cmd) {
+	//printf(cmd.c_str());
+	//printf("\n");
 	char buffer[128];
 	std::string result = "";
 	FILE* pipe = popen(cmd.c_str(), "r");

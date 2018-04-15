@@ -161,6 +161,7 @@ bool Megai2c::ppp(bool f) {
 
 int Megai2c::init()
 {
+	current_led_mode = 100;
 	_ring_bit_high = false;
 	ring_received = false;
 	ppp_on = false;
@@ -243,7 +244,7 @@ void Megai2c::set_led_color(uint8_t n, uint8_t r, uint8_t g, uint8_t b) {
 
 //0.35555555555555555555555555555556 = 1град
 bool Megai2c::gimagl(float pitch, float roll) {  // добавить поворот вмесете с коптером пра опред обст
-	if (pitch <= 90 && pitch >= -45) {
+	if (pitch <= 80 && pitch >= -45) { 
 		//Serial.fprintf(Debug.out_stream,"camAng="); Serial.println(angle);
 		pitch = pwm_OFF_THROTTLE + (180 - pitch)*44.444444;
 		roll = pwm_OFF_THROTTLE + (180 + roll)*44.4444;
@@ -296,6 +297,60 @@ void Megai2c::getiiiiv(char *iiiiv) {
 }
 
 
+#define LED_MODS 3
+//против часовой стрелки с 3 ноги.
+
+
+#define RED 1,0,0
+#define GRN 0,1,0
+#define BLE 0,0,1
+#define BLK 0,0,0
+
+
+
+const uint8_t collors[][8][3] = { 
+	{ { GRN },{ GRN },{ GRN },{ GRN },{ GRN },{ GRN },{ GRN },{ GRN } } ,// green
+	{ { RED },{ RED },{ GRN },{ GRN },{ GRN },{ GRN },{ RED },{ RED } } ,// green red
+	{ { RED },{ RED },{ RED },{ RED },{ RED },{ RED },{ RED },{ RED } }, // red
+	{ { BLK },{ BLK },{ BLK },{ BLK },{ BLK },{ BLK },{ BLK },{ BLK } } // black
+};
+	
+
+void Megai2c::set_led_mode(uint8_t n, uint8_t briht, bool pulse) {
+	static int cur_led_n = 8;
+	static uint64_t last_time = 0;
+	static uint8_t pulse_f = 1;
+
+	if (cur_led_n < 8) {
+		uint8_t b = briht * pulse_f;
+		set_led_color(cur_led_n +1, collors[n][cur_led_n][0]*b, collors[n][cur_led_n][1] * b, collors[n][cur_led_n][2] * b);
+		cur_led_n++;
+	}
+	else {
+		uint64_t dt = Mpu.mputime - last_time;
+		if (current_led_mode != n || dt > 100000) {
+			if (pulse)
+				pulse_f ^= 1;
+			else
+				pulse_f = 1;
+
+			last_time = Mpu.mputime;
+			cur_led_n = 0;
+			current_led_mode = n;
+	}
+		
+		
+		
+		
+
+
+
+
+
+
+
+	}
+}
 void Megai2c::sound(const float f) {
 #ifdef BUZZER_R
 	//OCR4B = 32000-(int16_t)f; 

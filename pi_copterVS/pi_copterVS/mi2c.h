@@ -111,8 +111,9 @@ timer5 	16 		C 			- 				46
 class Megai2c
 {
 protected:
-	
+	int current_led_mode;
 public:
+	void set_led_mode(uint8_t n,uint8_t briht, bool pulse=false);
 	bool _ring_bit_high;
 	 bool ring_received;
 	 bool ppp_on;

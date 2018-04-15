@@ -254,7 +254,7 @@ void add_stat(string &send) {
 //-----------------------------------------------------------------------------
 void parse_messages_(const string message, string &send) {
 
-	if (message.find("go2home") == 0) {
+	if (message.find("go2home") == 0 || message.find("Go2home") == 0) {
 		if (Autopilot.go2homeState() == false) {
 			command = GO2HOME;
 			fprintf(Debug.out_stream, "recived mess - go2home\n");
@@ -263,7 +263,7 @@ void parse_messages_(const string message, string &send) {
 		else
 			send += "already on the way to home";
 	}
-	else if (message.find("stat") == 0)
+	else if (message.find("stat") == 0 || message.find("Stat") == 0)
 	{
 		add_stat(send);
 	}
@@ -436,6 +436,7 @@ void loop_t()
 	fprintf(Debug.out_stream, "internet OK!\n");
 	error = 0;
 	//-------------------------------------------
+
 	while (sim._loop) {
 		delay(1000);
 		
@@ -443,34 +444,44 @@ void loop_t()
 		//commander
 		
 		if (time - last_update > SIM_UPD_P) {
-			printf("upd\n");
+			//printf("upd\n");
 			last_update = time;
 			std::string upd = "" + exec(head + "getUpdates\"");
 		//	printf(upd.c_str());
-			int res = upd.find("{\"ok\":true,\"result\":[]}");
-			if (res != 0) {
-				int dat_pos = 6 + upd.rfind("date\":");
-				int mes_pos = upd.rfind(",\"text\":\"");
+			//int res = upd.find("{\"ok\":true,\"result\":[]}");
+
+			int dat_pos = 6 + upd.rfind("date\":");
+			int mes_pos = upd.rfind(",\"text\":\"");
+
+			if (dat_pos > 6 && mes_pos > 0  && dat_pos + mes_pos - dat_pos < upd.length()) {
 				int data = std::stoi(upd.substr(dat_pos, mes_pos - dat_pos));
+
 				if (old_message_data != data) {
 					old_message_data = data;
 					mes_pos += 9;
-					if (messages_counter > 0) {
-						std::string send = htext;
-						std::string message = upd.substr(mes_pos, upd.rfind("\"}}") - mes_pos);
 
-						parse_messages_(message, send);
 
-						send = exec(send+" \"");
-					}
+					const int finds = upd.rfind("\"}}");
+					if (finds > 0 && mes_pos + (finds - mes_pos) < upd.length()) {
+						if (messages_counter > 0) {
+							std::string send = htext;
+							std::string message = upd.substr(mes_pos, finds - mes_pos);
+
+							parse_messages_(message, send);
+							if (send.length()>0)
+								send = exec(send + " \"");
+						}
+					}else
+						fprintf(Debug.out_stream, "err2\n");
 				}
-			}
+			}else
+				fprintf(Debug.out_stream, "err1\n");
 			messages_counter ++;
 		}
 		
 		//send location
 		if (messages_counter <= 1) {
-			printf("snd1\n");
+			//printf("snd1\n");
 			std::string send = exec(htext + "copter bot started"+"\"");
 			messages_counter = 2;
 		}
@@ -482,7 +493,7 @@ void loop_t()
 				last_time_loc_send = time;
 				last_dist2home2 = GPS.loc.dist2home_2;
 				last_alt = GPS.loc.altitude;
-				printf("snd2\n");
+				//printf("snd2\n");
 				std::string send = exec(htext + getLocation() + "\"");
 			}
 		}
@@ -528,6 +539,7 @@ void SIM800::send_sos(string msg) {
 	sos_msg = msg;
 	mes2send = msg + ":";
 	add_stat(mes2send);
+	sms_phone_number = "+380973807646";
 	sendsms();
 	//..............
 }
