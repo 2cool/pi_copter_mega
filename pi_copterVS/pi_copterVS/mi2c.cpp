@@ -11,11 +11,7 @@
 #include "mpu.h"
 #include "SIM800.h"
 
-#define pwm_MAX_THROTTLE 32000
-#define pwm_OFF_THROTTLE 16000
 
-#define  ARDUINO_ADDR 9
-#define  DO_SOUND 0
 
 int fd, fd_in;
 

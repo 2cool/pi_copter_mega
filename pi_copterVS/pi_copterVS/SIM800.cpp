@@ -11,6 +11,7 @@
 #include "Telemetry.h"
 
 
+
 string cyr[] = { 
 	"A","B","V","G","D","E","ZH","Z","I","J","K","L","M","N","O","P","R","S","T","U","F","X","C","CH","SH","SHH","\"","Y","'","EH","YU","YA",
 	"a", "b", "v", "g", "d", "e", "zh", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "x", "c", "ch", "sh", "shh", "\"", "y", "'", "eh", "yu", "ya" };
@@ -250,28 +251,70 @@ void add_stat(string &send) {
 	send += getLocation() + ",";
 
 }
-
+string down_case(string &str) {
+	for (int i = 0; i < str.length(); i++) {
+		if (str[i] >= 65 && str[i] <= 90)
+			str[i] += 32;
+	}
+	return str;
+}
+const static int  com_bit[] = { MOTORS_ON ,CONTROL_FALLING,REBOOT,SHUTDOWN,GIMBAL_PLUS,GIMBAL_MINUS,PROGRAM,Z_STAB,XY_STAB,COMPASS_ON,HORIZONT_ON,MPU_GYRO_CALIBR,COMPASS_CALIBR};
+const static string str_com[] = { "motors_on","cntr_f","reboot","shutdown","gimb_p","gimb_m","prog","z_stab","xy_stab","compas_on","horizont_on","mpu_gyro_calibr","compass_calibr" };
+const static int arr_size = sizeof(com_bit) / 4;
 //-----------------------------------------------------------------------------
-void parse_messages_(const string message, string &send) {
+void parse_messages_(string message, string &send) {
 
-	if (message.find("go2home") == 0 || message.find("Go2home") == 0) {
-		if (Autopilot.go2homeState() == false) {
-			command = GO2HOME;
-			fprintf(Debug.out_stream, "recived mess - go2home\n");
-			send += "go2home OK";
+	command = 0;
+	message = down_case(message);
+	const string in = send;
+	const bool seccure_f = true;// (message.find("282496") != string::npos);
+	if (seccure_f) {
+		
+		for (int i = 0; i < arr_size; i++) {
+
+			if (message.find(str_com[i]) != string::npos) {
+				command = com_bit[i];
+				send += str_com[i];
+				break;
+			}
+		
 		}
-		else
-			send += "already on the way to home";
-	}
-	else if (message.find("stat") == 0 || message.find("Stat") == 0)
-	{
-		add_stat(send);
-	}
-	else {
-		send = "";
-		fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
+
+		if (message.find("exit") != string::npos)
+			Autopilot.exit();
+		else if (message.find("stat") != string::npos){
+			add_stat(send);
+		}
+		else if (message.find("m_off") != string::npos)	{
+			Autopilot.off_throttle(true, "off");
+			send += "m_off OK";
+		}
+		else if (message.find("cntr_f") != string::npos)		{
+			Autopilot.off_throttle(false, "off");
+			send += "cntr_f OK";
+		}
+		else if (message.find("help_all") != string::npos) {
+			send += "xxxxxx,stat,exit, m_off,cntr_f,motors_on,cntr_f,reboot,shutdown,gimb_p,gimb_m,prog,z_stab,xy_stab,compas_on,horizont_on,mpu_gyro_calibr,compass_calibr";
+		}
+		else if (message.find("help") != string::npos)	{
+				send += "xxxxxx,stat,exit, m_off,cntr_f";
+		}
+
+
+
 	}
 
+	
+	
+	
+	
+	
+	
+	if (send.compare(in) == 0) {
+		send = "";
+		
+	}
+	fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
 
 }
 
@@ -485,10 +528,14 @@ void loop_t()
 			std::string send = exec(htext + "copter bot started"+"\"");
 			messages_counter = 2;
 		}
-		if (GPS.loc.accuracy_hor_pos_< 99 && (time - Autopilot.last_time_data_recived) > 1000)
+		if (mes2send.length()>0 || (GPS.loc.accuracy_hor_pos_< 99 && (time - Autopilot.last_time_data_recived) > 1000))
 		{
 		
-			if (GPS.loc.dist2home_2 - last_dist2home2 > 625 || abs(GPS.loc.altitude - last_alt) > 10 || (time - last_time_loc_send) > 300000) 
+			if (
+				GPS.loc.dist2home_2 - last_dist2home2 > max(625, GPS.loc.accuracy_hor_pos_*GPS.loc.accuracy_hor_pos_) || 
+				abs(GPS.loc.altitude - last_alt) > max(10,GPS.loc.accuracy_ver_pos_) || 
+				(time - last_time_loc_send) > 300000
+				)
 			{
 				last_time_loc_send = time;
 				last_dist2home2 = GPS.loc.dist2home_2;
@@ -500,8 +547,8 @@ void loop_t()
 	}
 #ifdef PPP_INET
 	
-	std:string ret=exec("poff");
-	fprintf(Debug.out_stream, "%s\n",ret);
+	std:string _ret=exec("poff");
+	fprintf(Debug.out_stream, "%s\n",_ret);
 #endif
 	delay(1000);
 	ppp_stoped = true;

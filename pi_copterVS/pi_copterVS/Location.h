@@ -44,6 +44,7 @@ public:
 	double dist2home_2;
 	//---------------
 	uint64_t last_gps_data_time;
+	uint64_t last_gps_accurasy_ok;
 	
 	double bearing_(const double lat, const double lon, const double lat2, const double lon2);
 	void sin_cos(double &x, double &y, const double lat, const double lon, const double lat2, const double lon2);
@@ -71,7 +72,7 @@ private:
 	double set_cos_sin_dir();
 	void xy(bool update_speed);
 	double lat_needV_, lon_needV_, lat_needR_, lon_needR_;
-	unsigned long old_iTOW;
+	uint64_t old_iTOW;
 	double mspeedx, mspeedy;
 
 

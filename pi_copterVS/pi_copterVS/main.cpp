@@ -1,4 +1,4 @@
-#define PROG_VERSION "ver 3.180414_\n"
+#define PROG_VERSION "ver 3.180417\n"
 
 //#define ONLY_ONE_RUN
 #define SIM800_F
@@ -398,8 +398,18 @@ int main(int argc, char *argv[]) {
 	if (Debug.run_main==false)
 		fprintf(Debug.out_stream, "\n exit\n");
 	if (string(argv[0]).find("out") == -1) {
-			if (Debug.reboot)
-				system(Debug.reboot==1?"reboot":"shutdown now");
+		if (Debug.reboot) {
+			switch (Debug.reboot) {
+			case 1:
+				system("reboot");
+				break;
+			case 2:
+				system("shutdown now");
+				break;
+
+			}
+			
+		}
 	}
 	fflush(Debug.out_stream);
 	fclose(Debug.out_stream);

@@ -48,7 +48,7 @@ class TelemetryClass
 	 float powerK;
 
 	 void clearMessage(){ message = ""; }
-	 void addMessage(const string msg);
+	 void addMessage(const string msg, bool and2sms=false);
 	 string getMessage(){ return message; }
 	 void getSettings(int n);
 	 bool minimumTelemetry;

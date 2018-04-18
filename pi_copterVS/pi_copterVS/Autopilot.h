@@ -65,7 +65,9 @@ class AutopilotClass
 	 
  public:
 
-	
+	 int reboot();
+	 int shutdown();
+	 int exit();
 	 uint32_t  time_at_start;
 	 void gimBalRollCorrection();
 	 bool busy() { return (control_bits & (MPU_ACC_CALIBR | MPU_GYRO_CALIBR | COMPASS_CALIBR)); }

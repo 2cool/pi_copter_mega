@@ -27,7 +27,8 @@
 
 
 
-void TelemetryClass::addMessage(const string msg){
+void TelemetryClass::addMessage(const string msg, bool and2sms){
+
 	fprintf(Debug.out_stream,"%s\n", msg.c_str());
 	if (message.length() + msg.length() >= TELEMETRY_BUF_SIZE)
 		return;

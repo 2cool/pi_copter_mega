@@ -7,7 +7,7 @@
 class SIM800
 {
 private:
-
+	void send_sos(string msg);
 
 public:
 	bool pppstoped();
@@ -18,7 +18,7 @@ public:
 	void readAllSMS(bool and_del = false);
 	int get_command_to_do();
 	string sos_msg;
-	void send_sos(string msg);
+
 	volatile bool _loop;
 	void start();
 	void stop();

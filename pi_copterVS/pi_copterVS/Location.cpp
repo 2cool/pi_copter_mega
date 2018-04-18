@@ -135,25 +135,16 @@ void LocationClass::updateXY(){
 
 //////////////////////////////////////////////////////////////
 void LocationClass::proceed(SEND_I2C *d) {
-	last_gps_data_time = micros();
-	accuracy_hor_pos_ = d->hAcc;
-	if (accuracy_hor_pos_ > 99)accuracy_hor_pos_ = 99;
-	accuracy_ver_pos_ = d->vAcc;
-	if (accuracy_ver_pos_ > 99)accuracy_ver_pos_ = 99;
+	last_gps_data_time = Mpu.mputime;
+	accuracy_hor_pos_ = (accuracy_hor_pos_ > 99)?99: d->hAcc;
+	accuracy_ver_pos_ = (accuracy_ver_pos_ > 99)?99: d->vAcc;
 
+	if (accuracy_hor_pos_ < MIN_ACUR_HOR_POS_4_JAMM)
+		last_gps_accurasy_ok = Mpu.mputime;
 
-	if (old_iTOW == 0)
-		old_iTOW = last_gps_data_time - 100;
-	dt = DELTA_ANGLE_C*(double)(last_gps_data_time - old_iTOW);
-	if (dt< 0.16) {
-		dt = 0.1;
-		rdt = 10;
-	}
-	else {
-		//fprintf(Debug.out_stream, "\ngps dt error: %f, time= %i\n", dt, last_gps_data_time / 100);
-		dt = 0.2;
-		rdt = 5;
-	}
+	dt = 0.000001*(double)(last_gps_data_time - old_iTOW);
+	dt = (dt < 1.6) ? 0.1 : 0.2;
+
 	old_iTOW = last_gps_data_time;
 	altitude = (double)d->height*0.001;
 	lat_ = d->lat;
@@ -217,6 +208,7 @@ int LocationClass::init(){
 	rdt = 10;
 	speedX = speedY = 0;
 	last_gps_data_time = micros();
+	last_gps_accurasy_ok = 0;
 	
 	fprintf(Debug.out_stream,"loc init\n");
 }

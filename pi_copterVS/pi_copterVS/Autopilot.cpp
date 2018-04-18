@@ -283,7 +283,8 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 
 #ifdef LOST_BEEP
-	if ( t - last_time_data_recived>3000 && t - last_beep_time > 3000) {
+	
+	if ( GPS.loc.lat_home!=0 && GPS.loc.lon_home!=0  && t - last_time_data_recived>3000 && t - last_beep_time > 3000) {
 		last_beep_time = t;
 		mega_i2c.beep_code(B_CONNECTION_LOST);
 	}
@@ -295,7 +296,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 	if (MS5611.fault() && go2homeState() == 0) {
 		//sim.send_sos(e_BARROMETR_FAULT);
-		//going2HomeON(true);
+		going2HomeON(true);
 	}
 
 
@@ -350,13 +351,13 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 	else {
 
 		if (motors_is_on() == false) {
-			mega_i2c.set_led_mode(0, 100, false);
+			mega_i2c.set_led_mode(0, 1, false);
 		}
 		else {
 			if (control_bits&CONTROL_FALLING)
-				mega_i2c.set_led_mode(2, 200, false);
+				mega_i2c.set_led_mode(2, 2, false);
 			else
-				mega_i2c.set_led_mode(1, 200, (control_bits & GO2HOME) | (control_bits & PROGRAM));
+				mega_i2c.set_led_mode(1, 2, (control_bits & GO2HOME) | (control_bits & PROGRAM));
 
 		}
 	}
@@ -555,7 +556,6 @@ bool AutopilotClass::go2HomeProc(const float dt){
 	{ 
 		if (MS5611.fault()) {
 			control_falling(e_BARROMETR_FAULT);
-			sim.send_sos(e_BARROMETR_FAULT_COPTER_AT_HOME);
 			return false;
 		}
 		//плавній спуск
@@ -828,15 +828,7 @@ if (motors_is_on())
 off_throttle(true, "lost connection");
 return;
 #endif
-	if (motors_is_on())
-		if (go2homeState() == false && progState() == false) {
-			aPitch = aRoll = 0;
-
-			if (going2HomeON(true) == false && (millis() - last_time_data_recived) > NO_GPS_TIME_TO_FALL) {
-				off_throttle(false, e_NO_GPS_2_LONG);
-			}
-		}
-
+	
 }
 void AutopilotClass::calibration() {/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1032,25 +1024,55 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 	}
 	if (bits & SHUTDOWN)
 	{
-		if (motors_is_on() == false) {
-			fprintf(Debug.out_stream, "SHUTD \n");
-			Debug.reboot = 2;
-			Debug.run_main = false;
-		}
+		shutdown();
 	}
 	if (bits & REBOOT)
 	{
-		if (motors_is_on() == false) {
-			fprintf(Debug.out_stream, "REBOOT \n");
-			Debug.reboot = 1;
-			Debug.run_main = false;
-		}
+		reboot();
 	}
 
 
 
 	return true;
 }
+
+
+
+int  AutopilotClass::reboot() {
+	if (motors_is_on() == false) {
+		fprintf(Debug.out_stream, "REBOOT \n");
+		Debug.reboot = 1;
+		Debug.run_main = false;
+		return 0;
+	}else
+		return -1;
+}
+int  AutopilotClass::shutdown() {
+	if (motors_is_on() == false) {
+		fprintf(Debug.out_stream, "SHUTD \n");
+		Debug.reboot = 2;
+		Debug.run_main = false;
+		return 0;
+	}
+	else
+		return -1;
+}
+int  AutopilotClass::exit() {
+	if (motors_is_on() == false) {
+		fprintf(Debug.out_stream, "EXIT \n");
+		Debug.reboot = 3;
+		Debug.run_main = false;
+		return 0;
+	}
+	else
+		return -1;
+}
+
+
+
+
+
+
 float old_g_roll = 1000;
 #define MAX_GIMBAL_ROLL 20
 void AutopilotClass::gimBalRollCorrection() {

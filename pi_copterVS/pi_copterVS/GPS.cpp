@@ -7,6 +7,7 @@
 #include "Autopilot.h"
 #include "debug.h"
 #include "Log.h"
+#include "SIM800.h"
 
 void GPSClass::init()
 {	
@@ -120,22 +121,23 @@ void GPSClass::loop(){
 
 uint64_t last_gps_time1 = 0;
 SEND_I2C g_data;
+
 void GPSClass::loop(){
+	if (Mpu.mputime - last_gps_time1 >= 10000) {
+		last_gps_time1 = Mpu.mputime;
 
-	uint64_t ttt = micros();
-	if (micros() - last_gps_time1 >= 10000) {
-		last_gps_time1 = micros();
-
-		last_gps_time1 = ttt;
 		if (mega_i2c.get_gps(&g_data)) {
 			loc.proceed(&g_data);
 		}
 		
-		if ((last_gps_time1 > loc.last_gps_data_time) && (last_gps_time1 - loc.last_gps_data_time) > 1000000){//NO_GPS_TIME_TO_FALL) {
-			fprintf(Debug.out_stream,"gps update error  %i\n",millis()/1000);
-			loc.last_gps_data_time = micros();
-			//Autopilot.control_falling(e_GPS_NO_UPDATE);
+
+		if (Mpu.mputime - loc.last_gps_data_time > NO_GPS_DATA){
+			fprintf(Debug.out_stream, "gps update error  %i\n", millis() / 1000);
 		}
+		if (Autopilot.motors_is_on() && Mpu.mputime - loc.last_gps_accurasy_ok > NO_GPS_DATA) {
+			fprintf(Debug.out_stream, "gps accuracy error  %i\n", millis() / 1000);
+		}
+		
 	}
 }
 #endif

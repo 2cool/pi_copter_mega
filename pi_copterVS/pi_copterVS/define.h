@@ -9,6 +9,7 @@
 #define DEFINE_H
 
 #define SIM_UPD_P 5000
+
 //#define PPP_INET
 #define TELEGRAM_BOT_RUN
 
@@ -17,33 +18,25 @@
 //#define FALSE_WIRE
 //#define MOTORS_OFF
 
-#define TEST_GPS_CCURACY
 
 //#define XY_SAFE_AREA 200
 //#define Z_SAFE_AREA 60
 
-#define RAD2GRAD 57.29578
-#define GRAD2RAD 0.0174533
 
-#define G 9.8
 #define MAX_ACC 7
-#define DEBUG_MODE
+//#define DEBUG_MODE
 #define GPS_ALT_MAX_ERROR 30
 #define MAX_BAROMETR_ERRORS 10
 #define MAX_BAROMETR_ERROR 100
 //#define OFF_MOTOR_IF_LOST_CONNECTION  
-
-
 //#define PLUS_CAMERA
 #define WORK_WITH_WIFI
 #define LED_ON
-
-
-//#define LOST_BEEP
-
-
-
-#define STEP_DEBAGING
+#define LOST_BEEP
+#define pwm_MAX_THROTTLE 32000
+#define pwm_OFF_THROTTLE 16000
+#define  ARDUINO_ADDR 9
+#define  DO_SOUND 0
 
 
 
@@ -56,11 +49,7 @@
 //#define FASLE_GPS_STILL
 #define MOTORS_OFF
 #define COMPAS_MOTORS_OFF  
-
-
-
 #define FALSE_ALTITUDE 30
-
 #else
 #define BUZZER_R
 //#define GYRO_CALIBR
@@ -69,24 +58,16 @@
 
 #define FALL_IF_STRONG_WIND
 
-
 #ifdef FALL_IF_STRONG_WIND
 #define MAX_DIST_ERROR_TO_FALL 200.0f
 #define e_TOO_STRONG_WIND "TSW"
 #endif
 
-
-#define NO_CONNECTION_DELAY_TO_RESET_IF_MOTORS_OFF 60000
-#define NO_GPS_TIME_TO_FALL 5000000
+#define NO_GPS_DATA 10000000
 
 #define MIN_ACUR_HOR_POS_2_START 5
+#define MIN_ACUR_HOR_POS_4_JAMM 20
 
-
-#define PRESSURE_AT_0 101325
-
-
-#define MAX_ACC_HOR 3
-#define MAX_ACC_VER 1.5f
 
 #define MAX_ANGLE_ 35
 #define MIN_ANGLE 15
@@ -111,7 +92,7 @@
 
 
 #define CONNECTION_LOST_TIMEOUT 3000
-#define TIMEOUT_LAG 2000
+#define TIMEOUT_LAG 500
 
 #define MIDDLE_POSITION 0.5f
 #define HOVER_THROTHLE 0.5
@@ -121,12 +102,11 @@
 #define STOP_THROTTLE_ 0.2f
 
 
-
-//#define BEGIN_ROTTATION_THROTTLE 1060;
-
-
+#define PRESSURE_AT_0 101325
 #define MAX_G 32760  
-
+#define RAD2GRAD 57.29578
+#define GRAD2RAD 0.0174533
+#define G 9.8
 #define TELEMETRY_BUF_SIZE 16384
 #define wrap_180(x) (x < -180 ? x+360 : (x > 180 ? x - 360: x))
 #define wrap_PI(x) (x < -PI ? x+TWO_PI : (x > PI ? x - TWO_PI: x))
