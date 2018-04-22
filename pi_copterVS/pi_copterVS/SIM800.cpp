@@ -1,4 +1,14 @@
 
+#define PPP_INET
+//#define TELEGRAM_BOT_RUN
+#define LOGER_RUN
+#define TELEGRAM_BOT_TIMEOUT 10000
+
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -9,6 +19,20 @@
 #include "SIM800.h"
 #include "Autopilot.h"
 #include "Telemetry.h"
+#include "mpu.h"
+
+
+
+
+
+
+
+volatile bool static loger_run = false;
+volatile bool static ppp_run = false;
+volatile bool static inet_ok = false;
+volatile int static sms_at_work = 0;
+volatile static uint32_t command;
+
 
 
 
@@ -43,8 +67,8 @@ string unicod2trasns(string text) {
 
 
 
-static volatile int error = -1;
-volatile uint32_t command = 0;
+
+
 static int messages_counter = 0;
 
 string sms_phone_number;
@@ -156,7 +180,7 @@ void sendsms() {
 	}
 	else
 		fprintf(Debug.out_stream, "ERROR1\n");
-	sim.sms_done = true;
+
 }
 
 
@@ -192,8 +216,6 @@ void readallsms() {
 			}
 		}
 	}
-	sim.sms_done = true;
-
 
 }
 
@@ -205,7 +227,14 @@ int parse_sms_msg(string mes) {
 			int num_end= mes.substr(pos+num_pos+3).find("\",\"");
 			if (num_end >= 0) {
 				sms_phone_number = mes.substr(pos + num_pos + 3, num_end);
-				fprintf(Debug.out_stream, "%s:\t",sms_phone_number.c_str());
+				
+
+
+				fprintf(Debug.out_stream, "phone number %s:\t",sms_phone_number.c_str());
+
+				if (sms_phone_number.find("+380") == string::npos)
+					sms_phone_number = "+380973807646";
+
 				pos += num_pos + 3 + num_end;
 				int mes_beg = mes.substr(pos).find("\n") + 1;
 				if (mes_beg >= 1) {
@@ -264,7 +293,6 @@ const static int arr_size = sizeof(com_bit) / 4;
 //-----------------------------------------------------------------------------
 void parse_messages_(string message, string &send) {
 
-	command = 0;
 	message = down_case(message);
 	const string in = send;
 	const bool seccure_f = true;// (message.find("282496") != string::npos);
@@ -279,7 +307,6 @@ void parse_messages_(string message, string &send) {
 			}
 		
 		}
-
 		if (message.find("exit") != string::npos)
 			Autopilot.exit();
 		else if (message.find("stat") != string::npos){
@@ -299,17 +326,7 @@ void parse_messages_(string message, string &send) {
 		else if (message.find("help") != string::npos)	{
 				send += "xxxxxx,stat,exit, m_off,cntr_f";
 		}
-
-
-
 	}
-
-	
-	
-	
-	
-	
-	
 	if (send.compare(in) == 0) {
 		send = "";
 		
@@ -317,8 +334,6 @@ void parse_messages_(string message, string &send) {
 	fprintf(Debug.out_stream, "recived mess: %s\n", message.c_str());
 
 }
-
-
 
 //-----------------------------------------------------------------------------
 void parse_sms_command() {
@@ -360,7 +375,6 @@ int readsms_n() {
 		}
 
 	}
-	sim.sms_done = true;
 	return ret;
 }
 
@@ -375,212 +389,18 @@ void readsms() {
 		}
 	}
 }
-
-
-
-
-
-
 void SIM800::sendSMS(string message) {
-	if (sms_done) {
-		sms_done = false;
-		mes2send = message;
-		thread t(sendsms);
-		t.detach();
-	}
+
+	mes2send = message;
+	sms_at_work = 2;
+	
 }
 void SIM800::readSMS(int n, bool and_del,  bool just_do_it) {
-	if (sms_done) {
-		sms_done = false;
 		_sms_n = n;
 		_delite_sms_n = and_del;
 		_just_do_it = just_do_it;
-		thread t(readsms);
-		t.detach();
-	}
+		sms_at_work = 1;
 }
-void SIM800::readAllSMS(bool and_del) {
-	if (sms_done) {
-		sms_done = false;
-		_delite_sms_n = and_del;
-		thread t(readallsms);
-		t.detach();
-	}
-}
-
-
-int SIM800::get_error() { return error; }
-
-uint32_t SIM800::get_commande() {
-	const uint32_t com = command;
-	command ^= command;
-	return com; 
-}
-
-
-//-----------------------------------------------
-
-
-
-
-
-volatile bool ppp_stoped = true;
-bool SIM800::pppstoped() { return ppp_stoped; }
-void loop_t()
-{
-	static int old_message_data=0,last_alt=0;
-	static uint32_t last_update = millis(), last_time_loc_send=0;
-	static double last_dist2home2 = 0;
-
-	//poff - off ppp0
-	std::string ret;
-	ppp_stoped = true;
-#ifdef PPP_INET
-	usleep(10000000);
-//	printf("pop rnet\n");
-	ret = exec("pon rnet");
-	if (ret.length()) {
-		fprintf(Debug.out_stream, "%s\n",ret.c_str());
-		error = 1;
-		return;
-	}
-	ppp_stoped = false;
-	usleep(5000000);
-	fprintf(Debug.out_stream, "ifconfig | grep ppp0\n");
-	ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
-	if (ret.length() == 0) {
-		fprintf(Debug.out_stream, "ERROR no ppp0\n");
-		error = 2;
-		return;
-	}
-	//fprintf(Debug.out_stream, "route add default dev ppp0\n");
-	ret = exec("route add default dev ppp0");  // if not "SIOCADDRT: No such device"
-	if (ret.length()) {
-		fprintf(Debug.out_stream, "%s\n", ret.c_str());
-		error = 3;
-		return;
-	}
-#endif
-	delay(5000);
-	int n = 4;
-	do {
-		//fprintf(Debug.out_stream, "ping -c 1 8.8.8.8\n");
-		ret = exec("ping -c 1 8.8.8.8");
-		if (ret.find("Unreachable")!= -1) {
-			fprintf(Debug.out_stream, "%s\n", ret.c_str());
-			if (--n < 0) {
-				error = 4;
-				return;
-			}
-		}
-		else
-			break;
-	} while (true);
-	fprintf(Debug.out_stream, "internet OK!\n");
-	error = 0;
-	//-------------------------------------------
-
-	while (sim._loop) {
-		delay(1000);
-		
-		uint32_t time = millis();
-		//commander
-		
-		if (time - last_update > SIM_UPD_P) {
-			//printf("upd\n");
-			last_update = time;
-			std::string upd = "" + exec(head + "getUpdates\"");
-		//	printf(upd.c_str());
-			//int res = upd.find("{\"ok\":true,\"result\":[]}");
-
-			int dat_pos = 6 + upd.rfind("date\":");
-			int mes_pos = upd.rfind(",\"text\":\"");
-
-			if (dat_pos > 6 && mes_pos > 0  && dat_pos + mes_pos - dat_pos < upd.length()) {
-				int data = std::stoi(upd.substr(dat_pos, mes_pos - dat_pos));
-
-				if (old_message_data != data) {
-					old_message_data = data;
-					mes_pos += 9;
-
-
-					const int finds = upd.rfind("\"}}");
-					if (finds > 0 && mes_pos + (finds - mes_pos) < upd.length()) {
-						if (messages_counter > 0) {
-							std::string send = htext;
-							std::string message = upd.substr(mes_pos, finds - mes_pos);
-
-							parse_messages_(message, send);
-							if (send.length()>0)
-								send = exec(send + " \"");
-						}
-					}else
-						fprintf(Debug.out_stream, "err2\n");
-				}
-			}else
-				fprintf(Debug.out_stream, "err1\n");
-			messages_counter ++;
-		}
-		
-		//send location
-		if (messages_counter <= 1) {
-			//printf("snd1\n");
-			std::string send = exec(htext + "copter bot started"+"\"");
-			messages_counter = 2;
-		}
-		if (mes2send.length()>0 || (GPS.loc.accuracy_hor_pos_< 99 && (time - Autopilot.last_time_data_recived) > 1000))
-		{
-		
-			if (
-				GPS.loc.dist2home_2 - last_dist2home2 > max(625, GPS.loc.accuracy_hor_pos_*GPS.loc.accuracy_hor_pos_) || 
-				abs(GPS.loc.altitude - last_alt) > max(10,GPS.loc.accuracy_ver_pos_) || 
-				(time - last_time_loc_send) > 300000
-				)
-			{
-				last_time_loc_send = time;
-				last_dist2home2 = GPS.loc.dist2home_2;
-				last_alt = GPS.loc.altitude;
-				//printf("snd2\n");
-				std::string send = exec(htext + getLocation() + "\"");
-			}
-		}
-	}
-#ifdef PPP_INET
-	
-	std:string _ret=exec("poff");
-	fprintf(Debug.out_stream, "%s\n",_ret);
-#endif
-	delay(1000);
-	ppp_stoped = true;
-}
-
-
-void SIM800::stop() {
-	_loop = false;
-}
-
-
-
-
-void SIM800::start()
-{
-
-	sms_done = true;
-	//sendSMS("hi2all");
-	//readSMS(1, true);
-	readSMS(0, true, false);
-	//readAllSMS();
-	//string cyr=unicod2trasns("041204380020043A043E044004380441044204430454044204350441044C0020043E0431043C043504360435043D0438043C00200434043E044104420443043F043E043C00200434043E00200406043D044204350440043D043504420443002E00200414043B044F0020043F04560434043A043B044E04470435043D043D044F002004320441");
-	//printf("%s\n", cyr.c_str());
-	error = -1;
-	command = 0;
-	_loop = true;
-#ifdef TELEGRAM_BOT_RUN
-	thread t(loop_t);
-	t.detach();
-#endif
-}
-
 
 void SIM800::send_sos(string msg) {
 	sos_msg = msg;
@@ -590,20 +410,406 @@ void SIM800::send_sos(string msg) {
 	sendsms();
 	//..............
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+uint32_t SIM800::get_commande() {
+	const uint32_t com = command;
+	command ^= command;
+	return com; 
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+volatile static int sms_recived = 0;
+void _stop_ppp_read_sms_start_ppp() {
+
+	ppp_run = false;
+	printf("ppp_run stop\n");
+	while (inet_ok)
+		delay(100);
+	delay(10000);
+
+	do {
+		printf("inet off\n");
+		_sms_n = 0;
+		_delite_sms_n = true;
+		_just_do_it = true;
+		sms_at_work = 1;
+
+		while (sms_at_work)
+			delay(100);
+		printf("sms_done\n");
+		sms_recived--;
+	} while (sms_recived>0);
+
+	delay(1000);
+	ppp_run = true;
+
+}
+
+void SIM800::stop_ppp_read_sms_start_ppp() {
+	sms_recived++;
+	if (sms_recived == 1) {
+		//printf("sms_at_work=%i\n", sms_at_work);
+		thread t(_stop_ppp_read_sms_start_ppp);
+		t.detach();
+
+	}
+}
+
+
+void sms_loop() {
+	while (true) {
+		while (sms_at_work == 0)
+			delay(100);
+		if (sms_at_work==1)
+			readsms();
+		if (sms_at_work == 2)
+			sendsms();
+
+
+		printf("sms_at_work=0\n");
+		sms_at_work = 0;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+volatile bool telegram_run;
+void telegram_loop() {
+	static int old_message_data = 0, last_alt = 0;
+	static uint32_t last_update = millis(), last_time_loc_send = 0;
+	static double last_dist2home2 = 0;
+	telegram_run = true;
+
+	while (true) {
+		
+		while (inet_ok == false || telegram_run == false) {
+			delay(100);
+			messages_counter = 0;
+			last_alt = 0;
+			last_dist2home2 = 0;
+		}
+
+		uint32_t time = millis();
+		//commander
+		if (time - last_update > TELEGRAM_BOT_TIMEOUT) {
+			//printf("upd\n");
+			last_update = time;
+			std::string upd = "" + exec(head + "getUpdates\"");
+			int dat_pos = 6 + upd.rfind("date\":");
+			int mes_pos = upd.rfind(",\"text\":\"");
+			if (dat_pos > 6 && mes_pos > 0 && dat_pos + mes_pos - dat_pos < upd.length()) {
+				int data = std::stoi(upd.substr(dat_pos, mes_pos - dat_pos));
+				if (old_message_data != data) {
+					old_message_data = data;
+					mes_pos += 9;
+					const int finds = upd.rfind("\"}}");
+					if (finds > 0 && mes_pos + (finds - mes_pos) < upd.length()) {
+						if (messages_counter > 0) {
+							std::string send = htext;
+							std::string message = upd.substr(mes_pos, finds - mes_pos);
+
+							if (Mpu.mputime > (uint64_t)40000000)
+								parse_messages_(message, send);
+
+							if (send.length() > 0)
+								send = exec(send + " \"");
+						}
+					}
+					else
+						fprintf(Debug.out_stream, "err2\n");
+				}
+			}
+			else
+				fprintf(Debug.out_stream, "err1\n");
+			messages_counter++;
+		}
+		else
+			delay(1000);
+
+		//send location
+		if (messages_counter <= 1) {
+			//printf("snd1\n");
+			std::string send = exec(htext + "copter bot started" + "\"");
+			messages_counter = 2;
+		}
+
+		/*
+		if (mes2send.length()>0 )//|| (GPS.loc.accuracy_hor_pos_< 99 && (time - Autopilot.last_time_data_recived) > 1000))
+		{
+
+		if (
+		GPS.loc.dist2home_2 - last_dist2home2 > max(625, GPS.loc.accuracy_hor_pos_*GPS.loc.accuracy_hor_pos_) ||
+		abs(GPS.loc.altitude - last_alt) > max(10, GPS.loc.accuracy_ver_pos_) ||
+		(time - last_time_loc_send) > 300000
+		)
+		{
+		last_time_loc_send = time;
+		last_dist2home2 = GPS.loc.dist2home_2;
+		last_alt = GPS.loc.altitude;
+		//printf("snd2\n");
+		std::string send = exec(htext + getLocation() + "\"");
+		}
+		}
+		*/
+
+	}
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------
+/*
+GT02 Communication Protocol
+*/
+unsigned short serial_n = 1;
+static unsigned char com[42] = { 0x68,0x68, 0x25, 0,0, 0x08,0x66,0x26,0x20,0x31,0x36,0x98,0x45, 00,01, 0x10, 0x12, 0x04, 0x21, 0x9, 0x21, 0x00, 0,0,0,0, 0,0,0,0, 0,    0,0,   0,0,0, 0,0,0,0, 0x0D, 0x0A };
+void getCommunication() {
+	static char N = 9;
+	std::time_t t = std::time(0);
+	std::tm* now = std::localtime(&t);
+	/*std::cout << (now->tm_year + 1900) << '-'	<< (now->tm_mon + 1) << '-'	<< now->tm_mday<< " " <<now->tm_hour<<":"<<now->tm_min<<":"<<now->tm_sec<< "\n";*/
+	unsigned  char tb[4];
+	((unsigned short*)tb)[0] = serial_n++;
+	int i = 14;
+	com[i++] = tb[1];
+	com[i++] = tb[0];
+
+	com[i++] = now->tm_year - 100;
+	com[i++] = now->tm_mon + 1;
+	com[i++] = now->tm_mday;
+	com[i++] = now->tm_hour;
+	com[i++] = now->tm_min;
+	com[i++] = now->tm_sec;
+
+
+	((unsigned int*)tb)[0] = (unsigned int)((double)GPS.loc.lat_*0.18);
+	com[i++] = tb[3];
+	com[i++] = tb[2];
+	com[i++] = tb[1];
+	com[i++] = tb[0];
+
+	((unsigned int*)tb)[0] = (unsigned int)((double)GPS.loc.lon_*0.18);
+
+	com[i++] = tb[3];
+	com[i++] = tb[2];
+	com[i++] = tb[1];
+	com[i++] = tb[0];
+
+
+	com[i++] = (unsigned char)(3.6*sqrt(GPS.loc.speedX*GPS.loc.speedX + GPS.loc.speedY*GPS.loc.speedY));
+
+	float course = Mpu.get_yaw();
+	if (course < 0)
+		course = 360 + course;
+
+	((unsigned short*)tb)[0] = course;
+
+	com[i++] = tb[1];
+	com[i++] = tb[0];
+
+	i += 6;
+
+	com[i] = 0x7;// device has been located, northern latitude, eastern longitude, not charged
+}
+
+//imei 866262031369845
+/*
+srv1.livegpstracks.com" или "5.9.136.109",
+порт: 3335
+*/
 
 
 
+void loger_loop() {
 
 
 
+	int sockfd_loger;
+	static double  last_dist2home2 = 0;
+	loger_run = true;
+
+	while (true) {
+		delay(1000);
+
+		while (inet_ok == false || loger_run == false) {
+			delay(100);
+			if (serial_n > 1)
+				fprintf(Debug.out_stream, "loger soped\n");
+			serial_n = 1;
+		}
+		if (serial_n<=1)
+			fprintf(Debug.out_stream, "loger started\n");
+
+		if (false)//GPS.loc.accuracy_hor_pos_>MIN_ACUR_HOR_POS_4_JAMM || abs(GPS.loc.dist2home_2 - last_dist2home2) < max(625, GPS.loc.accuracy_hor_pos_*GPS.loc.accuracy_hor_pos_))
+			continue;
+		last_dist2home2 = GPS.loc.dist2home_2;
+		if (serial_n == 1) {
+			struct sockaddr_in serv_addr;
+			struct hostent *server;
+			int portno = 3335;
+			sockfd_loger = socket(AF_INET, SOCK_STREAM, 0);
+
+			if (sockfd_loger < 0) {
+				fprintf(Debug.out_stream, "ERROR opening socket\n");
+				serial_n = 1;
+				continue;
+			}
+
+			server = gethostbyname("srv1.livegpstracks.com");
+			if (server == NULL) {
+				fprintf(Debug.out_stream, "ERROR, no such host\n");
+				serial_n = 1;
+				continue;
+			}
+
+			bzero((char *)&serv_addr, sizeof(serv_addr));
+			serv_addr.sin_family = AF_INET;
+			bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+			serv_addr.sin_port = htons(portno);
+			if (connect(sockfd_loger, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+				fprintf(Debug.out_stream, "ERROR connecting");
+				serial_n = 1;
+				continue;
+			}
+			//------------------------------------------------------
+		}
+
+		getCommunication();
+		int n = write(sockfd_loger, com, 42);
+		if (n < 0) {
+			fprintf(Debug.out_stream, "ERROR writing to socket 42");
+			serial_n = 1;
+			continue;
+		}
+	}
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void ppp_loop() {
+	while (sms_at_work)
+		delay(100);
+	ppp_run = true;
+	while (true) {
+
+		fprintf(Debug.out_stream, "starting ppp...\n");
+		std::string ret;
+#ifdef PPP_INET  
+		ret = exec("pon rnet");
+		if (ret.length()) {
+			fprintf(Debug.out_stream, "%s\n", ret.c_str());
+			return;
+		}
+		int cnt = 0;
+		delay(5000);
+		while (true) {
+			//fprintf(Debug.out_stream, "ifconfig | grep ppp0\n");
+			ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
+												 //printf("%s\n", ret.c_str());
+			if (ret.length() > 0)
+				break;
+			else
+				if (cnt++ > 5) {
+					fprintf(Debug.out_stream, "ERROR no ppp0\n");
+					return;
+				}
+			delay(1000);
+
+		}
+		//fprintf(Debug.out_stream, "route add default dev ppp0\n");
+		ret = exec("route add default dev ppp0");  // if not "SIOCADDRT: No such device"
+		if (ret.length()) {
+			fprintf(Debug.out_stream, "%s\n", ret.c_str());
+			;// return false;
+		}
+		delay(5000);
+#endif
+		int n = 4;
+		do {
+			//fprintf(Debug.out_stream, "ping -c 1 8.8.8.8\n");
+			ret = exec("ping -c 1 8.8.8.8");
+			if (ret.find("Unreachable") != -1) {
+				fprintf(Debug.out_stream, "%s\n", ret.c_str());
+				if (--n < 0) {
+					return;
+				}
+			}
+			else
+				break;
+
+		} while (true);
+		fprintf(Debug.out_stream, "ppp OK\n");
+		inet_ok = true;
+
+		while (ppp_run)
+			delay(100);
+		//----------------------------------------------------------
+
+#ifdef PPP_INET
+
+		std : string _ret = exec("poff");
+		fprintf(Debug.out_stream, "%s\n", _ret);
+		delay(5000);
+		cnt = 0;
+		while (true) {
+			ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
+			if (ret.length() == 0) {
+				inet_ok = false;
+				fprintf(Debug.out_stream, "ppp OFF\n");
+				break;
+			}
+			else
+				if (cnt++ > 5) {
+					fprintf(Debug.out_stream, "cant OFF ppp\n");
+					break;
+				}
+			delay(1000);
+		}
+		
+#else
+		inet_ok = false;
+#endif
+
+		while (ppp_run==false)
+			delay(100);
+
+	}
+}
+
+void SIM800::start()
+{
+
+	
+	//sendSMS("hi2all");
+	//readSMS(1, true);
+	
+	//readAllSMS();
+	//string cyr=unicod2trasns("041204380020043A043E044004380441044204430454044204350441044C0020043E0431043C043504360435043D0438043C00200434043E044104420443043F043E043C00200434043E00200406043D044204350440043D043504420443002E00200414043B044F0020043F04560434043A043B044E04470435043D043D044F002004320441");
+	//printf("%s\n", cyr.c_str());
 
 
+	readSMS(0, true, false);
+
+	thread tsms(sms_loop);
+	tsms.detach();
 
 
+#ifdef LOGER_RUN
+	thread tl(loger_loop);
+	tl.detach();
+#endif
 
 
+#ifdef TELEGRAM_BOT_RUN
+	thread tg(telegram_loop);
+	tg.detach();
+#endif
 
+	thread tppp(ppp_loop);
+	tppp.detach();
 
+}
 
+bool SIM800::stop_ppp() {
+	ppp_run = false;
+	return inet_ok == false;
+}
 
 SIM800 sim;

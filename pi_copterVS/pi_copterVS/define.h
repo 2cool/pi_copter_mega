@@ -8,10 +8,10 @@
 
 #define DEFINE_H
 
-#define SIM_UPD_P 5000
 
-//#define PPP_INET
-#define TELEGRAM_BOT_RUN
+
+
+
 
 //------------------------------------------------
 #define MPU_MAGIC

@@ -10,19 +10,21 @@ private:
 	void send_sos(string msg);
 
 public:
-	bool pppstoped();
+	void stop_ppp_read_sms_start_ppp();
+
+
+
 	string sms;
-	volatile bool sms_done;
+
 	void sendSMS(string message);
 	void readSMS(int n,bool and_del=false, bool just_do_it=true);
-	void readAllSMS(bool and_del = false);
-	int get_command_to_do();
+	
+
 	string sos_msg;
 
-	volatile bool _loop;
 	void start();
-	void stop();
-	int get_error();
+	bool stop_ppp();
+
 	uint32_t get_commande();
 };
 extern SIM800 sim;

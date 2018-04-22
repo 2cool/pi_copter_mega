@@ -70,7 +70,8 @@ static int sms_received = 0;
 				sms_received = smsN;
 				fprintf(Debug.out_stream, "SMS %i\n", sms_received);
 				smsN ^= smsN;
-				sim.readSMS(sms_received,  true, true);
+
+			//	sim.readSMS(sms_received,  true, true);
 			}
 		}
 		else {
@@ -271,7 +272,10 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 	if (bit_field & 1) {
 		if (_ring_bit_high == false) {
 			_ring_bit_high = true;
-			fprintf(Debug.out_stream, "RINGk_BIT\n");
+			fprintf(Debug.out_stream, "RINGk_BIT\n");//при заходе смс при ppp
+			///stop servises, stop ppp? read sms and do. start ppp and services again
+			sim.stop_ppp_read_sms_start_ppp();
+
 		}
 	}else
 		_ring_bit_high = false;

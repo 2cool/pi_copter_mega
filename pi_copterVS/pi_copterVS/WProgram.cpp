@@ -39,17 +39,25 @@ std::string exec(const std::string cmd) {
 	char buffer[128];
 	std::string result = "";
 	FILE* pipe = popen(cmd.c_str(), "r");
-	if (!pipe) throw std::runtime_error("popen() failed!");
+	if (!pipe) {
+		//throw std::runtime_error("popen() failed!");
+		printf("pipe brock\n");
+		return "";
+	}
 	try {
 		while (!feof(pipe)) {
 			if (fgets(buffer, 128, pipe) != NULL)
 				result += buffer;
 		}
+		pclose(pipe);
 	}
 	catch (...) {
 		pclose(pipe);
-		throw;
+		printf("pipe brock\n");
+		//throw;
+		return "";
 	}
-	pclose(pipe);
+	
+	
 	return result;
 }

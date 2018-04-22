@@ -1,6 +1,6 @@
 #define PROG_VERSION "ver 3.180417\n"
 
-//#define ONLY_ONE_RUN
+#define ONLY_ONE_RUN
 #define SIM800_F
 
 #include <cstdio>
@@ -372,22 +372,16 @@ int main(int argc, char *argv[]) {
 				//Debug.load(0, time_past, 0);
 				//Debug.dump();
 			}
-
-
 			if (Debug.run_main == false) {
 #ifdef SIM800_F
-				if (sim._loop) {
-					fprintf(Debug.out_stream, "try run poff...\n");
-					sim.stop();
-				}
-				if (sim.pppstoped())
-					break;
-#else
-				break;
+				if (sim.stop_ppp())
 #endif
+					break;
 			}
 		}
 	}
+
+
 	if (flag!=0)
 		fprintf(Debug.out_stream, "\n main Signal caught!\n");
 	WiFi.stopServer();

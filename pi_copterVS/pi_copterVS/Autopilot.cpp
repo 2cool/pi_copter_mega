@@ -828,6 +828,15 @@ if (motors_is_on())
 off_throttle(true, "lost connection");
 return;
 #endif
+
+	if (motors_is_on())
+		if (go2homeState() == false && progState() == false) {
+			aPitch = aRoll = 0;
+
+			if (going2HomeON(true) == false && (millis() - last_time_data_recived) > (CONNECTION_LOST_TIMEOUT*3)) {
+				off_throttle(false, e_NO_GPS_2_LONG);
+			}
+		}
 	
 }
 void AutopilotClass::calibration() {/////////////////////////////////////////////////////////////////////////////////////////////////
