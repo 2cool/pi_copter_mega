@@ -1,8 +1,8 @@
 
-#define PPP_INET
+//#define PPP_INET
 //#define TELEGRAM_BOT_RUN
 #define LOGER_RUN
-#define TELEGRAM_BOT_TIMEOUT 10000
+#define TELEGRAM_BOT_TIMEOUT 1000
 
 
 #include <sys/types.h>
@@ -475,13 +475,14 @@ void sms_loop() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 volatile bool telegram_run;
 void telegram_loop() {
-	static int old_message_data = 0, last_alt = 0;
+	static int old_message_len = 0;
+	static int last_alt = 0;
 	static uint32_t last_update = millis(), last_time_loc_send = 0;
 	static double last_dist2home2 = 0;
 	telegram_run = true;
 
 	while (true) {
-		
+
 		while (inet_ok == false || telegram_run == false) {
 			delay(100);
 			messages_counter = 0;
@@ -495,63 +496,33 @@ void telegram_loop() {
 			//printf("upd\n");
 			last_update = time;
 			std::string upd = "" + exec(head + "getUpdates\"");
-			int dat_pos = 6 + upd.rfind("date\":");
-			int mes_pos = upd.rfind(",\"text\":\"");
-			if (dat_pos > 6 && mes_pos > 0 && dat_pos + mes_pos - dat_pos < upd.length()) {
-				int data = std::stoi(upd.substr(dat_pos, mes_pos - dat_pos));
-				if (old_message_data != data) {
-					old_message_data = data;
-					mes_pos += 9;
-					const int finds = upd.rfind("\"}}");
-					if (finds > 0 && mes_pos + (finds - mes_pos) < upd.length()) {
-						if (messages_counter > 0) {
+			if (old_message_len == 0 || old_message_len > upd.length())
+				old_message_len = upd.length();
+			else
+				if (old_message_len < upd.length()) {
+					old_message_len = upd.length();
+					//int dat_pos = 6 + upd.rfind("date\":");
+					int mes_pos =upd.rfind(",\"text\":\"");
+					if (mes_pos != string::npos) {
+						mes_pos += 9;
+						const int mes_end = upd.rfind("\"}}");
+						if (mes_end != string::npos && mes_end > mes_pos) {
 							std::string send = htext;
-							std::string message = upd.substr(mes_pos, finds - mes_pos);
+							std::string message = upd.substr(mes_pos, mes_end - mes_pos);
 
-							if (Mpu.mputime > (uint64_t)40000000)
-								parse_messages_(message, send);
-
+							parse_messages_(message, send);
 							if (send.length() > 0)
 								send = exec(send + " \"");
+							messages_counter++;
 						}
 					}
-					else
-						fprintf(Debug.out_stream, "err2\n");
+					
 				}
+			if (messages_counter <= 1) {
+				std::string send = exec(htext + "copter bot started" + "\"");
+				messages_counter = 2;
 			}
-			else
-				fprintf(Debug.out_stream, "err1\n");
-			messages_counter++;
 		}
-		else
-			delay(1000);
-
-		//send location
-		if (messages_counter <= 1) {
-			//printf("snd1\n");
-			std::string send = exec(htext + "copter bot started" + "\"");
-			messages_counter = 2;
-		}
-
-		/*
-		if (mes2send.length()>0 )//|| (GPS.loc.accuracy_hor_pos_< 99 && (time - Autopilot.last_time_data_recived) > 1000))
-		{
-
-		if (
-		GPS.loc.dist2home_2 - last_dist2home2 > max(625, GPS.loc.accuracy_hor_pos_*GPS.loc.accuracy_hor_pos_) ||
-		abs(GPS.loc.altitude - last_alt) > max(10, GPS.loc.accuracy_ver_pos_) ||
-		(time - last_time_loc_send) > 300000
-		)
-		{
-		last_time_loc_send = time;
-		last_dist2home2 = GPS.loc.dist2home_2;
-		last_alt = GPS.loc.altitude;
-		//printf("snd2\n");
-		std::string send = exec(htext + getLocation() + "\"");
-		}
-		}
-		*/
-
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -689,9 +660,10 @@ void ppp_loop() {
 	ppp_run = true;
 	while (true) {
 
-		fprintf(Debug.out_stream, "starting ppp...\n");
+		
 		std::string ret;
 #ifdef PPP_INET  
+		fprintf(Debug.out_stream, "starting ppp...\n");
 		ret = exec("pon rnet");
 		if (ret.length()) {
 			fprintf(Debug.out_stream, "%s\n", ret.c_str());
@@ -735,7 +707,7 @@ void ppp_loop() {
 				break;
 
 		} while (true);
-		fprintf(Debug.out_stream, "ppp OK\n");
+		fprintf(Debug.out_stream, "internet OK\n");
 		inet_ok = true;
 
 		while (ppp_run)

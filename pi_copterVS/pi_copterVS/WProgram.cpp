@@ -44,20 +44,10 @@ std::string exec(const std::string cmd) {
 		printf("pipe brock\n");
 		return "";
 	}
-	try {
-		while (!feof(pipe)) {
-			if (fgets(buffer, 128, pipe) != NULL)
-				result += buffer;
-		}
-		pclose(pipe);
+	while (!feof(pipe)) {
+		if (fgets(buffer, 128, pipe) != NULL)
+			result += buffer;
 	}
-	catch (...) {
-		pclose(pipe);
-		printf("pipe brock\n");
-		//throw;
-		return "";
-	}
-	
-	
+	pclose(pipe);
 	return result;
 }

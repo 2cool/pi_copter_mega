@@ -1,6 +1,17 @@
 // 
 // 
 // 
+/*
+
+4.20 Â —— 100%
+3.95 Â —— 75%
+3.85 Â —— 50%
+3.73 Â —— 25%
+3.50 Â —— 5%
+2.75 Â —— 0%
+
+
+*/
 
 #include "Telemetry.h"
 #include "GPS.h"
@@ -18,7 +29,7 @@
 #define BALANCE_DELAY 120
 #define MAX_FLY_TIME 1200.0f
 #define BAT_ZERO 360.0f
-#define BAT_50P 391.0f
+#define BAT_50P 385.0f
 #define BAT_timeout 100
 #define BAT_timeoutRep  2
 //#define BAT_100P 422

@@ -294,7 +294,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 
 
-	if (MS5611.fault() && go2homeState() == 0) {
+	if (MS5611.fault() && motors_is_on() && go2homeState() == 0) {
 		//sim.send_sos(e_BARROMETR_FAULT);
 		going2HomeON(true);
 	}

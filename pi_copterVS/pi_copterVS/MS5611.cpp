@@ -75,7 +75,8 @@ double MS5611Class::getAltitude(const float pressure) {
 		
 			if (altitude_ != 0) {
 				if (abs(alt - altitude_) > MAX_BAROMETR_ERROR) {
-					wrong_altitude_cnt++;
+					if (GPS.loc.accuracy_ver_pos_<10)
+						wrong_altitude_cnt++;
 					fprintf(Debug.out_stream, "wrong alt! %i , %i\n", (int)alt ,(int)altitude_);
 					return altitude_;
 				}
