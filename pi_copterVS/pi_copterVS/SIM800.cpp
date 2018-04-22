@@ -1,10 +1,11 @@
 
 //#define PPP_INET
-//#define TELEGRAM_BOT_RUN
+#define TELEGRAM_BOT_RUN
 #define LOGER_RUN
 #define TELEGRAM_BOT_TIMEOUT 1000
 
-
+#include <cstdio>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -479,6 +480,12 @@ void telegram_loop() {
 	static int last_alt = 0;
 	static uint32_t last_update = millis(), last_time_loc_send = 0;
 	static double last_dist2home2 = 0;
+
+	
+
+
+	fprintf(Debug.out_stream, "telegram bot started\n");
+
 	telegram_run = true;
 
 	while (true) {
@@ -511,8 +518,10 @@ void telegram_loop() {
 							std::string message = upd.substr(mes_pos, mes_end - mes_pos);
 
 							parse_messages_(message, send);
-							if (send.length() > 0)
+							if (send.length() > 0) {
 								send = exec(send + " \"");
+								//raise(SIGPIPE);
+							}
 							messages_counter++;
 						}
 					}

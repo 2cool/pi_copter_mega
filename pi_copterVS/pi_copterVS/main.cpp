@@ -216,6 +216,12 @@ volatile sig_atomic_t flag = 0;
 void handler(int sig) { // can be called asynchronously
 	flag = 1; // set flag
 }
+void pipe_handler(int sig) {
+	fprintf(Debug.out_stream, "pipe error\n");
+}
+
+
+
 
 int printHelp() {
 	printf("<-help> for this help\n");
@@ -337,7 +343,9 @@ int main(int argc, char *argv[]) {
 	if (signal(SIGINT, handler) == SIG_ERR) {
 		return EXIT_FAILURE;
 	}
-
+	if (signal(SIGPIPE, pipe_handler) == SIG_ERR) {
+		return EXIT_FAILURE;
+	}
 
 	mega_i2c.init();
 	string str = string(argv[0]);
