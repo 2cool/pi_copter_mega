@@ -15,7 +15,7 @@
 
 //------------------------------------------------
 #define MPU_MAGIC
-//#define FALSE_WIRE
+#define FALSE_WIRE
 //#define MOTORS_OFF
 
 

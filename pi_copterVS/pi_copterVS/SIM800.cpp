@@ -288,8 +288,8 @@ string down_case(string &str) {
 	}
 	return str;
 }
-const static int  com_bit[] = { MOTORS_ON ,CONTROL_FALLING,REBOOT,SHUTDOWN,GIMBAL_PLUS,GIMBAL_MINUS,PROGRAM,Z_STAB,XY_STAB,COMPASS_ON,HORIZONT_ON,MPU_GYRO_CALIBR,COMPASS_CALIBR};
-const static string str_com[] = { "motors_on","cntr_f","reboot","shutdown","gimb_p","gimb_m","prog","z_stab","xy_stab","compas_on","horizont_on","mpu_gyro_calibr","compass_calibr" };
+const static int  com_bit[] = { MOTORS_ON ,GO2HOME,CONTROL_FALLING,REBOOT,SHUTDOWN,GIMBAL_PLUS,GIMBAL_MINUS,PROGRAM,Z_STAB,XY_STAB,COMPASS_ON,HORIZONT_ON,MPU_GYRO_CALIBR,COMPASS_CALIBR};
+const static string str_com[] = { "motorson","go2home","cntrf","reboot","shutdown","gimbp","gimbm","prog","zstab","xystab","compason","horizonton","mpugyrocalibr","compasscalibr" };
 const static int arr_size = sizeof(com_bit) / 4;
 //-----------------------------------------------------------------------------
 void parse_messages_(string message, string &send) {
@@ -313,19 +313,19 @@ void parse_messages_(string message, string &send) {
 		else if (message.find("stat") != string::npos){
 			add_stat(send);
 		}
-		else if (message.find("m_off") != string::npos)	{
+		else if (message.find("moff") != string::npos)	{
 			Autopilot.off_throttle(true, "off");
-			send += "m_off OK";
+			send += "moff OK";
 		}
-		else if (message.find("cntr_f") != string::npos)		{
+		else if (message.find("cntrf") != string::npos)		{
 			Autopilot.off_throttle(false, "off");
-			send += "cntr_f OK";
+			send += "cntrf OK";
 		}
-		else if (message.find("help_all") != string::npos) {
-			send += "xxxxxx,stat,exit, m_off,cntr_f,motors_on,cntr_f,reboot,shutdown,gimb_p,gimb_m,prog,z_stab,xy_stab,compas_on,horizont_on,mpu_gyro_calibr,compass_calibr";
+		else if (message.find("helpall") != string::npos) {
+			send += "xxxxxx,stat,exit, moff,cntrf,motorson,cntrf,reboot,shutdown,gimbp,gimbm,prog,zstab,xystab,compason,horizonton,mpugyrocalibr,compasscalibr";
 		}
 		else if (message.find("help") != string::npos)	{
-				send += "xxxxxx,stat,exit, m_off,cntr_f";
+				send += "xxxxxx,stat,exit, moff,cntrf";
 		}
 	}
 	if (send.compare(in) == 0) {
