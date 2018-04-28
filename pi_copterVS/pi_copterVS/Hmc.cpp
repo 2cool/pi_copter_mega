@@ -25,7 +25,7 @@ void HmcClass::init()
 {
 	do_compass_motors_calibr = false;
 	motor_index = 0;
-	startTime = 10000;
+	startTimed = 10;
 
 #ifdef COMPAS_MOTORS_OFF
 	motors_power_on = false;
@@ -100,7 +100,7 @@ void HmcClass::start_motor_compas_calibr(){
 		do_compass_motors_calibr = true;
 		motors_is_on_ = false;
 		c_base[X] = c_base[Y] = c_base[Z] = 0;
-		startTime = millis() + 5000;
+		startTimed = Mpu.timed + 5;
 		motor_index = 0;
 
 	}
@@ -110,7 +110,7 @@ void HmcClass::start_motor_compas_calibr(){
 
 float _base[3];
 void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
-	if (millis() > startTime){
+	if (Mpu.timed > startTimed){
 		if (baseI < 1000){
 			_base[0] += fmx;
 			_base[1] += fmy;
@@ -135,7 +135,7 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 
 				if (motor_index < 3){
 					motor_index++;
-					startTime = millis() + (unsigned long)3000;
+					startTimed = Mpu.timed + 3;
 				}
 				else{
 					do_compass_motors_calibr = false;
@@ -151,7 +151,7 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 				fprintf(Debug.out_stream," MOTOR OFF\n");
 				fprintf(Debug.out_stream,"compas test: 4 m %i\n",motor_index);
 				fprintf(Debug.out_stream,"%f\t%f\t%f\n",base[index],base[index + 1],base[index + 2]);
-				startTime = millis() + (unsigned long)3000;
+				startTimed = Mpu.timed + 3;
 				Autopilot.motors_do_on(true, "CMT");
 				motors_is_on_ = true;
 			}
@@ -164,12 +164,13 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 
 #ifdef FALSE_WIRE
 
-uint32_t comTime = 0;
+
 void HmcClass::loop(){
+static double comTimed = 0;
 ///#define wrap_180(x) (x < -180 ? x+360 : (x > 180 ? x - 360: x))
-	if (millis() - comTime < 50)
+	if (Mpu.timed - comTimed < 0.05)
 		return;
-	comTime = millis();
+	comTimed = Mpu.timed;
 	heading = Emu.get_heading();
 	
 //	headingGrad = 0;

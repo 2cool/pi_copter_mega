@@ -34,11 +34,10 @@ class AutopilotClass
 	 float sens_z, sens_xy;
 
 	 bool newData;
-	 uint32_t controlDeltaTime;
+	 double controlDeltaTimed;
 	 uint8_t go2homeIndex;
 	 float f_go2homeTimer;
-	 uint32_t oldtime;
-	 
+ 
 	 
 	 float flyAtAltitude;
 
@@ -68,10 +67,10 @@ class AutopilotClass
 	 int reboot();
 	 int shutdown();
 	 int exit();
-	 uint32_t  time_at_start;
+	 double  time_at_startd;
 	 void gimBalRollCorrection();
 	 bool busy() { return (control_bits & (MPU_ACC_CALIBR | MPU_GYRO_CALIBR | COMPASS_CALIBR)); }
-	 volatile uint32_t last_time_data_recived;
+	 volatile double last_time_data_recivedd;
 	 void setYaw(const float yaw){aYaw_ = yaw;}
 	 float getGimbalPitch(){ return gimbalPitch; }
 	 void control_falling(const string msg);
@@ -79,7 +78,7 @@ class AutopilotClass
 
 	 float corectedAltitude4tel();
 	
-	 uint32_t start_time;
+	 float start_timed;
 	void reset_compas_motors_calibr_bit() {control_bits &= (~COMPASS_MOTOR_CALIBR);}
 
 	bool motors_onState(){ return control_bits&MOTORS_ON; }
@@ -114,7 +113,7 @@ class AutopilotClass
 	 void clearSpeedCoreection(){ flyAtAltitude = tflyAtAltitude; }
 
 	// bool get_smart_cntr_flag(){ return smart_ctrl; }
-	 bool connected;
+
 	 float gimBalPitchZero, gimBalRollZero, gimbalPitch;
 	 float height_to_lift_to_fly_to_home;
 

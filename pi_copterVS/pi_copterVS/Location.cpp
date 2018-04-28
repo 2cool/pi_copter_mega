@@ -135,17 +135,17 @@ void LocationClass::updateXY(){
 
 //////////////////////////////////////////////////////////////
 void LocationClass::proceed(SEND_I2C *d) {
-	last_gps_data_time = Mpu.mputime;
+	last_gps_data_timed = Mpu.timed;
 	accuracy_hor_pos_ = (accuracy_hor_pos_ > 99)?99: d->hAcc;
 	accuracy_ver_pos_ = (accuracy_ver_pos_ > 99)?99: d->vAcc;
 
 	if (accuracy_hor_pos_ < MIN_ACUR_HOR_POS_4_JAMM)
-		last_gps_accurasy_ok = Mpu.mputime;
+		last_gps_accurasy_okd = Mpu.timed;
 
-	dt = 0.000001*(double)(last_gps_data_time - old_iTOW);
+	dt = last_gps_data_timed - old_iTOWd;
 	dt = (dt < 1.6) ? 0.1 : 0.2;
 
-	old_iTOW = last_gps_data_time;
+	old_iTOWd = last_gps_data_timed;
 	altitude = (double)d->height*0.001;
 	lat_ = d->lat;
 	lon_ = d->lon;
@@ -189,7 +189,7 @@ int LocationClass::init(){
 	
 #endif
 	mspeedx =  mspeedy = 0;
-	old_iTOW = 0;
+	old_iTOWd = 0;
 	oldDist = MAX_DIST2UPDATE + MAX_DIST2UPDATE;
 
 	dt = 0.1f;
@@ -207,8 +207,8 @@ int LocationClass::init(){
 	dt = 0.1f;
 	rdt = 10;
 	speedX = speedY = 0;
-	last_gps_data_time = micros();
-	last_gps_accurasy_ok = 0;
+	last_gps_data_timed = 0;
+	last_gps_accurasy_okd = 0;
 	
 	fprintf(Debug.out_stream,"loc init\n");
 }

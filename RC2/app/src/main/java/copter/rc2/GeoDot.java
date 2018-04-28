@@ -42,23 +42,26 @@ public class GeoDot {
     GeoDot(String str){
         String s[]=str.split(",");
         int i=0;
-        index=Integer.parseInt(s[i++]);
-        tx=Integer.parseInt(s[i++]);
-        ty=Integer.parseInt(s[i++]);
-        lat=(int)(getLat(ty)*10000000.0);
-        lon=(int)(getLon(tx)*10000000.0);
+        if (s.length==12) {
+            index = Integer.parseInt(s[i++]);
+            tx = Integer.parseInt(s[i++]);
+            ty = Integer.parseInt(s[i++]);
+            lat = (int) (getLat(ty) * 10000000.0);
+            lon = (int) (getLon(tx) * 10000000.0);
 
-        alt=Integer.parseInt(s[i++]);
-        direction=Integer.parseInt(s[i++]);
-        timer=Integer.parseInt(s[i++]);
-        cam_ang=Integer.parseInt(s[i++]);
-        dDist=Integer.parseInt(s[i++]);
-        dAlt=Integer.parseInt(s[i++]);
-        speed=Integer.parseInt(s[i++]);
-        speed*=0.1;
-        speedZ=Integer.parseInt(s[i++]);
-        speedZ*=0.1;
-        led_prog=(s.length>i)?led_prog=Integer.parseInt(s[i++]):6;
+            alt = Integer.parseInt(s[i++]);
+            direction = Integer.parseInt(s[i++]);
+            timer = Integer.parseInt(s[i++]);
+            cam_ang = Integer.parseInt(s[i++]);
+            dDist = Integer.parseInt(s[i++]);
+            dAlt = Integer.parseInt(s[i++]);
+            speed = Integer.parseInt(s[i++]);
+            speed *= 0.1;
+            speedZ = Integer.parseInt(s[i++]);
+            speedZ *= 0.1;
+            led_prog = (s.length > i) ? led_prog = Integer.parseInt(s[i++]) : 6;
+        }else
+            this.index=-1;
     }
     public String toString(){
         String s="";

@@ -18,8 +18,7 @@ class LocationClass
 
 
 public:
-	bool processGPS_1();
-	bool processGPS();
+
 	double cosDirection, sinDirection;
 	float dir_angle_GRAD;
 	double dt, rdt;
@@ -43,8 +42,8 @@ public:
 	double x2home, y2home, dX, dY, speedX, speedY,accX,accY,accZ,speedZ,startAlt,old_alt;
 	double dist2home_2;
 	//---------------
-	uint64_t last_gps_data_time;
-	uint64_t last_gps_accurasy_ok;
+	double last_gps_data_timed;
+	double last_gps_accurasy_okd;
 	
 	double bearing_(const double lat, const double lon, const double lat2, const double lon2);
 	void sin_cos(double &x, double &y, const double lat, const double lon, const double lat2, const double lon2);
@@ -72,7 +71,7 @@ private:
 	double set_cos_sin_dir();
 	void xy(bool update_speed);
 	double lat_needV_, lon_needV_, lat_needR_, lon_needR_;
-	uint64_t old_iTOW;
+	double old_iTOWd;
 	double mspeedx, mspeedy;
 
 

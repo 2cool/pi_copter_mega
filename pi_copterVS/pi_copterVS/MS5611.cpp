@@ -67,7 +67,7 @@ bool MS5611Class::fault() {
 }
 double MS5611Class::getAltitude(const float pressure) {
 	double alt = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка 4.4.2018-вот она
-	if (Mpu.mputime>20000000){
+	if (Mpu.timed>20){
 		if (fault()) {
 				return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
 		}
@@ -256,8 +256,8 @@ void MS5611Class::phase2() {
 		//float pr = (float)(D1 * SENS / 2097152 - OFF) * 0.000030517578125;
 
 		P = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
-		const float dt = (micros() - old_time)*0.000001;
-		old_time = micros();
+		const double dt = (Mpu.timed - old_timed);
+		old_timed = Mpu.timed;
 		
 		if (pressure == PRESSURE_AT_0) {
 			pressure = (float)P;
@@ -293,7 +293,7 @@ float MS5611Class::get_pressure(float h) {
 int MS5611Class::init() {
 	oldAltt = 100000;
 
-	old_time = micros();
+	old_timed = 0;
 	bar_task = 0;
 	bar_zero = 0x0;
 	ct = 10000;

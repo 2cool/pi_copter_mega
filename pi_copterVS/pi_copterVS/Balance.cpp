@@ -245,12 +245,12 @@ float BalanceClass::powerK(){
 
 bool BalanceClass::loop()
 {
-	static uint32_t hmc_last_time = 0;
-	uint32_t c_time = millis();
+	static double hmc_last_timed = 0;
+	//double c_timed = Mpu.timed;
 	if (!Mpu.loop()) {
 		MS5611.loop();
-		if (c_time - hmc_last_time > 10) {
-			hmc_last_time = c_time;
+		if (Mpu.timed - hmc_last_timed > 0.01) {
+			hmc_last_timed = Mpu.timed;
 			Hmc.loop();
 		}
 		GPS.loop();
@@ -346,7 +346,10 @@ bool BalanceClass::loop()
 			f_[0] = f_constrain((throttle - roll_output - pitch_output + m_yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 
 
-			if (throttle < 0.3 || c_time- Autopilot.time_at_start < 3000) {
+			f_[0] = f_[1] = f_[2] = f_[3] = (throttle<0.2)?throttle:0.3;
+
+
+			if (throttle < 0.3 || Mpu.timed - Autopilot.time_at_startd < 3) {
 
 				pids[PID_PITCH_RATE].reset_I();
 				pids[PID_ROLL_RATE].reset_I();

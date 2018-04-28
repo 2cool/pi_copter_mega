@@ -3,6 +3,6 @@
   Copying sources remotely to '192.168.0.105'
   Starting remote build
   Compiling sources:
-  SIM800.cpp
+  Telemetry.cpp
   Linking objects
   pi_copterVS.vcxproj -> D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

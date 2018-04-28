@@ -8,7 +8,7 @@
 #include "Balance.h"
 #include "Telemetry.h"
 
-#define MOTOR_FORCE 0.6
+#define MOTOR_FORCE 0.5
 
 //#define NOISE_ON
 
@@ -26,7 +26,7 @@
 float false_time = 0;
 float false_voltage = BAT_100P;
 
-float EmuClass::battery() {
+void EmuClass::battery(float m_current[], float &voltage) {
 
 	float voltage_sag = 0;
 	if (false_time == 0 && Autopilot.motors_is_on()) {
@@ -39,13 +39,19 @@ float EmuClass::battery() {
 		powerKl *= powerKl;
 		voltage_sag = 16;
 		const float drawSpeed = 46.0 * powerKl / FALSE_TIME_TO_BATERY_OFF;
-		float dt = 1;// 0.001*(float)(millis() - false_time);
+		float dt = 0.001*(float)(millis() - false_time);
 		false_time = millis();
 		false_voltage -= drawSpeed*dt;
 	}
 	const float a = false_voltage - voltage_sag;
 
-	return a*4;
+	voltage = a * 4;
+
+	m_current[0] = Balance.gf0() * Balance.gf0() * 4 * 3.5;
+	m_current[1] = Balance.gf1() * Balance.gf1() * 4 * 3.5;
+	m_current[2] = Balance.gf2() * Balance.gf2() * 4 * 3.5;
+	m_current[3] = Balance.gf3() * Balance.gf3() * 4 * 3.5;
+
 }
 
 

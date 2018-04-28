@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-land\\values-land.xml",
+            "outputFile": "D:\\Users\\2cool\\Desktop\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-land\\values-land.xml",
             "map": [
                 {
                     "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\a3df7bf7c6665fcf993534f03a39f9c9\\res\\values-land\\values.xml",

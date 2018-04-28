@@ -1,11 +1,11 @@
 #Internal package file, do not edit.
-#Fri Apr 06 00:15:47 EEST 2018
-1.base=D\:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\11
+#Tue Apr 24 15:27:26 EEST 2018
+1.base=D\:\\Users\\2cool\\Desktop\\pi_copter_mega\\RC2\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\11
 0.baseType=DIRECTORY
 1.baseType=DIRECTORY
 count=2
 1.set=DEX
 0.path=classes.dex
 0.set=DEX
-0.base=D\:\\Users\\2cool\\Desktop\\COPTER\\RC2\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\12
+0.base=D\:\\Users\\2cool\\Desktop\\pi_copter_mega\\RC2\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\12
 1.path=classes.dex

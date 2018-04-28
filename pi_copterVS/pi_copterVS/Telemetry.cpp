@@ -27,16 +27,17 @@
 #include "Log.h"
 
 #define BALANCE_DELAY 120
-#define MAX_FLY_TIME 1200.0f
-#define BAT_ZERO 360.0f
+#define MAX_FLY_TIME 900
+#define BAT_ZERO 350.0f
 #define BAT_50P 385.0f
-#define BAT_timeout 100
+#define BAT_timeout 0.1
 #define BAT_timeoutRep  2
 //#define BAT_100P 422
 #define MAX_UPD_COUNTER 100
 #define MAX_VOLTAGE_AT_START 406
+#define BAT_Ampere_hour 3.5
 
-
+static float  f_current = 0;
 
 void TelemetryClass::addMessage(const string msg, bool and2sms){
 
@@ -104,7 +105,7 @@ void TelemetryClass::init_()
 	//inner_clock_old_sec = millis() >> 10;
 	low_voltage = voltage50P=false;
 	message = "";
-	next_battery_test_time = millis()+BAT_timeout;
+	next_battery_test_timed = BAT_timeout;
 	update_voltage();
 	SN = ((voltage < 1200) ? 3 : 4);
 		
@@ -113,14 +114,19 @@ void TelemetryClass::init_()
 	//Out.println("TELEMETRY INIT");
 	voltage_at_start = 0;
 	full_power = 0;
+	consumed_charge = 0;
+
+
+
+	battery_charge = BAT_Ampere_hour * 3600*  ((voltage- (BAT_ZERO*SN))/(70*SN));
 }
 
 
 void TelemetryClass::loop()
 {
 	
-	if (next_battery_test_time<millis()){
-		next_battery_test_time = millis() + BAT_timeout;
+	if (next_battery_test_timed<Mpu.timed){
+		next_battery_test_timed = Mpu.timed + BAT_timeout;
 		testBatteryVoltage();
 
 		if (Autopilot.progState() && check_time_left_if_go_to_home() < 60 && ++no_time_cnt>3){ // на тестах ошибся на 5 минут.  
@@ -135,38 +141,35 @@ void TelemetryClass::loop()
 int TelemetryClass::get_voltage4one_cell() { return (int)(voltage / SN); }
 
 int TelemetryClass::check_time_left_if_go_to_home(){
-	float max_fly_time=0;
-	if (voltage_at_start > 0){
-		float work_time = 0.001f*(float)(millis() - Autopilot.time_at_start);
-		if (work_time > BALANCE_DELAY && voltage_at_start > voltage){
-			max_fly_time = ((voltage - BAT_ZERO*SN)*work_time / (voltage_at_start - voltage));
-		}
-		else{
-			max_fly_time = MAX_FLY_TIME - work_time;
-			no_time_cnt = 0;
-		}
-		const float dist2home = (float)sqrt(GPS.loc.dist2home_2);
-		const float time2home = dist2home *(1.0f / MAX_HOR_SPEED);
-		const float time2down = abs((MS5611.altitude())*(1.0f / MAX_VER_SPEED_MINUS));
-	//	Debug.dump(max_fly_time, time2home + time2down, voltage, 0);
-		return (int)(max_fly_time - time2home - time2down);
-	}
-	else
-		return (int)max_fly_time;
+	double last = max(0,  battery_charge-consumed_charge);
+	float max_fly_time = min(MAX_FLY_TIME,last/f_current);
+
+	const float dist2home = (float)sqrt(GPS.loc.dist2home_2);
+	const float time2home = dist2home * (1.0f / MAX_HOR_SPEED);
+	const float time2down = abs((MS5611.altitude())*(1.0f / MAX_VER_SPEED_MINUS));
+	const float time_left=(max_fly_time - time2home - time2down);
+
+
+
+	//printf("%f\n", time_left);
+	return (int)time_left;
 
 }
 
 void TelemetryClass::update_voltage() {
+	
 #ifdef FALSE_WIRE
-	voltage = Emu.battery();
+	Emu.battery(m_current,voltage);
 #else
 	uint16_t data[5];
 	mega_i2c.getiiiiv((char*)data);
+#define max_V 1022
+	m_current[0] = 0.01953125*(float)(1005 - data[0]);
+	m_current[1] = 0.01953125*(float)(1010 - data[1]);
+	m_current[2] = 0.01953125*(float)(1006 - data[2]);
+	m_current[3] = 0.01953125*(float)(1006 - data[3]);
 
-	m_current[0] = 0.01953125*(float)(1024 - data[0]);
-	m_current[1] = 0.01953125*(float)(1024 - data[1]);
-	m_current[2] = 0.01953125*(float)(1024 - data[2]);
-	m_current[3] = 0.01953125*(float)(1024 - data[3]);
+	//Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
 
 #define WORK_I 1.5
 
@@ -192,8 +195,19 @@ void TelemetryClass::update_voltage() {
 
 
 void TelemetryClass::testBatteryVoltage(){
-
+	static double old_timed = 0;
 	update_voltage();
+	//const double time_nowd = Mpu.timed;
+	double dt = Mpu.timed - old_timed;
+	old_timed = Mpu.timed;
+	float current = m_current[0] + m_current[1] + m_current[2] + m_current[3]+0.2;
+	//if (current < 2)?????????????? проверить с батареей
+	//	current = 0.6;
+	f_current += (current - f_current)*0.003;
+	
+	consumed_charge += current *dt;
+
+	printf("charge=%f, cons ch=%f, bat ch=%f\n", current,consumed_charge, battery_charge);
 
 	if (!Autopilot.motors_is_on())
 		voltage_at_start = voltage;
@@ -207,8 +221,8 @@ void TelemetryClass::testBatteryVoltage(){
 	low_voltage = lov_voltage_cnt > 3;
 	voltage50P = voltage < BAT_50P*SN;
 
-	if (low_voltage)
-		addMessage(e_VOLT_MON_ERROR);
+	//if (low_voltage)
+	//	addMessage(e_VOLT_MON_ERROR);
 
 	powerK = (MAX_VOLTAGE_AT_START * SN) / voltage;
 	powerK = constrain(powerK, 1, 1.35f);

@@ -15,7 +15,7 @@
 
 //------------------------------------------------
 #define MPU_MAGIC
-#define FALSE_WIRE
+//#define FALSE_WIRE
 //#define MOTORS_OFF
 
 
@@ -45,7 +45,6 @@
 //#define NO_BATTERY
 
 #ifdef FALSE_WIRE
-
 //#define FASLE_GPS_STILL
 #define MOTORS_OFF
 #define COMPAS_MOTORS_OFF  
@@ -63,7 +62,7 @@
 #define e_TOO_STRONG_WIND "TSW"
 #endif
 
-#define NO_GPS_DATA 10000000
+#define NO_GPS_DATA 10
 
 #define MIN_ACUR_HOR_POS_2_START 5
 #define MIN_ACUR_HOR_POS_4_JAMM 20
@@ -91,8 +90,8 @@
 
 
 
-#define CONNECTION_LOST_TIMEOUT 3000
-#define TIMEOUT_LAG 500
+#define CONNECTION_LOST_TIMEOUT 3
+#define TIMEOUT_LAG 0.5
 
 #define MIDDLE_POSITION 0.5f
 #define HOVER_THROTHLE 0.5

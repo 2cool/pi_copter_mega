@@ -37,7 +37,7 @@ class ProgClass
 	 float speed_X, speed_Y, speed_Z;
 	 bool program_is_OK();
 	 float r_time,time4step2done,speed_corected_delta, old_dt;
-	 uint32_t begin_time;
+	 double begin_timed;
 	 float max_speed_xy,timer;
 	 float max_stab_z_P, max_stab_z_M;
  public:

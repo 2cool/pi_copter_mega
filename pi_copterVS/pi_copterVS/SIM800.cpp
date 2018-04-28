@@ -1,6 +1,6 @@
 
 //#define PPP_INET
-#define TELEGRAM_BOT_RUN
+//#define TELEGRAM_BOT_RUN
 #define LOGER_RUN
 #define TELEGRAM_BOT_TIMEOUT 1000
 
@@ -21,7 +21,7 @@
 #include "Autopilot.h"
 #include "Telemetry.h"
 #include "mpu.h"
-
+#include "Wi_Fi.h"
 
 
 
@@ -70,7 +70,7 @@ string unicod2trasns(string text) {
 
 
 
-static int messages_counter = 0;
+static unsigned int messages_counter = 0;
 
 string sms_phone_number;
 string sms_mes;
@@ -467,8 +467,6 @@ void sms_loop() {
 		if (sms_at_work == 2)
 			sendsms();
 
-
-		printf("sms_at_work=0\n");
 		sms_at_work = 0;
 	}
 }
@@ -484,18 +482,23 @@ void telegram_loop() {
 	
 
 
-	fprintf(Debug.out_stream, "telegram bot started\n");
+	
 
 	telegram_run = true;
 
 	while (true) {
 
-		while (inet_ok == false || telegram_run == false) {
+		while (GPS.loc.lon_home == 0 || GPS.loc.lat_home == 0 || WiFi.connectedF() || inet_ok == false || telegram_run == false) {
+			if (messages_counter > 0)
+				fprintf(Debug.out_stream, "telegram bot stoped\n");
 			delay(100);
 			messages_counter = 0;
 			last_alt = 0;
 			last_dist2home2 = 0;
 		}
+
+		if (messages_counter == 0)
+			fprintf(Debug.out_stream, "telegram bot started\n");
 
 		uint32_t time = millis();
 		//commander
@@ -527,10 +530,11 @@ void telegram_loop() {
 					}
 					
 				}
-			if (messages_counter <= 1) {
+			if (messages_counter == 0) {
 				std::string send = exec(htext + "copter bot started" + "\"");
-				messages_counter = 2;
+				messages_counter++;
 			}
+			
 		}
 	}
 }
@@ -612,7 +616,7 @@ void loger_loop() {
 		while (inet_ok == false || loger_run == false) {
 			delay(100);
 			if (serial_n > 1)
-				fprintf(Debug.out_stream, "loger soped\n");
+				fprintf(Debug.out_stream, "loger stoped\n");
 			serial_n = 1;
 		}
 		if (serial_n<=1)

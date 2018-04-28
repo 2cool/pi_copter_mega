@@ -100,13 +100,13 @@ class MpuClass
 	
 	float DRAG_K,_0007;
  public:
-	 uint64_t acc_callibr_time;
+	 double acc_callibr_timed;
 	 float hower_thr, min_thr, fall_thr;
 	 float e_accZ, e_speedZ, w_accZ;
-	 uint64_t mputime;
+	 double timed;
 	float e_accX, e_accY;
 	 float cor_c_pitch, cor_c_roll;
-	 uint64_t oldmpuTime;
+	 double oldmpuTimed;
 
 
 	 float cosYaw,sinYaw;
@@ -135,7 +135,7 @@ class MpuClass
 
 
 	 bool selfTest();
-	 float dt,rdt;
+	 double dt,rdt;
 	 void set_yaw();
 
 	 int16_t getGX();

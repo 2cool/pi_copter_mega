@@ -12,7 +12,7 @@
 void GPSClass::init()
 {	
 #ifndef	FALSE_WIRE
-	loc.last_gps_data_time = millis();
+	loc.last_gps_data_timed = 0;
 #endif
 	if (loc.init() == -1) {
 		fprintf(Debug.out_stream,"GPS ERROR\n");
@@ -119,23 +119,24 @@ void GPSClass::loop(){
 #else
 
 
-uint64_t last_gps_time1 = 0;
+
 SEND_I2C g_data;
 
 void GPSClass::loop(){
-	if (Mpu.mputime - last_gps_time1 >= 10000) {
-		last_gps_time1 = Mpu.mputime;
+static double last_gps_time1d = 0;
+	if (Mpu.timed - last_gps_time1d >= 0.01) {
+		last_gps_time1d = Mpu.timed;
 
 		if (mega_i2c.get_gps(&g_data)) {
 			loc.proceed(&g_data);
 		}
 		
 
-		if (Mpu.mputime - loc.last_gps_data_time > NO_GPS_DATA){
+		if (Mpu.timed - loc.last_gps_data_timed > NO_GPS_DATA){
 			fprintf(Debug.out_stream, "gps update error  %i\n", millis() / 1000);
 		}
-		if (Autopilot.motors_is_on() && Mpu.mputime - loc.last_gps_accurasy_ok > NO_GPS_DATA) {
-			fprintf(Debug.out_stream, "gps accuracy error  %i\n", millis() / 1000);
+		if (Autopilot.motors_is_on() && Mpu.timed - loc.last_gps_accurasy_okd > NO_GPS_DATA) {
+			//fprintf(Debug.out_stream, "gps accuracy error  %i\n", millis() / 1000);
 		}
 		
 	}

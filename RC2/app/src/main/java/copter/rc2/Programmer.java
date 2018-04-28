@@ -274,12 +274,16 @@ public class Programmer {
                 "\t\t\t<tessellate>1</tessellate>\n" +
                 "\t\t\t<coordinates>";
         for (progIndex=0; progIndex< str.length; progIndex++) {
-            dot[progIndex] = new GeoDot(str[progIndex]);
-            if (cnt>0)
-                kml+=",";
-            kml+=Double.toString(dot[progIndex].lon*0.0000001)+","+Double.toString(dot[progIndex].lat*0.0000001)+",0";
-            cnt++;
-
+            GeoDot t =new GeoDot(str[progIndex]);
+            if (t.index==-1)
+                break;
+            else {
+                dot[progIndex] = t;//new GeoDot(str[progIndex]);
+                if (cnt > 0)
+                    kml += ",";
+                kml += Double.toString(dot[progIndex].lon * 0.0000001) + "," + Double.toString(dot[progIndex].lat * 0.0000001) + ",0";
+                cnt++;
+            }
         }
 
         kml+="</coordinates>\n" +

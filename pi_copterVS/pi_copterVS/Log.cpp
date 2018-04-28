@@ -29,7 +29,7 @@ void LogClass::write_bank_cnt() {
 }
 uint8_t * LogClass::getNext(int &len) {
 
-	if (millis() - Autopilot.last_time_data_recived > 500 || run_loging == false || log_bank_ <= net_bank) {
+	if (Mpu.timed - Autopilot.last_time_data_recivedd > 0.5 || run_loging == false || log_bank_ <= net_bank) {
 		len = 0;
 		return 0;
 	}

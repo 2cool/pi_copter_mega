@@ -145,7 +145,7 @@ void MpuClass::log_sens() {
 	if (Log.writeTelemetry) {
 		Log.block_start(LOG::MPU_SENS);
 
-		Log.loaduint64t(oldmpuTime);
+		Log.loaduint64t(oldmpuTimed);
 		Log.loadMem((uint8_t*)g, 6, false);
 		Log.loadMem((uint8_t*)a, 6, false);
 		Log.loadMem((uint8_t*)_q, 16, false);
@@ -269,7 +269,7 @@ void MpuClass::init()
 	//DRAG_K = 0.022;
 	_0007=0.007;
 	gaccX =  gaccY =0;
-	acc_callibr_time = 0;
+	acc_callibr_timed = 0;
 	rate = 100;
 	tiltPower_CF = 0.05;
 
@@ -285,11 +285,11 @@ void MpuClass::init()
 	fx = fy = fz = 0;
 
 	faccX = faccY = faccZ = 0;
-	oldmpuTime = micros();
+	oldmpuTimed = 0;
 	yaw_offset = yaw = pitch = roll = gyroPitch = gyroRoll = gyroYaw = accX = accY = accZ = 0;
 	sinPitch = sinRoll = 0;
 	tiltPower = cosPitch = cosRoll = 1;
-	mputime = 0;
+	timed = 0;
 	//COMP_FILTR = 0;// 0.003;
 
 	fprintf(Debug.out_stream,"Initializing MPU6050\n");
@@ -446,13 +446,14 @@ bool MpuClass::loop(){
 
 
 
-	uint64_t mputime = micros();
-	float ___dt = (float)(mputime - oldmpuTime)*0.000001;// *div;
+	timed = (0.000001*(double)micros());
+	double ___dt = (float)(timed - oldmpuTimed);// *div;
 	if (___dt < 0.01)
 		return false;
+
 	dt = 0.01;
 	rdt = 1.0 / dt;
-	oldmpuTime = mputime;
+	oldmpuTimed = timed;
 	if (dt > 0.02)
 		dt = 0.01;
 
@@ -568,13 +569,13 @@ static void toEulerianAngle(const Quaternion& q, float& roll, float& pitch, floa
 
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
 
-	mputime = micros();
+	timed = 0.000001*(double)micros();
 
 	//dmp
 	if (dmp_read_fifo(g, a, _q, &sensors, &fifoCount) != 0) //gyro and accel can be null because of being disabled in the efeatures
 		return false;
 
-	dt = (float)(mputime - oldmpuTime)*0.000001f;// *div;
+	dt = (timed - oldmpuTimed);// *div;
 	/*if (dt > 0.012)
 		printf("MPU DT too long %f\n",dt);
 	if (dt < 0.008)
@@ -582,8 +583,8 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 */
 
 
-	rdt = 1.0f / dt;
-	oldmpuTime = mputime;
+	rdt = 1.0 / dt;
+	oldmpuTimed = timed;
 
 	q = _q;
 	q.x *= 1.5259e-5;
@@ -672,14 +673,14 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	accY = 9.8f*(y*cosRoll + z*sinRoll) - ac_accY;
 
 	if (Autopilot.motors_is_on() == false) {
-		if (mputime > 20000000) {
+		if (timed > 20) {
 			maccX += (accX - maccX)*0.01f;
 			maccY += (accY - maccY)*0.01f;
 			maccZ += (accZ - maccZ)*0.01f;
 			
 		}
 
-		if (mputime > 30000000 && acc_callibr_time > mputime) {
+		if (timed > 30 && acc_callibr_timed > timed) {
 			ac_accZ += accZ*0.01;
 			ac_accY += accY*0.01;
 			ac_accX += accX*0.01;
@@ -768,7 +769,7 @@ bool MpuClass::selfTest(){
 
 void MpuClass::new_calibration(const bool onlyGyro){
 
-	acc_callibr_time = micros()+(uint64_t)10000000;
+	acc_callibr_timed = timed+10;
 	gyro_calibratioan = true;
 }
 

@@ -44,7 +44,7 @@ void ProgClass::init(){
 
 void ProgClass::loop(){
 
-	float dt = 0.001f*(float)(millis() - begin_time);
+	double dt = Mpu.timed - begin_timed;
 
 
 	float rdt = dt - old_dt;
@@ -97,7 +97,7 @@ bool ProgClass::program_is_OK(){
 		prog_data_index = 0;
 		time4step2done = 0;
 		old_dt = 0;
-		begin_time = 0;
+		begin_timed = 0;
 		lat = GPS.loc.lat_;
 		lon = GPS.loc.lon_;
 		alt = MS5611.altitude();
@@ -159,7 +159,7 @@ bool ProgClass::start(){
 		prog_data_index = 0;
 		time4step2done = 0;
 		old_dt = 0;
-		begin_time = 0;
+		begin_timed = 0;
 		lat = GPS.loc.lat_;
 		lon = GPS.loc.lon_;
 		alt = MS5611.altitude();
@@ -451,7 +451,7 @@ bool ProgClass::load_next(bool loadf){
 
 	//==============================================================
 
-	begin_time = millis();
+	begin_timed = Mpu.timed;
 
 	old_dt = 0;
 

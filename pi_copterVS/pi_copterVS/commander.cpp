@@ -248,7 +248,7 @@ void CommanderClass::new_data(byte *buffer, int n) {
 
 		memcpy(buf, buffer, n);
 		//fprintf(Debug.out_stream,"in-> %i\n", buffer[0]);
-		Autopilot.last_time_data_recived = millis();
+		Autopilot.last_time_data_recivedd = Mpu.timed;
 		data_size = n;
 	}
 }

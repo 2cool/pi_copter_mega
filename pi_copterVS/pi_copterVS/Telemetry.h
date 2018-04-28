@@ -16,6 +16,8 @@ enum { T_TEMP = 0, T_PRES = 1, T_LAT = 3, T_LON = 7, T_GPS_HEIGHT = 11, T_GPS_HE
 class TelemetryClass
 {
  protected:
+	 float battery_charge;
+	 float consumed_charge;
 	 uint32_t power_on_time;
 	 uint8_t buf[TELEMETRY_BUF_SIZE];
 	 volatile int buffer_size;
@@ -30,7 +32,7 @@ class TelemetryClass
 	 
 	// uint8_t inner_clock_old_sec;
 	
-	 unsigned long next_battery_test_time;
+	 double next_battery_test_timed;
 	  uint32_t pressure;
 	 float voltage,voltage_at_start;
 	 float m_current[4];
