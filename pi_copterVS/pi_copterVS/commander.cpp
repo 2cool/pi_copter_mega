@@ -1,7 +1,13 @@
 // 
 // 
 // 
+#include <cstdio>
+#include <signal.h>
 
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <stdio.h>
 #include "commander.h"
 #include "mi2c.h"
 #include "Autopilot.h"
@@ -22,6 +28,7 @@
 void CommanderClass::init()
 {
 	//Out.println("COMMANDER INIT");
+	vedeo_stream_client_addr = 0;
 	data_size = 0;
 	yaw = yaw_offset = pitch = roll = throttle = 0;
 
@@ -157,7 +164,8 @@ bool CommanderClass::Settings(string buf){
 		Hmc.set(load(buf, filds));
 		break;
 	case 6:
-		Balance.set(load(buf, filds), 1);
+		set(load(buf, filds));
+		
 		break;
 	default:
 		return false;
@@ -354,6 +362,37 @@ bool CommanderClass::input(){
 
 	return false;
 }
+
+
+void stop_stream() {
+
+	int pid = get_pid("ffmpeg");
+	if (pid != -1) {
+		kill(pid, SIGQUIT);
+		fprintf(Debug.out_stream, "stream STOP\n");
+	}
+
+}
+
+
+
+string CommanderClass::get_set() {
+	string s = std::to_string(vedeo_stream_client_addr);
+	return s;
+}
+
+void CommanderClass::set(const float buf[]) {
+	vedeo_stream_client_addr = buf[0];
+	fprintf(Debug.out_stream, "trans adr %f\n", buf[0]);
+	thread t(stop_stream);
+	t.detach();
+
+}
+
+
+
+
+
 
 CommanderClass Commander;
 

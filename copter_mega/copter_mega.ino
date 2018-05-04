@@ -32,6 +32,7 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ80
 #define SIM800 Serial2
 #define BUZZER 30
 #define RING 31
+#define SIM800_RESET 25
 
 
 #define OCR0 OCR4C
@@ -182,7 +183,7 @@ void throttle_3(const float n) {
 enum COMMANDS_BIT { SOUND_ON = 1, BEEP_CODE = 30 };
 
 
-
+volatile uint32_t cnt_reset = 0;
 volatile uint8_t cnt = 0;
 volatile bool beep_on = false;
 
@@ -238,7 +239,14 @@ void receiveEvent(int countToRead) {
 	}
 	case 1:
 	{
-		beep_code=inBuf[1];
+		if (inBuf[1] >= 16) {
+			if (inBuf[1] == 16) {
+				digitalWrite(SIM800_RESET, LOW);
+				cnt_reset=millis()+10;
+				
+			}
+		}else
+			beep_code=inBuf[1];
 		//Serial.println(beep_code);
 		break;
 	}
@@ -370,7 +378,9 @@ void setup()
 	gps_setup();
 	pinMode(BUZZER, OUTPUT);
 	pinMode(RING, INPUT);
+	pinMode(SIM800_RESET, OUTPUT);
 	digitalWrite(BUZZER, LOW);
+	digitalWrite(SIM800_RESET, HIGH);
 	analogReference(INTERNAL2V56);
 
 	Wire.begin(9);
@@ -402,7 +412,10 @@ float i[5] = { 0,0,0,0,0 };
 
 void loop()
 {
-	
+	if (cnt_reset>0 && cnt_reset < millis()) {
+		cnt_reset = 0;
+		digitalWrite(SIM800_RESET, HIGH);
+	}
 
 	const float CF = 0.01;
 

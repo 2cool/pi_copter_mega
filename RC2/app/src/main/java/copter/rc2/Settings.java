@@ -24,7 +24,8 @@ public class Settings extends Activity {
             {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","max_speed","KF_SPEED","KF_DIST","FILTR",_null,_null,"XY stab"},
             {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z","secur"},
             {"DRAG_K","_0007","tiltPower_CF",_null,_null,_null,_null,_null,_null,_null,"mpu"},
-            {"m power on",_null,_null,_null,_null,_null,_null,_null,_null,_null,"compas"}
+            {"m power on",_null,_null,_null,_null,_null,_null,_null,_null,_null,"compas"},
+            {"vedeoAdr",_null,_null,_null,_null,_null,_null,_null,_null,_null,"rest"}
 
     };
 

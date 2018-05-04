@@ -112,6 +112,9 @@ static int sms_received = 0;
 
 int Megai2c::gsm_loop()
 {
+	if (sim800_reset_time > 0 && sim800_reset_time + 2000 < millis())
+		sim800_reset_time = 0;
+
 	char gsm_in_buf[18];
 	int a_in;
 	ioctl(fd_in, FIONREAD, &a_in);
@@ -158,6 +161,7 @@ bool Megai2c::ppp(bool f) {
 
 int Megai2c::init()
 {
+	sim800_reset_time = 0;
 	current_led_mode = 100;
 	_ring_bit_high = false;
 	ring_received = false;
@@ -171,7 +175,7 @@ int Megai2c::init()
 		fprintf(Debug.out_stream, "Failed to acquire /dev/i2c-0 access and/or talk to slave.\n");
 		return -1;
 	}
-
+	
 	fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd_in < 0)
 	{
@@ -238,7 +242,11 @@ void Megai2c::set_led_color(uint8_t n, uint8_t r, uint8_t g, uint8_t b) {
 	write(fd, buf, 4);
 
 }
-
+void Megai2c::sim800_reset() {
+	char chBuf[] = { 1,16 };
+	sim800_reset_time = millis();
+	write(fd, chBuf, 2);
+}
 //0.35555555555555555555555555555556 = 1град
 bool Megai2c::gimagl(float pitch, float roll) {  // добавить поворот вмесете с коптером пра опред обст
 	if (pitch <= 80 && pitch >= -45) { 
@@ -270,7 +278,7 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 
 
 	if (bit_field & 1) {
-		if (_ring_bit_high == false) {
+		if (_ring_bit_high == false && sim800_reset_time==0) {
 			_ring_bit_high = true;
 			fprintf(Debug.out_stream, "RINGk_BIT\n");//при заходе смс при ppp
 			///stop servises, stop ppp? read sms and do. start ppp and services again

@@ -81,28 +81,7 @@ int camera_mode;
 enum { CAMMERA_OFF, CAMERA_RECORDING, CAMERA_TRANCLATE };
 
 
-int get_pid(const char* name) {
-	FILE *in;
-	char buff[512];
 
-	if (!(in = popen("ps -e", "r"))) {
-		return 1;
-	}
-	
-	while (fgets(buff, sizeof(buff), in) != NULL) {
-		//	cout << buff;
-		string s = string(buff);
-		if (s.find(name) != -1) {
-			cout << s;
-			int pid = stoi(s.substr(0, 5));
-			fclose(in);
-			return pid;
-			
-		}
-	}
-	pclose(in);
-	return -1;
-}
 
 /*
 chtoby zapustit' strim
@@ -115,16 +94,8 @@ ffplay udp://android_address:5544
 
 */
 
-void stop_video() {
 
-	int pid = get_pid("ffmpeg");
-	if (pid != -1) {
-		kill(pid, SIGQUIT);
-		fprintf(Debug.out_stream, "video STOP\n");
-	}
-
-}
-
+/*
 void start_video() {
 	if (camera_mode == CAMERA_RECORDING) {
 		usleep(2000000);
@@ -147,7 +118,7 @@ void start_video() {
 	}
 }
 
-
+*/
 
 //каждий новий режим работі добовляется в месадж
 
@@ -156,7 +127,7 @@ void start_video() {
 
 void AutopilotClass::init(){/////////////////////////////////////////////////////////////////////////////////////////////////
 
-	
+	sim800_reset = false;
 	time_at_startd = 0;
 	camera_mode = CAMMERA_OFF;
 	lowest_height = Debug.lowest_altitude_to_fly;
@@ -367,7 +338,10 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 
 
-
+	if (sim800_reset) {
+		sim800_reset = false;
+		mega_i2c.sim800_reset();
+	}
 
 
 
@@ -730,11 +704,11 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 #endif
 
 			Log.run_counter++;
-			if (camera_mode) {//---------------------------------------------------
-				thread t(start_video);
-				t.detach();
+			//if (camera_mode) {//---------------------------------------------------
+			//	thread t(start_video);
+			//	t.detach();
 
-			}
+			//}
 
 
 		}
@@ -764,8 +738,8 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		fprintf(Debug.out_stream,"OK\n");
 
 		//if (camera_mode) {//----------------------------------
-			thread t(stop_video);
-			t.detach();
+		//	thread t(stop_video);
+		//	t.detach();
 
 		//}
 	}

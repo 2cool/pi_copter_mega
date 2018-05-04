@@ -79,7 +79,7 @@ void TelemetryClass::getSettings(int n){
 		message += Hmc.get_set();
 		break;		
 	case 6:
-		message += Balance.get_set(1);
+		message += Commander.get_set();
 		break;
 	}
 	
@@ -182,7 +182,7 @@ void TelemetryClass::update_voltage() {
 	}
 
 
-	//Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
+//	Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
 	voltage = 1.725*(float)(data[4]);
 	full_power += ( (m_current[0] + m_current[1] + m_current[2] + m_current[3]) * voltage - full_power)*0.2;  //152 вата  - 274, 9.24 amper
 	if (Log.writeTelemetry) {
@@ -207,7 +207,7 @@ void TelemetryClass::testBatteryVoltage(){
 	
 	consumed_charge += current *dt;
 
-	printf("charge=%f, cons ch=%f, bat ch=%f\n", current,consumed_charge, battery_charge);
+	//printf("charge=%f, cons ch=%f, bat ch=%f\n", current,consumed_charge, battery_charge);
 
 	if (!Autopilot.motors_is_on())
 		voltage_at_start = voltage;

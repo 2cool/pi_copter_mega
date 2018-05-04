@@ -1,4 +1,4 @@
-#define PROG_VERSION "ver 3.180422\n"
+#define PROG_VERSION "ver 3.180504_\n"
 
 #define ONLY_ONE_RUN
 #define SIM800_F
@@ -64,6 +64,40 @@ int zzz = 1;
 
 
 
+
+
+void video_stream() {
+	while (true) {
+		//ffmpeg - rtsp_transport udp - i "rtsp://192.168.42.1:554/live" - c copy - f h264 udp ://android_phone_address:5544
+		delay(6000);
+		if (Commander.vedeo_stream_client_addr == 0)
+			continue;
+		string adr =  WiFi.get_client_addres();
+
+		int last_dot = adr.find_last_of(".");
+		adr = adr.substr(0, last_dot + 1) += std::to_string(Commander.vedeo_stream_client_addr);
+		//printf("%s\n", adr.c_str());
+		string ret = exec("ping -c 1 " + adr);
+		if (ret.find("1 received") != string::npos) {
+			ret = exec("ping -c 1 192.168.42.1");
+			if (ret.find("1 received") != string::npos) {
+				fprintf(Debug.out_stream, "try stream to %s\n", adr.c_str());
+				
+				string s = "ffmpeg -rtsp_transport udp -i \"rtsp://192.168.42.1:554/live\" -c copy -f h264 udp://" + adr + ":554 > /dev/null 2>&1";
+				system(s.c_str());
+				fprintf(Debug.out_stream, "stream stoped\n");
+			}
+		}
+
+		/*
+		ffmpeg -rtsp_transport udp -i "rtsp://192.168.42.1:554/live" -c copy -f h264 udp://192.168.0.104:554
+
+		*/
+
+		//fprintf(Debug.out_stream, "%s\n", ret.c_str());
+			
+	}
+}
 
 
 int semid;
@@ -363,7 +397,15 @@ int main(int argc, char *argv[]) {
 
 		Debug.run_main = true;
 		Debug.reboot = 0;
-		
+
+
+		//video_stream();
+		thread t(video_stream);
+		t.detach();
+
+
+
+
 		while (flag == 0){
 			if (loop()) {
 				//usleep(5400);

@@ -28,6 +28,8 @@ class WiFiClass
 	 bool newConnection_;
 	bool is_connected(void){return connected>0;}
 	string get_client_addres();
+	string get_server_addres();
+
 	int init();
 
 };

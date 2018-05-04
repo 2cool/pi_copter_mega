@@ -59,7 +59,7 @@ using namespace std;
 #define HIGH 1
 #define Serial2 Serial
 #define Serial1 Serial
-
+int get_pid(const char* name);
 uint32_t millis(void);
 int64_t micros(void);
 void delay(unsigned long);

@@ -1,6 +1,5 @@
-
-//#define PPP_INET
-//#define TELEGRAM_BOT_RUN
+#define PPP_INET
+#define TELEGRAM_BOT_RUN
 #define LOGER_RUN
 #define TELEGRAM_BOT_TIMEOUT 1000
 
@@ -666,75 +665,103 @@ void loger_loop() {
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int start_ppp() {
 
-void ppp_loop() {
-	while (sms_at_work)
-		delay(100);
+	
+	delay(15000);
 	ppp_run = true;
-	while (true) {
-
-		
-		std::string ret;
 #ifdef PPP_INET  
-		fprintf(Debug.out_stream, "starting ppp...\n");
-		ret = exec("pon rnet");
-		if (ret.length()) {
-			fprintf(Debug.out_stream, "%s\n", ret.c_str());
-			return;
-		}
-		int cnt = 0;
-		delay(5000);
-		while (true) {
-			//fprintf(Debug.out_stream, "ifconfig | grep ppp0\n");
-			ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
-												 //printf("%s\n", ret.c_str());
-			if (ret.length() > 0)
-				break;
-			else
-				if (cnt++ > 5) {
-					fprintf(Debug.out_stream, "ERROR no ppp0\n");
-					return;
-				}
-			delay(1000);
-
-		}
-		//fprintf(Debug.out_stream, "route add default dev ppp0\n");
-		ret = exec("route add default dev ppp0");  // if not "SIOCADDRT: No such device"
-		if (ret.length()) {
-			fprintf(Debug.out_stream, "%s\n", ret.c_str());
-			;// return false;
-		}
-		delay(5000);
-#endif
-		int n = 4;
-		do {
-			//fprintf(Debug.out_stream, "ping -c 1 8.8.8.8\n");
-			ret = exec("ping -c 1 8.8.8.8");
-			if (ret.find("Unreachable") != -1) {
-				fprintf(Debug.out_stream, "%s\n", ret.c_str());
-				if (--n < 0) {
-					return;
-				}
+	fprintf(Debug.out_stream, "starting ppp...\n");
+	string ret = exec("pon rnet");
+	if (ret.length()) {
+		fprintf(Debug.out_stream, "%s\n", ret.c_str());
+		return -1;
+	}
+	int cnt = 0;
+	delay(5000);
+	while (true) {
+		//fprintf(Debug.out_stream, "ifconfig | grep ppp0\n");
+		ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
+											 //printf("%s\n", ret.c_str());
+		if (ret.length() > 0)
+			break;
+		else
+			if (cnt++ > 5) {
+				fprintf(Debug.out_stream, "ERROR no ppp0\n");
+				return -1;
 			}
 			else
-				break;
+				fprintf(Debug.out_stream, "ppp0 err\n");
+		delay(2000);
 
-		} while (true);
-		fprintf(Debug.out_stream, "internet OK\n");
-		inet_ok = true;
+	}
+	//fprintf(Debug.out_stream, "route add default dev ppp0\n");
+	ret = exec("route add default dev ppp0");  // if not "SIOCADDRT: No such device"
+	if (ret.length()) {
+		fprintf(Debug.out_stream, "%s\n", ret.c_str());
+		;// return false;
+	}
+	delay(5000);
+#endif
+	int n = 4;
+	do {
+		//fprintf(Debug.out_stream, "ping -c 1 8.8.8.8\n");
+		ret = exec("ping -c 1 8.8.8.8");
 
-		while (ppp_run)
-			delay(100);
+		if (ret.find("1 received") == string::npos){
+			fprintf(Debug.out_stream, "%s\n", ret.c_str());
+			if (--n < 0) {
+				return -1;
+			}
+		}
+		else
+			break;
+
+	} while (true);
+	fprintf(Debug.out_stream, "internet OK\n");
+	inet_ok = true;
+	return 0;
+}
+/////////////////////////////////////////////////////////////////////////////
+void ppp_loop() {
+	
+	
+	
+	while (true) {
+		while (sms_at_work)
+				delay(100);
+
+		start_ppp();
+
+		
+		while (ppp_run) {
+			int n = 4;
+			delay(1000);
+			while (n>0) {
+				string ret = exec("ping -c 1 8.8.8.8");
+				if (ret.find("1 received") == string::npos) {
+					fprintf(Debug.out_stream, "%s\n", ret.c_str());
+					if (--n < 0) {
+						ret = exec("poff");
+						Autopilot.sim800_reset = true;
+						start_ppp();
+						break;
+					}
+				}
+				else
+					break;
+			}
+		}
 		//----------------------------------------------------------
 
 #ifdef PPP_INET
 
-		std : string _ret = exec("poff");
+		std:string _ret = exec("poff");
 		fprintf(Debug.out_stream, "%s\n", _ret);
 		delay(5000);
-		cnt = 0;
+		int cnt = 0;
 		while (true) {
-			ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
+			string ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
 			if (ret.length() == 0) {
 				inet_ok = false;
 				fprintf(Debug.out_stream, "ppp OFF\n");
