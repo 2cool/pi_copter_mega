@@ -20,10 +20,10 @@ D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\MPU6050.cpp|636592
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.cpp|636602849353572249|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.cpp|636603284956191263|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp|636603285696975988|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.cpp|636610470063491194|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.cpp|636612194559898941|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\RC_Filter.cpp|636592537681653864|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\Settings.cpp|636592537681673866|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\SIM800.cpp|636610470063571193|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\SIM800.cpp|636612204287969609|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.cpp|636592537681678874|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\Telemetry.cpp|636608683539076421|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\Wi_Fi.cpp|636608661495967151|~/projects/pi_copterVS|
@@ -54,7 +54,7 @@ D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\MPU6050.h|63659253
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.h|636602028279049958|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.h|636603280886920231|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.h|636603280886715203|~/projects/pi_copterVS|
-D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.h|636610463387455017|~/projects/pi_copterVS|
+D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.h|636612202380972732|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\RC_Filter.h|636592537681653864|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\Settings.h|636592537681673866|~/projects/pi_copterVS|
 D:\Users\2cool\Desktop\pi_copter_mega\pi_copterVS\pi_copterVS\SIM800.h|636600052412801919|~/projects/pi_copterVS|

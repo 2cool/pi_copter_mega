@@ -112,7 +112,7 @@ static int sms_received = 0;
 
 int Megai2c::gsm_loop()
 {
-	if (sim800_reset_time > 0 && sim800_reset_time + 2000 < millis())
+	if (sim800_reset_time > 0 && sim800_reset_time + 15000 < millis())
 		sim800_reset_time = 0;
 
 	char gsm_in_buf[18];
@@ -161,7 +161,7 @@ bool Megai2c::ppp(bool f) {
 
 int Megai2c::init()
 {
-	sim800_reset_time = 0;
+	
 	current_led_mode = 100;
 	_ring_bit_high = false;
 	ring_received = false;
@@ -196,6 +196,8 @@ int Megai2c::init()
 	buf[6] = 0;
 
 	write(fd, buf, 7);
+
+	sim800_reset();/////////////
 
 	return 0;
 

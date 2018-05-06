@@ -21,7 +21,7 @@
 #include "Telemetry.h"
 #include "mpu.h"
 #include "Wi_Fi.h"
-
+#include "mi2c.h"
 
 
 
@@ -670,7 +670,11 @@ int start_ppp() {
 	
 	delay(15000);
 	ppp_run = true;
-#ifdef PPP_INET  
+#ifdef PPP_INET 
+
+	while (mega_i2c.sim800_reset_time > 0)
+		delay(100);
+
 	fprintf(Debug.out_stream, "starting ppp...\n");
 	string ret = exec("pon rnet");
 	if (ret.length()) {
@@ -722,6 +726,53 @@ int start_ppp() {
 	inet_ok = true;
 	return 0;
 }
+int stop_ppp() {
+#ifdef PPP_INET
+
+	std : string _ret = exec("poff");
+	fprintf(Debug.out_stream, "%s\n", _ret);
+	delay(5000);
+	int cnt = 0;
+	while (true) {
+		string ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
+		if (ret.length() == 0) {
+			inet_ok = false;
+			fprintf(Debug.out_stream, "ppp OFF\n");
+			break;
+		}
+		else
+			if (cnt++ > 5) {
+				fprintf(Debug.out_stream, "cant OFF ppp\n");
+				break;
+			}
+		delay(1000);
+	}
+
+#endif
+	inet_ok = false;
+
+}
+
+void test_ppp_inet_loop() {
+	while (ppp_run) {
+		int n = 4;
+		delay(1000);
+		while (n>0) {
+			string ret = exec("ping -c 1 8.8.8.8");
+			if (ret.find("1 received") == string::npos) {
+				fprintf(Debug.out_stream, "%s\n", ret.c_str());
+				if (--n < 0) {
+					ret = exec("poff");
+					Autopilot.sim800_reset = true;
+					start_ppp();
+					break;
+				}
+			}
+			else
+				break;
+		}
+	}
+}
 /////////////////////////////////////////////////////////////////////////////
 void ppp_loop() {
 	
@@ -729,55 +780,13 @@ void ppp_loop() {
 	
 	while (true) {
 		while (sms_at_work)
-				delay(100);
+			delay(100);
+
 
 		start_ppp();
+		test_ppp_inet_loop();
+		stop_ppp();
 
-		
-		while (ppp_run) {
-			int n = 4;
-			delay(1000);
-			while (n>0) {
-				string ret = exec("ping -c 1 8.8.8.8");
-				if (ret.find("1 received") == string::npos) {
-					fprintf(Debug.out_stream, "%s\n", ret.c_str());
-					if (--n < 0) {
-						ret = exec("poff");
-						Autopilot.sim800_reset = true;
-						start_ppp();
-						break;
-					}
-				}
-				else
-					break;
-			}
-		}
-		//----------------------------------------------------------
-
-#ifdef PPP_INET
-
-		std:string _ret = exec("poff");
-		fprintf(Debug.out_stream, "%s\n", _ret);
-		delay(5000);
-		int cnt = 0;
-		while (true) {
-			string ret = exec("ifconfig | grep ppp0");  //ppp0      Link encap : Point - to - Point Protocol
-			if (ret.length() == 0) {
-				inet_ok = false;
-				fprintf(Debug.out_stream, "ppp OFF\n");
-				break;
-			}
-			else
-				if (cnt++ > 5) {
-					fprintf(Debug.out_stream, "cant OFF ppp\n");
-					break;
-				}
-			delay(1000);
-		}
-		
-#else
-		inet_ok = false;
-#endif
 
 		while (ppp_run==false)
 			delay(100);
