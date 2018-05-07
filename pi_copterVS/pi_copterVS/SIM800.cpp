@@ -487,7 +487,8 @@ void telegram_loop() {
 
 	while (true) {
 
-		while (GPS.loc.lon_home == 0 || GPS.loc.lat_home == 0 || WiFi.connectedF() || inet_ok == false || telegram_run == false) {
+
+		while (GPS.loc.lon_home == 0 || GPS.loc.lat_home == 0 || WiFi.connectedF() || inet_ok == false || telegram_run == false || Commander.telegram_bot == false) {
 			if (messages_counter > 0)
 				fprintf(Debug.out_stream, "telegram bot stoped\n");
 			delay(100);
@@ -612,7 +613,7 @@ void loger_loop() {
 	while (true) {
 		delay(1000);
 
-		while (inet_ok == false || loger_run == false) {
+		while (inet_ok == false || loger_run == false || inet_ok==false) {
 			delay(100);
 			if (serial_n > 1)
 				fprintf(Debug.out_stream, "loger stoped\n");
@@ -667,7 +668,7 @@ void loger_loop() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int start_ppp() {
 
-	
+
 	delay(15000);
 	ppp_run = true;
 #ifdef PPP_INET 
@@ -706,7 +707,7 @@ int start_ppp() {
 		;// return false;
 	}
 	delay(5000);
-#endif
+
 	int n = 4;
 	do {
 		//fprintf(Debug.out_stream, "ping -c 1 8.8.8.8\n");
@@ -722,8 +723,10 @@ int start_ppp() {
 			break;
 
 	} while (true);
+
 	fprintf(Debug.out_stream, "internet OK\n");
 	inet_ok = true;
+#endif
 	return 0;
 }
 int stop_ppp() {
@@ -756,17 +759,19 @@ int stop_ppp() {
 void test_ppp_inet_loop() {
 	while (ppp_run) {
 		int n = 4;
-		delay(1000);
-		while (n>0) {
+		delay(5000);
+		while (true) {
 			string ret = exec("ping -c 1 8.8.8.8");
 			if (ret.find("1 received") == string::npos) {
-				fprintf(Debug.out_stream, "%s\n", ret.c_str());
+
+				//fprintf(Debug.out_stream, "%s %i\n", ret.c_str(),n);
 				if (--n < 0) {
-					ret = exec("poff");
+					stop_ppp();
 					Autopilot.sim800_reset = true;
 					start_ppp();
 					break;
 				}
+
 			}
 			else
 				break;
@@ -779,7 +784,7 @@ void ppp_loop() {
 	
 	
 	while (true) {
-		while (sms_at_work)
+		while (sms_at_work || Commander.ppp_inet==false)
 			delay(100);
 
 

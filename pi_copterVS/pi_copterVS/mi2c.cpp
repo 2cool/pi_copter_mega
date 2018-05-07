@@ -112,7 +112,7 @@ static int sms_received = 0;
 
 int Megai2c::gsm_loop()
 {
-	if (sim800_reset_time > 0 && sim800_reset_time + 15000 < millis())
+	if (sim800_reset_time > 0 && sim800_reset_time + 40000 < millis())
 		sim800_reset_time = 0;
 
 	char gsm_in_buf[18];

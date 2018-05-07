@@ -30,6 +30,7 @@ class CommanderClass
 
  public:
 	 volatile int vedeo_stream_client_addr;
+	 volatile bool ppp_inet, telegram_bot;
 	 uint8_t _set(const float  val, float &set, bool secure=true);
 	 void setThrottle(const float t){ throttle = t; }
 	 void setPitch(const float p){ pitch = p; }

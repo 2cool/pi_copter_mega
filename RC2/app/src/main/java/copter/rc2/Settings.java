@@ -25,7 +25,7 @@ public class Settings extends Activity {
             {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z","secur"},
             {"DRAG_K","_0007","tiltPower_CF",_null,_null,_null,_null,_null,_null,_null,"mpu"},
             {"m power on",_null,_null,_null,_null,_null,_null,_null,_null,_null,"compas"},
-            {"vedeoAdr",_null,_null,_null,_null,_null,_null,_null,_null,_null,"rest"}
+            {"vedeoAdr","ppp_inet","telegram",_null,_null,_null,_null,_null,_null,_null,"rest"}
 
     };
 

@@ -29,6 +29,8 @@ void CommanderClass::init()
 {
 	//Out.println("COMMANDER INIT");
 	vedeo_stream_client_addr = 0;
+	ppp_inet = true;
+	telegram_bot = false;
 	data_size = 0;
 	yaw = yaw_offset = pitch = roll = throttle = 0;
 
@@ -378,11 +380,21 @@ void stop_stream() {
 
 string CommanderClass::get_set() {
 	string s = std::to_string(vedeo_stream_client_addr);
+	s += ",";
+	s += (ppp_inet) ? "1" : "0";
+	s += ",";
+	s+= (telegram_bot) ? "1" : "0";
+	s += ",";
+
 	return s;
 }
 
 void CommanderClass::set(const float buf[]) {
 	vedeo_stream_client_addr = buf[0];
+	ppp_inet = buf[1] > 0;
+	telegram_bot = buf[2] > 0;
+	if (telegram_bot)
+		ppp_inet = true;
 	fprintf(Debug.out_stream, "trans adr %f\n", buf[0]);
 	thread t(stop_stream);
 	t.detach();

@@ -6,7 +6,9 @@
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
-
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include "define.h"
 #include "Wi_Fi.h"
 #include "Telemetry.h"
@@ -56,6 +58,52 @@ void mclose(){
 CommanderClass *com;
 TelemetryClass *tel;
 
+string get_my_ip_addres() {
+	string str=exec("ifconfig wlan0");
+	int i = str.find("192.168");
+	if (i > 0) {
+		int e = str.substr(i, 20).find(" ");
+		if (e > 0) {
+			return str.substr(i, e);
+		}
+	}
+	return "";
+}
+
+int new_server() {
+	if (wifi_connections>0)
+		return 0;
+	wifi_connections++;
+
+	string adr;
+	do {
+		delay(1000);
+		adr = get_my_ip_addres();
+	} while ( adr.length() == 0);
+
+
+	connected = 0;
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sockfd < 0) {
+		fprintf(Debug.out_stream, "ERROR opening socket/n");
+		wifi_connections--;
+		return -1;
+	}
+	bzero((char *)&serv_addr, sizeof(serv_addr));
+	portno = 9876;
+	serv_addr.sin_family = AF_INET;
+	
+	serv_addr.sin_addr.s_addr = inet_addr(adr.c_str());//INADDR_ANY;//
+	serv_addr.sin_port = htons(portno);
+	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+		fprintf(Debug.out_stream, "ERROR on binding/n");
+		wifi_connections--;
+		return -1;
+	}
+	listen(sockfd, 5);
+	clilen = sizeof(cli_addr);
+}
+
 bool wite_connection(){
 	 newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
      if (newsockfd < 0) {
@@ -77,7 +125,7 @@ bool WiFiClass::stopServer() {
 uint32_t wifiold_t = 0;
 void server(){
 	//delay(5000);
-	
+	new_server();
      if (wite_connection())
 		return;
 	  while(run){
@@ -162,29 +210,7 @@ int WiFiClass::init()
 	commander_done = true;
 	command_resived = false;
 	
-	if (wifi_connections>0)
-		return 0;
-	wifi_connections++;
-
-	connected=0;
-     sockfd = socket(AF_INET, SOCK_STREAM, 0);
-     if (sockfd < 0) {
-        fprintf(Debug.out_stream,"ERROR opening socket/n");
-        wifi_connections--;
-        return -1;
-	}
-     bzero((char *) &serv_addr, sizeof(serv_addr));
-    portno = 9876;
-     serv_addr.sin_family = AF_INET;
-     serv_addr.sin_addr.s_addr = INADDR_ANY;
-     serv_addr.sin_port = htons(portno);
-     if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-          fprintf(Debug.out_stream,"ERROR on binding/n");
-          wifi_connections--;
-          return -1;
-	}
-    listen(sockfd,5);
-     clilen = sizeof(cli_addr);
+	
      
      thread t(server);
      t.detach();
