@@ -74,13 +74,13 @@ int new_server() {
 	if (wifi_connections>0)
 		return 0;
 	wifi_connections++;
-
+	/*
 	string adr;
 	do {
 		delay(1000);
 		adr = get_my_ip_addres();
 	} while ( adr.length() == 0);
-
+	*/
 
 	connected = 0;
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -93,7 +93,7 @@ int new_server() {
 	portno = 9876;
 	serv_addr.sin_family = AF_INET;
 	
-	serv_addr.sin_addr.s_addr = inet_addr(adr.c_str());//INADDR_ANY;//
+	serv_addr.sin_addr.s_addr = INADDR_ANY;//inet_addr(adr.c_str());
 	serv_addr.sin_port = htons(portno);
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 		fprintf(Debug.out_stream, "ERROR on binding/n");

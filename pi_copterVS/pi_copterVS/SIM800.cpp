@@ -1,6 +1,6 @@
-#define PPP_INET
-#define TELEGRAM_BOT_RUN
-#define LOGER_RUN
+//#define PPP_INET
+//#define TELEGRAM_BOT_RUN
+//#define LOGER_RUN
 #define TELEGRAM_BOT_TIMEOUT 1000
 
 #include <cstdio>
@@ -760,6 +760,9 @@ void test_ppp_inet_loop() {
 	while (ppp_run) {
 		int n = 4;
 		delay(5000);
+
+#ifdef PPP_INET
+		
 		while (true) {
 			string ret = exec("ping -c 1 8.8.8.8");
 			if (ret.find("1 received") == string::npos) {
@@ -776,6 +779,7 @@ void test_ppp_inet_loop() {
 			else
 				break;
 		}
+#endif
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
