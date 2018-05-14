@@ -376,13 +376,14 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     int i=0;
-
+    static long old_time_acc=0;
     static long old_time=0;
+
     static double heading_t;
     static double pitch=0,roll=0;
 
+    double dt_update=0;
 
-    boolean gyro_flag=false;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -393,8 +394,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 
         long now=System.currentTimeMillis();
-        if (old_time==0)
-            old_time=now;
+        if (old_time==0) {
+            old_time = old_time_acc=now;
+            return;
+        }
 
 
 /*
@@ -404,34 +407,48 @@ SensorEvent.values[2]	Rate of rotation around the z axis.
  */
 
         if (event.sensor.getType()==Sensor.TYPE_GYROSCOPE){
-            gyro_flag=true;
-            float dt=0.001f*(now-old_time);
+
+            double dt=0.001*(now-old_time);
             old_time=now;
             pitch-=event.values[1]*dt;
             roll+=event.values[0]*dt;
-            Commander.yaw-=event.values[2]*dt;
+           // Commander.yaw-=event.values[2]*dt;
 
            // Log.i("MATHr","roll="+(int)(Commander.roll*56.3)+", pitch="+(int)(Commander.pitch*57.3)+", yaw="+(int)(Commander.yaw*57.3));
+
+            dt_update+=dt;
+            if (dt_update>0.05) {
+                dt_update=0;
+                new Thread() {
+                    @Override
+                    public void run() {
+                        if (MainActivity.drawView != null)
+                            MainActivity.drawView.postInvalidate();
+                    }
+                }.start();
+            }
         }
 
         if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-            if (gyro_flag){
-                gyro_flag=false;
-                double aRoll = Math.atan2(event.values[1], event.values[2]);
-                double aPitch = Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2]));
 
-                pitch+=(aPitch-pitch)*0.003;
-                roll+=(aRoll-roll)*0.003;
+            double aRoll = Math.atan2(event.values[1], event.values[2]);
+            double aPitch = Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2]));
 
-                double k=(float)(zoomN/0.69813170079773183076947630739545);
-                Commander.pitch=(float)(pitch*k);
-                Commander.roll=(float)(roll*k);
-
-
-              //  Log.i("MATH","aroll="+(int)(aRoll*56.3)+", apitch="+(int)(aPitch*57.3));
-            }
+            double dt=0.001*(now-old_time_acc);
+            old_time_acc=now;
+            double F=Math.min(1,dt*0.3);
+            pitch+=(aPitch-pitch)*F;
+            roll+=(aRoll-roll)*F;
 
             double k=(float)(zoomN/0.69813170079773183076947630739545);
+            Commander.pitch=(float)(pitch*k);
+            Commander.roll=(float)(roll*k);
+
+
+          //  Log.i("MATH","aroll="+(int)(aRoll*56.3)+", apitch="+(int)(aPitch*57.3));
+
+
+            k=(float)(zoomN/0.69813170079773183076947630739545);
             Commander.ax+=((event.values[0]*k/9.8)-Commander.ax)*0.1;
             Commander.ay+=((event.values[1]*k/9.8)-Commander.ay)*0.1;
 
@@ -439,13 +456,8 @@ SensorEvent.values[2]	Rate of rotation around the z axis.
 
             //az=midZ.get(event.values[2]*k/10f);
 
-            new Thread() {
-                @Override
-                public void run() {
-                    if (MainActivity.drawView!=null)
-                        MainActivity.drawView.postInvalidate();
-                }
-            }.start();
+
+
         }
 
         if (event.sensor.getType()==Sensor.TYPE_ORIENTATION){

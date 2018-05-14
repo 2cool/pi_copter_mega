@@ -124,7 +124,7 @@ SEND_I2C g_data;
 
 void GPSClass::loop(){
 static double last_gps_time1d = 0;
-	if (Mpu.timed - last_gps_time1d >= 0.01) {
+	if (Mpu.timed - last_gps_time1d >= 0.05) {
 		last_gps_time1d = Mpu.timed;
 
 		if (mega_i2c.get_gps(&g_data)) {
@@ -132,8 +132,8 @@ static double last_gps_time1d = 0;
 		}
 		
 
-		if (Mpu.timed - loc.last_gps_data_timed > NO_GPS_DATA){
-			fprintf(Debug.out_stream, "gps update error  %i\n", millis() / 1000);
+		if ( Mpu.timed - loc.last_gps_data_timed > 0.15){
+			fprintf(Debug.out_stream, "gps update error  %f\n", Mpu.timed - loc.last_gps_data_timed);
 		}
 		if (Autopilot.motors_is_on() && Mpu.timed - loc.last_gps_accurasy_okd > NO_GPS_DATA) {
 			//fprintf(Debug.out_stream, "gps accuracy error  %i\n", millis() / 1000);

@@ -88,9 +88,12 @@ import android.widget.Toast;
 	}
 
 
-
+static boolean onDrawAtwork=false;
     public void onDraw(Canvas c) {
-
+		if (onDrawAtwork)
+			return;
+		else
+			onDrawAtwork=true;
     	try{
 
 
@@ -324,6 +327,7 @@ import android.widget.Toast;
             //c.drawLine(0, 0, this.getWidth(), this.getHeight()-x, black);  
            // x++;
     	}catch (Exception e){}
+		onDrawAtwork=false;
     }
     
     @Override

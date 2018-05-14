@@ -67,7 +67,8 @@ bool MS5611Class::fault() {
 }
 double MS5611Class::getAltitude(const float pressure) {
 	double alt = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка 4.4.2018-вот она
-	if (Mpu.timed>20){
+	
+	if (Mpu.timed>5){
 		if (fault()) {
 				return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
 		}
@@ -75,16 +76,19 @@ double MS5611Class::getAltitude(const float pressure) {
 		
 			if (altitude_ != 0) {
 				if (abs(alt - altitude_) > MAX_BAROMETR_ERROR) {
-					if (GPS.loc.accuracy_ver_pos_<10)
+					//if (GPS.loc.accuracy_ver_pos_<10)
 						wrong_altitude_cnt++;
 					fprintf(Debug.out_stream, "wrong alt! %i , %i\n", (int)alt ,(int)altitude_);
+					printf("press= %i, alt=%i\n", (int)pressure, (int)alt);
 					return altitude_;
 				}
 			}
 			altitude_ = alt;
-			gps_barometr_alt_dif = GPS.loc.altitude - alt;
+			gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif)*0.1;
 		}
 	}
+	else
+		altitude_ = alt;
 	return alt;
 }
 
@@ -292,7 +296,7 @@ float MS5611Class::get_pressure(float h) {
 //-------------------------------------------init-------------------------
 int MS5611Class::init() {
 	oldAltt = 100000;
-
+	gps_barometr_alt_dif = 0;
 	old_timed = 0;
 	bar_task = 0;
 	bar_zero = 0x0;

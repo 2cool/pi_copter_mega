@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\Users\\2cool\\Desktop\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-zh-rTW\\values-zh-rTW.xml",
+            "outputFile": "C:\\Users\\2cool\\Desktop\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-zh-rTW\\values-zh-rTW.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\igor.DESKTOP\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\1f77869a824ab9b14da015db3d616380\\res\\values-zh-rTW\\values.xml",
+                    "source": "C:\\Users\\2cool\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\7a9469ffa512d9d0c1d52cca6a03c9ee\\res\\values-zh-rTW\\values.xml",
                     "from": {
                         "startLines": "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

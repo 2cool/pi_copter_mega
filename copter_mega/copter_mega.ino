@@ -2,7 +2,7 @@
 
 
 
-
+#include <avr/wdt.h>
 #include <stdint.h>
 #include <Wire.h>
 #include "Adafruit_NeoPixel-master\Adafruit_NeoPixel.h"
@@ -184,11 +184,13 @@ enum COMMANDS_BIT { SOUND_ON = 1, BEEP_CODE = 30 };
 
 
 volatile uint32_t cnt_reset = 0;
-volatile uint8_t cnt = 0;
+volatile uint8_t cnt_rec = 0;
+volatile uint8_t cnt_req = 0;
+
 volatile bool beep_on = false;
 
 
-uint8_t old_cnt = 0;
+uint8_t old_cnt_res = 255,old_cnt_req=255;
 uint16_t err = 0;
 int temp;
 #define writePWM8(n)					\
@@ -204,6 +206,7 @@ int temp;
 char inBuf[32];
 volatile uint8_t reg=15;
 void receiveEvent(int countToRead) {
+	cnt_rec++;
 	if (countToRead == 1) {
 		reg = Wire.read();
 		return;
@@ -274,7 +277,7 @@ void receiveEvent(int countToRead) {
 		}
 	}
 	}
-	cnt++;
+	
 }
 
 //	A0	-	3v from balance
@@ -299,7 +302,7 @@ void requestEvent() {
 
 
 
-	cnt++;
+	cnt_req++;
 
 
 	switch (reg) {
@@ -365,6 +368,7 @@ void requestEvent() {
 //#define ESC_CALIBR
 void setup()
 {
+
 #ifdef ESC_CALIBR
 	on(48000, pwm_MAX_THROTTLE);
 	delay(3000);
@@ -394,7 +398,7 @@ void setup()
 		pixels.setPixelColor(i, pixels.Color(0, 1, 0)); // Moderately bright green pi_copter_color.
 	pixels.show();
 
-
+	wdt_enable(WDTO_120MS);
 }
 ///thr0 = m1
 //thr1 = m0
@@ -455,8 +459,9 @@ void loop()
 	//Serial.print(fb[0]); Serial.print(" "); Serial.print(fb[1]); Serial.print(" "); Serial.print(fb[2]); Serial.print(" "); Serial.print(fb[3]); Serial.print(" "); Serial.println(fb[4]);
 
 
-	if (cnt != old_cnt) {
-		old_cnt = cnt;
+	if (cnt_req != old_cnt_req && cnt_rec != old_cnt_res) {
+		old_cnt_req = cnt_req;
+		old_cnt_res = cnt_rec;
 		err = 0;
 
 	}
@@ -484,7 +489,7 @@ void loop()
 		
 		new_colors_i = 0;
 	}
-
+	wdt_reset();
 	
 
 	

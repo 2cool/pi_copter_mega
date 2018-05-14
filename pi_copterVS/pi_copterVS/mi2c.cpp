@@ -115,13 +115,13 @@ int Megai2c::gsm_loop()
 	if (sim800_reset_time > 0 && sim800_reset_time + 40000 < millis())
 		sim800_reset_time = 0;
 
-	char gsm_in_buf[18];
+	char gsm_in_buf[32];
 	int a_in;
 	ioctl(fd_in, FIONREAD, &a_in);
 	if (a_in) {
-		//printf("----\n");
-		if (a_in > 16)
-			a_in = 16;
+		//printf("a_in=%i\n",a_in);
+		if (a_in > 24)
+			a_in = 24;
 
 		int av = read(fd_in, &gsm_in_buf, a_in);
 /*
@@ -163,7 +163,7 @@ int Megai2c::init()
 {
 	
 	current_led_mode = 100;
-	_ring_bit_high = false;
+
 	ring_received = false;
 	ppp_on = false;
 
@@ -196,6 +196,9 @@ int Megai2c::init()
 	buf[6] = 0;
 
 	write(fd, buf, 7);
+
+
+	sim800_reset_time = 0;
 
 	sim800_reset();/////////////
 
@@ -278,17 +281,23 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 	int res = read(fd, &bit_field, 1);
 
 
+	static double last_ring_time = 0;
 
-	if (bit_field & 1) {
-		if (_ring_bit_high == false && sim800_reset_time==0) {
-			_ring_bit_high = true;
+	if (last_ring_time > 0 && last_ring_time + 10 < Mpu.timed) {
+		last_ring_time = 0;
+		sim.stop_ppp_read_sms_start_ppp();
+		
+	}
+
+
+	if (bit_field & 1 && sim800_reset_time == 0) {
+		if (last_ring_time==0)
 			fprintf(Debug.out_stream, "RINGk_BIT\n");//при заходе смс при ppp
-			///stop servises, stop ppp? read sms and do. start ppp and services again
-			sim.stop_ppp_read_sms_start_ppp();
-
-		}
-	}else
-		_ring_bit_high = false;
+		last_ring_time = Mpu.timed;
+		
+		///stop servises, stop ppp? read sms and do. start ppp and services again
+		
+	}
 
 	if (bit_field & 2) {
 		res = read(fd, (char*)gps_d, sizeof(SEND_I2C));

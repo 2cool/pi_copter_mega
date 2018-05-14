@@ -1,4 +1,4 @@
-#define PROG_VERSION "ver 3.180504_\n"
+#define PROG_VERSION "ver 3.180511_\n"
 
 #define ONLY_ONE_RUN
 #define SIM800_F
