@@ -120,8 +120,8 @@ int Megai2c::gsm_loop()
 	ioctl(fd_in, FIONREAD, &a_in);
 	if (a_in) {
 		//printf("a_in=%i\n",a_in);
-		if (a_in > 24)
-			a_in = 24;
+		if (a_in > 8)
+			a_in = 8;
 
 		int av = read(fd_in, &gsm_in_buf, a_in);
 /*

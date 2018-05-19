@@ -284,7 +284,24 @@ int printHelp() {
 	return -1;
 }
 
+void watch_dog() {
+	delay(1000);
+	while (shmPTR->run_main) {
+		
+		uint8_t wifi_cnt = shmPTR->wifi_cnt;
+		uint8_t internet_cnt = shmPTR->internet_cnt;
+		delay(500);
+		if (wifi_cnt == shmPTR->wifi_cnt) {
+			printf("--------------wifi starting\n");
+			//int ret=system("/root/projects/pi_copter_wifi/bin/ARM/Debug/pi_copter_wifi.out &");
 
+		}
+		if (internet_cnt == shmPTR->internet_cnt) {
+			printf("--------------ppp starting\n");
+			//int ret = system("/root/projects/pi_copter_internet/bin/ARM/Debug/pi_copter_internet.out &");
+		}
+	}
+}
 
 
 int main(int argc, char *argv[]) {
@@ -292,9 +309,11 @@ int main(int argc, char *argv[]) {
 	if (init_shmPTR())
 		return 0;
 	shmPTR->in_fly = (shmPTR->control_bits&MOTORS_ON);
-
-
-
+	shmPTR->wifi_cnt = 0;
+	shmPTR->run_main = true;
+	shmPTR->inet_ok = false;
+	thread tl(watch_dog);
+	tl.detach();
 
 	string fname;
 	printf(PROG_VERSION);
@@ -405,7 +424,7 @@ shmPTR->connected = 0;
 
 		old_time4loop = micros();
 
-		shmPTR->run_main = true;
+		
 		shmPTR->reboot = 0;
 
 
@@ -415,8 +434,8 @@ shmPTR->connected = 0;
 
 
 
-
-		while (flag == 0){
+		static uint32_t ppp_delay=0;
+		while (true){
 			if (loop()) {
 				shmPTR->main_cnt++;
 				//usleep(5400);
@@ -433,11 +452,14 @@ shmPTR->connected = 0;
 				//Debug.load(0, time_past, 0);
 				//Debug.dump();
 			}
+			if (flag)
+				shmPTR->run_main = false;
 			if (shmPTR->run_main == false) {
-#ifdef SIM800_F
-				//if (sim.stop_ppp())
-#endif
+				if (ppp_delay != 0 && millis() - ppp_delay > 5000)
 					break;
+				if (ppp_delay == 0 && shmPTR->inet_ok == false)
+					ppp_delay = millis();
+					
 			}
 		}
 	}

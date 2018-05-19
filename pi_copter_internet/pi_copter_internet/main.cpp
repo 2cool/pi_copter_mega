@@ -114,9 +114,9 @@ int init_shmPTR() {
 
 
 		ShmKEY = ftok(SHMKEY, 'x');
-		ShmID = shmget(ShmKEY, sizeof(struct Memory), IPC_CREAT | 0666);
+		ShmID = shmget(ShmKEY, sizeof(struct Memory),  0666);
 		if (ShmID < 0) {
-			printf("*** shmget error (server) ***\n");
+			printf("*** shmget error (internet) ***\n");
 			return 1;
 		}
 		shmPTR = (struct Memory *) shmat(ShmID, NULL, 0);
@@ -521,7 +521,6 @@ void _stop_ppp_read_sms_start_ppp() { // external
 	printf("ppp_run stop\n");
 	while (shmPTR->inet_ok) {
 		delay(100);
-		shmPTR->internet_cnt++;
 	}
 
 	printf("inet off\n");
@@ -532,12 +531,10 @@ void _stop_ppp_read_sms_start_ppp() { // external
 
 	while (shmPTR->sms_at_work) {
 		delay(100);
-		shmPTR->internet_cnt++;
 	}
 	printf("sms_done\n");
 	delay(100);
 	shmPTR->ppp_run = true;
-
 }
 
 
@@ -545,14 +542,20 @@ void _stop_ppp_read_sms_start_ppp() { // external
 
 void sms_loop() {
 	while (true) {
-		while (shmPTR->sms_at_work == 0)
+		while (shmPTR->sms_at_work == 0) {
 			delay(100);
+		}
 		if (shmPTR->sms_at_work == 1) {
+			shmPTR->ppp_run = false;
+			while (shmPTR->inet_ok)
+				sleep(100);
 			readsms();
-			stop_ppp();
+		
 		}
 		if (shmPTR->sms_at_work == 2) {
-			stop_ppp();
+			shmPTR->ppp_run = false;
+			while (shmPTR->inet_ok)
+				sleep(100);
 			sendsms();
 		}
 
@@ -616,17 +619,18 @@ void telegram_loop() {
 								send = exec(send + " \"");
 								//raise(SIGPIPE);
 							}
-							messages_counter++;
+							//messages_counter++;
 						}
 					}
 
 				}
 			if (messages_counter == 0) {
 				std::string send = exec(htext + "copter bot started" + "\"");
-				messages_counter++;
+				//messages_counter++;
 			}
 
 		}
+		messages_counter++;
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -760,13 +764,14 @@ void loger_loop() {
 int start_ppp() {
 	if (shmPTR->inet_ok == true)
 		return 0;
-	//delay(15000);
-	shmPTR->ppp_run = true;
+	delay(500);
+	
 #ifdef PPP_INET 
 
 	while (shmPTR->sim800_reset_time > 0)
 		delay(100);
 
+	shmPTR->ppp_run = true;
 	printf( "starting ppp...\n");
 	string ret = exec("pon rnet");
 	if (ret.length()) {
@@ -802,6 +807,8 @@ int stop_ppp() {
 	system("route add default dev wlan0");
 	system("poff -a");
 	printf( "ppp OFF\n");
+	
+	printf("---------PPP STOPED---------\n");
 	shmPTR->inet_ok = false;
 
 }
@@ -810,7 +817,7 @@ int stop_ppp() {
 void test_ppp_inet_and_local_loop() {
 	int n = 2;
 	int ln = 2;
-	while (shmPTR->ppp_run) {
+	while (shmPTR->ppp_run && shmPTR->run_main) {
 		delay(5000);
 		string ret = exec("ping -w 5 -c 1 8.8.8.8");
 		if (ret.find("1 received") == string::npos) {
@@ -854,11 +861,11 @@ void ppp_loop() {
 
 
 
-	while (true) {
+	while (shmPTR->run_main) {
 		while (shmPTR->sms_at_work )
 			delay(100);
 
-		stop_ppp();
+		//stop_ppp();
 		start_ppp();
 		test_ppp_inet_and_local_loop();
 		stop_ppp();
@@ -869,7 +876,7 @@ void ppp_loop() {
 
 
 
-		while (shmPTR->ppp_run == false)
+		while (shmPTR->ppp_run == false && shmPTR->run_main)
 			delay(100);
 
 	}
@@ -883,30 +890,43 @@ void ppp_loop() {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
+void watch_d() {
 
+	while (true) {
+		shmPTR->internet_cnt++;
+		delay(100);
+	}
+}
 int main(int argc, char *argv[])//lat,lon,.......
 {
 	static bool stop_start = false;
 	if (init_shmPTR())
 		return 0;
+	if (shmPTR->run_main == false)
+		return 0;
+
+	shmPTR->inet_ok = false;
+
+	thread wd(watch_d);
+	wd.detach();
 
 	readSMS(0, true, false);
-
+	printf("start sms loop\n");
 	thread tsms(sms_loop);
 	tsms.detach();
-
+	printf("start ppp loop\n");
 	thread tppp(ppp_loop);
 	tppp.detach();
 
-
+	printf("start loger loop\n");
 	thread tl(loger_loop);
 	tl.detach();
-
+	printf("start telegram loop\n");
 	thread tg(telegram_loop);
 	tg.detach();
 
 
-	while (true) {
+	while ( shmPTR->run_main) {
 		if ( stop_start == false && shmPTR->stop_ppp_read_sms_start_ppp ) {
 			stop_start = true;
 			_stop_ppp_read_sms_start_ppp();
@@ -914,9 +934,13 @@ int main(int argc, char *argv[])//lat,lon,.......
 		}
 		else {
 			usleep(100000);
-			shmPTR->internet_cnt++;
 		}
 	}
-
+	while(shmPTR->inet_ok)
+		delay(100);
+	printf("internet exits...\n");
+	delay(5000);
+	shmdt((void *)shmPTR);
+	
     return 0;
 }

@@ -261,6 +261,10 @@ void MS5611Class::phase2() {
 		//float pr = (float)(D1 * SENS / 2097152 - OFF) * 0.000030517578125;
 
 		P = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
+		if (P < 90000) {
+			printf("PRESSURE ERROR %i\n",P);
+			return;
+		}
 		const double dt = (Mpu.timed - old_timed);
 		old_timed = Mpu.timed;
 		

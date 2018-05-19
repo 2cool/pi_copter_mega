@@ -27,14 +27,31 @@ using namespace std;
 #include "../pi_copterVS/glob_header.h"
 #endif
 
-struct Memory  *ShmPTR;
+key_t          ShmKEY;
+int            ShmID;
+struct Memory *shmPTR;
+
+int init_shmPTR() {
+	if (shmPTR == 0) {
+
+
+		ShmKEY = ftok(SHMKEY, 'x');
+		ShmID = shmget(ShmKEY, sizeof(struct Memory), 0666);
+		if (ShmID < 0) {
+			printf("*** shmget error (wifi) ***\n");
+			return 1;
+		}
+		shmPTR = (struct Memory *) shmat(ShmID, NULL, 0);
+	}
+	return 0;
+}
 
 //thread t;
 
 bool stopServer();
 
 bool newConnection_;
-bool is_connected(void) { return ShmPTR->connected>0; }
+bool is_connected(void) { return shmPTR->connected>0; }
 string get_client_addres();
 
 
@@ -157,10 +174,10 @@ int new_server() {
 }
 
 bool wite_connection() {
-	ShmPTR->connected = 0;
-	ShmPTR->client_addr = 0;
-	ShmPTR->wifibuffer_data_len_4_read = 0;
-	ShmPTR->wifibuffer_data_len_4_write = 0;
+	shmPTR->connected = 0;
+	shmPTR->client_addr = 0;
+	shmPTR->wifibuffer_data_len_4_read = 0;
+	shmPTR->wifibuffer_data_len_4_write = 0;
 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 	if (newsockfd < 0) {
 		printf( "ERROR on accept\n");
@@ -191,7 +208,7 @@ void server() {
 	new_server();
 	if (wite_connection())
 		return;
-	while (flag==0) {
+	while (flag==0 && shmPTR->run_main) {
 
 		// bzero(buffer,256);
 		const uint32_t t = millis();
@@ -205,18 +222,18 @@ void server() {
 		//  printf("too long %i\n", dt);
 
 
-		while (ShmPTR->wifibuffer_data_len_4_read != 0)
+		while (shmPTR->wifibuffer_data_len_4_read != 0)
 			usleep(10000);
 				
-		ShmPTR->wifibuffer_data_len_4_read = read(newsockfd, ShmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
+		shmPTR->wifibuffer_data_len_4_read = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
 
-		if (ShmPTR->wifibuffer_data_len_4_read > 0) {
-			if (ShmPTR->connected == 0)
-				ShmPTR->client_addr = cli_addr.sin_addr.s_addr;
-			ShmPTR->connected++;
+		if (shmPTR->wifibuffer_data_len_4_read > 0) {
+			if (shmPTR->connected == 0)
+				shmPTR->client_addr = cli_addr.sin_addr.s_addr;
+			shmPTR->connected++;
 		}
 		else {
-			if (ShmPTR->connected) {
+			if (shmPTR->connected) {
 
 				printf("ERROR reading from socket\n");
 				
@@ -227,17 +244,17 @@ void server() {
 			continue;
 		}
 		
-		while (ShmPTR->wifibuffer_data_len_4_write == 0)
+		while (shmPTR->wifibuffer_data_len_4_write == 0)
 			usleep(10000);
 
 		
-		n = write(newsockfd, ShmPTR->wifiWbuffer, ShmPTR->wifibuffer_data_len_4_write);
+		n = write(newsockfd, shmPTR->wifiWbuffer, shmPTR->wifibuffer_data_len_4_write);
 		if (n > 0) {
 			
-			ShmPTR->wifibuffer_data_len_4_write = 0;
+			shmPTR->wifibuffer_data_len_4_write = 0;
 		}
 		else{
-			if (ShmPTR->connected) {
+			if (shmPTR->connected) {
 
 				printf( "ERROR reading from socket\n");
 				
@@ -254,24 +271,18 @@ void server() {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 void watch_d() {
+
 	while (true) {
-		ShmPTR->wifi_cnt++;
-		delay(10);
+		shmPTR->wifi_cnt++;
+		delay(100);
 	}
 }
 
 int main()
 {
-	key_t          ShmKEY;
-	int            ShmID;
-	
-
-	ShmKEY = ftok(SHMKEY, 'x');
-	ShmID = shmget(ShmKEY, sizeof(struct Memory), 0666);
-	if (ShmID < 0) {
-		printf("*** shmget error (client) ***\n");
-		exit(1);
-	}
+	init_shmPTR();
+	if (shmPTR->run_main == false)
+		return 0;
 	thread tl(watch_d);
 	tl.detach();
 
@@ -286,34 +297,22 @@ int main()
 
 
 	
-	printf("   Client has received a shared memory of four integers...\n");
+	printf("  wifi started...\n");
 
-	ShmPTR = (struct Memory *) shmat(ShmID, NULL, 0);
-	if ((int)ShmPTR == -1) {
-		printf("*** shmat error (client) ***\n");
-		exit(1);
-	}
+	
 
-	ShmPTR->connected = 0;
-	ShmPTR->client_addr = 0;
-	ShmPTR->wifibuffer_data_len_4_read = 0;
-	ShmPTR->wifibuffer_data_len_4_write = 0;
+	shmPTR->connected = 0;
+	shmPTR->client_addr = 0;
+	shmPTR->wifibuffer_data_len_4_read = 0;
+	shmPTR->wifibuffer_data_len_4_write = 0;
 
 	printf("server started...\n");
 	server();
-/*
-	printf("Server has detected the completion of its child...\n");
-	shmdt((void *)ShmPTR);
-	printf("Server has detached its shared memory...\n");
-	shmctl(ShmID, IPC_RMID, NULL);
-	printf("Server has removed its shared memory...\n");
-	printf("Server exits...\n");
-	*/
 
 
+	shmdt((void *)shmPTR);
+	printf("   wifi exits...\n");
 
-
-    printf("hello from pi_copter_wifi!\n");
     return 0;
 }
 

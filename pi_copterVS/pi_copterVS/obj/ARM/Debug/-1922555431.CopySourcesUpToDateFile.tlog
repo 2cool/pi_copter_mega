@@ -14,13 +14,13 @@ C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\inv_mpu.cpp|6
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\inv_mpu_dmp_motion_driver.cpp|636612996181016093|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\Location.cpp|636622488352902678|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp|636612996160681831|~/projects/pi_copterVS|
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\main.cpp|636622810311566403|~/projects/pi_copterVS|
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\main.cpp|636623422574051352|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.cpp|636622858561855109|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\MPU6050.cpp|636612996162250836|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.cpp|636612996183495184|~/projects/pi_copterVS|
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.cpp|636622488351061258|~/projects/pi_copterVS|
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.cpp|636623214539902379|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp|636612996163724264|~/projects/pi_copterVS|
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.cpp|636622786441166490|~/projects/pi_copterVS|
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.cpp|636623386924935803|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\RC_Filter.cpp|636612996165664858|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\Settings.cpp|636612996166570638|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.cpp|636612996166620603|~/projects/pi_copterVS|
@@ -38,7 +38,7 @@ C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\dmpmap.h|6366
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\Filter.h|636612996155009579|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\FIND.h|636612996154123885|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\GeoDot.h|636612996156990761|~/projects/pi_copterVS|
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\glob_header.h|636622821269503856|~/projects/pi_copterVS|
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\glob_header.h|636623178768547968|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\GPS.h|636612996155069542|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h|636612996180034095|~/projects/pi_copterVS|
 C:\Users\2cool\source\repos\pi_copter_mega\pi_copterVS\pi_copterVS\Hmc.h|636612996157050724|~/projects/pi_copterVS|

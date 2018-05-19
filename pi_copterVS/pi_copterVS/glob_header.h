@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#define SHMKEY "/home/igor/logs/logCounter.txt"
+#define SHMKEY "/home/igor/logs/"
 #define TELEMETRY_BUF_SIZE 16384
 
 enum { X, Y, Z };
