@@ -2,14 +2,14 @@
 
 
 
-#include "WProgram.h"
 
 #ifndef DEFINE_H
 
 #define DEFINE_H
 
 
-
+#include "glob_header.h"
+#include "WProgram.h"
 
 
 
@@ -106,7 +106,7 @@
 #define RAD2GRAD 57.29578
 #define GRAD2RAD 0.0174533
 #define G 9.8
-#define TELEMETRY_BUF_SIZE 16384
+
 #define wrap_180(x) (x < -180 ? x+360 : (x > 180 ? x - 360: x))
 #define wrap_PI(x) (x < -PI ? x+TWO_PI : (x > PI ? x - TWO_PI: x))
 
@@ -159,13 +159,7 @@
 #define m_UPLOAD_SETTINGS "UPS"
 #define m_PROGRAM	   "PRG"
 
-enum { X, Y, Z };
 
-enum {
-	MOTORS_ON = 1, CONTROL_FALLING = 2, Z_STAB = 4, XY_STAB = 8, GO2HOME = 0x10, PROGRAM = 0x20, COMPASS_ON = 0x40, HORIZONT_ON = 0x80,
-	MPU_ACC_CALIBR = 0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR = 0x400, COMPASS_MOTOR_CALIBR = 0x800, SHUTDOWN = 0x1000, GIMBAL_PLUS = 0x2000, 
-	GIMBAL_MINUS = 0x4000, REBOOT = 0x8000,M_ON_AND_GO2HOME=10000,M_ON_AND_PROG_START=20000
-};
 
 struct SEND_I2C {
 
@@ -179,7 +173,7 @@ struct SEND_I2C {
 
 
 
-
+extern struct Memory *shmPTR;
 
 
 #endif

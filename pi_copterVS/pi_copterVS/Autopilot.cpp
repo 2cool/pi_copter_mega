@@ -53,7 +53,7 @@ enum { B_CONNECTION_LOST = 1, B_MS611_ERROR, B_ACC_ERROR, B_LOW_VOLTAGE, B_GPS_A
 #include "Stabilization.h"
 #include "debug.h"
 #include "Prog.h"
-#include "Wi_Fi.h"
+
 #include "mi2c.h"
 
 #include <cstdio>
@@ -73,7 +73,7 @@ enum { B_CONNECTION_LOST = 1, B_MS611_ERROR, B_ACC_ERROR, B_LOW_VOLTAGE, B_GPS_A
 #include <string>
 
 #include  "Log.h"
-#include "SIM800.h"
+
 
 using namespace std;
 
@@ -127,10 +127,14 @@ void start_video() {
 
 void AutopilotClass::init(){/////////////////////////////////////////////////////////////////////////////////////////////////
 
-	sim800_reset = false;
+	if (init_shmPTR())
+		return;
+
+
+	shmPTR->sim800_reset = false;
 	time_at_startd = 0;
 	camera_mode = CAMMERA_OFF;
-	lowest_height = Debug.lowest_altitude_to_fly;
+	lowest_height = shmPTR->lowest_altitude_to_fly;
 	last_time_data_recivedd = 0;
 	
 	Balance.init();
@@ -247,9 +251,12 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 	controlDeltaTimed = Mpu.timed;
 
-	uint sim_com = sim.get_commande();
-	if (sim_com) 
-		set_control_bits(sim_com);
+	if (shmPTR->control_bits_4_do)
+		set_control_bits(shmPTR->control_bits_4_do);
+
+	shmPTR->control_bits = control_bits;
+
+
 	
 	gimBalRollCorrection();
 
@@ -338,8 +345,8 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 
 
-	if (sim800_reset) {
-		sim800_reset = false;
+	if (shmPTR->sim800_reset) {
+		shmPTR->sim800_reset = false;
 		mega_i2c.sim800_reset();
 	}
 
@@ -691,7 +698,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			
 			Mpu.max_g_cnt = 0;
 
-			holdAltitude(Debug.fly_at_start);
+			holdAltitude(shmPTR->fly_at_start);
 			holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 			Stabilization.resset_z();
 			Stabilization.resset_xy_integrator();
@@ -1027,8 +1034,8 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 int  AutopilotClass::reboot() {
 	if (motors_is_on() == false) {
 		fprintf(Debug.out_stream, "REBOOT \n");
-		Debug.reboot = 1;
-		Debug.run_main = false;
+		shmPTR->reboot = 1;
+		shmPTR->run_main = false;
 		return 0;
 	}else
 		return -1;
@@ -1036,8 +1043,8 @@ int  AutopilotClass::reboot() {
 int  AutopilotClass::shutdown() {
 	if (motors_is_on() == false) {
 		fprintf(Debug.out_stream, "SHUTD \n");
-		Debug.reboot = 2;
-		Debug.run_main = false;
+		shmPTR->reboot = 2;
+		shmPTR->run_main = false;
 		return 0;
 	}
 	else
@@ -1046,8 +1053,8 @@ int  AutopilotClass::shutdown() {
 int  AutopilotClass::exit() {
 	if (motors_is_on() == false) {
 		fprintf(Debug.out_stream, "EXIT \n");
-		Debug.reboot = 3;
-		Debug.run_main = false;
+		shmPTR->reboot = 3;
+		shmPTR->run_main = false;
 		return 0;
 	}
 	else

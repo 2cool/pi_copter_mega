@@ -60,6 +60,7 @@ using namespace std;
 #define Serial2 Serial
 #define Serial1 Serial
 int get_pid(const char* name);
+uint32_t millis_g(void);
 uint32_t millis(void);
 int64_t micros(void);
 void delay(unsigned long);
@@ -115,8 +116,8 @@ inline void sin_cos(const float a, float &s, float &c) {
 		c = -c;
 		*/
 }
-
-
+int init_shmPTR();
+void close_shmPTR();
 
 #endif
 

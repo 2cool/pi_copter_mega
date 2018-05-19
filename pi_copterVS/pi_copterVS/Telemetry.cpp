@@ -21,7 +21,7 @@
 #include "commander.h"
 #include "Balance.h"
 #include "Stabilization.h"
-#include "Wi_Fi.h"
+
 #include "debug.h"
 #include "mpu_umulator.h"
 #include "Log.h"
@@ -94,11 +94,16 @@ void TelemetryClass::getSettings(int n){
 
 }
 
-
 void TelemetryClass::init_()
 {
+	
+	
+	init_shmPTR();
+
+	buf = shmPTR->wifiWbuffer;
 	uint32_t power_on_time = 0;
-	buffer_size = 0;
+	
+	
 	powerK = 1;
 	minimumTelemetry = false;
 	lov_voltage_cnt = 0;
@@ -164,10 +169,10 @@ void TelemetryClass::update_voltage() {
 	uint16_t data[5];
 	mega_i2c.getiiiiv((char*)data);
 #define max_V 1022
-	m_current[0] = 0.01953125*(float)(1005 - data[0]);
-	m_current[1] = 0.01953125*(float)(1010 - data[1]);
-	m_current[2] = 0.01953125*(float)(1006 - data[2]);
-	m_current[3] = 0.01953125*(float)(1006 - data[3]);
+	shmPTR->m_current[0] = m_current[0] = 0.01953125*(float)(1005 - data[0]);
+	shmPTR->m_current[1] = m_current[1] = 0.01953125*(float)(1010 - data[1]);
+	shmPTR->m_current[2] = m_current[2] = 0.01953125*(float)(1006 - data[2]);
+	shmPTR->m_current[3] = m_current[3] = 0.01953125*(float)(1006 - data[3]);
 
 	//Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
 
@@ -183,7 +188,7 @@ void TelemetryClass::update_voltage() {
 
 
 //	Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
-	voltage = 1.725*(float)(data[4]);
+	shmPTR->voltage = voltage = 1.725*(float)(data[4]);
 	full_power += ( (m_current[0] + m_current[1] + m_current[2] + m_current[3]) * voltage - full_power)*0.2;  //152 вата  - 274, 9.24 amper
 	if (Log.writeTelemetry) {
 		Log.block_start(LOG::TELE);
@@ -210,7 +215,7 @@ void TelemetryClass::testBatteryVoltage(){
 	//printf("charge=%f, cons ch=%f, bat ch=%f\n", current,consumed_charge, battery_charge);
 
 	if (!Autopilot.motors_is_on())
-		voltage_at_start = voltage;
+		shmPTR->voltage_at_start = voltage_at_start = voltage;
 	
 
 	if (voltage < BAT_ZERO*SN)
@@ -271,25 +276,16 @@ void TelemetryClass::loadBUF(int &i, const float fval)
 bool gps_or_acuracy = false;
 
 
-int TelemetryClass::read_buf(byte *buffer) {
-	if (Autopilot.busy())
-		return 4;
-	else {
-		while (buffer_size == 0) {
-			usleep(10000);
-		}
-		int size = buffer_size;
-		memcpy(buffer, buf, size);
-		buffer_size = 0;
-		return size;
-	}
 
-
-}
 uint32_t last_update_time=0;
 void TelemetryClass::update_buf() {
-	if (buffer_size > 0)
+	if (shmPTR->connected == 0 || shmPTR->wifibuffer_data_len_4_write > 0)
 		return;
+	if (Autopilot.busy()) {
+		shmPTR->wifibuffer_data_len_4_write=4;
+		return;
+	}
+
 	//bzero(buf, 32);
 	//delay(1000);
 	int i = 0;
@@ -354,7 +350,7 @@ void TelemetryClass::update_buf() {
 
 	} while (true);
 
-	buffer_size = i;
+	shmPTR->wifibuffer_data_len_4_write = i;
 }
 //nado echo peredat koordinaty starta i visoti ili luche ih androis socharanaet
 

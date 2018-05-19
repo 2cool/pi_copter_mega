@@ -64,7 +64,7 @@ class AutopilotClass
 	 
  public:
 
-	 volatile bool sim800_reset;
+
 	 int reboot();
 	 int shutdown();
 	 int exit();

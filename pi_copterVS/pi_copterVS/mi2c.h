@@ -116,16 +116,16 @@ public:
 	void set_led_mode(uint8_t n,uint8_t briht, bool pulse=false);
 
 	 bool ring_received;
-	 bool ppp_on;
+	
 	 int init();
-	 bool ppp(bool f);
+
 
 	 bool gimagl(float pitch, float roll);
 	 void set_led_color(uint8_t n, uint8_t r, uint8_t g, uint8_t b);  // n form 1 to 8
 	 void sound(const float);
 	 void beep_code(uint8_t);
 	 void sim800_reset();
-	 volatile  uint32_t sim800_reset_time;
+
 	 void throttle(const float n0, const float n1, const float n2, const float n3);
 
 	 void getiiiiv(char *iiiiv);

@@ -9,7 +9,7 @@
 #include "define.h"
 #include "mi2c.h"
 #include "mpu.h"
-#include "SIM800.h"
+
 
 
 
@@ -112,8 +112,8 @@ static int sms_received = 0;
 
 int Megai2c::gsm_loop()
 {
-	if (sim800_reset_time > 0 && sim800_reset_time + 40000 < millis())
-		sim800_reset_time = 0;
+	if (shmPTR->sim800_reset_time > 0 && shmPTR->sim800_reset_time + 40000 < millis())
+		shmPTR->sim800_reset_time = 0;
 
 	char gsm_in_buf[32];
 	int a_in;
@@ -154,18 +154,16 @@ int Megai2c::gsm_loop()
 }
 
 
-bool Megai2c::ppp(bool f) {
-	ppp_on = true;
-	return ppp_on;
-}
+
 
 int Megai2c::init()
 {
-	
+	if (init_shmPTR())
+		return 0;
 	current_led_mode = 100;
 
 	ring_received = false;
-	ppp_on = false;
+
 
 	if ((fd = open("/dev/i2c-0", O_RDWR)) < 0) {
 		fprintf(Debug.out_stream, "Failed to open /dev/i2c-0\n");
@@ -198,10 +196,10 @@ int Megai2c::init()
 	write(fd, buf, 7);
 
 
-	sim800_reset_time = 0;
+	shmPTR->sim800_reset_time = 0;
 
-	sim800_reset();/////////////
-
+	//sim800_reset();/////////////
+	
 	return 0;
 
 
@@ -249,7 +247,7 @@ void Megai2c::set_led_color(uint8_t n, uint8_t r, uint8_t g, uint8_t b) {
 }
 void Megai2c::sim800_reset() {
 	char chBuf[] = { 1,16 };
-	sim800_reset_time = millis();
+	shmPTR->sim800_reset_time = millis();
 	write(fd, chBuf, 2);
 }
 //0.35555555555555555555555555555556 = 1град
@@ -285,12 +283,12 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 
 	if (last_ring_time > 0 && last_ring_time + 10 < Mpu.timed) {
 		last_ring_time = 0;
-		sim.stop_ppp_read_sms_start_ppp();
+		shmPTR->stop_ppp_read_sms_start_ppp = true;
 		
 	}
 
 
-	if (bit_field & 1 && sim800_reset_time == 0) {
+	if (bit_field & 1 && shmPTR->sim800_reset_time == 0) {
 		if (last_ring_time==0)
 			fprintf(Debug.out_stream, "RINGk_BIT\n");//при заходе смс при ppp
 		last_ring_time = Mpu.timed;

@@ -24,8 +24,8 @@ public:
 	double dt, rdt;
 	double add_lat_need, add_lon_need;
 	long lat_, lon_, lat_home, lon_home;
-	double accuracy_hor_pos_, altitude;
-	double accuracy_ver_pos_;
+	double altitude;
+	uint8_t accuracy_ver_pos_,accuracy_hor_pos_;
 	unsigned long mseconds;
 	void setSpeedZero(){ lat_needV_ = lat_needR_; lon_needV_ = lon_needR_; }
 	int init();

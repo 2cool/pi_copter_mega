@@ -66,7 +66,7 @@ protected:
 	  void phase2();
 
 
-	float altitude_;
+	double altitude_;
 public:
 	bool fault();
 	bool compensation;
@@ -77,7 +77,7 @@ public:
 	int init();
 	uint8_t loop();
 	
-	float pressure , powerK;
+	double pressure , powerK;
 
 
 	void copterStarted();
@@ -89,7 +89,7 @@ public:
 	
 
 
-	double getAltitude(const float pres);
+	double getAltitude(const double pres);
 
 	float get_pressure(float h);
 	//---------------------------------------------------------------

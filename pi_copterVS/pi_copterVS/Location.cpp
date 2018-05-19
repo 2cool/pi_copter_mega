@@ -51,7 +51,7 @@ void LocationClass::xy(bool update_speed){
 		y2home = t;
 		accY = (tspeedY - speedY)*rdt;
 		accY = constrain(accY, -MAX_ACC, MAX_ACC);
-		speedY = constrain(tspeedY,-25,25);
+		shmPTR->speedY=speedY = constrain(tspeedY,-25,25);
 		
 	
 		t = from_lat2X((double)(lat_home - lat_));
@@ -59,12 +59,12 @@ void LocationClass::xy(bool update_speed){
 		x2home = t;
 		accX = (tspeedX - speedX)*rdt;
 		accX = constrain(accX, -MAX_ACC, MAX_ACC);
-		speedX=constrain(tspeedX,-25,25);
+		shmPTR->speedX=speedX=constrain(tspeedX,-25,25);
 		//update z
 		float tsz = (altitude - old_alt)*rdt;
 		old_alt = altitude;
 		accZ = (tsz - speedZ)*rdt;
-		speedZ = tsz;
+		shmPTR->speedZ=speedZ = tsz;
 		//accZ = (accZ, -2, 6);
 
 
@@ -116,7 +116,7 @@ void LocationClass::update(){
 }
 #define MAX_DIST2UPDATE 1000000
 void LocationClass::updateXY(){
-	dist2home_2 = x2home*x2home + y2home*y2home;
+	shmPTR->dist2home_2 = dist2home_2 = x2home*x2home + y2home*y2home;
 	//Out.println(dist2home_2);
 	if (abs(dist2home_2 - oldDist) > MAX_DIST2UPDATE){
 		oldDist = dist2home_2;
@@ -136,8 +136,8 @@ void LocationClass::updateXY(){
 //////////////////////////////////////////////////////////////
 void LocationClass::proceed(SEND_I2C *d) {
 	last_gps_data_timed = Mpu.timed;
-	accuracy_hor_pos_ = (accuracy_hor_pos_ > 99)?99: d->hAcc;
-	accuracy_ver_pos_ = (accuracy_ver_pos_ > 99)?99: d->vAcc;
+	shmPTR->accuracy_hor_pos_ =  accuracy_hor_pos_ = (accuracy_hor_pos_ > 99)?99: d->hAcc;
+	shmPTR->accuracy_ver_pos_ = accuracy_ver_pos_ = (accuracy_ver_pos_ > 99)?99: d->vAcc;
 
 	if (accuracy_hor_pos_ < MIN_ACUR_HOR_POS_4_JAMM)
 		last_gps_accurasy_okd = Mpu.timed;
@@ -146,9 +146,9 @@ void LocationClass::proceed(SEND_I2C *d) {
 	dt = (dt < 1.6) ? 0.1 : 0.2;
 
 	old_iTOWd = last_gps_data_timed;
-	altitude = (double)d->height*0.001;
-	lat_ = d->lat;
-	lon_ = d->lon;
+	shmPTR->gps_altitude = altitude = (double)d->height*0.001;
+	shmPTR->lat_ = lat_ = d->lat;
+	shmPTR->lon_ = lon_ = d->lon;
 
 	updateXY();
 
@@ -214,8 +214,8 @@ int LocationClass::init(){
 }
 
 void LocationClass::setHomeLoc(){
-	lat_home = lat_;
-	lon_home = lon_;
+	shmPTR->lat_home =  lat_home = lat_;
+	shmPTR->lon_home = lon_home = lon_;
 	old_alt=startAlt = altitude;
 
 	//Debug.dump(lat_, lon_, 0, 0);

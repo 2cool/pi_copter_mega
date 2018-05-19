@@ -19,8 +19,8 @@ class TelemetryClass
 	 float battery_charge;
 	 float consumed_charge;
 	 uint32_t power_on_time;
-	 uint8_t buf[TELEMETRY_BUF_SIZE];
-	 volatile int buffer_size;
+	 uint8_t *buf;
+
 	 void loadBUF32(int &i, int32_t val);
 	 void loadBUF16(int &i, int16_t val);
 	 void loadBUF(int &i,  const float fval);
@@ -70,7 +70,7 @@ class TelemetryClass
 	 float get_voltage(){ return voltage; }
 	 int get_voltage4one_cell();
 	
-	 int read_buf(byte *buf);
+	
 	// string getSport();
 	 
 	

@@ -5,18 +5,15 @@
 
 
 
+#include "define.h"
+#include "WProgram.h"
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
-#else
-	#include "WProgram.h"
-#endif
 #include "Autopilot.h"
 class CommanderClass
 {
  protected:
-	 volatile int data_size;
-	 uint8_t buf[TELEMETRY_BUF_SIZE];
+	
+	
 
 //	 bool ManualControl(int8_t *msg);//manual
 
@@ -51,7 +48,7 @@ class CommanderClass
 
 	 void init();
 	 bool input();
-	 void new_data(byte *buf, int n);
+
 };
 	
 

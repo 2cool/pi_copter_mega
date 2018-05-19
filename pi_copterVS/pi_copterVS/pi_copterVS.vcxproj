@@ -86,10 +86,8 @@
     <ClCompile Include="mi2c.cpp" />
     <ClCompile Include="RC_Filter.cpp" />
     <ClCompile Include="Settings.cpp" />
-    <ClCompile Include="SIM800.cpp" />
     <ClCompile Include="Stabilization.cpp" />
     <ClCompile Include="Telemetry.cpp" />
-    <ClCompile Include="Wi_Fi.cpp" />
     <ClCompile Include="WProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -105,6 +103,7 @@
     <ClInclude Include="Filter.h" />
     <ClInclude Include="FIND.h" />
     <ClInclude Include="GeoDot.h" />
+    <ClInclude Include="glob_header.h" />
     <ClInclude Include="GPS.h" />
     <ClInclude Include="helper_3dmath.h" />
     <ClInclude Include="Hmc.h" />
@@ -122,10 +121,8 @@
     <ClInclude Include="mi2c.h" />
     <ClInclude Include="RC_Filter.h" />
     <ClInclude Include="Settings.h" />
-    <ClInclude Include="SIM800.h" />
     <ClInclude Include="Stabilization.h" />
     <ClInclude Include="Telemetry.h" />
-    <ClInclude Include="Wi_Fi.h" />
     <ClInclude Include="WProgram.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">

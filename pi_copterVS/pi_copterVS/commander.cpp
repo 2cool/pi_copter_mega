@@ -18,20 +18,26 @@
 #include "Prog.h"
 #include "define.h"
 #include "Hmc.h"
-#include "Wi_Fi.h"
+
 #include "Stabilization.h"
 #include "debug.h"
-#include "Wi_Fi.h"
+
 #include "Log.h"
-#include "define.h"
+
 
 void CommanderClass::init()
 {
+	init_shmPTR();
+
+
+
+
+
 	//Out.println("COMMANDER INIT");
 	vedeo_stream_client_addr = 0;
 	ppp_inet = true;
 	telegram_bot = false;
-	data_size = 0;
+
 	yaw = yaw_offset = pitch = roll = throttle = 0;
 
 
@@ -250,18 +256,6 @@ void CommanderClass::data_reset() {
 }
 
 
-void CommanderClass::new_data(byte *buffer, int n) {
-	//control_bits |= (MPU_ACC_CALIBR | MPU_GYRO_CALIBR)
-	if (n > 4 && !Autopilot.busy()) {
-		while (data_size)
-			usleep(10000);
-
-		memcpy(buf, buffer, n);
-		//fprintf(Debug.out_stream,"in-> %i\n", buffer[0]);
-		Autopilot.last_time_data_recivedd = Mpu.timed;
-		data_size = n;
-	}
-}
 
 
 int get32to8bMask(int v) {
@@ -286,81 +280,95 @@ float CommanderClass::getYaw() {
 	return yaw; 
 }
 bool CommanderClass::input(){
-	if (data_size) {
-
-		//Autopilot.last_time_data_recived = millis();
-		if (data_size >= 12) {
-
-			if (Log.writeTelemetry) {
-				Log.block_start(LOG::COMM,true);
-				Log.loadMem(buf, data_size,false);
-				Log.block_end(true);
-			}
 
 
-
-			uint32_t mode = *(uint32_t*)buf;
-			int sec_mask = mode >> 24;
-			
-			mode &= 0x00ffffff;
-			int mask = get32to8bMask(mode);
-
-			int i = 4;
-			int16_t i_throttle = *(int16_t*)(buf + i);
-			mask ^= get16to8bMask(i_throttle);
-			i += 2;
-			
-
-			int16_t i_yaw = *(int16_t*)(buf + i);
-			i += 2;
-			mask ^= get16to8bMask(i_yaw);
-			
-
-			int i_yaw_offset = *(int16_t*)(buf + i);
-			i += 2;
-			mask ^= get16to8bMask(i_yaw_offset);
-			
-
-			int i_pitch = *(int16_t*)(buf + i);
-			i += 2;
-			mask ^= get16to8bMask(i_pitch);
-			
-			int i_roll = *(int16_t*)(buf + i);
-			i += 2;
-			mask ^= get16to8bMask(i_roll);
-
-
-			if (mask == sec_mask) {
-				Autopilot.set_control_bits(mode);
-				throttle = 0.00003125f*(float)i_throttle;
-				yaw = -ANGK*(float)i_yaw;
-				yaw_offset = ANGK*(float)i_yaw_offset;
-				pitch = ANGK*(float)i_pitch;
-				roll = ANGK*(float)i_roll;
-				if ((i + 3) < data_size) {
-					string msg = "";
-					msg += *(buf + i++);
-					msg += *(buf + i++);
-					msg += *(buf + i++);
-					if (msg.find(m_PROGRAM) == 0 && Autopilot.progState()==false) {
-						Prog.add(buf + i);
-					}
-					else if (msg.find(m_SETTINGS) == 0) {
-							Settings(string((char*)(buf+i)));
-					}
-					else if (msg.find(m_UPLOAD_SETTINGS) == 0) {
-						Telemetry.getSettings(buf[i++]);
-					}
-				
-				}
-			}
-			else {
-				fprintf(Debug.out_stream,"COMMANDER ERROR\n");
-			}
-			data_size = 0;
-			return true;
-		}
+	if (shmPTR->connected==0 || shmPTR->wifibuffer_data_len_4_read ==  0)
+		return false;
+	
+	if (Autopilot.busy()) {
+		shmPTR->wifibuffer_data_len_4_read = 0;
+		return true;
 	}
+
+	Autopilot.last_time_data_recivedd = Mpu.timed;
+	uint8_t *buf = shmPTR->wifiRbuffer;
+	if (shmPTR->wifibuffer_data_len_4_read >= 12) {
+
+		if (Log.writeTelemetry) {
+			Log.block_start(LOG::COMM,true);
+			Log.loadMem(buf, shmPTR->wifibuffer_data_len_4_read,false);
+			Log.block_end(true);
+		}
+
+
+
+		uint32_t mode = *(uint32_t*)buf;
+		int sec_mask = mode >> 24;
+			
+		mode &= 0x00ffffff;
+		int mask = get32to8bMask(mode);
+
+		int i = 4;
+		int16_t i_throttle = *(int16_t*)(buf + i);
+		mask ^= get16to8bMask(i_throttle);
+		i += 2;
+			
+
+		int16_t i_yaw = *(int16_t*)(buf + i);
+		i += 2;
+		mask ^= get16to8bMask(i_yaw);
+			
+
+		int i_yaw_offset = *(int16_t*)(buf + i);
+		i += 2;
+		mask ^= get16to8bMask(i_yaw_offset);
+			
+
+		int i_pitch = *(int16_t*)(buf + i);
+		i += 2;
+		mask ^= get16to8bMask(i_pitch);
+			
+		int i_roll = *(int16_t*)(buf + i);
+		i += 2;
+		mask ^= get16to8bMask(i_roll);
+
+
+		if (mask == sec_mask) {
+			Autopilot.set_control_bits(mode);
+			throttle = 0.00003125f*(float)i_throttle;
+			yaw = -ANGK*(float)i_yaw;
+			yaw_offset = ANGK*(float)i_yaw_offset;
+			pitch = ANGK*(float)i_pitch;
+			roll = ANGK*(float)i_roll;
+			if ((i + 3) < shmPTR->wifibuffer_data_len_4_read) {
+				string msg = "";
+				msg += *(buf + i++);
+				msg += *(buf + i++);
+				msg += *(buf + i++);
+				if (msg.find(m_PROGRAM) == 0 && Autopilot.progState()==false) {
+					Prog.add(buf + i);
+				}
+				else if (msg.find(m_SETTINGS) == 0) {
+						Settings(string((char*)(buf+i)));
+				}
+				else if (msg.find(m_UPLOAD_SETTINGS) == 0) {
+					Telemetry.getSettings(buf[i++]);
+				}
+				
+			}
+		}
+		else {
+			fprintf(Debug.out_stream,"COMMANDER ERROR\n");
+		}
+		shmPTR->wifibuffer_data_len_4_read = 0;
+		return true;
+	}
+	else
+	{
+		shmPTR->wifibuffer_data_len_4_read = 0;
+		return true;
+	}
+	
 
 	return false;
 }

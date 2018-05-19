@@ -299,6 +299,7 @@ void MpuClass::init()
 
 
 	ms_open();
+
 /*
 	accelgyro.initialize();
 	fprintf(Debug.out_stream,"Testing device connections...\n");
@@ -568,7 +569,7 @@ static void toEulerianAngle(const Quaternion& q, float& roll, float& pitch, floa
 
 
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
-
+	
 	timed = 0.000001*(double)micros();
 
 	//dmp
@@ -693,9 +694,9 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 
 
 
-	pitch *= RAD2GRAD;
-	roll *= RAD2GRAD;
-	yaw*=RAD2GRAD;
+	shmPTR->pitch = pitch *= RAD2GRAD;
+	shmPTR->roll = roll *= RAD2GRAD;
+	shmPTR->yaw = yaw*=RAD2GRAD;
 
 
 	

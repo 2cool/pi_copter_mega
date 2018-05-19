@@ -1,26 +1,39 @@
 #define PROG_VERSION "ver 3.180511_\n"
 
-#define ONLY_ONE_RUN
+//#define ONLY_ONE_RUN
 #define SIM800_F
+
+
+
+
+#include  <sys/types.h>
+#include  <sys/ipc.h>
+#include  <sys/shm.h>
+
+#include <unistd.h>
+#include <sys/shm.h>
+#include <sys/ipc.h>
 
 #include <cstdio>
 #include <signal.h>
-
+#include  <stdio.h>
+#include  <stdlib.h>
 #include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/sem.h>
+
 #include <stdio.h>
+
+#include "define.h"
+
 #include "Log.h"
 //#include "KalmanFilterVector.h"
 #include "Filter.h"
 
-#include "Filter.h"
-#include "define.h"
+
 #include "debug.h"
 
 
 
-#include "WProgram.h"
+#include "WProgram.h"/// not change
 #include "Settings.h"
 #include "Prog.h"
 #include "Location.h"
@@ -28,7 +41,7 @@
 #include "GPS.h"
 #include "Telemetry.h"
 #include "commander.h"
-#include "Wi_Fi.h"
+
 
 #include "Autopilot.h"
 
@@ -36,7 +49,7 @@
 #include "I2Cdev.h"
 #include "MPU6050.h"
 #include "Balance.h"
-#include "SIM800.h"
+
 
 bool loop();
 
@@ -65,14 +78,20 @@ int zzz = 1;
 
 
 
-
 void video_stream() {
 	while (true) {
 		//ffmpeg - rtsp_transport udp - i "rtsp://192.168.42.1:554/live" - c copy - f h264 udp ://android_phone_address:5544
 		delay(6000);
 		if (Commander.vedeo_stream_client_addr == 0)
 			continue;
-		string adr =  WiFi.get_client_addres();
+
+#define uchar unsigned char
+		int iadr = shmPTR->client_addr;
+		if (iadr == 0)
+			return;
+		string adr = to_string((uchar)(iadr & 255)) + "." + to_string((uchar)(255 & (iadr >> 8))) + "." + to_string((uchar)(255 & (iadr >> 16))) + "." + to_string((uchar)(iadr >> 24));
+
+		
 
 		int last_dot = adr.find_last_of(".");
 		adr = adr.substr(0, last_dot + 1) += std::to_string(Commander.vedeo_stream_client_addr);
@@ -102,7 +121,7 @@ void video_stream() {
 
 int semid;
 bool is_clone(char *argv0) {
-	
+	/*
 	struct sembuf my_sembuf;
 	key_t IPC_key = ftok(argv0, 0);
 	if (0 > IPC_key)
@@ -139,7 +158,7 @@ bool is_clone(char *argv0) {
 		return true;
 	}
 
-	
+	*/
 	return false;
 }
 
@@ -157,9 +176,9 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	
 
 #ifdef WORK_WITH_WIFI
-	fprintf(Debug.out_stream,"wifi init...\n");
-	if (WiFi.init())
-		return -1;
+//	fprintf(Debug.out_stream,"wifi init...\n");
+//	if (WiFi.init())
+//		return -1;
 #endif
 
 	fprintf(Debug.out_stream,"commander init...\n");
@@ -173,7 +192,7 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	GPS.init();
 
 #ifdef SIM800_F
-	sim.start();
+
 #endif
 	return 0;
 
@@ -269,111 +288,102 @@ int printHelp() {
 
 
 int main(int argc, char *argv[]) {
+
+	if (init_shmPTR())
+		return 0;
+	shmPTR->in_fly = (shmPTR->control_bits&MOTORS_ON);
+
+
+
+
 	string fname;
-	//0xbefffcf7 "/home/igor/projects/pi_copterVS/bin/ARM/Debug/pi_copterVS.out"
-
-
-
-
 	printf(PROG_VERSION);
 
-#ifdef ONLY_ONE_RUN
-	if (is_clone(argv[0]) == true) {
-		printf("clone\n");
-		if (-1 == semctl(semid, 0, IPC_RMID, 0))
-		{
-			printf("Error delete!\n");
+shmPTR->connected = 0;
+		shmPTR->fly_at_start = 3;
+		shmPTR->lowest_altitude_to_fly = 1.6f;
+		Debug.n_debug = 0;
+
+		int counter = 0;
+
+		if (argc >= 2) {
+			int tt = string(argv[1]).compare("-help");
+			if (tt == 0) {
+				return printHelp();
+			}
+			if (argc >= 6) {
+				int t = atoi(argv[1]);
+				t = constrain(t, 300, 300);/////
+				shmPTR->fly_at_start = 0.01f*(float)t;
+
+				t = atoi(argv[2]);
+				shmPTR->lowest_altitude_to_fly = 0.01f*(float)t;
+				if (shmPTR->lowest_altitude_to_fly > shmPTR->fly_at_start)
+					shmPTR->lowest_altitude_to_fly = shmPTR->fly_at_start;
+#define LOG_COUNTER_NAME "/home/igor/logs/logCounter.txt"
+
+				FILE *set = fopen(LOG_COUNTER_NAME, "r");
+				if (set) {
+					fscanf(set, "%i", &counter);
+
+					fclose(set);
+					usleep(500);
+					if (counter < 9999)
+					{
+						FILE *in;
+						char buff[512];
+
+						if (!(in = popen("ls /home/igor/logs", "r"))) {
+							return 1;
+						}
+						counter = 10000;
+						while (fgets(buff, sizeof(buff), in) != NULL) {
+							string s = string(buff);
+							int b = s.find_first_of("0123456789");
+							int e = s.find_first_of(".");
+							if (b > 0 && e + 4 > b) {
+								int cnt = stoi(s.substr(b, e));
+								if (cnt > counter)
+									counter = cnt;
+							}
+						}
+						fclose(in);
+					}
+					remove(LOG_COUNTER_NAME);
+				}
+				else {
+					printf("no counter file");
+					return 0;
+				}
+
+				set = fopen(LOG_COUNTER_NAME, "w+");
+				fprintf(set, "%i\n", counter + 1);
+				fclose(set);
+				if (argv[3][0] == 'f' || argv[3][0] == 'F') {
+
+
+					ostringstream convert;
+					convert << "/home/igor/logs/log_out" << counter << ".txt";
+					fname = convert.str();
+
+					Debug.out_stream = fopen(fname.c_str(), "w+");
+				}
+				else
+					Debug.out_stream = stdout;
+
+				Log.writeTelemetry = (argv[4][0] == 'y' || argv[4][0] == 'Y');
+
+
+
+			}
+
 		}
-		return 0;
-	}
-#endif	
-	
-	Debug.fly_at_start = 3;
-	Debug.lowest_altitude_to_fly = 1.6f;
-	Debug.n_debug = 0;
-	int counter = 0;
-
-	if (argc >= 2) {
-		int tt = string(argv[1]).compare("-help");
-		if (tt==0) {
-
-		
+		else
 			return printHelp();
 
-		}
-
-		if (argc >= 6) {
-			int t = atoi(argv[1]);
-			t = constrain(t, 300, 300);/////
-			Debug.fly_at_start = 0.01f*(float)t;
-
-			t=atoi(argv[2]);
-			Debug.lowest_altitude_to_fly = 0.01f*(float)t;
-			if (Debug.lowest_altitude_to_fly > Debug.fly_at_start)
-				Debug.lowest_altitude_to_fly = Debug.fly_at_start;
-#define LOG_COUNTER_NAME "/home/igor/logs/logCounter.txt"
-			
-			FILE *set = fopen(LOG_COUNTER_NAME, "r");
-			if (set) {
-				fscanf(set, "%i", &counter);
-
-				fclose(set);
-				usleep(500);
-				if (counter < 9999)
-				{
-					FILE *in;
-					char buff[512];
-
-					if (!(in = popen("ls /home/igor/logs", "r"))) {
-						return 1;
-					}
-					counter = 10000;
-					while (fgets(buff, sizeof(buff), in) != NULL) {
-						string s = string(buff);
-						int b = s.find_first_of("0123456789");
-						int e = s.find_first_of(".");
-						if (b > 0 && e + 4 > b) {
-							int cnt = stoi(s.substr(b, e));
-							if (cnt > counter)
-								counter = cnt;
-						}
-					}
-					fclose(in);
-				}
-				remove(LOG_COUNTER_NAME);
-			}
-			else {
-				printf("no counter file");
-				return 0;
-			}
-			
-			set = fopen(LOG_COUNTER_NAME, "w+");
-			fprintf(set, "%i\n", counter + 1);
-			fclose(set);
-			if (argv[3][0] == 'f' || argv[3][0] == 'F') {
-				
-
-				ostringstream convert;
-				convert << "/home/igor/logs/log_out" << counter << ".txt";
-				fname = convert.str();
-
-				Debug.out_stream = fopen(fname.c_str(), "w+");
-			}else	
-				Debug.out_stream = stdout;
-
-			Log.writeTelemetry = (argv[4][0] == 'y' || argv[4][0] == 'Y');
-			
-			
-
-		}
-		
-	}
-	else
-		return printHelp();
-
-	fprintf(Debug.out_stream, PROG_VERSION);
-	fprintf(Debug.out_stream, "picopter par: %s %s %s %s\n", argv[1], argv[2], argv[3], argv[4]);
-
+		fprintf(Debug.out_stream, PROG_VERSION);
+		fprintf(Debug.out_stream, "picopter par: %s %s %s %s\n", argv[1], argv[2], argv[3], argv[4]);
+	
 	if (signal(SIGINT, handler) == SIG_ERR) {
 		return EXIT_FAILURE;
 	}
@@ -395,19 +405,20 @@ int main(int argc, char *argv[]) {
 
 		old_time4loop = micros();
 
-		Debug.run_main = true;
-		Debug.reboot = 0;
+		shmPTR->run_main = true;
+		shmPTR->reboot = 0;
 
 
 		//video_stream();
-		thread t(video_stream);
-		t.detach();
+		//thread t(video_stream);
+		//t.detach();
 
 
 
 
 		while (flag == 0){
 			if (loop()) {
+				shmPTR->main_cnt++;
 				//usleep(5400);
 			//	int ttt = micros();
 			//	dfr += ((1000000 / (ttt - old_time4loop)) - dfr)*0.01;
@@ -422,9 +433,9 @@ int main(int argc, char *argv[]) {
 				//Debug.load(0, time_past, 0);
 				//Debug.dump();
 			}
-			if (Debug.run_main == false) {
+			if (shmPTR->run_main == false) {
 #ifdef SIM800_F
-				if (sim.stop_ppp())
+				//if (sim.stop_ppp())
 #endif
 					break;
 			}
@@ -434,16 +445,16 @@ int main(int argc, char *argv[]) {
 
 	if (flag!=0)
 		fprintf(Debug.out_stream, "\n main Signal caught!\n");
-	WiFi.stopServer();
+	//WiFi.stopServer();
 	Settings.write();
 	Log.close();
 	usleep(5000000);
 
-	if (Debug.run_main==false)
+	if (shmPTR->run_main==false)
 		fprintf(Debug.out_stream, "\n exit\n");
 	if (string(argv[0]).find("out") == -1) {
-		if (Debug.reboot) {
-			switch (Debug.reboot) {
+		if (shmPTR->reboot) {
+			switch (shmPTR->reboot) {
 			case 1:
 				system("reboot");
 				break;
@@ -457,13 +468,9 @@ int main(int argc, char *argv[]) {
 	}
 	fflush(Debug.out_stream);
 	fclose(Debug.out_stream);
-#ifdef ONLY_ONE_RUN
 
-	if (-1 == semctl(semid, 0, IPC_RMID, 0))
-	{
-		printf("Error delete!\n");
-	}
-#endif
+	//close_shmPTR();
 	return 0;
 
 }
+

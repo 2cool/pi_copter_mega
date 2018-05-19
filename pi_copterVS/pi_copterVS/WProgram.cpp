@@ -1,10 +1,19 @@
 #include <sys/types.h>
 #include "WProgram.h"
+#include "define.h"
 
-
+#include <sys/shm.h>
+#include <sys/ipc.h>
 
 uint32_t start_seconds = 0;
-
+uint32_t millis_g() {
+	timespec t;
+	clock_gettime(CLOCK_REALTIME, &t);
+	uint32_t ret;
+	
+	ret = ((t.tv_sec ) * 1000) + (t.tv_nsec / 1000000);
+	return ret;
+}
 uint32_t millis(){
 	timespec t;
 	clock_gettime(CLOCK_REALTIME,&t);
@@ -74,4 +83,32 @@ int get_pid(const char* name) {
 	}
 	pclose(in);
 	return -1;
+}
+
+key_t          ShmKEY;
+int            ShmID;
+struct Memory *shmPTR;
+
+int init_shmPTR() {
+	if (shmPTR == 0) {
+
+
+		ShmKEY = ftok(SHMKEY, 'x');
+	ShmID = shmget(ShmKEY, sizeof(struct Memory), IPC_CREAT | 0666);
+		if (ShmID < 0) {
+			printf("*** shmget error (server) ***\n");
+			return 1;
+		}
+		shmPTR = (struct Memory *) shmat(ShmID, NULL, 0);
+	}
+	return 0;
+}
+
+void close_shmPTR() {
+	printf("Server has detected the completion of its child...\n");
+	shmdt((void *)shmPTR);
+	printf("Server has detached its shared memory...\n");
+	shmctl(ShmID, IPC_RMID, NULL);
+	printf("Server has removed its shared memory...\n");
+	printf("Server exits...\n");
 }

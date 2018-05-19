@@ -65,7 +65,7 @@ void MS5611Class::copterStarted(){
 bool MS5611Class::fault() {
 	return wrong_altitude_cnt > MAX_BAROMETR_ERRORS;
 }
-double MS5611Class::getAltitude(const float pressure) {
+double MS5611Class::getAltitude(const double pressure) {
 	double alt = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка 4.4.2018-вот она
 	
 	if (Mpu.timed>5){
@@ -83,7 +83,8 @@ double MS5611Class::getAltitude(const float pressure) {
 					return altitude_;
 				}
 			}
-			altitude_ = alt;
+			shmPTR->altitude = altitude_ = alt;
+			shmPTR->pressure = pressure;
 			gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif)*0.1;
 		}
 	}
@@ -264,11 +265,11 @@ void MS5611Class::phase2() {
 		old_timed = Mpu.timed;
 		
 		if (pressure == PRESSURE_AT_0) {
-			pressure = (float)P;
+			pressure = P;
 			altitude_ = getAltitude(pressure);
 		}
 
-		pressure += ((float)P - pressure)*0.3;
+		pressure += ((double)P - pressure)*0.3;
 		log_sens();
 		powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
 		const float new_altitude = getAltitude(pressure);

@@ -23,12 +23,11 @@ class DebugClass
 	 void graphic(const int n, const float x, const float y,const float z);
  public:
 	 uint32_t escCalibr;
-	 int n_debug;
-	 float fly_at_start, lowest_altitude_to_fly;
+	 
+	 float  lowest_altitude_to_fly;
 	 FILE * out_stream;
 
-	 bool run_main;
-	 uint8_t reboot;
+	 int n_debug;
 	 void init();
 	 void dump(const long f1, long f2, long f3, long f4);
 	 void dump(const float f1, float f2, float f3, float f4);
