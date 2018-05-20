@@ -66,30 +66,17 @@ bool MS5611Class::fault() {
 	return wrong_altitude_cnt > MAX_BAROMETR_ERRORS;
 }
 double MS5611Class::getAltitude(const double pressure) {
-	double alt = (44330.0f * (1.0f - pow((double)pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка 4.4.2018-вот она
+	double alt = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка 4.4.2018-вот она
 	
-	if (Mpu.timed>5){
-		if (fault()) {
-				return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
-		}
-		else {
-		
-			if (altitude_ != 0) {
-				if (abs(alt - altitude_) > MAX_BAROMETR_ERROR) {
-					//if (GPS.loc.accuracy_ver_pos_<10)
-						wrong_altitude_cnt++;
-					fprintf(Debug.out_stream, "wrong alt! %i , %i\n", (int)alt ,(int)altitude_);
-					printf("press= %i, alt=%i\n", (int)pressure, (int)alt);
-					return altitude_;
-				}
-			}
-			shmPTR->altitude = altitude_ = alt;
-			shmPTR->pressure = pressure;
-			gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif)*0.1;
-		}
+	if (fault()) {
+			return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
 	}
-	else
-		altitude_ = alt;
+	else {
+		shmPTR->altitude = altitude_ = alt;
+		shmPTR->pressure = pressure;
+		gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif)*0.1;
+	}
+	
 	return alt;
 }
 
@@ -260,10 +247,14 @@ void MS5611Class::phase2() {
 
 		//float pr = (float)(D1 * SENS / 2097152 - OFF) * 0.000030517578125;
 
-		P = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
-		if (P < 90000) {
-			printf("PRESSURE ERROR %i\n",P);
-			return;
+		int32_t tP = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
+		if (tP < 80000) {
+			fprintf(Debug.out_stream, "PRESSURE ERROR %i\n",tP);
+			wrong_altitude_cnt++;
+		}
+		else {
+			wrong_altitude_cnt = 0;
+			P = tP;
 		}
 		const double dt = (Mpu.timed - old_timed);
 		old_timed = Mpu.timed;

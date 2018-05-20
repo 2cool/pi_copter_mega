@@ -58,7 +58,7 @@ volatile bool ring=false;
 
 
 
-
+volatile bool gps_status = false;
 volatile uint8_t pi_copter_color[8][3]={ {0,1,0},{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 } };
 
 
@@ -292,7 +292,7 @@ char buf[64];
 
 byte gps_buf[12];
 
-uint8_t old_gps_c = 100;
+volatile uint8_t gps_cnt=100, old_gps_c = 100;
 
 
 
@@ -319,18 +319,11 @@ void requestEvent() {
 	case 1: 
 	{
 		ret = ring;
-		while (gps.available()) {
-			uint8_t r = processGPS();
-			if (r>0 && r!=old_gps_c) {
-				old_gps_c = r;
-				//ret = sizeof(SEND_I2C);
-				ret |= 2;
-				//Serial.println(ret);
-				reg = 2;
-				break;
-			}
+		if (gps_status == false && gps_cnt != 0 && gps_cnt != old_gps_c) {
+			old_gps_c = gps_cnt;
+			reg = 2;
+			ret |= 2;
 		}
-	
 		Wire.write(ret);
 		break;
 	}
@@ -428,6 +421,16 @@ void loop()
 	fb[2] += ((float)(analogRead(MI2)) - fb[2])*CF;
 	fb[3] += ((float)(analogRead(MI3)) - fb[3])*CF;
 	fb[4] += ((float)(analogRead(BAT)) - fb[4])*CF;
+
+
+	if (gps.available()) {
+		gps_status = true;
+		gps_cnt = processGPS();
+		gps_status = false;
+	}
+
+
+
 
 	if (beep_code)
 		beep();

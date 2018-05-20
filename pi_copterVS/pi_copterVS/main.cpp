@@ -290,14 +290,20 @@ void watch_dog() {
 		
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;
 		uint8_t internet_cnt = shmPTR->internet_cnt;
-		delay(500);
+		delay(2000);
 		if (wifi_cnt == shmPTR->wifi_cnt) {
 			printf("--------------wifi starting\n");
-			//int ret=system("/root/projects/pi_copter_wifi/bin/ARM/Debug/pi_copter_wifi.out &");
+			system("pkill wifi_p");
+			int ret=system("/root/projects/wifi_p &");
 
 		}
 		if (internet_cnt == shmPTR->internet_cnt) {
+
 			printf("--------------ppp starting\n");
+
+			system("pkill ppp_p");
+			int ret = system("/root/projects/ppp_p &");
+
 			//int ret = system("/root/projects/pi_copter_internet/bin/ARM/Debug/pi_copter_internet.out &");
 		}
 	}
@@ -312,6 +318,7 @@ int main(int argc, char *argv[]) {
 	shmPTR->wifi_cnt = 0;
 	shmPTR->run_main = true;
 	shmPTR->inet_ok = false;
+	//shmPTR->internet_run = false;
 	thread tl(watch_dog);
 	tl.detach();
 

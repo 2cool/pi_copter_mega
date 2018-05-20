@@ -45,7 +45,7 @@ uint8_t processGPS() {
 			if (c == checksum[1]) {
 				s_i2c.lat = posllh.lat;
 				s_i2c.lon = posllh.lon;
-				s_i2c.height = posllh.height;
+				s_i2c.height = posllh.height>>10;
 				posllh.vAcc >>= 10;
 				posllh.hAcc >>= 10;
 				s_i2c.vAcc =(uint8_t)((posllh.vAcc > 255)?255:posllh.vAcc);

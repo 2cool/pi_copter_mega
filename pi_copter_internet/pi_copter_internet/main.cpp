@@ -480,7 +480,7 @@ void readsms() {
 	if (_sms_n > 0)
 		readsms_n();
 	else {//read all
-		printf( "\n");
+		
 		for (int i = 1; i <= 20; i++) {
 			_sms_n = i;
 			if (readsms_n() == -1)
@@ -765,34 +765,18 @@ int start_ppp() {
 	if (shmPTR->inet_ok == true)
 		return 0;
 	delay(500);
-	
-#ifdef PPP_INET 
-
 	while (shmPTR->sim800_reset_time > 0)
 		delay(100);
 
+
 	shmPTR->ppp_run = true;
 	printf( "starting ppp...\n");
-	string ret = exec("pon rnet");
-	if (ret.length()) {
-		printf( "pop %s\n", ret.c_str());
-		return -1;
-	}
-	int cnt = 0;
-	delay(5000);
-
-	//printf( "route add default dev ppp0\n");
-	ret = exec("route add default dev ppp0");  // if not "SIOCADDRT: No such device"
-	if (ret.length()) {
-		printf( "route %s\n", ret.c_str());
-		return -1;
-	}
-	else {
-
-		return 0;
-	}
-	delay(1000);
-#endif
+	system("poff -a");
+	delay(3000);
+	system("pon rnet");
+	delay(3000);
+	system("route add default dev ppp0");
+	delay(3000);
 	return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -805,9 +789,9 @@ int stop_ppp() {
 
 
 	system("route add default dev wlan0");
+	delay(3000);
 	system("poff -a");
-	printf( "ppp OFF\n");
-	
+	delay(3000);
 	printf("---------PPP STOPED---------\n");
 	shmPTR->inet_ok = false;
 
@@ -905,6 +889,10 @@ int main(int argc, char *argv[])//lat,lon,.......
 	if (shmPTR->run_main == false)
 		return 0;
 
+//	if (shmPTR->internet_run)
+//		return 0;
+	shmPTR->internet_run = true;
+
 	shmPTR->inet_ok = false;
 
 	thread wd(watch_d);
@@ -940,6 +928,7 @@ int main(int argc, char *argv[])//lat,lon,.......
 		delay(100);
 	printf("internet exits...\n");
 	delay(5000);
+	shmPTR->internet_run = false;
 	shmdt((void *)shmPTR);
 	
     return 0;

@@ -25,7 +25,7 @@ struct SEND_I2C {
 
 	long lon;
 	long lat;
-	long height;
+	int16_t height;
 	uint8_t hAcc;
 	uint8_t vAcc;
 };

@@ -133,7 +133,7 @@ static double last_gps_time1d = 0;
 		
 
 		if ( Mpu.timed - loc.last_gps_data_timed > 0.15){
-			fprintf(Debug.out_stream, "gps update error  %f\n", Mpu.timed - loc.last_gps_data_timed);
+			fprintf(Debug.out_stream, "gps update error  %f,%f,%f\n", Mpu.timed-loc.last_gps_data_timed,Mpu.timed, loc.last_gps_data_timed);
 		}
 		if (Autopilot.motors_is_on() && Mpu.timed - loc.last_gps_accurasy_okd > NO_GPS_DATA) {
 			//fprintf(Debug.out_stream, "gps accuracy error  %i\n", millis() / 1000);
