@@ -56,7 +56,7 @@ void StabilizationClass::init(){
 	Z_FILTER = 0.1;
 	sX=sY=sZ = 0;
 	speedZ = speedX = speedY = mc_pitch=mc_roll=mc_z=0;
-	fprintf(Debug.out_stream,"stab init\n");
+	cout << "stab init\n";
 
 }
 //bool flx = false, fly = false;
@@ -330,15 +330,15 @@ void StabilizationClass::setZ(const float  *ar){
 			Z_FILTER=t;
 
 		//resset_z();
-		fprintf(Debug.out_stream,"Stabilization Z set:\n");
+		cout << "Stabilization Z set:\n";
 
 		for (uint8_t ii = 0; ii < i; ii++){
-			fprintf(Debug.out_stream,"%f,",ar[ii]);
+			cout << ar[ii] << ",";
 		}
-		fprintf(Debug.out_stream,"%f\n",ar[i]);
+		cout << ar[i] << endl;
 	}
 	if (error>0){
-		fprintf(Debug.out_stream,"Stab Z set Error\n");
+		cout << "Stab Z set Error\n";
 	}
 }
 
@@ -386,15 +386,15 @@ void StabilizationClass::setXY(const float  *ar){
 			XY_FILTER=t;
 
 		//resset_xy_integrator();
-		fprintf(Debug.out_stream,"Stabilization XY set:\n");
+		cout << "Stabilization XY set:\n";
 		for (uint8_t ii = 0; ii < i; ii++){
-			fprintf(Debug.out_stream,"%f,",ar[ii]);
+			cout << ar[ii] << ",";
 		}
-		fprintf(Debug.out_stream,"%f\n",ar[i]);
+		cout << ar[i] << endl;
 	}
 	if (error>0)
 	{
-		fprintf(Debug.out_stream,"Stab XY set Error\n");
+		cout << "Stab XY set Error\n";
 	}
 }
 

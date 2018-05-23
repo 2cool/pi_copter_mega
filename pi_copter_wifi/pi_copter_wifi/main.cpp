@@ -17,6 +17,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <string>
+#include <iostream>
+#include <fstream>
 using namespace std;
 //#define FORTEST
 #include <thread>
@@ -38,7 +40,7 @@ int init_shmPTR() {
 		ShmKEY = ftok(SHMKEY, 'x');
 		ShmID = shmget(ShmKEY, sizeof(struct Memory), 0666);
 		if (ShmID < 0) {
-			printf("*** shmget error (wifi) ***\n");
+			cout << "*** shmget error (wifi) ***\n";
 			return 1;
 		}
 		shmPTR = (struct Memory *) shmat(ShmID, NULL, 0);
@@ -63,7 +65,7 @@ void handler(int sig) { // can be called asynchronously
 	flag = 1; // set flag
 }
 void pipe_handler(int sig) {
-	printf( "pipe error\n");
+	cout << "wifi pipe error\n";
 }
 
 void error(const char *msg)
@@ -129,11 +131,11 @@ string log_fname;
 
 void mclose() {
 
-	printf( "server stoped\n");
+	cout << "server stoped\n";
 	wifi_connections--;
 	close(newsockfd);
 	close(sockfd);
-	printf( "WIFI closed\n");
+	cout << "WIFI closed\n";
 }
 
 
@@ -154,7 +156,7 @@ int new_server() {
 	
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) {
-		printf( "ERROR opening socket/n");
+		cout << "ERROR opening socket/n";
 		wifi_connections--;
 		return -1;
 	}
@@ -165,7 +167,7 @@ int new_server() {
 	serv_addr.sin_addr.s_addr = INADDR_ANY;//inet_addr(adr.c_str());
 	serv_addr.sin_port = htons(portno);
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		printf( "ERROR on binding/n");
+		cout << "ERROR on binding/n";
 		wifi_connections--;
 		return -1;
 	}
@@ -180,7 +182,7 @@ bool wite_connection() {
 	shmPTR->wifibuffer_data_len_4_write = 0;
 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 	if (newsockfd < 0) {
-		printf( "ERROR on accept\n");
+		cout << "ERROR on accept\n";
 		wifi_connections--;
 		return true;
 	}
@@ -235,7 +237,7 @@ void server() {
 		else {
 			if (shmPTR->connected) {
 
-				printf("ERROR reading from socket\n");
+				cout << "ERROR reading from socket\n";
 				
 			}
 			if (wite_connection())
@@ -256,7 +258,7 @@ void server() {
 		else{
 			if (shmPTR->connected) {
 
-				printf( "ERROR reading from socket\n");
+				cout << "ERROR reading from socket\n";
 				
 			}
 			if (wite_connection())
@@ -278,7 +280,10 @@ void watch_d() {
 	}
 }
 
-int main()
+std::ofstream out;
+std::streambuf *coutbuf;// старый буфер
+
+int main(int argc, char *argv[])
 {
 	init_shmPTR();
 	if (shmPTR->run_main == false)
@@ -295,9 +300,15 @@ int main()
 	}
 
 
+	if (argc == 2) {
+		out = std::ofstream(argv[1]); //откроем файл для вывод
+		coutbuf = std::cout.rdbuf(); //запомним старый буфер
+		std::cout.rdbuf(out.rdbuf()); //и теперь все будет в файл!
+		std::cerr.rdbuf(out.rdbuf());
+	}
 
 	
-	printf("  wifi started...\n");
+	//cout << "  wifi started...\n";
 
 	
 
@@ -306,13 +317,13 @@ int main()
 	shmPTR->wifibuffer_data_len_4_read = 0;
 	shmPTR->wifibuffer_data_len_4_write = 0;
 
-	printf("server started...\n");
+	//cout << "server started...\n";
 	server();
 
 
 	shmdt((void *)shmPTR);
-	printf("   wifi exits...\n");
-
+	cout << "   wifi exits...\n";
+	out.close();
     return 0;
 }
 

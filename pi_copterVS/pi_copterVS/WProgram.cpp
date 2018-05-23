@@ -50,7 +50,7 @@ std::string exec(const std::string cmd) {
 	FILE* pipe = popen(cmd.c_str(), "r");
 	if (!pipe) {
 		//throw std::runtime_error("popen() failed!");
-		printf("pipe brock\n");
+		cout << "pipe brock\n";
 		return "";
 	}
 	while (!feof(pipe)) {
@@ -96,7 +96,7 @@ int init_shmPTR() {
 		ShmKEY = ftok(SHMKEY, 'x');
 	ShmID = shmget(ShmKEY, sizeof(struct Memory), IPC_CREAT | 0666);
 		if (ShmID < 0) {
-			printf("*** shmget error (server) ***\n");
+			cout << "*** shmget error (server) ***\n";
 			return 1;
 		}
 		shmPTR = (struct Memory *) shmat(ShmID, NULL, 0);
@@ -105,10 +105,10 @@ int init_shmPTR() {
 }
 
 void close_shmPTR() {
-	printf("Server has detected the completion of its child...\n");
+	cout << "Server has detected the completion of its child...\n";
 	shmdt((void *)shmPTR);
-	printf("Server has detached its shared memory...\n");
+	cout << "Server has detached its shared memory...\n";
 	shmctl(ShmID, IPC_RMID, NULL);
-	printf("Server has removed its shared memory...\n");
-	printf("Server exits...\n");
+	cout << "Server has removed its shared memory...\n";
+	cout << "Server exits...\n";
 }

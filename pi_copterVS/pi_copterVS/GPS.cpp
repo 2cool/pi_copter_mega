@@ -15,10 +15,10 @@ void GPSClass::init()
 	loc.last_gps_data_timed = 0;
 #endif
 	if (loc.init() == -1) {
-		fprintf(Debug.out_stream,"GPS ERROR\n");
+		cout << "GPS ERROR\n";
 		return;
 	}
-	fprintf(Debug.out_stream,"GPS INIT\n");
+	cout << "GPS INIT\n";
 }
 
 
@@ -133,10 +133,10 @@ static double last_gps_time1d = 0;
 		
 
 		if ( Mpu.timed - loc.last_gps_data_timed > 0.15){
-			fprintf(Debug.out_stream, "gps update error  %f,%f,%f\n", Mpu.timed-loc.last_gps_data_timed,Mpu.timed, loc.last_gps_data_timed);
+			cout << "gps update error  " << Mpu.timed - loc.last_gps_data_timed << "," << Mpu.timed << "," << loc.last_gps_data_timed << endl;
 		}
 		if (Autopilot.motors_is_on() && Mpu.timed - loc.last_gps_accurasy_okd > NO_GPS_DATA) {
-			//fprintf(Debug.out_stream, "gps accuracy error  %i\n", millis() / 1000);
+			//printf( "gps accuracy error  %i\n", millis() / 1000);
 		}
 		
 	}

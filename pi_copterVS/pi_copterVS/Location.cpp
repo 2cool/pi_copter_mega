@@ -112,7 +112,7 @@ void LocationClass::update(){
 
 	//Debug.load(0, x, y);
 	//Debug.dump();
-	//Out.fprintf(Debug.out_stream,"3UPD "); Out.fprintf(Debug.out_stream,x); Out.fprintf(Debug.out_stream," "); Out.println(y);
+	//Out.printf("3UPD "); Out.printf(x); Out.printf(" "); Out.println(y);
 }
 #define MAX_DIST2UPDATE 1000000
 void LocationClass::updateXY(){
@@ -126,7 +126,7 @@ void LocationClass::updateXY(){
 	}
 
 	xy(true);
-	//Out.fprintf(Debug.out_stream,"N  "); Out.fprintf(Debug.out_stream,x2home); Out.fprintf(Debug.out_stream," "); Out.println(y2home);
+	//Out.printf("N  "); Out.printf(x2home); Out.printf(" "); Out.println(y2home);
 
 
 
@@ -210,7 +210,7 @@ int LocationClass::init(){
 	last_gps_data_timed = 0;
 	last_gps_accurasy_okd = 0;
 	
-	fprintf(Debug.out_stream,"loc init\n");
+	cout << "loc init\n";
 }
 
 void LocationClass::setHomeLoc(){

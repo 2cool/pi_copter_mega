@@ -1,74 +1,74 @@
 ﻿  Validating architecture
   Validating sources
-  Copying sources remotely to '192.168.43.247'
+  Copying sources remotely to '192.168.0.102'
   Starting remote build
   Compiling sources:
   main.cpp
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(158,20): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(158,20): warning :   for (int p = 0; p < text.length(); p += 4) {
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(158,20): warning :                     ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(156,6): warning : unused variable ‘pos’ [-Wunused-variable]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(156,6): warning :   int pos;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(156,6): warning :       ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(238,23): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(238,23): warning :      for (int i = 0; i < mes.length(); i++)
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(238,23): warning :                        ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(304,6): warning : unused variable ‘next’ [-Wunused-variable]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(394,20): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(394,20): warning :   for (int i = 0; i < str.length(); i++) {
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(394,20): warning :                     ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(396,11): warning : conversion to ‘__gnu_cxx::__alloc_traits<std::allocator<char> >::value_type {aka char}’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(396,11): warning :     str[i] += 32;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(396,11): warning :            ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(606,48): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(606,48): warning :     if (old_message_len == 0 || old_message_len > upd.length())
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(606,48): warning :                                                 ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(609,25): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(609,25): warning :      if (old_message_len < upd.length()) {
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(609,25): warning :                          ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(613,18): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(616,19): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(573,13): warning : variable ‘last_alt’ set but not used [-Wunused-but-set-variable]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(573,13): warning :   static int last_alt = 0;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(573,13): warning :              ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(574,42): warning : unused variable ‘last_time_loc_send’ [-Wunused-variable]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(574,42): warning :   static uint32_t last_update = millis(), last_time_loc_send = 0;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(574,42): warning :                                           ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(575,16): warning : variable ‘last_dist2home2’ set but not used [-Wunused-but-set-variable]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(575,16): warning :   static double last_dist2home2 = 0;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(575,16): warning :                 ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(657,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(657,11): warning :   com[i++] = now->tm_year - 100;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(657,11): warning :            ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(658,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(658,11): warning :   com[i++] = now->tm_mon + 1;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(658,11): warning :            ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(659,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(659,11): warning :   com[i++] = now->tm_mday;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(659,11): warning :            ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(660,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(660,11): warning :   com[i++] = now->tm_hour;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(660,11): warning :            ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(661,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(661,11): warning :   com[i++] = now->tm_min;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(661,11): warning :            ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(662,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(662,11): warning :   com[i++] = now->tm_sec;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(662,11): warning :            ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(685,27): warning : conversion to ‘short unsigned int’ from ‘float’ may alter its value [-Wfloat-conversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(685,27): warning :   ((unsigned short*)tb)[0] = course;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(685,27): warning :                            ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(647,14): warning : unused variable ‘N’ [-Wunused-variable]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(647,14): warning :   static char N = 9;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(647,14): warning :               ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(748,37): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(748,37): warning :     serv_addr.sin_port = htons(portno);
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(748,37): warning :                                      ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(708,17): warning : variable ‘last_dist2home2’ set but not used [-Wunused-but-set-variable]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(708,17): warning :   static double  last_dist2home2 = 0;
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(708,17): warning :                  ^
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(801,1): warning : control reaches end of non-void function [-Wreturn-type]
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(801,1): warning :  }
-C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(801,1): warning :  ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(214,20): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(214,20): warning :   for (int p = 0; p < text.length(); p += 4) {
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(214,20): warning :                     ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(212,6): warning : unused variable ‘pos’ [-Wunused-variable]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(212,6): warning :   int pos;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(212,6): warning :       ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(302,23): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(302,23): warning :      for (int i = 0; i < mes.length(); i++)
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(302,23): warning :                        ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(368,6): warning : unused variable ‘next’ [-Wunused-variable]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(458,20): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(458,20): warning :   for (int i = 0; i < str.length(); i++) {
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(458,20): warning :                     ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(460,11): warning : conversion to ‘__gnu_cxx::__alloc_traits<std::allocator<char> >::value_type {aka char}’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(460,11): warning :     str[i] += 32;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(460,11): warning :            ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(667,48): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(667,48): warning :     if (old_message_len == 0 || old_message_len > upd.length())
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(667,48): warning :                                                 ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(670,25): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(670,25): warning :      if (old_message_len < upd.length()) {
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(670,25): warning :                          ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(674,18): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(677,19): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(634,13): warning : variable ‘last_alt’ set but not used [-Wunused-but-set-variable]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(634,13): warning :   static int last_alt = 0;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(634,13): warning :              ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(635,42): warning : unused variable ‘last_time_loc_send’ [-Wunused-variable]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(635,42): warning :   static uint32_t last_update = millis(), last_time_loc_send = 0;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(635,42): warning :                                           ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(636,16): warning : variable ‘last_dist2home2’ set but not used [-Wunused-but-set-variable]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(636,16): warning :   static double last_dist2home2 = 0;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(636,16): warning :                 ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(718,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(718,11): warning :   com[i++] = now->tm_year - 100;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(718,11): warning :            ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(719,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(719,11): warning :   com[i++] = now->tm_mon + 1;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(719,11): warning :            ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(720,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(720,11): warning :   com[i++] = now->tm_mday;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(720,11): warning :            ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(721,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(721,11): warning :   com[i++] = now->tm_hour;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(721,11): warning :            ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(722,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(722,11): warning :   com[i++] = now->tm_min;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(722,11): warning :            ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(723,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(723,11): warning :   com[i++] = now->tm_sec;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(723,11): warning :            ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(746,27): warning : conversion to ‘short unsigned int’ from ‘float’ may alter its value [-Wfloat-conversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(746,27): warning :   ((unsigned short*)tb)[0] = course;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(746,27): warning :                            ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(708,14): warning : unused variable ‘N’ [-Wunused-variable]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(708,14): warning :   static char N = 9;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(708,14): warning :               ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(809,37): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(809,37): warning :     serv_addr.sin_port = htons(portno);
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(809,37): warning :                                      ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(769,17): warning : variable ‘last_dist2home2’ set but not used [-Wunused-but-set-variable]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(769,17): warning :   static double  last_dist2home2 = 0;
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(769,17): warning :                  ^
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(862,1): warning : control reaches end of non-void function [-Wreturn-type]
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(862,1): warning :  }
+C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(862,1): warning :  ^
   Linking objects
   pi_copter_internet.vcxproj -> C:\Users\2cool\source\repos\pi_copter_mega\pi_copter_internet\pi_copter_internet\bin\ARM\Debug\pi_copter_internet.out

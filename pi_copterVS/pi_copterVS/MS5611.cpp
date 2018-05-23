@@ -13,11 +13,11 @@ unsigned int PROM_read(int DA, char PROM_CMD)
 	uint8_t r8b[] = { 0, 0 };
 
 	if (write(DA, &PROM_CMD, 1) != 1){
-		fprintf(Debug.out_stream,"read set reg Failed to write to the i2c bus.\n");
+		cout << "read set reg Failed to write to the i2c bus.\n";
 	}
 
 	if (read(DA, r8b, 2) != 2){
-		fprintf(Debug.out_stream,"Failed to read from the i2c bus.\n");
+		cout << "Failed to read from the i2c bus.\n";
 	}
 
 	ret = r8b[0] * 256 + r8b[1];
@@ -38,7 +38,7 @@ int MS5611Class::error(int e) {
 
 int MS5611Class::writeReg(char bar_zero) {
 	if (write(fd4S, &bar_zero, 1) != 1) {
-		fprintf(Debug.out_stream, "write reset 8 bit Failed to write to the i2c bus.\n");
+		cout << "write reset 8 bit Failed to write to the i2c bus.\n";
 		bar_task = 0;
 		return error(2);
 	}
@@ -179,7 +179,7 @@ void MS5611Class::phase1()
 		writeReg(bar_zero);
 		bar_h = read(fd4S, &bar_D, 3);
 		if (bar_h != 3) {
-			fprintf(Debug.out_stream, "Failed to read from the i2c bus %d.\n", bar_h);
+			cout << "Failed to read from the i2c bus " << bar_h << endl;
 			error(3);
 			return;
 		}
@@ -214,7 +214,7 @@ void MS5611Class::phase2() {
 		bar_h = read(fd4S, &bar_D, 3);
 
 		if (bar_h != 3)
-			fprintf(Debug.out_stream, "Failed to read from the i2c bus %d.\n", bar_h);
+			cout << "Failed to read from the i2c bus "<< bar_h << endl;
 
 		D1 = ((int32_t)bar_D[0] << 16) | ((int32_t)bar_D[1] << 8) | bar_D[2];
 		int32_t dT = D2 - (uint32_t)fc[4] * 256;
@@ -249,7 +249,7 @@ void MS5611Class::phase2() {
 
 		int32_t tP = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
 		if (tP < 80000) {
-			fprintf(Debug.out_stream, "PRESSURE ERROR %i\n",tP);
+			cout << "PRESSURE ERROR " << tP << endl;
 			wrong_altitude_cnt++;
 		}
 		else {
@@ -307,7 +307,7 @@ int MS5611Class::init() {
 
 #ifndef FALSE_WIRE
 
-	fprintf(Debug.out_stream, "Initialize High resolution: MS5611\n");
+	cout << "Initialize High resolution: MS5611\n";
 
 
 #endif
@@ -318,12 +318,12 @@ int MS5611Class::init() {
 	compensation = true;
 
 	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
-		fprintf(Debug.out_stream, "Failed to open the bus.\n");
+		cout << "Failed to open the bus.\n";
 		return error(0);
 	}
 
 	if (ioctl(fd4S, I2C_SLAVE, MS5611_ADDRESS) < 0) {
-		fprintf(Debug.out_stream, "Failed to acquire bus access and/or talk to slave.\n");
+		cout << "Failed to acquire bus access and/or talk to slave.\n";
 		return error(1);
 	}
 

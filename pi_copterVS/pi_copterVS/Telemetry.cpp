@@ -41,7 +41,7 @@ static float  f_current = 0;
 
 void TelemetryClass::addMessage(const string msg, bool and2sms){
 
-	fprintf(Debug.out_stream,"%s\n", msg.c_str());
+	cout << msg << endl;
 	if (message.length() + msg.length() >= TELEMETRY_BUF_SIZE)
 		return;
 
@@ -51,7 +51,7 @@ void TelemetryClass::addMessage(const string msg, bool and2sms){
 }
 
 void TelemetryClass::getSettings(int n){
-	fprintf(Debug.out_stream,"up set\n");
+	cout << "up set\n";
 	if (n > 7 || n < 0)
 		return;
 
@@ -135,7 +135,7 @@ void TelemetryClass::loop()
 		testBatteryVoltage();
 
 		if (Autopilot.progState() && check_time_left_if_go_to_home() < 60 && ++no_time_cnt>3){ // на тестах ошибся на 5 минут.  
-			fprintf(Debug.out_stream,"too far from HOME!\n");
+			cout << "too far from HOME!\n";
 			addMessage(e_BATERY_OFF_GO_2_HOME);
 			Autopilot.going2HomeStartStop(false);
 		}	
@@ -290,9 +290,9 @@ void TelemetryClass::update_buf() {
 	//delay(1000);
 	int i = 0;
 	uint32_t mod = Autopilot.get_control_bits();
-//	fprintf(Debug.out_stream,"out <- %i\n", mod);
+//	printf("out <- %i\n", mod);
 	loadBUF32(i, mod);
-	//fprintf(Debug.out_stream,"message=", message.c_str());
+	//printf("message=", message.c_str());
 	loadBUF(i, 1000 + (Balance.get_throttle() * 1000));
 	loadBUF32(i, GPS.loc.lat_);
 	loadBUF32(i, GPS.loc.lon_);
@@ -301,7 +301,7 @@ void TelemetryClass::update_buf() {
 	buf[i++] = (byte)GPS.loc.accuracy_ver_pos_;
 
 	loadBUF(i, 10.0f*Autopilot.corectedAltitude4tel());// -Autopilot.startAltitude));
-	//Out.fprintf(Debug.out_stream,t_old_alt); Out.fprintf(Debug.out_stream," "); Out.println(MS5611.altitude);// -Autopilot.startAltitude);
+	//Out.printf(t_old_alt); Out.printf(" "); Out.println(MS5611.altitude);// -Autopilot.startAltitude);
 	loadBUF8(i, -Mpu.get_pitch());
 	loadBUF8(i, Mpu.get_roll());
 	loadBUF8(i, Balance.c_pitch);

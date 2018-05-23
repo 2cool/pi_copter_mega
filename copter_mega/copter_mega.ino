@@ -29,7 +29,7 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ80
 #define pwm_MAX_THROTTLE 32000
 #define pwm_OFF_THROTTLE 16000
 
-#define SIM800 Serial2
+//#define SIM800 Serial2
 #define BUZZER 30
 #define RING 31
 #define SIM800_RESET 25
@@ -53,7 +53,7 @@ uint8_t beeps_coder[] = { 0, B00001000,B00001001,B00001010,B00001011,B00001100,B
 #define b11 {100,100,0}
 uint8_t beeps_led[][2][3]{ {b00,b00}, { b10,b00},{b10,b01},{ b10,b01 },{b10,b11},{b11,b00},{b11,b01},{b11,b10},{b11,b11},{b00,b01,},{b00,b11},{b01,b00},{b01,b01},{b01,b10},{b01,b11} };
 
-volatile bool ring=false;
+volatile bool ring=false,ring_to_send=false;
 
 
 
@@ -255,8 +255,8 @@ void receiveEvent(int countToRead) {
 	}
 	case 2: 
 	{
-		uint8_t len = countToRead-1;
-		SIM800.write(&inBuf[1], len);
+		//uint8_t len = countToRead-1;
+		//SIM800.write(&inBuf[1], len);
 		//Serial.println(2);
 		break;
 	}
@@ -318,7 +318,8 @@ void requestEvent() {
 	}
 	case 1: 
 	{
-		ret = ring;
+		ret = ring_to_send;
+		ring_to_send = false;
 		if (gps_status == false && gps_cnt != 0 && gps_cnt != old_gps_c) {
 			old_gps_c = gps_cnt;
 			reg = 2;
@@ -334,23 +335,24 @@ void requestEvent() {
 		break;
 	case 3:
 	{
-		if (ret = SIM800.available()) {
+	/*	if (ret = SIM800.available()) {
 			if (ret > 16)
 				ret = 16;
 			Wire.write(ret);
 			reg = 4;
 			//Serial.print("sim ");
 			//Serial.println((int)ret);
-		}
+		}*/
 		break;
 	}
 	case 4: 
 	{
 
-		SIM800.readBytes(simbuf, ret);
-		Wire.write(simbuf, ret);
+		//SIM800.readBytes(simbuf, ret);
+		//Wire.write(simbuf, ret);
 		
 		//Serial.println("sended");
+		break;
 	}
 	
 
@@ -371,7 +373,7 @@ void setup()
 #endif
 	//Serial.begin(9600);
 	//while (!Serial);
-	SIM800.begin(9600);
+	//SIM800.begin(9600);
 	gps_setup();
 	pinMode(BUZZER, OUTPUT);
 	pinMode(RING, INPUT);
@@ -436,7 +438,7 @@ void loop()
 		beep();
 	else {
 
-		ring = digitalRead(31) == LOW;
+		ring_to_send |= ring = digitalRead(RING) == LOW;
 
 		if (millis() > 5000 && ring) {
 			bool puls = (micros() & (unsigned long)65536) == 0;

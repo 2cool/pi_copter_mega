@@ -41,11 +41,11 @@ void HmcClass::init()
 #ifndef FALSE_WIRE
 
 
-	fprintf(Debug.out_stream,"Initializing I2C devices...\n");
+	cout << "Initializing I2C devices...\n";
 	initialize();
-	fprintf(Debug.out_stream,"Testing device connections...\n");
+	cout << "Testing device connections...\n";
 	ok = testConnection();
-	fprintf(Debug.out_stream,ok ? "HMC5883L connection successful\n" : "HMC5883L connection failed\n");
+	cout << ok ? "HMC5883L connection successful\n" : "HMC5883L connection failed\n";
 	if (ok) {
 		calibration(false);
 	}
@@ -56,13 +56,13 @@ void HmcClass::init()
 
 string HmcClass::get_set(){
 	string s = motors_power_on ? "1" : "0";
-	//Out.fprintf(Debug.out_stream,"hmc set:"); Out.println(s);
+	//Out.printf("hmc set:"); Out.println(s);
 	return s;
 }
 
 void HmcClass::set(const float buf[]){
 	motors_power_on = (buf[0] > 0);
-	fprintf(Debug.out_stream,"compas %f\n",buf[0]);
+	cout << "compas " << buf[0] << endl;
 }
 //---------------------------------------------------------
 
@@ -96,7 +96,7 @@ bool motors_is_on_ = false;
 
 void HmcClass::start_motor_compas_calibr(){
 	if (do_compass_motors_calibr == false && Autopilot.motors_is_on()==false){
-		fprintf(Debug.out_stream,"START MOTOR COMPAS CAL\n");
+		cout << "START MOTOR COMPAS CAL\n";
 		do_compass_motors_calibr = true;
 		motors_is_on_ = false;
 		c_base[X] = c_base[Y] = c_base[Z] = 0;
@@ -130,8 +130,8 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 				base[index+1] = fv*(_base[1] - base[index+1])*0.001f;
 				base[index+2] = fv*(_base[2] - base[index+2])*0.001f;
 
-				fprintf(Debug.out_stream,"%f\t%f\t%f MOTOR ON\n", base[index] * 1000, base[index + 1] * 1000, base[index + 2] * 1000);
-				fprintf(Debug.out_stream,"compas test: 4 m %i %f\n", motor_index, Telemetry.get_voltage());
+				printf("%f\t%f\t%f MOTOR ON\n", base[index] * 1000, base[index + 1] * 1000, base[index + 2] * 1000);
+				printf("compas test: 4 m %i %f\n", motor_index, Telemetry.get_voltage());
 
 				if (motor_index < 3){
 					motor_index++;
@@ -148,9 +148,9 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 				base[index] =   _base[0];
 				base[index+1] = _base[1];
 				base[index+2] = _base[2];
-				fprintf(Debug.out_stream," MOTOR OFF\n");
-				fprintf(Debug.out_stream,"compas test: 4 m %i\n",motor_index);
-				fprintf(Debug.out_stream,"%f\t%f\t%f\n",base[index],base[index + 1],base[index + 2]);
+				printf(" MOTOR OFF\n");
+				printf("compas test: 4 m %i\n",motor_index);
+				printf("%f\t%f\t%f\n",base[index],base[index + 1],base[index + 2]);
 				startTimed = Mpu.timed + 3;
 				Autopilot.motors_do_on(true, "CMT");
 				motors_is_on_ = true;
@@ -257,10 +257,7 @@ void HmcClass::loop(){
 	log_sens();
 
 	
-#ifdef SERIAL_PRINT
-	Out.fprintf(Debug.out_stream,"heading:\t");
-	Out.println(heading);
-#endif
+
 
 
 }
@@ -270,7 +267,7 @@ void HmcClass::loop(){
 void HmcClass::newCalibration(int16_t sh[]){
 	//wdt_enable(WDTO_4S);
 	sh[0] = sh[1] = sh[2] = sh[3] = sh[4] = sh[5] = 0;
-	fprintf(Debug.out_stream,"START ROTATION\n");
+	printf("START ROTATION\n");
 
 	delay(2000);
 	int16_t mx, my, mz;
@@ -287,33 +284,33 @@ void HmcClass::newCalibration(int16_t sh[]){
 
 		if (mx > sh[0]){
 			sh[0] = (int16_t)mx;
-			fprintf(Debug.out_stream,"max_X: %i\n",mx);
+			printf("max_X: %i\n",mx);
 			new_val = true;
 		}
 		if (mx < sh[1]){
 			sh[1] = (int16_t)mx;
-			fprintf(Debug.out_stream,"min_X: %i\n", mx);
+			printf("min_X: %i\n", mx);
 			new_val = true;
 		}
 
 		if (my > sh[2]){
 			sh[2] = (int16_t)my;
-			fprintf(Debug.out_stream,"max_Y: %i\n", my);
+			printf("max_Y: %i\n", my);
 			new_val = true;
 		}
 		if (my < sh[3]){
 			sh[3] = (int16_t)my;
-			fprintf(Debug.out_stream,"min_Y: %i\n", my);
+			printf("min_Y: %i\n", my);
 			new_val = true;
 		}
 		if (mz > sh[4]){
 			sh[4] = (int16_t)mz;
-			fprintf(Debug.out_stream,"max_Z: %i\n", mz);
+			printf("max_Z: %i\n", mz);
 			new_val = true;
 		}
 		if (mz < sh[5]){
 			sh[5] = (int16_t)mz;
-			fprintf(Debug.out_stream,"min_Z: %i\n", mz);
+			printf("min_Z: %i\n", mz);
 			new_val = true;
 		}
 		delay(10);
@@ -325,7 +322,7 @@ void HmcClass::newCalibration(int16_t sh[]){
 			break;
 		//wdt_reset();
 	}
-	fprintf(Debug.out_stream,"Stop Rottation\nx %i,%i\ny %i,%i\nz %i,%i\n", sh[0], sh[1], sh[2], sh[3], sh[4], sh[5]);
+	printf("Stop Rottation\nx %i,%i\ny %i,%i\nz %i,%i\n", sh[0], sh[1], sh[2], sh[3], sh[4], sh[5]);
 }
 
 bool HmcClass::calibration(const bool newc){
@@ -339,31 +336,31 @@ bool HmcClass::calibration(const bool newc){
 		newCalibration(sh);
 		Settings.saveCompssSettings(sh);
 		//wdt_enable(WDTO_120MS);//reset
-		fprintf(Debug.out_stream,"RESET HMC\n");
+		cout << "RESET HMC\n";
 	}
 
 	calibrated = Settings.readCompassSettings(sh);
 	if (calibrated == false) 
-		fprintf(Debug.out_stream, "! ! ! ! Comppas not Calibrated ! ! ! !\n");
+		cout<< "! ! ! ! Comppas not Calibrated ! ! ! !\n";
 	bool mot_cal = true;// Settings.readCompasMotorSettings(base);
 	if (!mot_cal)
-		fprintf(Debug.out_stream, "! ! ! ! Comppas motors not Calibrated ! ! ! !\n");
+		cout << "! ! ! ! Comppas motors not Calibrated ! ! ! !\n";
 	calibrated &= mot_cal;
 
 	
 	dx = (float)(sh[0] - sh[1])*0.5f;
 	c_base[X] = (int16_t)(dx + sh[1]);
-	fprintf(Debug.out_stream,"%i\t%i\n", sh[0], sh[1]);
+	cout << sh[0] << "\t" << sh[1] << endl;
 	dx = 1.0f / dx;
 
 	dy = (float)(sh[2] - sh[3])*0.5f;
 	c_base[Y] = (int16_t)(dy + sh[3]);
-	fprintf(Debug.out_stream,"%i\t%i\n", sh[2], sh[3]);
+	cout << sh[2] << "\t" << sh[3] << endl;
 	dy = 1.0f / dy;
 
 	dz = (float)(sh[4] - sh[5])*0.5f;
 	c_base[Z] = (int16_t)(dz + sh[5]);
-	fprintf(Debug.out_stream,"%i\t%i\n",sh[4],sh[5]);
+	cout << sh[4] << "\t" << sh[5] << endl;
 	dz = 1.0f / dz;
 
 	log_base();
@@ -372,7 +369,7 @@ bool HmcClass::calibration(const bool newc){
 }
 
 bool HmcClass::selfTest(){
-	fprintf(Debug.out_stream,"COMPAS TEST\n");
+	printf("COMPAS TEST\n");
 	if (ok){
 		int mx, my, mz;
 		int tx = 0, ty = 0, tz = 0;
@@ -383,7 +380,7 @@ bool HmcClass::selfTest(){
 			mx = (((int)buffer[0]) << 8) | buffer[1];
 			my = (((int)buffer[4]) << 8) | buffer[5];
 			mz = (((int)buffer[2]) << 8) | buffer[3];
-			fprintf(Debug.out_stream,"%i %i %i\n", mx, my, mz); 
+			printf("%i %i %i\n", mx, my, mz); 
 			error += (tx == mx || ty == my || tz == mz);
 			tx = mx;
 			ty = my;
@@ -393,7 +390,7 @@ bool HmcClass::selfTest(){
 		ok &= error < 10;
 	}
 	if (!ok)
-		fprintf(Debug.out_stream,"ERROR\n");
+		printf("ERROR\n");
 	return ok;
 }
 

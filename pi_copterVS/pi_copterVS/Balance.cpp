@@ -82,7 +82,7 @@ void BalanceClass::init()
 //	0.00357
 
 	f_[0] = f_[1] = f_[2] = f_[3] = 0;
-	fprintf(Debug.out_stream,"BALANCE INIT\n");
+	cout << "BALANCE INIT\n";
 	
 	c_pitch = c_roll = 0;
 	
@@ -121,7 +121,7 @@ void BalanceClass::init()
 	mid_powerK = 1;
 	power_K = 1;
 #ifdef DEBUG_MODE
-	fprintf(Debug.out_stream, "Heading :%i\n", (int)Hmc.get_headingGrad());
+	printf( "Heading :%i\n", (int)Hmc.get_headingGrad());
 	
 #endif
 
@@ -210,24 +210,24 @@ void BalanceClass::set(const float *ar, int n){
 
 			//	error += Commander._set(ar[i], stop_throttle);
 
-			fprintf(Debug.out_stream, "balance set:\n");
+			cout << "balance set:\n";
 		}
 		else {
 			
 			}
 		if (error == 0){
 			//for (ii = 0; ii < i; ii++){
-			//	Out.fprintf(Debug.out_stream,ar[ii]); Out.fprintf(Debug.out_stream,",");
+			//	Out.printf(ar[ii]); Out.printf(",");
 			//}
 			//Out.println(ar[ii]);
-			fprintf(Debug.out_stream,"OK\n");
+			cout << "OK\n";
 		}
 		else{
-			fprintf(Debug.out_stream,"ERROR to big or small. P=%i",error);
+			cout << "ERROR to big or small. P="<<error;
 		}
 	}
 	else{
-		fprintf(Debug.out_stream,"ERROR\n");
+		cout << "ERROR\n";
 	}
 }
 

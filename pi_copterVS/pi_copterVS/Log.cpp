@@ -54,7 +54,7 @@ void loger() {
 		//printf("%i\n",log_bank_ - old_bank);
 		
 		if (log_bank_ - old_bank > mask) {
-			fprintf(Debug.out_stream, "log sync error! %i\n", log_bank_);
+			cout << "log sync error! %i\n", log_bank_;
 			error_bansk += log_bank_ - old_bank - mask;
 			old_bank = log_bank_ - mask;
 			
@@ -66,7 +66,7 @@ void loger() {
 			logfile.flush();
 			old_bank++;
 		}else{
-			fprintf(Debug.out_stream, "LOG ERROR\n");
+			cout << "LOG ERROR\n";
 		}
 			
 		
@@ -103,8 +103,8 @@ int LogClass::counter_() { return counter; }
 
 bool LogClass::close() {
 	if (writeTelemetry) {
-		fprintf(Debug.out_stream, "close tel log\n");
-		fprintf(Debug.out_stream, "banks: %i\twrited banks: %i\terrors:%i\n", log_bank_, old_bank, error_bansk);
+		cout << "close tel log\n";
+		cout << "banks: "<< log_bank_ <<"\twrited banks: "<< old_bank <<"\terrors:"<< error_bansk <<endl;
 		run_loging = false;
 		while (log_file_closed == false)
 			usleep(100000);
@@ -124,7 +124,7 @@ bool LogClass::init(int counter_) {
 		ostringstream convert;
 		convert << "/home/igor/logs/tel_log" << counter << ".log";
 		this_log_fname = convert.str();
-		fprintf(Debug.out_stream, "log 2 %s\n", this_log_fname.c_str());
+		cout << "log 2 " << this_log_fname << endl;
 		logfile.open(this_log_fname.c_str(), fstream::in | fstream::out | fstream::trunc);
 
 		//char ver[] = LOG_VER;

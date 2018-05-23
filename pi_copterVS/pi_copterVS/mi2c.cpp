@@ -68,7 +68,7 @@ static int sms_received = 0;
 			}
 			else {
 				sms_received = smsN;
-				fprintf(Debug.out_stream, "SMS %i\n", sms_received);
+				cout << "SMS " << sms_received << endl;
 				smsN ^= smsN;
 
 			//	sim.readSMS(sms_received,  true, true);
@@ -88,7 +88,7 @@ static int sms_received = 0;
 				if (str[i] == ring[ringi++]) {
 					if (ringi == sizeof(ring) - 1) {
 						ring_received = true;
-						fprintf(Debug.out_stream, "RING\n");
+						cout << "RING\n";
 						ringi ^= ringi;
 					}
 				}
@@ -99,7 +99,7 @@ static int sms_received = 0;
 				if (str[i] == no_carrier[no_carrieri++]) {
 					if (no_carrieri == sizeof(no_carrier) - 1) {
 						ring_received = false;
-						fprintf(Debug.out_stream, "NO CARRIER\n");
+						cout << "NO CARRIER\n";
 						no_carrieri ^= no_carrieri;
 					}
 				}
@@ -109,20 +109,35 @@ static int sms_received = 0;
 		}
 	}
 }
-
+char gsm_in_buf[4096];
 int Megai2c::gsm_loop()
 {
 	if (shmPTR->sim800_reset_time > 0 && shmPTR->sim800_reset_time + 40000 < millis())
 		shmPTR->sim800_reset_time = 0;
-
-	char gsm_in_buf[32];
 	int a_in;
-	ioctl(fd_in, FIONREAD, &a_in);
+	if (fd_in < 0) {
+		fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
+		if (fd_in < 0)
+		{
+			cout << "error " << errno << " opening /dev/tnt1: " << strerror(errno) << endl;
+			return -1;
+		}
+	}
+
+	//перенести гпс и симку на орандж и не ебать мозк
+	ioctl(fd_in, FIONREAD, &a_in); //max 4095
 	if (a_in) {
 		//printf("a_in=%i\n",a_in);
-		if (a_in > 8)
-			a_in = 8;
-
+	/*	if (a_in > 300) {
+			read(fd_in, gsm_in_buf, a_in);
+			printf("     CLEAR---------------------------------%i\n", a_in);
+			return 0;
+		}
+		if (a_in > 200)
+			printf("    ERROR---------------------------------%i\n",a_in);
+		if (a_in > 16)
+			a_in = 16;
+			*/
 		int av = read(fd_in, &gsm_in_buf, a_in);
 /*
 		printf("<-");
@@ -149,6 +164,8 @@ int Megai2c::gsm_loop()
 		write(fd_in, gsm_in_buf, res);
 	}
 
+	
+
 	return 0;
 
 }
@@ -166,20 +183,23 @@ int Megai2c::init()
 
 
 	if ((fd = open("/dev/i2c-0", O_RDWR)) < 0) {
-		fprintf(Debug.out_stream, "Failed to open /dev/i2c-0\n");
+		cout << "Failed to open /dev/i2c-0\n";
 		return -1;
 	}
 	if (ioctl(fd, I2C_SLAVE, ARDUINO_ADDR) < 0) {
-		fprintf(Debug.out_stream, "Failed to acquire /dev/i2c-0 access and/or talk to slave.\n");
+		cout << "Failed to acquire /dev/i2c-0 access and/or talk to slave.\n";
 		return -1;
 	}
+	
 	
 	fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd_in < 0)
 	{
-		fprintf(Debug.out_stream, "error %d opening /dev/tnt1: %s", errno, strerror(errno));
+		cout << "error " << errno << " opening /dev/tnt1: " << strerror(errno) << endl;
 		return -1;
 	}
+	
+	
 	//--------------------------------init sound & colors 
 	char buf[7];
 
@@ -253,7 +273,7 @@ void Megai2c::sim800_reset() {
 //0.35555555555555555555555555555556 = 1град
 bool Megai2c::gimagl(float pitch, float roll) {  // добавить поворот вмесете с коптером пра опред обст
 	if (pitch <= 80 && pitch >= -45) { 
-		//Serial.fprintf(Debug.out_stream,"camAng="); Serial.println(angle);
+		//Serial.printf("camAng="); Serial.println(angle);
 		pitch = pwm_OFF_THROTTLE + (180 - pitch)*44.444444;
 		roll = pwm_OFF_THROTTLE + (180 + roll)*44.4444;
 		char buf[6];
@@ -290,7 +310,7 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 
 	if (bit_field & 1 && shmPTR->sim800_reset_time == 0) {
 		if (last_ring_time==0)
-			fprintf(Debug.out_stream, "RINGk_BIT\n");//при заходе смс при ppp
+			cout << "RINGk_BIT\n";//при заходе смс при ppp
 		last_ring_time = Mpu.timed;
 		
 		///stop servises, stop ppp? read sms and do. start ppp and services again

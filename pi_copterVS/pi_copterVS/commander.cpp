@@ -105,9 +105,9 @@ float * load(const string  buf, const uint8_t  * filds){
 			ar_t333[i] = val;
 		else{
 			//Out.println(buf.substr(filds[i], filds[i + 1]- filds[i] - 1));
-			fprintf(Debug.out_stream, "%s\n",buf.substr(filds[i], filds[i + 1] - filds[i] - 1));
+			cout << buf.substr(filds[i], filds[i + 1] - filds[i] - 1) << endl;
 			ar_t333[10] = SETTINGS_ERROR;
-			fprintf(Debug.out_stream,"%i\n",i);
+			cout << i << endl;
 			return ar_t333;
 		}
 	}
@@ -137,7 +137,7 @@ uint8_t CommanderClass::_set(const float  val, float &set, bool secure){
 }
 
 bool CommanderClass::Settings(string buf){
-	fprintf(Debug.out_stream,"settings\n");
+	cout << "settings\n";
 	uint8_t filds[11];
 	uint8_t fi = 0;
 	uint8_t i = 0;
@@ -203,7 +203,7 @@ B,COUNTER,S_S,		start stop
 bool CommanderClass::ButtonMessage(string msg){
 
 #ifdef DEBUG_MODE
-	fprintf(Debug.out_stream,"<- $s\n",msg.c_str());
+	printf("<- $s\n",msg.c_str());
 #endif
 
 	bool command_correct = false;
@@ -239,7 +239,7 @@ bool CommanderClass::ButtonMessage(string msg){
 	}
 
 	if (command_correct == false)
-		fprintf(Debug.out_stream,"WORNG MESSAGE\n");
+		cout << "WORNG MESSAGE\n";
 
 	return command_correct;
 
@@ -358,7 +358,7 @@ bool CommanderClass::input(){
 			}
 		}
 		else {
-			fprintf(Debug.out_stream,"COMMANDER ERROR\n");
+			cout << "COMMANDER ERROR\n";
 		}
 		shmPTR->wifibuffer_data_len_4_read = 0;
 		return true;
@@ -379,7 +379,7 @@ void stop_stream() {
 	int pid = get_pid("ffmpeg");
 	if (pid != -1) {
 		kill(pid, SIGQUIT);
-		fprintf(Debug.out_stream, "stream STOP\n");
+		cout << "stream STOP\n";
 	}
 
 }
@@ -403,7 +403,7 @@ void CommanderClass::set(const float buf[]) {
 	telegram_bot = buf[2] > 0;
 	if (telegram_bot)
 		ppp_inet = true;
-	fprintf(Debug.out_stream, "trans adr %f\n", buf[0]);
+	cout << "trans adr %f\n", buf[0];
 	thread t(stop_stream);
 	t.detach();
 

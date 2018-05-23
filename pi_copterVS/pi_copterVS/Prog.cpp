@@ -80,7 +80,7 @@ void ProgClass::loop(){
 		go_next = distFlag = altFlag = false;
 		if (load_next(true) == false){
 			//if (Autopilot.lost_conection_time == 0){
-				fprintf(Debug.out_stream,"PROG END\n");
+				cout << "PROG END\n";
 				Autopilot.start_stop_program(false);
 			//}
 		}
@@ -116,7 +116,7 @@ bool ProgClass::program_is_OK(){
 				
 				fullTime += time;
 				if (fullTime>timeLeft){//MAX_TIME_LONG_FLIGHT){
-					fprintf(Debug.out_stream,"to long fly for prog!\n");
+					cout << "to long fly for prog!\n";
 					return false;
 				}
 			old_lat = lat;
@@ -136,11 +136,11 @@ bool ProgClass::program_is_OK(){
 
 
 		if (dist >= 20 || alt  >= 20){
-			fprintf(Debug.out_stream,"end poitn to far from star!!!\n");
+			cout << "end poitn to far from star!!!\n";
 			return false;
 		}
 
-		fprintf(Debug.out_stream,"time for flyghy: %i\n",(int)fullTime);
+		cout << "time for flyghy: " << (int)fullTime << endl;
 		return true;
 	}
 else
@@ -168,7 +168,7 @@ bool ProgClass::start(){
 	}
 	else{
 		clear();
-		fprintf(Debug.out_stream,"no program\n");
+		cout << "no program\n";
 	}
 	return false;
 
@@ -203,8 +203,8 @@ float pDistance(float x, float y, float x1, float y1, float x2, float y2) {
 		xx = x1 + param * C;
 		yy = y1 + param * D;
 
-		fprintf(Debug.out_stream,"x=%f\n",xx);
-		fprintf(Debug.out_stream,"y=%f\n",yy);
+		cout << "x=" << xx << endl;
+		cout << "y=" << yy << endl;
 	}
 
 	float dx = x - xx;
@@ -479,15 +479,15 @@ bool ProgClass::add(byte*buf)
 	
 	if (steps_count != buf[i++]){
 		clear();
-		fprintf(Debug.out_stream,"PROG INDEX ERROR\n");
+		cout << "PROG INDEX ERROR\n";
 		return false;
 	}
 	if (i + 17 > PROG_MEMORY_SIZE){
 		clear();
-		fprintf(Debug.out_stream,"PROG_MEMORY_OVERFLOW\n");
+		cout << "PROG_MEMORY_OVERFLOW\n";
 		return false;
 	}
-//	Out.fprintf(Debug.out_stream,"mask:"); Out.println(buf[0]);
+//	Out.printf("mask:"); Out.println(buf[0]);
 	
 	if (buf[0] & TIMER){
 		prog[pi++] = buf[i++];
@@ -546,14 +546,14 @@ bool ProgClass::add(byte*buf)
 		byte*lb = (byte*)&prog_steps_count_must_be;
 		lb[0] = buf[i++];
 		lb[1] = buf[i++];
-		fprintf(Debug.out_stream, "prog steps=%i\n",prog_steps_count_must_be);
+		cout << "prog steps=" << prog_steps_count_must_be << endl;
 	}
 	
 	
 
 	prog_data_size = pi;
 	steps_count++;
-	fprintf(Debug.out_stream,"%i. dot added! %i\n", steps_count, prog_data_size); 
+	cout << steps_count << ". dot added! " << prog_data_size << endl;
 	return true;
 }
 

@@ -117,7 +117,7 @@ int SettingsClass::read() {
 		f.close();
 		return 0;
 	}
-	fprintf(Debug.out_stream, "\n can't read settings \n");
+	cout << "\n can't read settings \n";
 	return -1;
 }
 
@@ -134,7 +134,7 @@ int SettingsClass::write() {
 		f.close();
 		return 0;
 	}
-	fprintf(Debug.out_stream, "\n cant write settings \n");
+	cout << "\n cant write settings \n";
 	return -1;
 }
 

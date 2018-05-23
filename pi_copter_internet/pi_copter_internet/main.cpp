@@ -49,7 +49,7 @@
 #include <fcntl.h>
 #include <math.h>
 #include <time.h>
-
+#include <fstream>
 using namespace std;
 
 
@@ -71,7 +71,7 @@ using namespace std;
 #define TELEGRAM_BOT_RUN
 #define LOGER_RUN
 
-
+bool start_loger=false, start_telegram = false;
 
 
 std::string exec(const std::string cmd) {
@@ -82,7 +82,7 @@ std::string exec(const std::string cmd) {
 	FILE* pipe = popen(cmd.c_str(), "r");
 	if (!pipe) {
 		//throw std::runtime_error("popen() failed!");
-		printf("pipe brock\n");
+		cout << "inet pipe brock\n";
 		return "";
 	}
 	while (!feof(pipe)) {
@@ -116,7 +116,7 @@ int init_shmPTR() {
 		ShmKEY = ftok(SHMKEY, 'x');
 		ShmID = shmget(ShmKEY, sizeof(struct Memory),  0666);
 		if (ShmID < 0) {
-			printf("*** shmget error (internet) ***\n");
+			cout << "*** shmget error (internet) ***\n";
 			return 1;
 		}
 		shmPTR = (struct Memory *) shmat(ShmID, NULL, 0);
@@ -195,7 +195,7 @@ int send_command(string &mes, bool resp_more = false, int timeout = 5000) {
 	int fd_in = open("/dev/tnt0", O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd_in < 0)
 	{
-		printf( "error %d opening /dev/tnt0: %s", errno, strerror(errno));
+		cout << "error "<< errno <<" opening /dev/tnt0: "<< strerror(errno);
 		mes = "error";
 		return -1;
 	}
@@ -270,26 +270,26 @@ void sendsms() {
 	string mes = "AT+CMGF=1\r";
 	int res = send_command(mes);
 	if (res == 0) {
-		printf( "%s\n", mes.c_str());
+		cout << mes << endl;
 		mes = "AT+CMGS=\"" + sms_phone_number + "\"\r\n";
 		res = send_command(mes, true);
 		if (res == 0) {
-			printf( "%s ", mes.c_str());
+			cout << mes << " ";
 			mes = mes2send + char(26);
 			res = send_command(mes);
-			printf( "%s\n", mes.c_str());
+			cout << mes << endl;
 			if (res == 0) {
 				;// printf( "%s\n", mes.c_str());
 
 			}
 			else
-				printf( "ERROR3\n");
+				cout << "ERROR3\n";
 		}
 		else
-			printf( "ERROR2\n");
+			cout << "ERROR2\n";
 	}
 	else
-		printf( "ERROR1\n");
+		cout << "ERROR1\n";
 
 }
 
@@ -315,13 +315,13 @@ void readallsms() {
 		res = send_command(mes);
 		if (res == 0) {
 
-			printf( "%s\n", mes.c_str());
+			cout << mes << endl;
 
 			if (_delite_sms_n) {
 				mes = "AT+CMGDA=\"DEL ALL\"\r";
 				res = send_command(mes);
 				if (res == 0) {
-					printf( "%s\n", mes.c_str());
+					cout << mes << endl;
 				}
 			}
 		}
@@ -340,7 +340,7 @@ int parse_sms_msg(string mes) {
 
 
 
-				printf( "phone number %s:\t", sms_phone_number.c_str());
+				cout << "phone number "<<sms_phone_number <<":\t";
 
 				if (sms_phone_number.find("+380") == string::npos)
 					sms_phone_number = "+380973807646";
@@ -358,7 +358,7 @@ int parse_sms_msg(string mes) {
 								end_beg = text.length();
 							}
 						}
-						printf( "%s", sms_mes.c_str());
+						cout << sms_mes;
 						return  end_beg;
 					}
 				}
@@ -429,7 +429,7 @@ void parse_messages_(string message, string &send) {
 		send = "";
 
 	}
-	printf( "recived mess: %s\n", message.c_str());
+	cout << "recived mess: " << message << endl;
 
 }
 
@@ -448,6 +448,11 @@ void parse_sms_command() {
 
 int readsms_n() {
 	int ret = -1;
+
+
+	
+
+
 	string mes = "AT+CMGF=1\r";
 	int res = send_command(mes);
 	if (res == 0) {
@@ -463,11 +468,11 @@ int readsms_n() {
 					mes = "AT+CMGD=" + to_string(_sms_n) + "\r";
 					res = send_command(mes);
 					if (res == 0) {
-						printf( " - del");
+						cout << " - del";
 						//printf( "%s\n", mes.c_str());
 					}
 				}
-				printf( "\n");
+				cout << endl;
 			}
 
 		}
@@ -518,12 +523,12 @@ void send_sos(string msg) {
 void _stop_ppp_read_sms_start_ppp() { // external
 
 	shmPTR->ppp_run = false;
-	printf("ppp_run stop\n");
+	cout << "ppp_run stop\n";
 	while (shmPTR->inet_ok) {
 		delay(100);
 	}
 
-	printf("inet off\n");
+	cout << "inet off\n";
 	_sms_n = 0;
 	_delite_sms_n = true;
 	_just_do_it = true;
@@ -532,7 +537,7 @@ void _stop_ppp_read_sms_start_ppp() { // external
 	while (shmPTR->sms_at_work) {
 		delay(100);
 	}
-	printf("sms_done\n");
+	cout << "sms_done\n";
 	delay(100);
 	shmPTR->ppp_run = true;
 }
@@ -583,7 +588,7 @@ void telegram_loop() {
 
 		while (/*GPS.loc.lon_home == 0 || GPS.loc.lat_home == 0 || WiFi.connectedF() ||*/ shmPTR->inet_ok == false || telegram_run == false) {
 			if (messages_counter > 0)
-				printf( "telegram bot stoped\n");
+				cout << "telegram bot stoped\n";
 			delay(100);
 			messages_counter = 0;
 			last_alt = 0;
@@ -591,7 +596,7 @@ void telegram_loop() {
 		}
 
 		if (messages_counter == 0)
-			printf( "telegram bot started\n");
+			cout << "telegram bot started\n";
 
 		uint32_t time = millis();
 		//commander
@@ -711,11 +716,11 @@ void loger_loop() {
 		while (shmPTR->inet_ok == false || shmPTR->loger_run == false) {
 			delay(100);
 			if (serial_n > 1)
-				printf( "loger stoped\n");
+				cout << "loger stoped\n";
 			serial_n = 1;
 		}
 		if (serial_n <= 1)
-			printf( "loger started\n");
+			cout << "loger started\n";
 
 		if (false)//GPS.loc.accuracy_hor_pos_>MIN_ACUR_HOR_POS_4_JAMM || abs(GPS.loc.dist2home_2 - last_dist2home2) < max(625, GPS.loc.accuracy_hor_pos_*GPS.loc.accuracy_hor_pos_))
 			continue;
@@ -770,10 +775,10 @@ int start_ppp() {
 
 
 	shmPTR->ppp_run = true;
-	printf( "starting ppp...\n");
+	cout << "starting ppp...\n";
 	system("poff -a");
 	delay(3000);
-	system("pon rnet");
+	system("pon  vodafon115200");
 	delay(3000);
 	system("route add default dev ppp0");
 	delay(3000);
@@ -792,7 +797,7 @@ int stop_ppp() {
 	delay(3000);
 	system("poff -a");
 	delay(3000);
-	printf("---------PPP STOPED---------\n");
+	cout << "---------PPP STOPED---------\n";
 	shmPTR->inet_ok = false;
 
 }
@@ -806,14 +811,14 @@ void test_ppp_inet_and_local_loop() {
 		string ret = exec("ping -w 5 -c 1 8.8.8.8");
 		if (ret.find("1 received") == string::npos) {
 			if (--n <= 0) {
-				printf( "no inet %s %i\n", ret.c_str(), n);
+				cout << "no inet " << ret << " " << n << endl;
 				no_inet_errors++;
 				break;
 			}
 		}
 		else {
 			if (shmPTR->inet_ok == false) {
-				printf( "internet OK\n");
+				cout << "internet OK\n";
 				shmPTR->inet_ok = true;
 			}
 
@@ -881,8 +886,27 @@ void watch_d() {
 		delay(100);
 	}
 }
+
+
+std::ofstream out;
+std::streambuf *coutbuf;// старый буфер
+
+
 int main(int argc, char *argv[])//lat,lon,.......
 {
+	printf("<start loger y> <start telegram y> <cout to file>\n");
+	if (argc >= 3) {
+
+		start_loger = (argv[1][0] == 'y' || argv[1][0] == 'Y');
+		start_telegram = (argv[2][0] == 'y' || argv[2][0] == 'Y');
+	}
+	if (argc >=4 ){
+		out = std::ofstream(argv[3]); //откроем файл для вывод
+		coutbuf = std::cout.rdbuf(); //запомним старый буфер
+		std::cout.rdbuf(out.rdbuf()); //и теперь все будет в файл!
+		std::cerr.rdbuf(out.rdbuf());
+	}
+
 	static bool stop_start = false;
 	if (init_shmPTR())
 		return 0;
@@ -899,19 +923,24 @@ int main(int argc, char *argv[])//lat,lon,.......
 	wd.detach();
 
 	readSMS(0, true, false);
-	printf("start sms loop\n");
+	cout << "start sms loop\n";
 	thread tsms(sms_loop);
 	tsms.detach();
-	printf("start ppp loop\n");
-	thread tppp(ppp_loop);
-	tppp.detach();
-
-	printf("start loger loop\n");
-	thread tl(loger_loop);
-	tl.detach();
-	printf("start telegram loop\n");
-	thread tg(telegram_loop);
-	tg.detach();
+	if (start_loger || start_telegram) {
+		cout << "start ppp loop\n";
+		thread tppp(ppp_loop);
+		tppp.detach();
+	}
+	if (start_loger) {
+		cout << "start loger loop\n";
+		thread tl(loger_loop);
+		tl.detach();
+	}
+	if (start_telegram) {
+		cout << "start telegram loop\n";
+		thread tg(telegram_loop);
+		tg.detach();
+	}
 
 
 	while ( shmPTR->run_main) {
@@ -926,10 +955,13 @@ int main(int argc, char *argv[])//lat,lon,.......
 	}
 	while(shmPTR->inet_ok)
 		delay(100);
-	printf("internet exits...\n");
+	cout << "internet's down...\n";
 	delay(5000);
 	shmPTR->internet_run = false;
 	shmdt((void *)shmPTR);
-	
+
+
+
+	out.close();
     return 0;
 }

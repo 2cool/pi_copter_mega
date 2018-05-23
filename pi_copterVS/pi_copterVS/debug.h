@@ -25,7 +25,7 @@ class DebugClass
 	 uint32_t escCalibr;
 	 
 	 float  lowest_altitude_to_fly;
-	 FILE * out_stream;
+	 
 
 	 int n_debug;
 	 void init();

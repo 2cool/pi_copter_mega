@@ -88,10 +88,10 @@ class Serial_class{
 	bool find(char *c){return false;}
 	bool available(){return false;}
 	byte read(){return 0;}
-	unsigned int fprintf(Debug.out_stream,char s[]);
-	unsigned int fprintf(Debug.out_stream,char c);
-	unsigned int fprintf(Debug.out_stream,string &s);
-	unsigned int fprintf(Debug.out_stream,string s);
+	unsigned int printf(char s[]);
+	unsigned int printf(char c);
+	unsigned int printf(string &s);
+	unsigned int printf(string s);
 	unsigned int println(char s[]);
 	unsigned int println(char c);
 	//unsigned int println(string &s);

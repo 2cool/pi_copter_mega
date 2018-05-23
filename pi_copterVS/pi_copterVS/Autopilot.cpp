@@ -99,7 +99,7 @@ ffplay udp://android_address:5544
 void start_video() {
 	if (camera_mode == CAMERA_RECORDING) {
 		usleep(2000000);
-		fprintf(Debug.out_stream, "recording video START\n");
+		printf( "recording video START\n");
 		string s = "/home/igor/ffmpeg_cedrus264_H3/ffmpeg -f v4l2 -channel 0 -video_size 640x480 -i /dev/video0 -pix_fmt nv12 -r 30 -b:v 64k -c:v cedrus264 /home/igor/logs/video";
 		s += std::to_string(Log.counter_());
 		s += "_";
@@ -109,7 +109,7 @@ void start_video() {
 		
 	}
 	if (camera_mode=CAMERA_TRANCLATE){
-		fprintf(Debug.out_stream, "transmiting video START\n");
+		printf( "transmiting video START\n");
 		string adr = WiFi.get_client_addres();
 		string s = "/home/igor/ffmpeg_cedrus264_H3/ffmpeg -f v4l2 -framerate 30 -video_size 640x480 -i /dev/video0 -f mpegts udp://"+adr+":1234 > /dev/null 2>&1";
 		system(s.c_str());
@@ -201,7 +201,7 @@ void AutopilotClass::add_2_need_altitude(float speed, const float dt){
 		if (flyAtAltitude < lowest_height)
 			flyAtAltitude = lowest_height;
 
-		//fprintf(Debug.out_stream,"f@alt %f\n", flyAtAltitude);
+		//printf("f@alt %f\n", flyAtAltitude);
 	}
 	else {
 		if (set_alt) {
@@ -253,7 +253,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 	if (shmPTR->control_bits_4_do)
 		set_control_bits(shmPTR->control_bits_4_do);
-
+	shmPTR->control_bits_4_do = 0;
 	shmPTR->control_bits = control_bits;
 
 
@@ -379,7 +379,7 @@ string AutopilotClass::get_set(){
 }
 
 void AutopilotClass::set(const float ar[]){
-	fprintf(Debug.out_stream,"Autopilot set\n");
+	cout << "Autopilot set\n";
 	int error = 1;
 
 	if (ar[SETTINGS_ARRAY_SIZE] == SETTINGS_IS_OK){
@@ -402,16 +402,16 @@ void AutopilotClass::set(const float ar[]){
 		mega_i2c.gimagl(gimBalPitchZero, gimBalRollZero);
 		if (error == 0){
 			int ii = 0;
-			fprintf(Debug.out_stream,"Safe set:\n");
+			cout << "Safe set:\n";
 
 			for (ii = 0; ii < i; ii++){
-				fprintf(Debug.out_stream,"%f,",ar[ii]);
+				cout << ar[ii] << endl;
 			}
-			fprintf(Debug.out_stream,"%f\n",ar[ii]);
+			cout << ar[ii] << endl;
 		}
 	}
 	if (error>0){
-		fprintf(Debug.out_stream,"ERROR\n");
+		cout << "ERROR\n";
 	}
 }
 
@@ -433,7 +433,7 @@ bool AutopilotClass::holdAltitude(float alt){
 		Stabilization.init_Z();
 	}
 	//setbuf(stdout, NULL);
-	fprintf(Debug.out_stream,"FlyAt: %f \n",flyAtAltitude);
+	cout << "FlyAt: " << flyAtAltitude << endl;
 
 	return true;
 }
@@ -576,7 +576,7 @@ bool AutopilotClass::going2HomeON(const bool hower){
 		control_bits |= GO2HOME;
 		f_go2homeTimer = 0;
 		//Out.println("Hanging on the site!");
-		fprintf(Debug.out_stream,"go2home\n");
+		cout << "go2home\n";
 		go2homeIndex=JUMP;
 	}
 	return res;
@@ -608,7 +608,7 @@ bool AutopilotClass::holdLocation(const long lat, const long lon){
 
 		
 		GPS.loc.setNeedLoc(lat,lon);
-		fprintf(Debug.out_stream,"Hower at: %i,%i\n",GPS.loc.lat_, GPS.loc.lon_);
+		cout << "Hower at: " << GPS.loc.lat_ << " " << GPS.loc.lon_ << endl;
 
 		Stabilization.init_XY(0, 0);
 
@@ -645,14 +645,14 @@ beep codes
 
 bool AutopilotClass::motors_do_on(const bool start, const string msg){////////////////////////  M O T O R S  D O  ON  /////////////////////////////////////////////////////////////////////////
 
-	fprintf(Debug.out_stream,"%s - ",msg.c_str());
+	cout << msg << "-";
 	
 	if (start){
-		//fprintf(Debug.out_stream, "\MS5611 err: %f\n",MS5611.getErrorsK());
+		//printf( "\MS5611 err: %f\n",MS5611.getErrorsK());
 #ifndef FALSE_WIRE
-		fprintf(Debug.out_stream,"on ");
+		cout << "on ";
 		if (Mpu.timed < 25) {
-			fprintf(Debug.out_stream,"\n!!!calibrating!!! to end:%i sec.\n", 25-millis()/1000);
+			cout << "\n!!!calibrating!!! to end:"<< 25-millis()/1000 <<" sec.\n";
 			mega_i2c.beep_code(B_MS611_ERROR);
 			return false;
 		}
@@ -663,7 +663,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 
 #define MAX_MACC 0.1f
 		if (Hmc.do_compass_motors_calibr == false && (abs(Mpu.maccX) > MAX_MACC || abs(Mpu.maccY) > MAX_MACC || abs(Mpu.maccZ) > MAX_MACC)) {
-			fprintf(Debug.out_stream, "ACC ERROR!!! \n");
+			cout << "ACC ERROR!!! \n";
 			mega_i2c.beep_code(B_ACC_ERROR);
 			return false;
 		}
@@ -672,13 +672,13 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 
 			if (Telemetry.low_voltage){
 				Telemetry.addMessage(e_LOW_VOLTAGE);
-				fprintf(Debug.out_stream," LOW VOLTAGE\n");
+				cout << " LOW VOLTAGE\n";
 				mega_i2c.beep_code(B_LOW_VOLTAGE);
 				return false;
 			}
 
 			if (Hmc.do_compass_motors_calibr==false && GPS.loc.accuracy_hor_pos_ > MIN_ACUR_HOR_POS_2_START ){
-				fprintf(Debug.out_stream," GPS error\n");
+				cout << " GPS error\n";
 				mega_i2c.beep_code(B_GPS_ACCURACY_E);
 				Telemetry.addMessage(e_GPS_ERROR);
 
@@ -689,7 +689,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			
 			control_bits = MOTORS_ON;
 
-			fprintf(Debug.out_stream,"OK\n");
+			cout << "OK\n";
 
 			GPS.loc.setHomeLoc();
 
@@ -707,7 +707,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			start_timed = Mpu.timed;
 
 #ifdef DEBUG_MODE
-			fprintf(Debug.out_stream, "\nhome loc: %i %i \nhome alt set %i\n", GPS.loc.lat_, GPS.loc.lon_, (int)flyAtAltitude);
+			printf( "\nhome loc: %i %i \nhome alt set %i\n", GPS.loc.lat_, GPS.loc.lon_, (int)flyAtAltitude);
 #endif
 
 			Log.run_counter++;
@@ -721,16 +721,16 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		}
 		else{
 			if (Hmc.calibrated == false){
-				fprintf(Debug.out_stream,"compas, ");
+				cout << "compas, ";
 				mega_i2c.beep_code(4);
 
 			}
 			if (Mpu.gyro_calibratioan == false){
-				fprintf(Debug.out_stream,"gyro");
+				cout << "gyro";
 				mega_i2c.beep_code(5);
 
 			}
-			fprintf(Debug.out_stream," calibr FALSE\n");
+			cout << " calibr FALSE\n";
 		}
 	}//------------------------------OFF----------------
 	else {
@@ -738,11 +738,11 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 #ifdef FALSE_WIRE
 		Emu.init(WIND_X, WIND_Y, WIND_Z);
 #endif
-		fprintf(Debug.out_stream,"off ");
+		cout << "off ";
 		Telemetry.addMessage(i_OFF_MOTORS);
 		off_throttle(true, msg);
 
-		fprintf(Debug.out_stream,"OK\n");
+		cout << "OK\n";
 
 		//if (camera_mode) {//----------------------------------
 		//	thread t(stop_video);
@@ -758,7 +758,7 @@ void AutopilotClass::control_falling(const string msg){
 		throttle = Mpu.fall_thr*Balance.powerK();
 		aPitch = aRoll = 0;
 #ifdef DEBUG_MODE
-		fprintf(Debug.out_stream, "CNTROLL FALLING\n");
+		printf( "CNTROLL FALLING\n");
 #endif
 		Telemetry.addMessage(msg);
 		Telemetry.addMessage(i_CONTROL_FALL);
@@ -772,7 +772,7 @@ bool AutopilotClass::off_throttle(const bool force, const string msg){//////////
 	{
 
 
-		fprintf(Debug.out_stream,"force motors_off %s, alt: %i, time %i\n", msg.c_str(), (int)MS5611.altitude(),millis()/1000);
+		cout << "force motors_off " << msg << ", alt: " << (int)MS5611.altitude() << ", time " << (int)Mpu.timed << endl;
 		Balance.set_off_th_();
 		Telemetry.addMessage(msg);
 		control_bits = 0;
@@ -797,7 +797,7 @@ bool AutopilotClass::off_throttle(const bool force, const string msg){//////////
 
 void AutopilotClass::connectionLost_(){ ///////////////// LOST
 
-	fprintf(Debug.out_stream,"connection lost\n");
+	cout << "connection lost\n";
 	//Out.println("CONNECTION LOST");
 	
 
@@ -825,7 +825,7 @@ return;
 }
 void AutopilotClass::calibration() {/////////////////////////////////////////////////////////////////////////////////////////////////
 
-	fprintf(Debug.out_stream,"Set Calibr NOT USET.\n");
+	cout << "Set Calibr NOT USET.\n";
 	/*
 	if (abs(cPitch + Commander.pitch) > 0.1 || abs(cRoll + Commander.roll) > 0.1)
 		return;
@@ -893,7 +893,7 @@ void AutopilotClass::horizont_tr() {
 
 bool AutopilotClass::selfTest(){/////////////////////////////////////////////////////////////////////////////////////////////////
 	//wdt_enable(WDTO_2S);
-	fprintf(Debug.out_stream,"Self Test running\n");
+	cout << "Self Test running\n";
 	int ok = 0;
 	if (Mpu.selfTest())
 		ok += 1;
@@ -946,7 +946,7 @@ bool AutopilotClass::start_stop_program(const bool stopHere){
 				res &= holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 				if (res) {
 					control_bits |= PROGRAM;
-					fprintf(Debug.out_stream, "prog started\n");
+					cout << "prog started\n";
 					return true;
 				}
 			}
@@ -961,13 +961,13 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 	if (bits==0)
 		return true;
 	//	uint8_t mask = control_bits_^bits;
-	//fprintf(Debug.out_stream,"comm=%i\n", bits);
+	//printf("comm=%i\n", bits);
 	if (MOTORS_ON&bits)  {
 		Hmc.do_compass_motors_calibr = false;
 		bool on = motors_is_on() == false;
 		on = motors_do_on(on, m_START_STOP);
 		if (on == false) {
-			fprintf(Debug.out_stream,"motors on denied!\n");
+			cout << "motors on denied!\n";
 		}
 	}
 
@@ -1033,7 +1033,7 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 
 int  AutopilotClass::reboot() {
 	if (motors_is_on() == false) {
-		fprintf(Debug.out_stream, "REBOOT \n");
+		cout << "REBOOT \n";
 		shmPTR->reboot = 1;
 		shmPTR->run_main = false;
 		return 0;
@@ -1042,7 +1042,7 @@ int  AutopilotClass::reboot() {
 }
 int  AutopilotClass::shutdown() {
 	if (motors_is_on() == false) {
-		fprintf(Debug.out_stream, "SHUTD \n");
+		cout << "SHUTD \n";
 		shmPTR->reboot = 2;
 		shmPTR->run_main = false;
 		return 0;
@@ -1052,7 +1052,7 @@ int  AutopilotClass::shutdown() {
 }
 int  AutopilotClass::exit() {
 	if (motors_is_on() == false) {
-		fprintf(Debug.out_stream, "EXIT \n");
+		cout << "EXIT \n";
 		shmPTR->reboot = 3;
 		shmPTR->run_main = false;
 		return 0;

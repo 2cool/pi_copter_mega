@@ -1,4 +1,4 @@
-#define PROG_VERSION "ver 3.180511_\n"
+#define PROG_VERSION "ver 3.180520\n"
 
 //#define ONLY_ONE_RUN
 #define SIM800_F
@@ -100,11 +100,12 @@ void video_stream() {
 		if (ret.find("1 received") != string::npos) {
 			ret = exec("ping -c 1 192.168.42.1");
 			if (ret.find("1 received") != string::npos) {
-				fprintf(Debug.out_stream, "try stream to %s\n", adr.c_str());
+				//printf( "try stream to %s\n", adr.c_str());
+				cout << "try stream to " << adr << endl;
 				
 				string s = "ffmpeg -rtsp_transport udp -i \"rtsp://192.168.42.1:554/live\" -c copy -f h264 udp://" + adr + ":554 > /dev/null 2>&1";
 				system(s.c_str());
-				fprintf(Debug.out_stream, "stream stoped\n");
+				cout<< "stream stoped\n";
 			}
 		}
 
@@ -113,7 +114,7 @@ void video_stream() {
 
 		*/
 
-		//fprintf(Debug.out_stream, "%s\n", ret.c_str());
+		//printf( "%s\n", ret.c_str());
 			
 	}
 }
@@ -172,22 +173,21 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	Settings.read();
 
 
-	fprintf(Debug.out_stream,"___setup___\n");
-	
+	cout << "___setup___\n";
 
 #ifdef WORK_WITH_WIFI
-//	fprintf(Debug.out_stream,"wifi init...\n");
+//	printf("wifi init...\n");
 //	if (WiFi.init())
 //		return -1;
 #endif
 
-	fprintf(Debug.out_stream,"commander init...\n");
+	cout << "commander init...\n";
 	Commander.init();
-	fprintf(Debug.out_stream,"Autopilot init...\n");
+	cout << "Autopilot init...\n";
 	Autopilot.init();
 	Telemetry.init_();
 	Telemetry.testBatteryVoltage();
-	fprintf(Debug.out_stream,"telemetry init OK \n");
+	cout << "telemetry init OK \n";
 
 	GPS.init();
 
@@ -210,7 +210,7 @@ void print_time() {
 		if (d > maxTT) {
 			\
 				maxTT = d; \
-				fprintf(Debug.out_stream,"%i\n",maxTT); \
+				cout << maxTT<<endl; \
 		}\
 }
 #ifndef WORK_WITH_WIFI
@@ -252,7 +252,10 @@ bool loop()
 #endif
 		Commander.input();
 		Autopilot.loop();
-		mega_i2c.gsm_loop();
+		//mega_i2c.gsm_loop();
+		if (shmPTR->sim800_reset_time > 0 && shmPTR->sim800_reset_time + 40000 < millis())
+			shmPTR->sim800_reset_time = 0;
+
 #ifdef FALSE_WIRE
 		usleep(3000);
 #endif
@@ -270,44 +273,73 @@ void handler(int sig) { // can be called asynchronously
 	flag = 1; // set flag
 }
 void pipe_handler(int sig) {
-	fprintf(Debug.out_stream, "pipe error\n");
+	cout << "pipe error\n";
 }
 
 
 
 
 int printHelp() {
-	printf("<-help> for this help\n");
-	printf(" <fly at start at hight in sm > <lower hight in sm> <f=write stdout to file > <log com and tel y/n> \n");
-	printf("example to write in log file : pi_copter 300 100 f n \n");
-	printf("example to write in stdout   : pi_copter 300 100 s n\n");
+	cout << "<-help> for this help\n";
+	cout << " <fly at start at hight in sm > <lower hight in sm> <f=write stdout to file > <log com and tel y> <start wifi> <start sms> <start log> <start telegram>\n";
+	cout << "example to write in log file : pi_copter 300 100 f n y y y y\n";
+	cout << "example to write in stdout   : pi_copter 300 100 s n y y y y\n";
 	return -1;
 }
+double last_wifi_reloaded = 0;
+string stdout_file = "";
+int inet_start_cnt = 0, wifi_start_cnt = 0;
 
+bool start_wifi = false, start_inet = false, start_loger = false, start_telegram = false;;
 void watch_dog() {
-	delay(1000);
+	delay(3000);
 	while (shmPTR->run_main) {
 		
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;
 		uint8_t internet_cnt = shmPTR->internet_cnt;
 		delay(2000);
-		if (wifi_cnt == shmPTR->wifi_cnt) {
-			printf("--------------wifi starting\n");
-			system("pkill wifi_p");
-			int ret=system("/root/projects/wifi_p &");
+		if (start_wifi)
+			if (wifi_cnt == shmPTR->wifi_cnt  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
+				last_wifi_reloaded = Mpu.timed;
+				cout << "--------------wifi starting\n";
+				system("pkill wifi_p");
+				string t = "/root/projects/wifi_p ";
+				//if (stdout_file.length()) {
+			//		t += stdout_file + "wifi_"+to_string(wifi_start_cnt++);
+				//}
+				t += " &";
+				int ret=system(t.c_str());
 
-		}
-		if (internet_cnt == shmPTR->internet_cnt) {
+			}
+		if (start_inet)
+			if (internet_cnt == shmPTR->internet_cnt) {
 
-			printf("--------------ppp starting\n");
-
-			system("pkill ppp_p");
-			int ret = system("/root/projects/ppp_p &");
-
-			//int ret = system("/root/projects/pi_copter_internet/bin/ARM/Debug/pi_copter_internet.out &");
-		}
+				cout << "--------------ppp starting\n";
+				system("pkill ppp_p");
+				string t = "/root/projects/ppp_p ";
+				if (start_loger)
+					t += "y";
+				else
+					t += "n";
+				t += " ";
+				if (start_telegram)
+					t += "y";
+				else
+					t += "n";
+				t+=" ";
+				if (stdout_file.length()) {
+					t += stdout_file + "inet_"+to_string(inet_start_cnt++);
+				}
+				t += " &";
+				int ret = system(t.c_str());
+			
+			}
 	}
 }
+std::ofstream out;
+std::streambuf *coutbuf;// старый буфер
+
+
 
 
 int main(int argc, char *argv[]) {
@@ -323,9 +355,9 @@ int main(int argc, char *argv[]) {
 	tl.detach();
 
 	string fname;
-	printf(PROG_VERSION);
+	cout << PROG_VERSION << endl;
 
-shmPTR->connected = 0;
+		shmPTR->connected = 0;
 		shmPTR->fly_at_start = 3;
 		shmPTR->lowest_altitude_to_fly = 1.6f;
 		Debug.n_debug = 0;
@@ -337,7 +369,7 @@ shmPTR->connected = 0;
 			if (tt == 0) {
 				return printHelp();
 			}
-			if (argc >= 6) {
+			if (argc >= 9) {
 				int t = atoi(argv[1]);
 				t = constrain(t, 300, 300);/////
 				shmPTR->fly_at_start = 0.01f*(float)t;
@@ -346,7 +378,7 @@ shmPTR->connected = 0;
 				shmPTR->lowest_altitude_to_fly = 0.01f*(float)t;
 				if (shmPTR->lowest_altitude_to_fly > shmPTR->fly_at_start)
 					shmPTR->lowest_altitude_to_fly = shmPTR->fly_at_start;
-#define LOG_COUNTER_NAME "/home/igor/logs/logCounter.txt"
+#define LOG_COUNTER_NAME "/home/igor/logs/logCounter"
 
 				FILE *set = fopen(LOG_COUNTER_NAME, "r");
 				if (set) {
@@ -378,7 +410,7 @@ shmPTR->connected = 0;
 					remove(LOG_COUNTER_NAME);
 				}
 				else {
-					printf("no counter file");
+					cout << "no counter file";
 					return 0;
 				}
 
@@ -392,23 +424,25 @@ shmPTR->connected = 0;
 					convert << "/home/igor/logs/log_out" << counter << ".txt";
 					fname = convert.str();
 
-					Debug.out_stream = fopen(fname.c_str(), "w+");
+					//Debug.out_stream = fopen(fname.c_str(), "w+");
+					stdout_file = fname;
+					out = std::ofstream(fname.c_str()); //откроем файл для вывод
+					coutbuf = std::cout.rdbuf(); //запомним старый буфер
+					std::cout.rdbuf(out.rdbuf()); //и теперь все будет в файл!
 				}
-				else
-					Debug.out_stream = stdout;
-
 				Log.writeTelemetry = (argv[4][0] == 'y' || argv[4][0] == 'Y');
-
-
-
+				start_wifi = (argv[5][0] == 'y' || argv[5][0] == 'Y');
+				start_inet = (argv[6][0] == 'y' || argv[6][0] == 'Y');
+				start_inet |= start_loger=(argv[7][0] == 'y' || argv[7][0] == 'Y');
+				start_inet |= start_telegram=(argv[8][0] == 'y' || argv[8][0] == 'Y');
 			}
 
 		}
 		else
 			return printHelp();
 
-		fprintf(Debug.out_stream, PROG_VERSION);
-		fprintf(Debug.out_stream, "picopter par: %s %s %s %s\n", argv[1], argv[2], argv[3], argv[4]);
+		cout << PROG_VERSION << endl;
+		cout << "picopter par: " << argv[1] << " " << argv[2] << " " << argv[3] << " " << argv[4] << endl;
 	
 	if (signal(SIGINT, handler) == SIG_ERR) {
 		return EXIT_FAILURE;
@@ -454,33 +488,33 @@ shmPTR->connected = 0;
 				int32_t time_past = (int32_t)(t - old_time4loop);
 				old_time4loop = t;
 				//if (time_past > 15000)
-				//	fprintf(Debug.out_stream,"too long %i\n",time_past);
+				//	printf("too long %i\n",time_past);
 
 				//Debug.load(0, time_past, 0);
 				//Debug.dump();
 			}
 			if (flag)
 				shmPTR->run_main = false;
-			if (shmPTR->run_main == false) {
+		/*	if (shmPTR->run_main == false) {
 				if (ppp_delay != 0 && millis() - ppp_delay > 5000)
 					break;
 				if (ppp_delay == 0 && shmPTR->inet_ok == false)
 					ppp_delay = millis();
 					
-			}
+			}*/
 		}
 	}
 
 
 	if (flag!=0)
-		fprintf(Debug.out_stream, "\n main Signal caught!\n");
+		cout<< "\n main Signal caught!\n";
 	//WiFi.stopServer();
 	Settings.write();
 	Log.close();
 	usleep(5000000);
 
 	if (shmPTR->run_main==false)
-		fprintf(Debug.out_stream, "\n exit\n");
+		cout<< "\n exit\n";
 	if (string(argv[0]).find("out") == -1) {
 		if (shmPTR->reboot) {
 			switch (shmPTR->reboot) {
@@ -495,10 +529,11 @@ shmPTR->connected = 0;
 			
 		}
 	}
-	fflush(Debug.out_stream);
-	fclose(Debug.out_stream);
+	//fflush(Debug.out_stream);
+	//fclose(Debug.out_stream);
 
 	//close_shmPTR();
+	out.close();
 	return 0;
 
 }

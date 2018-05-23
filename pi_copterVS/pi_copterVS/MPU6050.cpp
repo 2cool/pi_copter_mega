@@ -49,9 +49,9 @@ int MPU6050::initialize() {
     setSleepEnabled(false); // thanks to Jack Elston for pointing this one out!
     if (testConnection())
     {
-		fprintf(Debug.out_stream,"MPU6050 connection successful\n");
+		printf("MPU6050 connection successful\n");
 	}else{
-		fprintf(Debug.out_stream,"MPU6050 connection failed\n");
+		printf("MPU6050 connection failed\n");
 		return -1;
 	}
 	//setDLPFMode(MPU6050_DLPF_BW_188);
