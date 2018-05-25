@@ -62,9 +62,9 @@ void GPSClass::loop(){
 		loc.mseconds = gpsttime;
 	else
 		return;
-	loc.accuracy_hor_pos_ = 0;
-	loc.accuracy_ver_pos_ = 1;
-	loc.altitude = Emu.get_alt();
+	shmPTR->accuracy_hor_pos_=loc.accuracy_hor_pos_ = 0;
+	shmPTR->accuracy_ver_pos_=loc.accuracy_ver_pos_ = 1;
+	shmPTR->gps_altitude=loc.altitude = Emu.get_alt();
 
 
 
@@ -97,8 +97,8 @@ void GPSClass::loop(){
 		lat = FALSE_LAT + (long)(loc.from_X2Lat(Emu.get_x()));
 		lon = FALSE_LON + (long)(loc.from_Y2Lon(Emu.get_y()));
 #endif
-		loc.lat_ = lat;
-		loc.lon_ = lon;
+		shmPTR->lat_=loc.lat_ = lat;
+		shmPTR->lon_=loc.lon_ = lon;
 		loc.updateXY();
 
 			if (Log.writeTelemetry) {

@@ -50,7 +50,7 @@ int init_shmPTR() {
 
 //thread t;
 
-bool stopServer();
+
 
 bool newConnection_;
 bool is_connected(void) { return shmPTR->connected>0; }
@@ -68,11 +68,7 @@ void pipe_handler(int sig) {
 	cout << "wifi pipe error\n";
 }
 
-void error(const char *msg)
-{
-	perror(msg);
-	exit(1);
-}
+
 
 
 uint32_t start_seconds = 0;
@@ -131,6 +127,7 @@ string log_fname;
 
 void mclose() {
 
+	
 	cout << "server stoped\n";
 	wifi_connections--;
 	close(newsockfd);
@@ -156,7 +153,7 @@ int new_server() {
 	
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) {
-		cout << "ERROR opening socket/n";
+		//cout << "ERROR opening socket/n";
 		wifi_connections--;
 		return -1;
 	}
@@ -167,7 +164,7 @@ int new_server() {
 	serv_addr.sin_addr.s_addr = INADDR_ANY;//inet_addr(adr.c_str());
 	serv_addr.sin_port = htons(portno);
 	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		cout << "ERROR on binding/n";
+		//cout << "ERROR on binding/n";
 		wifi_connections--;
 		return -1;
 	}
@@ -191,12 +188,7 @@ bool wite_connection() {
 	return false;
 }
 
-bool run = true;
-bool stopServer() {
-	run = false;
-	mclose();
 
-}
 uint32_t wifiold_t = 0;
 
 
@@ -274,10 +266,20 @@ void server() {
 
 void watch_d() {
 
+
+
+	uint old_main_cnt = shmPTR->main_cnt - 1;
 	while (true) {
 		shmPTR->wifi_cnt++;
+		if (shmPTR->main_cnt == old_main_cnt) {
+			flag = 1;
+			cout << "main dont update cnt! EXIT\n";
+			return;
+		}
+		old_main_cnt = shmPTR->main_cnt;
 		delay(100);
 	}
+
 }
 
 std::ofstream out;
@@ -318,7 +320,9 @@ int main(int argc, char *argv[])
 	shmPTR->wifibuffer_data_len_4_write = 0;
 
 	//cout << "server started...\n";
-	server();
+	delay(400);
+	if (flag==0)
+		server();
 
 
 	shmdt((void *)shmPTR);

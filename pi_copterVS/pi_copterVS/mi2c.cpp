@@ -304,13 +304,14 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 	if (last_ring_time > 0 && last_ring_time + 10 < Mpu.timed) {
 		last_ring_time = 0;
 		shmPTR->stop_ppp_read_sms_start_ppp = true;
+		cout << "RING_BIT sended...\n";
 		
 	}
 
 
 	if (bit_field & 1 && shmPTR->sim800_reset_time == 0) {
 		if (last_ring_time==0)
-			cout << "RINGk_BIT\n";//при заходе смс при ppp
+			cout << "RING_BIT\n";//при заходе смс при ppp
 		last_ring_time = Mpu.timed;
 		
 		///stop servises, stop ppp? read sms and do. start ppp and services again

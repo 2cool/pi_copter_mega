@@ -1,4 +1,4 @@
-#define PROG_VERSION "ver 3.180520\n"
+#define PROG_VERSION "ver 3.180524\n"
 
 //#define ONLY_ONE_RUN
 #define SIM800_F
@@ -301,7 +301,7 @@ void watch_dog() {
 		if (start_wifi)
 			if (wifi_cnt == shmPTR->wifi_cnt  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
 				last_wifi_reloaded = Mpu.timed;
-				cout << "--------------wifi starting\n";
+				//cout << "--------------wifi starting\n";
 				system("pkill wifi_p");
 				string t = "/root/projects/wifi_p ";
 				//if (stdout_file.length()) {
@@ -476,7 +476,7 @@ int main(int argc, char *argv[]) {
 
 
 		static uint32_t ppp_delay=0;
-		while (true){
+		while (shmPTR->run_main){
 			if (loop()) {
 				shmPTR->main_cnt++;
 				//usleep(5400);
@@ -495,13 +495,6 @@ int main(int argc, char *argv[]) {
 			}
 			if (flag)
 				shmPTR->run_main = false;
-		/*	if (shmPTR->run_main == false) {
-				if (ppp_delay != 0 && millis() - ppp_delay > 5000)
-					break;
-				if (ppp_delay == 0 && shmPTR->inet_ok == false)
-					ppp_delay = millis();
-					
-			}*/
 		}
 	}
 
@@ -511,7 +504,7 @@ int main(int argc, char *argv[]) {
 	//WiFi.stopServer();
 	Settings.write();
 	Log.close();
-	usleep(5000000);
+	sleep(3);
 
 	if (shmPTR->run_main==false)
 		cout<< "\n exit\n";
@@ -526,12 +519,8 @@ int main(int argc, char *argv[]) {
 				break;
 
 			}
-			
 		}
 	}
-	//fflush(Debug.out_stream);
-	//fclose(Debug.out_stream);
-
 	//close_shmPTR();
 	out.close();
 	return 0;

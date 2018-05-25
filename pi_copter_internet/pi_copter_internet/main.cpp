@@ -59,11 +59,26 @@ using namespace std;
 //#define FORTEST
 
 #ifdef FORTEST
-#include "../../../../repos/pi_copter_mega/pi_copterVS/pi_copterVS/glob_header.h"
+#include "../../../../2coolz/pi_copter_mega/pi_copterVS/pi_copterVS/glob_header.h"
 
 #else
 #include "../pi_copterVS/glob_header.h"
 #endif
+
+
+
+
+
+//http://www.cprogramming.com/tutorial/lesson10.html
+volatile sig_atomic_t flag = 0;
+void handler(int sig) { // can be called asynchronously
+	flag = 1; // set flag
+}
+void pipe_handler(int sig) {
+	cout << "wifi pipe error\n";
+}
+
+
 
 
 
@@ -144,42 +159,11 @@ void delay(unsigned long t) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int stop_ppp();
-
-string cyr[] = {
-	"A","B","V","G","D","E","ZH","Z","I","J","K","L","M","N","O","P","R","S","T","U","F","X","C","CH","SH","SHH","\"","Y","'","EH","YU","YA",
-	"a", "b", "v", "g", "d", "e", "zh", "z", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f", "x", "c", "ch", "sh", "shh", "\"", "y", "'", "eh", "yu", "ya" };
-
-string unicod2trasns(string text) {
-	if (text.length() < 4)
-		return "";
-	int pos;
-	string out = "";
-	for (int p = 0; p < text.length(); p += 4) {
-		if (text.substr(p, 2).compare("04") == 0) {
-			int c = stoi(text.substr(p + 1, 3), nullptr, 16) - 0x410;
-			if (c < 0 || c >= 64) if (c < 0 || c >= 64) {
-				//out += text.substr(p, 4);
-				out += "?";
-				continue;
-			}
-			out += cyr[c];
-		}
-		else if (text.substr(p, 2).compare("00") == 0) {
-			char c = (char)(stoi(text.substr(p + 1, 3), nullptr, 16) - 0x400);
-			out += c;
-		}
-	}
-	return out;
-}
 
 
 
 
-
-
-
-static unsigned int messages_counter = 0;
+static unsigned int telegram_cnt = 0;
 
 string sms_phone_number;
 string sms_mes;
@@ -187,67 +171,8 @@ string sms_mes;
 static const std::string head = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/";
 static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_id=241349746&text=";
 
-int _sms_n;
-bool _delite_sms_n, _just_do_it;
+volatile int _sms_n;
 
-
-int send_command(string &mes, bool resp_more = false, int timeout = 5000) {
-	int fd_in = open("/dev/tnt0", O_RDWR | O_NOCTTY | O_SYNC);
-	if (fd_in < 0)
-	{
-		cout << "error "<< errno <<" opening /dev/tnt0: "<< strerror(errno);
-		mes = "error";
-		return -1;
-	}
-	write(fd_in, mes.c_str(), mes.length());
-	mes = "";
-	int tcur;
-	int tlast_upd = tcur = millis();
-	int ok;
-	while (tcur - tlast_upd < timeout) {
-		ok = -1;
-		int a_in;
-		delay(10);
-		tcur = millis();
-		ioctl(fd_in, FIONREAD, &a_in);
-		if (a_in) {
-			tlast_upd = tcur;
-			char buf[256];
-			int av = read(fd_in, &buf, a_in);
-
-
-
-			mes += string(buf, av);
-
-			//printf( "%s", mes.c_str());
-
-
-			int  err = ok = -1;
-			if (resp_more) {
-				int pos = max(0, mes.length() - 3);
-				ok = mes.find("> ", pos);
-			}
-			else {
-				int pos = max(0, mes.length() - 5);
-				ok = mes.find("OK\r\n", pos);
-				pos = max(0, mes.length() - 8);
-				err = mes.find("ERROR\r\n", pos);
-			}
-			if (ok >= 0 || err >= 0) {
-
-				for (int i = 0; i < mes.length(); i++)
-					if (mes[i] == '\r')// || mes[i] == '\n')
-						mes[i] = ' ';
-				//printf("%s\n",mes.c_str());
-				break;
-			}
-		}
-	}
-
-
-	close(fd_in);
-	return (ok >= 0) ? 0 : -1;
-}
 
 inline bool space(char c) {
 	return std::isspace(c);
@@ -260,115 +185,19 @@ inline bool notspace(char c) {
 string mes2send;
 string telNumber;
 void sendsms() {
+
 	/*
-	AT+CMGF=1
-	AT+CMGS="+380661140320\r"
-	>
-	"hello world"+char(26)
-	+CMGS: 62
+	gammu sendsms TEXT 601xxx555 -text "To is TESTING. A SMS that is!"
 	*/
-	string mes = "AT+CMGF=1\r";
-	int res = send_command(mes);
-	if (res == 0) {
-		cout << mes << endl;
-		mes = "AT+CMGS=\"" + sms_phone_number + "\"\r\n";
-		res = send_command(mes, true);
-		if (res == 0) {
-			cout << mes << " ";
-			mes = mes2send + char(26);
-			res = send_command(mes);
-			cout << mes << endl;
-			if (res == 0) {
-				;// printf( "%s\n", mes.c_str());
 
-			}
-			else
-				cout << "ERROR3\n";
-		}
-		else
-			cout << "ERROR2\n";
-	}
-	else
-		cout << "ERROR1\n";
+	string com = "gammu sendsms TEXT " + sms_phone_number + " -text \"" + mes2send + "\"";
+	string ret=exec(com);
 
 }
 
 
-string get_next_sms(string mes)
-{
-	static int pos = 0;
-	if (pos == 0)
-		pos = mes.find("+CMGL: ");
-	if (pos == -1)
-		return "";
-	int next = mes.substr(pos + 8).find("+CMGL: ") + pos + 9;
 
 
-	return mes;
-}
-
-void readallsms() {
-	string mes = "AT+CMGF=1\r";
-	int res = send_command(mes);
-	if (res == 0) {
-		mes = "AT+CMGL=\"ALL\"\r";
-		res = send_command(mes);
-		if (res == 0) {
-
-			cout << mes << endl;
-
-			if (_delite_sms_n) {
-				mes = "AT+CMGDA=\"DEL ALL\"\r";
-				res = send_command(mes);
-				if (res == 0) {
-					cout << mes << endl;
-				}
-			}
-		}
-	}
-
-}
-
-int parse_sms_msg(string mes) {
-	int pos = mes.find("+CMGR:") + 1;
-	if (pos > 0) {
-		int num_pos = mes.substr(pos).find("\",\"");
-		if (num_pos >= 0) {
-			int num_end = mes.substr(pos + num_pos + 3).find("\",\"");
-			if (num_end >= 0) {
-				sms_phone_number = mes.substr(pos + num_pos + 3, num_end);
-
-
-
-				cout << "phone number "<<sms_phone_number <<":\t";
-
-				if (sms_phone_number.find("+380") == string::npos)
-					sms_phone_number = "+380973807646";
-
-				pos += num_pos + 3 + num_end;
-				int mes_beg = mes.substr(pos).find("\n") + 1;
-				if (mes_beg >= 1) {
-					int end_beg = mes.substr(pos + mes_beg).find("\nOK") - 2;
-					if (end_beg > 0) {
-						sms_mes = mes.substr(pos + mes_beg, end_beg);
-						if (sms_mes.length()>4 && sms_mes.c_str()[0] == '0' && (sms_mes.c_str()[1] == '0' || sms_mes.c_str()[1] == '4')) {
-							string text = unicod2trasns(sms_mes);
-							if (text.length() > 0 && sms_mes.length() / text.length() >= 3) {
-								sms_mes = text;
-								end_beg = text.length();
-							}
-						}
-						cout << sms_mes;
-						return  end_beg;
-					}
-				}
-			}
-		}
-	}
-	sms_phone_number = "";
-	sms_mes = "";
-	return -1;
-}
 //-----------------------------------------------
 string getLocation() {
 	std::string req = "lat:" + std::to_string(shmPTR->lat_) + " lon:" + std::to_string(shmPTR->lon_) + " alt:" + std::to_string((int)shmPTR->altitude) + " hor:" + std::to_string((int)shmPTR->accuracy_hor_pos_);
@@ -391,7 +220,7 @@ void add_stat(string &send) {
 
 }
 string down_case(string &str) {
-	for (int i = 0; i < str.length(); i++) {
+	for (uint i = 0; i < str.length(); i++) {
 		if (str[i] >= 65 && str[i] <= 90)
 			str[i] += 32;
 	}
@@ -435,57 +264,149 @@ void parse_messages_(string message, string &send) {
 
 //-----------------------------------------------------------------------------
 void parse_sms_command() {
-	if (_just_do_it) {
-		mes2send = "";
-		parse_messages_(sms_mes, mes2send);
-		if (mes2send.length()>0)
-			sendsms();
-		_just_do_it = false;
-		sms_phone_number = "";
-		sms_mes = "";
-	}
+
+	mes2send = "";
+	parse_messages_(sms_mes, mes2send);
+	if (mes2send.length()>0)
+		sendsms();
+	sms_phone_number = "";
+	sms_mes = "";
+	
 }
 
+
+/*
+
+root@2cool:~# gammu —getsms 0 2
+Location 2, folder "Inbox", SIM memory, Inbox folder
+SMS message
+SMSC number          : "+38050000402"
+Sent                 : Wed 23 May 2018 11:37:10 AM  +0300
+Coding               : Unicode (no compression)
+Remote number        : "Vodafone"
+Status               : Read
+User Data Header     : Concatenated (linked) message, ID (8 bit) 157, part 2 of 3
+
+іх умов тарифу поповніть рахунок від 40 гривень. Деталі: www.vodafo
+
+
+root@2cool:~# gammu —getsms 0 4
+Location 4, folder "Inbox", SIM memory, Inbox folder
+SMS message
+SMSC number          : "+380672021111"
+Sent                 : Wed 23 May 2018 12:02:12 PM  +0300
+Coding               : Default GSM alphabet (no compression)
+Remote number        : "+380973807646"
+Status               : Read
+
+Stat
+
+
+=============================
+
+
+
+0 SMS parts in 0 SMS sequences
+root@2cool:~/projects/pi_copter_internet# gammu getallsms
+Location 1, folder "Inbox", SIM memory, Inbox folder
+SMS message
+SMSC number          : "+38050000401"
+Sent                 : Thu 24 May 2018 12:50:13 PM  +0300
+Coding               : Unicode (no compression)
+Remote number        : "Internet"
+Status               : UnRead
+User Data Header     : Concatenated (linked) message, ID (8 bit) 222, part 1 of 2
+
+ttttt Увага! ПрАТ «ВФ Україна» не несе відповідальності за текст
+
+Location 2, folder "Inbox", SIM memory, Inbox folder
+SMS message
+SMSC number          : "+38050000401"
+Sent                 : Thu 24 May 2018 12:50:18 PM  +0300
+Coding               : Unicode (no compression)
+Remote number        : "Internet"
+Status               : UnRead
+User Data Header     : Concatenated (linked) message, ID (8 bit) 222, part 2 of 2
+
+повідомлення.
+
+
+
+
+
+
+
+
+
+
+
+
+
+gammu deletesms 0 2 2
+
+
+*/
+
 int readsms_n() {
-	int ret = -1;
-
-
 	
 
 
-	string mes = "AT+CMGF=1\r";
-	int res = send_command(mes);
-	if (res == 0) {
-		mes = "AT+CMGR=" + to_string(_sms_n) + "\r";
-		res = send_command(mes);
-		if (res == 0) {
-			ret = parse_sms_msg(mes);
-			//printf( "%s\n", mes.c_str());
-
-			if (ret != -1) {
-				parse_sms_command();
-				if (_delite_sms_n) {
-					mes = "AT+CMGD=" + to_string(_sms_n) + "\r";
-					res = send_command(mes);
-					if (res == 0) {
-						cout << " - del";
-						//printf( "%s\n", mes.c_str());
-					}
-				}
-				cout << endl;
-			}
-
-		}
-
+	string str = "gammu getsms 0 " +to_string(_sms_n);
+	str = exec(str);
+	if (str.length() < 20) {
+		return -1;
 	}
-	return ret;
+	string tttt;
+	//int smsc_number =	str.find("SMSC number          : \"");
+	std::size_t  remote_number =  str.find("Remote number        : \"");
+	std::size_t status =		  str.find("Status               : ");
+	if (status != string::npos)
+		if (str.c_str()[23] == 'U') {
+
+			if (remote_number != string::npos) {
+				remote_number += 24;
+				std::size_t len = str.substr(remote_number).find("\"");
+				if (len != string::npos) {
+					sms_phone_number = str.substr(remote_number, len);
+					if (sms_phone_number.find("+380") == string::npos)
+						sms_phone_number = "+380973807646";
+
+
+
+				}
+				else
+					return -1;
+			}
+			else
+				return -1;
+
+			std::size_t mess = str.find("\n\n");
+			if (mess != string::npos) {
+				std::size_t len = str.substr(mess + 2).find("\n\n");
+				if (len != string::npos) {
+					sms_mes = str.substr(mess + 2, len);
+				}
+				else
+					return -1;
+			}
+			else
+				return -1;
+
+			parse_sms_command();
+		}
+		string com = "gammu deletesms 0 " + to_string(_sms_n);
+		system(com.c_str());
+		
+		
+	return 0;
+
 }
 
 void readsms() {
 	if (_sms_n > 0)
 		readsms_n();
 	else {//read all
-		
+
 		for (int i = 1; i <= 20; i++) {
 			_sms_n = i;
 			if (readsms_n() == -1)
@@ -499,12 +420,7 @@ void sendSMS(string message) {
 	shmPTR->sms_at_work = 2;
 
 }
-void readSMS(int n, bool and_del, bool just_do_it) {
-	_sms_n = n;
-	_delite_sms_n = and_del;
-	_just_do_it = just_do_it;
-	shmPTR->sms_at_work = 1;
-}
+
 
 void send_sos(string msg) {
 	sos_msg = msg;
@@ -530,8 +446,6 @@ void _stop_ppp_read_sms_start_ppp() { // external
 
 	cout << "inet off\n";
 	_sms_n = 0;
-	_delite_sms_n = true;
-	_just_do_it = true;
 	shmPTR->sms_at_work = 1;
 
 	while (shmPTR->sms_at_work) {
@@ -569,38 +483,27 @@ void sms_loop() {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-volatile bool telegram_run;
+
 void telegram_loop() {
-	static int old_message_len = 0;
-	static int last_alt = 0;
-	static uint32_t last_update = millis(), last_time_loc_send = 0;
-	static double last_dist2home2 = 0;
+	static uint old_message_len = 0;
+	static uint32_t last_update = 0;
 
-
-
-
-
-
-	telegram_run = true;
+	shmPTR->telegram_run = true;
 
 	while (true) {
 
 
-		while (/*GPS.loc.lon_home == 0 || GPS.loc.lat_home == 0 || WiFi.connectedF() ||*/ shmPTR->inet_ok == false || telegram_run == false) {
-			if (messages_counter > 0)
-				cout << "telegram bot stoped\n";
+		while ( shmPTR->inet_ok == false || shmPTR->telegram_run == false) {
 			delay(100);
-			messages_counter = 0;
-			last_alt = 0;
-			last_dist2home2 = 0;
+			telegram_cnt = 0;
 		}
 
-		if (messages_counter == 0)
-			cout << "telegram bot started\n";
-
+		
+			
+		delay(100);
 		uint32_t time = millis();
 		//commander
-		if (time - last_update > 5000) {
+		if (time - last_update > 15000) {
 			//printf("upd\n");
 			last_update = time;
 			std::string upd = "" + exec(head + "getUpdates\"");
@@ -611,10 +514,10 @@ void telegram_loop() {
 				if (old_message_len < upd.length()) {
 					old_message_len = upd.length();
 					//int dat_pos = 6 + upd.rfind("date\":");
-					int mes_pos = upd.rfind(",\"text\":\"");
+					uint mes_pos = upd.rfind(",\"text\":\"");
 					if (mes_pos != string::npos) {
 						mes_pos += 9;
-						const int mes_end = upd.rfind("\"}}");
+						const uint mes_end = upd.rfind("\"}}");
 						if (mes_end != string::npos && mes_end > mes_pos) {
 							std::string send = htext;
 							std::string message = upd.substr(mes_pos, mes_end - mes_pos);
@@ -624,18 +527,17 @@ void telegram_loop() {
 								send = exec(send + " \"");
 								//raise(SIGPIPE);
 							}
-							//messages_counter++;
 						}
 					}
-
 				}
-			if (messages_counter == 0) {
-				std::string send = exec(htext + "copter bot started" + "\"");
-				//messages_counter++;
-			}
+			
 
 		}
-		messages_counter++;
+		if (telegram_cnt == 0) {
+			std::string send = exec(htext + "bot started\"");
+			cout << "telegram bot started\n";
+		}
+		telegram_cnt++;
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -646,7 +548,7 @@ GT02 Communication Protocol
 unsigned short serial_n = 1;
 static unsigned char com[42] = { 0x68,0x68, 0x25, 0,0, 0x08,0x66,0x26,0x20,0x31,0x36,0x98,0x45, 00,01, 0x10, 0x12, 0x04, 0x21, 0x9, 0x21, 0x00, 0,0,0,0, 0,0,0,0, 0,    0,0,   0,0,0, 0,0,0,0, 0x0D, 0x0A };
 void getCommunication() {
-	static char N = 9;
+	
 	std::time_t t = std::time(0);
 	std::tm* now = std::localtime(&t);
 	/*std::cout << (now->tm_year + 1900) << '-'	<< (now->tm_mon + 1) << '-'	<< now->tm_mday<< " " <<now->tm_hour<<":"<<now->tm_min<<":"<<now->tm_sec<< "\n";*/
@@ -706,8 +608,7 @@ void loger_loop() {
 
 
 
-	int sockfd_loger;
-	static double  last_dist2home2 = 0;
+	int sockfd_loger=0;
 	shmPTR->loger_run = true;
 
 	while (true) {
@@ -715,16 +616,21 @@ void loger_loop() {
 
 		while (shmPTR->inet_ok == false || shmPTR->loger_run == false) {
 			delay(100);
-			if (serial_n > 1)
+			if (serial_n > 1) {
 				cout << "loger stoped\n";
+				if (sockfd_loger != 0) {
+					close(sockfd_loger);
+					sockfd_loger = 0;
+				}
+			}
 			serial_n = 1;
 		}
 		if (serial_n <= 1)
 			cout << "loger started\n";
 
-		if (false)//GPS.loc.accuracy_hor_pos_>MIN_ACUR_HOR_POS_4_JAMM || abs(GPS.loc.dist2home_2 - last_dist2home2) < max(625, GPS.loc.accuracy_hor_pos_*GPS.loc.accuracy_hor_pos_))
-			continue;
-		last_dist2home2 = shmPTR->dist2home_2;
+	//	if (false)//GPS.loc.accuracy_hor_pos_>MIN_ACUR_HOR_POS_4_JAMM || abs(GPS.loc.dist2home_2 - last_dist2home2) < max(625, GPS.loc.accuracy_hor_pos_*GPS.loc.accuracy_hor_pos_))
+	//		continue;
+
 		if (serial_n == 1) {
 			struct sockaddr_in serv_addr;
 			struct hostent *server;
@@ -763,6 +669,7 @@ void loger_loop() {
 			serial_n = 1;
 			continue;
 		}
+
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -786,9 +693,9 @@ int start_ppp() {
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 static int no_inet_errors = 0;
-int stop_ppp() {
+int stop_ppp(bool test_inet=true) {
 
-	if (shmPTR->inet_ok == false)
+	if (test_inet && shmPTR->inet_ok == false)
 		return 0;
 
 
@@ -807,7 +714,7 @@ void test_ppp_inet_and_local_loop() {
 	int n = 2;
 	int ln = 2;
 	while (shmPTR->ppp_run && shmPTR->run_main) {
-		delay(5000);
+		delay(15000);
 		string ret = exec("ping -w 5 -c 1 8.8.8.8");
 		if (ret.find("1 received") == string::npos) {
 			if (--n <= 0) {
@@ -821,10 +728,10 @@ void test_ppp_inet_and_local_loop() {
 				cout << "internet OK\n";
 				shmPTR->inet_ok = true;
 			}
-
-			delay(10000);
 			n = 2;
 			no_inet_errors = 0;
+			delay(3000);
+			
 		}
 
 		ret = exec("ping -w 1 -c 1 192.168.43.1");
@@ -850,16 +757,19 @@ void ppp_loop() {
 
 
 
-	while (shmPTR->run_main) {
+	while (shmPTR->run_main && flag==0) {
 		while (shmPTR->sms_at_work )
 			delay(100);
 
 		//stop_ppp();
 		start_ppp();
 		test_ppp_inet_and_local_loop();
-		stop_ppp();
-		if (no_inet_errors >= 3) {
+		stop_ppp(false);
+		if (no_inet_errors >= 2) {
 			no_inet_errors = 0;
+			system("poff -a");
+			sleep(3);
+			system("pkill gammu");
 			shmPTR->sim800_reset = true;
 		}
 
@@ -870,19 +780,19 @@ void ppp_loop() {
 
 	}
 }
-//sendSMS("hi2all");
-//readSMS(1, true);
-
-//readAllSMS();
-//string cyr=unicod2trasns("041204380020043A043E044004380441044204430454044204350441044C0020043E0431043C043504360435043D0438043C00200434043E044104420443043F043E043C00200434043E00200406043D044204350440043D043504420443002E00200414043B044F0020043F04560434043A043B044E04470435043D043D044F002004320441");
-//printf("%s\n", cyr.c_str());
-
 
 //////////////////////////////////////////////////////////////////////////////////////
-void watch_d() {
 
+void watch_d() {
+	uint old_main_cnt= shmPTR->main_cnt-1;
 	while (true) {
 		shmPTR->internet_cnt++;
+		if (shmPTR->main_cnt == old_main_cnt) {
+			flag=1;
+			cout << "main dont update cnt! EXIT\n";
+			return;
+		}
+		old_main_cnt = shmPTR->main_cnt;
 		delay(100);
 	}
 }
@@ -891,6 +801,16 @@ void watch_d() {
 std::ofstream out;
 std::streambuf *coutbuf;// старый буфер
 
+void deleteAllSMS() {
+	for (int i = 1; i <= 20; i++) {
+		string com = "gammu deletesms 0 " + to_string(i);;
+
+		string ret=exec(com);
+		cout << ret << endl;
+		if (ret.length() > 0 && ret.find("Entry is empty") != string::npos)
+			break;
+	}
+}
 
 int main(int argc, char *argv[])//lat,lon,.......
 {
@@ -907,6 +827,13 @@ int main(int argc, char *argv[])//lat,lon,.......
 		std::cerr.rdbuf(out.rdbuf());
 	}
 
+	if (signal(SIGINT, handler) == SIG_ERR) {
+		return EXIT_FAILURE;
+	}
+	if (signal(SIGPIPE, pipe_handler) == SIG_ERR) {
+		return EXIT_FAILURE;
+	}
+
 	static bool stop_start = false;
 	if (init_shmPTR())
 		return 0;
@@ -915,18 +842,37 @@ int main(int argc, char *argv[])//lat,lon,.......
 
 //	if (shmPTR->internet_run)
 //		return 0;
-	shmPTR->internet_run = true;
 
-	shmPTR->inet_ok = false;
+
 
 	thread wd(watch_d);
 	wd.detach();
 
-	readSMS(0, true, false);
+	delay(400);
+	if (flag)
+		return 0;
+
+	system("poff -a");
+	sleep(3);
+	system("gammu getallsms");
+	deleteAllSMS();
+
+	
+	shmPTR->inet_ok = false;
+	shmPTR->internet_run = false;
+	shmPTR->loger_run = false;
+	shmPTR->telegram_run = true;
+	shmPTR->sms_at_work = 0;
+
+
+	
+
+
 	cout << "start sms loop\n";
 	thread tsms(sms_loop);
 	tsms.detach();
 	if (start_loger || start_telegram) {
+		shmPTR->internet_run = true;
 		cout << "start ppp loop\n";
 		thread tppp(ppp_loop);
 		tppp.detach();
@@ -943,9 +889,10 @@ int main(int argc, char *argv[])//lat,lon,.......
 	}
 
 
-	while ( shmPTR->run_main) {
+	while ( shmPTR->run_main && flag==0) {
 		if ( stop_start == false && shmPTR->stop_ppp_read_sms_start_ppp ) {
 			stop_start = true;
+			cout << "RING BIT recived:\n";
 			_stop_ppp_read_sms_start_ppp();
 			shmPTR->stop_ppp_read_sms_start_ppp = stop_start = false;
 		}
@@ -953,14 +900,14 @@ int main(int argc, char *argv[])//lat,lon,.......
 			usleep(100000);
 		}
 	}
-	while(shmPTR->inet_ok)
-		delay(100);
-	cout << "internet's down...\n";
-	delay(5000);
+	shmPTR->ppp_run = false;
+	
+	stop_ppp();
+	sleep(3);
 	shmPTR->internet_run = false;
+	
+	cout << "internet's down...\n";
 	shmdt((void *)shmPTR);
-
-
 
 	out.close();
     return 0;

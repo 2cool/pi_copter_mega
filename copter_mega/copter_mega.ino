@@ -253,13 +253,13 @@ void receiveEvent(int countToRead) {
 		//Serial.println(beep_code);
 		break;
 	}
-	case 2: 
-	{
+	//case 2: 
+//	{
 		//uint8_t len = countToRead-1;
 		//SIM800.write(&inBuf[1], len);
 		//Serial.println(2);
-		break;
-	}
+//		break;
+//	}
 	case 3: 
 	{   new_colors_i = inBuf[0] >> 3;
 		pi_copter_color[new_colors_i - 1][0] = *(uint8_t*)&inBuf[1];
@@ -333,8 +333,8 @@ void requestEvent() {
 	//	Serial.println("send");
 		Wire.write((char*)gps_data(), sizeof(SEND_I2C));
 		break;
-	case 3:
-	{
+	//case 3:
+	//{
 	/*	if (ret = SIM800.available()) {
 			if (ret > 16)
 				ret = 16;
@@ -343,17 +343,17 @@ void requestEvent() {
 			//Serial.print("sim ");
 			//Serial.println((int)ret);
 		}*/
-		break;
-	}
-	case 4: 
-	{
+	//	break;
+	//}
+	//case 4: 
+	//{
 
 		//SIM800.readBytes(simbuf, ret);
 		//Wire.write(simbuf, ret);
 		
 		//Serial.println("sended");
-		break;
-	}
+	//	break;
+	//}
 	
 
 	}

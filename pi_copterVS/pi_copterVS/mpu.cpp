@@ -512,6 +512,11 @@ bool MpuClass::loop(){
 	gyro_calibratioan = true;
 
 	log_emu();
+
+	shmPTR->pitch = pitch;
+	shmPTR->roll = roll;
+	shmPTR->yaw = yaw;
+
 	return true;
 }
 
