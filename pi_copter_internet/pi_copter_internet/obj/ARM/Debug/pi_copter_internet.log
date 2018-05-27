@@ -31,8 +31,8 @@ C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(58
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(656,37): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(656,37): warning :     serv_addr.sin_port = htons(portno);
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(656,37): warning :                                      ^
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(710,1): warning : control reaches end of non-void function [-Wreturn-type]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(710,1): warning :  }
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(710,1): warning :  ^
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(711,1): warning : control reaches end of non-void function [-Wreturn-type]
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(711,1): warning :  }
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(711,1): warning :  ^
   Linking objects
   pi_copter_internet.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\bin\ARM\Debug\pi_copter_internet.out

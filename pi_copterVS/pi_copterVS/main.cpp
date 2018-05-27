@@ -1,11 +1,11 @@
-#define PROG_VERSION "ver 3.180524\n"
+#define PROG_VERSION "ver 3.180526\n"
 
-//#define ONLY_ONE_RUN
+#define ONLY_ONE_RUN
 #define SIM800_F
 
 
 
-
+#include <sys/sem.h>
 #include  <sys/types.h>
 #include  <sys/ipc.h>
 #include  <sys/shm.h>
@@ -120,9 +120,11 @@ void video_stream() {
 }
 
 
+
+
 int semid;
 bool is_clone(char *argv0) {
-	/*
+	
 	struct sembuf my_sembuf;
 	key_t IPC_key = ftok(argv0, 0);
 	if (0 > IPC_key)
@@ -159,7 +161,7 @@ bool is_clone(char *argv0) {
 		return true;
 	}
 
-	*/
+	
 	return false;
 }
 
@@ -287,7 +289,7 @@ int printHelp() {
 	return -1;
 }
 double last_wifi_reloaded = 0;
-string stdout_file = "";
+string stdout_file_ext = "";
 int inet_start_cnt = 0, wifi_start_cnt = 0;
 
 bool start_wifi = false, start_inet = false, start_loger = false, start_telegram = false;;
@@ -304,8 +306,8 @@ void watch_dog() {
 				//cout << "--------------wifi starting\n";
 				system("pkill wifi_p");
 				string t = "/root/projects/wifi_p ";
-				//if (stdout_file.length()) {
-			//		t += stdout_file + "wifi_"+to_string(wifi_start_cnt++);
+				//if (stdout_file_ext.length()) {
+			//		t += stdout_file_ext + "wifi_"+to_string(wifi_start_cnt++);
 				//}
 				t += " &";
 				int ret=system(t.c_str());
@@ -327,8 +329,8 @@ void watch_dog() {
 				else
 					t += "n";
 				t+=" ";
-				if (stdout_file.length()) {
-					t += stdout_file + "inet_"+to_string(inet_start_cnt++);
+				if (stdout_file_ext.length()) {
+					t += stdout_file_ext + "i"+to_string(inet_start_cnt++)+".txt";
 				}
 				t += " &";
 				int ret = system(t.c_str());
@@ -344,6 +346,23 @@ std::streambuf *coutbuf;// старый буфер
 
 int main(int argc, char *argv[]) {
 
+
+
+
+
+cout << PROG_VERSION << endl;
+#ifdef ONLY_ONE_RUN
+	if (is_clone(argv[0]) == true) {
+		cout << "clone\n";
+		if (-1 == semctl(semid, 0, IPC_RMID, 0))
+		{
+			printf("Error delete!\n");
+		}
+		return 0;
+	}
+#endif	
+
+
 	if (init_shmPTR())
 		return 0;
 	shmPTR->in_fly = (shmPTR->control_bits&MOTORS_ON);
@@ -355,7 +374,7 @@ int main(int argc, char *argv[]) {
 	tl.detach();
 
 	string fname;
-	cout << PROG_VERSION << endl;
+	
 
 		shmPTR->connected = 0;
 		shmPTR->fly_at_start = 3;
@@ -420,12 +439,10 @@ int main(int argc, char *argv[]) {
 				if (argv[3][0] == 'f' || argv[3][0] == 'F') {
 
 
-					ostringstream convert;
-					convert << "/home/igor/logs/log_out" << counter << ".txt";
-					fname = convert.str();
+					stdout_file_ext = "/home/igor/logs/log_out" + to_string(counter);
+					fname = stdout_file_ext+".txt";
 
-					//Debug.out_stream = fopen(fname.c_str(), "w+");
-					stdout_file = fname;
+
 					out = std::ofstream(fname.c_str()); //откроем файл для вывод
 					coutbuf = std::cout.rdbuf(); //запомним старый буфер
 					std::cout.rdbuf(out.rdbuf()); //и теперь все будет в файл!
@@ -523,6 +540,14 @@ int main(int argc, char *argv[]) {
 	}
 	//close_shmPTR();
 	out.close();
+
+#ifdef ONLY_ONE_RUN
+
+	if (-1 == semctl(semid, 0, IPC_RMID, 0))
+	{
+		printf("Error delete!\n");
+	}
+#endif
 	return 0;
 
 }

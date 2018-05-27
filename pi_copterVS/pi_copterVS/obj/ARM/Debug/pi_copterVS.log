@@ -3,6 +3,6 @@
   Copying sources remotely to '192.168.0.102'
   Starting remote build
   Compiling sources:
-  mi2c.cpp
+  main.cpp
   Linking objects
   pi_copterVS.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

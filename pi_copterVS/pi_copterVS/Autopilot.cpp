@@ -698,8 +698,8 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			
 			Mpu.max_g_cnt = 0;
 
-			holdAltitude(shmPTR->fly_at_start);
-			holdLocation(GPS.loc.lat_, GPS.loc.lon_);
+			//holdAltitude(shmPTR->fly_at_start);
+			//holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 			Stabilization.resset_z();
 			Stabilization.resset_xy_integrator();
 			aYaw_ = -Mpu.get_yaw();

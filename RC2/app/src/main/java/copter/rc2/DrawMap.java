@@ -239,7 +239,7 @@ public class DrawMap extends View {
     float xDown=0,yDown=0;
     long timeDown=0,timeUp=0;
     int tap=0;
-    final long tap_max_time = 300;
+    final long tap_max_time = 1000;
     final int DRAG_LEN=1;//      32;
     static public boolean progLoaded=false;
     @TargetApi(Build.VERSION_CODES.FROYO)

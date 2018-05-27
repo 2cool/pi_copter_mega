@@ -664,9 +664,10 @@ void loger_loop() {
 
 		getCommunication();
 		int n = write(sockfd_loger, com, 42);
-		if (n < 0) {
-			//printf( "ERROR writing to socket 42");
+		if (n < 42) {
+			cout << "loger: ERROR writing to socket\n";
 			serial_n = 1;
+			close(sockfd_loger);
 			continue;
 		}
 
