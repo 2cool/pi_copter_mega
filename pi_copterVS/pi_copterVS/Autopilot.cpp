@@ -80,6 +80,117 @@ using namespace std;
 int camera_mode;
 enum { CAMMERA_OFF, CAMERA_RECORDING, CAMERA_TRANCLATE };
 
+//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+bool AutopilotClass::motors_do_on(const bool start, const string msg) {////////////////////////  M O T O R S  D O  ON  /////////////////////////////////////////////////////////////////////////
+
+	cout << msg << "-";
+
+	if (start) {
+		//printf( "\MS5611 err: %f\n",MS5611.getErrorsK());
+#ifndef FALSE_WIRE
+		cout << "on ";
+		if (Mpu.timed < 25) {
+			cout << "\n!!!calibrating!!! to end:" << 25 - millis() / 1000 << " sec.\n";
+			mega_i2c.beep_code(B_MS611_ERROR);
+			return false;
+		}
+#else
+		Emu.init(WIND_X, WIND_Y, WIND_Z);
+#endif
+
+
+#define MAX_MACC 0.1f
+		if (Hmc.do_compass_motors_calibr == false && (abs(Mpu.maccX) > MAX_MACC || abs(Mpu.maccY) > MAX_MACC || abs(Mpu.maccZ) > MAX_MACC)) {
+			cout << "ACC ERROR!!! \n";
+			mega_i2c.beep_code(B_ACC_ERROR);
+			return false;
+		}
+
+		if (Hmc.do_compass_motors_calibr || (Mpu.gyro_calibratioan && Hmc.calibrated)) {
+
+			if (Telemetry.low_voltage) {
+				Telemetry.addMessage(e_LOW_VOLTAGE);
+				cout << " LOW VOLTAGE\n";
+				mega_i2c.beep_code(B_LOW_VOLTAGE);
+				return false;
+			}
+
+			if (Hmc.do_compass_motors_calibr == false && GPS.loc.accuracy_hor_pos_ > MIN_ACUR_HOR_POS_2_START) {
+				cout << " GPS error\n";
+				mega_i2c.beep_code(B_GPS_ACCURACY_E);
+				Telemetry.addMessage(e_GPS_ERROR);
+
+				//return false;
+			}
+			time_at_startd = Mpu.timed;
+			Telemetry.update_voltage();
+
+			control_bits = MOTORS_ON;
+
+			cout << "OK\n";
+
+			GPS.loc.setHomeLoc();
+
+			MS5611.copterStarted();
+			tflyAtAltitude = flyAtAltitude = MS5611.altitude();
+
+			Mpu.max_g_cnt = 0;
+
+			holdAltitude(shmPTR->fly_at_start);
+			holdLocation(GPS.loc.lat_, GPS.loc.lon_);
+
+			Stabilization.resset_z();
+			Stabilization.resset_xy_integrator();
+			aYaw_ = -Mpu.get_yaw();
+			start_timed = Mpu.timed;
+
+#ifdef DEBUG_MODE
+			printf("\nhome loc: %i %i \nhome alt set %i\n", GPS.loc.lat_, GPS.loc.lon_, (int)flyAtAltitude);
+#endif
+
+			Log.run_counter++;
+			//if (camera_mode) {//---------------------------------------------------
+			//	thread t(start_video);
+			//	t.detach();
+
+			//}
+
+
+		}
+		else {
+			if (Hmc.calibrated == false) {
+				cout << "compas, ";
+				mega_i2c.beep_code(4);
+
+			}
+			if (Mpu.gyro_calibratioan == false) {
+				cout << "gyro";
+				mega_i2c.beep_code(5);
+
+			}
+			cout << " calibr FALSE\n";
+		}
+	}//------------------------------OFF----------------
+	else {
+		time_at_startd = 0;
+#ifdef FALSE_WIRE
+		Emu.init(WIND_X, WIND_Y, WIND_Z);
+#endif
+		cout << "off ";
+		Telemetry.addMessage(i_OFF_MOTORS);
+		off_throttle(true, msg);
+
+		cout << "OK\n";
+
+		//if (camera_mode) {//----------------------------------
+		//	thread t(stop_video);
+		//	t.detach();
+
+		//}
+	}
+	return true;
+}
 
 
 
@@ -641,117 +752,6 @@ bool AutopilotClass::holdLocationStartStop(){///////////////////////////////////
 beep codes
 {0, B00001000, B00001001, B00001010, B00001011, B00001100, B00001101, B00001110, B00001111, B00000001, B00000010, B00000011, B00000100, B00000101, B00000110, B00000111 };//4 beeps. 0 short 1 long beep
 */
-//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-bool AutopilotClass::motors_do_on(const bool start, const string msg){////////////////////////  M O T O R S  D O  ON  /////////////////////////////////////////////////////////////////////////
-
-	cout << msg << "-";
-	
-	if (start){
-		//printf( "\MS5611 err: %f\n",MS5611.getErrorsK());
-#ifndef FALSE_WIRE
-		cout << "on ";
-		if (Mpu.timed < 25) {
-			cout << "\n!!!calibrating!!! to end:"<< 25-millis()/1000 <<" sec.\n";
-			mega_i2c.beep_code(B_MS611_ERROR);
-			return false;
-		}
-#else
-		Emu.init(WIND_X, WIND_Y, WIND_Z);
-#endif
-		
-
-#define MAX_MACC 0.1f
-		if (Hmc.do_compass_motors_calibr == false && (abs(Mpu.maccX) > MAX_MACC || abs(Mpu.maccY) > MAX_MACC || abs(Mpu.maccZ) > MAX_MACC)) {
-			cout << "ACC ERROR!!! \n";
-			mega_i2c.beep_code(B_ACC_ERROR);
-			return false;
-		}
-
-		if (Hmc.do_compass_motors_calibr || (Mpu.gyro_calibratioan && Hmc.calibrated)){
-
-			if (Telemetry.low_voltage){
-				Telemetry.addMessage(e_LOW_VOLTAGE);
-				cout << " LOW VOLTAGE\n";
-				mega_i2c.beep_code(B_LOW_VOLTAGE);
-				return false;
-			}
-
-			if (Hmc.do_compass_motors_calibr==false && GPS.loc.accuracy_hor_pos_ > MIN_ACUR_HOR_POS_2_START ){
-				cout << " GPS error\n";
-				mega_i2c.beep_code(B_GPS_ACCURACY_E);
-				Telemetry.addMessage(e_GPS_ERROR);
-
-				//return false;
-			}
-			time_at_startd = Mpu.timed;
-			Telemetry.update_voltage();
-			
-			control_bits = MOTORS_ON;
-
-			cout << "OK\n";
-
-			GPS.loc.setHomeLoc();
-
-			MS5611.copterStarted();
-			tflyAtAltitude = flyAtAltitude = MS5611.altitude();
-			
-			Mpu.max_g_cnt = 0;
-
-			//holdAltitude(shmPTR->fly_at_start);
-			//holdLocation(GPS.loc.lat_, GPS.loc.lon_);
-			Stabilization.resset_z();
-			Stabilization.resset_xy_integrator();
-			aYaw_ = -Mpu.get_yaw();
-			//fflush(Debug.out_stream);
-			start_timed = Mpu.timed;
-
-#ifdef DEBUG_MODE
-			printf( "\nhome loc: %i %i \nhome alt set %i\n", GPS.loc.lat_, GPS.loc.lon_, (int)flyAtAltitude);
-#endif
-
-			Log.run_counter++;
-			//if (camera_mode) {//---------------------------------------------------
-			//	thread t(start_video);
-			//	t.detach();
-
-			//}
-
-
-		}
-		else{
-			if (Hmc.calibrated == false){
-				cout << "compas, ";
-				mega_i2c.beep_code(4);
-
-			}
-			if (Mpu.gyro_calibratioan == false){
-				cout << "gyro";
-				mega_i2c.beep_code(5);
-
-			}
-			cout << " calibr FALSE\n";
-		}
-	}//------------------------------OFF----------------
-	else {
-		time_at_startd = 0;
-#ifdef FALSE_WIRE
-		Emu.init(WIND_X, WIND_Y, WIND_Z);
-#endif
-		cout << "off ";
-		Telemetry.addMessage(i_OFF_MOTORS);
-		off_throttle(true, msg);
-
-		cout << "OK\n";
-
-		//if (camera_mode) {//----------------------------------
-		//	thread t(stop_video);
-		//	t.detach();
-
-		//}
-	}
-	return true;
-}
 
 void AutopilotClass::control_falling(const string msg){
 	if (motors_is_on() && (control_bits & CONTROL_FALLING) == 0){

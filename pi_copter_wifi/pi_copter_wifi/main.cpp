@@ -209,19 +209,24 @@ void server() {
 		const uint32_t dt = t - wifiold_t;
 		wifiold_t = t;
 
-		if (dt < 33)
-			delay(33 - dt);
+	//	if (dt < 33)
+	//		delay(33 - dt);
 
 		// if (dt > 35)
 		//  printf("too long %i\n", dt);
 
 
 		while (shmPTR->wifibuffer_data_len_4_read != 0)
-			usleep(10000);
+			usleep(1000);
 				
-		shmPTR->wifibuffer_data_len_4_read = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
+		int len = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
+		if (len <= 0) {
+			cout << "ra\n";
+			len = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
+		}
+		shmPTR->wifibuffer_data_len_4_read = len;
 
-		if (shmPTR->wifibuffer_data_len_4_read > 0) {
+		if (len > 0) {
 			if (shmPTR->connected == 0)
 				shmPTR->client_addr = cli_addr.sin_addr.s_addr;
 			shmPTR->connected++;
@@ -239,10 +244,15 @@ void server() {
 		}
 		
 		while (shmPTR->wifibuffer_data_len_4_write == 0)
-			usleep(10000);
+			usleep(1000);
 
 		
 		n = write(newsockfd, shmPTR->wifiWbuffer, shmPTR->wifibuffer_data_len_4_write);
+		if (n <= 0) {
+			cout << "wa\n";
+			n = write(newsockfd, shmPTR->wifiWbuffer, shmPTR->wifibuffer_data_len_4_write);
+
+		}
 		if (n > 0) {
 			
 			shmPTR->wifibuffer_data_len_4_write = 0;
@@ -250,7 +260,7 @@ void server() {
 		else{
 			if (shmPTR->connected) {
 
-				cout << "ERROR reading from socket\n";
+				cout << "ERROR writing to socket\n";
 				
 			}
 			if (wite_connection())
@@ -266,17 +276,23 @@ void server() {
 
 void watch_d() {
 
-
+	static int errors = 0;
 
 	uint old_main_cnt = shmPTR->main_cnt - 1;
 	while (true) {
 		shmPTR->wifi_cnt++;
 		if (shmPTR->main_cnt == old_main_cnt) {
-			flag = 1;
-			cout << "main dont update cnt! EXIT\n";
-			return;
+			if (++errors >= 3) {
+				flag = 1;
+				cout << "main dont update cnt! EXIT\n";
+				flag = 1;
+				return;
+			}
 		}
-		old_main_cnt = shmPTR->main_cnt;
+		else {
+			errors = 0;
+			old_main_cnt = shmPTR->main_cnt;
+		}
 		delay(100);
 	}
 
@@ -288,11 +304,14 @@ std::streambuf *coutbuf;// старый буфер
 int main(int argc, char *argv[])
 {
 	init_shmPTR();
-	if (shmPTR->run_main == false)
-		return 0;
+	
 	thread tl(watch_d);
 	tl.detach();
-
+	delay(100);
+	if (flag == 1)
+		return -1;
+	//if (shmPTR->run_main == false)
+		//return 0;
 
 	if (signal(SIGINT, handler) == SIG_ERR) {
 		return EXIT_FAILURE;

@@ -3,5 +3,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <RemoteDebuggingMode>gdbserver</RemoteDebuggingMode>
     <DebuggerFlavor>LinuxDebugger</DebuggerFlavor>
+    <RemoteTarget>1343664412;192.168.0.102 (username=, port=22, authentication=Password)</RemoteTarget>
   </PropertyGroup>
 </Project>

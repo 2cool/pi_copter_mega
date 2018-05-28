@@ -193,9 +193,6 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 
 	GPS.init();
 
-#ifdef SIM800_F
-
-#endif
 	return 0;
 
 }
@@ -301,7 +298,7 @@ void watch_dog() {
 		uint8_t internet_cnt = shmPTR->internet_cnt;
 		delay(2000);
 		if (start_wifi)
-			if (wifi_cnt == shmPTR->wifi_cnt  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
+			if (wifi_cnt == shmPTR->wifi_cnt  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 2 && Mpu.timed - last_wifi_reloaded > 30)) {
 				last_wifi_reloaded = Mpu.timed;
 				//cout << "--------------wifi starting\n";
 				system("pkill wifi_p");

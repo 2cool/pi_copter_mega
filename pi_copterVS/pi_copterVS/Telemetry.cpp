@@ -161,9 +161,13 @@ int TelemetryClass::check_time_left_if_go_to_home(){
 
 }
 
+
+
+//#define FULL_FW
+
 void TelemetryClass::update_voltage() {
 	
-#ifdef FALSE_WIRE
+#ifdef FULL_FW
 	Emu.battery(m_current,voltage);
 #else
 	uint16_t data[5];

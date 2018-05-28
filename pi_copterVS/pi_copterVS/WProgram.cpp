@@ -19,7 +19,11 @@ uint32_t millis(){
 	clock_gettime(CLOCK_REALTIME,&t);
 	uint32_t ret;
 	if (start_seconds == 0)
+#ifdef FALSE_WIRE
+		start_seconds = t.tv_sec-30;
+#else
 		start_seconds = t.tv_sec;
+#endif
 	ret=((t.tv_sec-start_seconds)*1000)+(t.tv_nsec/1000000);
 	return ret;
 }
@@ -31,7 +35,11 @@ int64_t micros(void){
 	clock_gettime(CLOCK_REALTIME,&t);
 	int64_t ret;
 	if (start_seconds == 0)
+#ifdef FALSE_WIRE
+		start_seconds = t.tv_sec - 30;
+#else
 		start_seconds = t.tv_sec;
+#endif
 	ret=((int64_t)(t.tv_sec-start_seconds)*1000000)+(t.tv_nsec/1000);
 	return ret;
 }

@@ -346,7 +346,7 @@ bool BalanceClass::loop()
 			f_[0] = f_constrain((throttle - roll_output - pitch_output + m_yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 
 
-			//f_[0] = f_[1] = f_[2] = f_[3] = (throttle<0.2)?throttle:0.3;
+		//	f_[0] = f_[1] = f_[2] = f_[3] = throttle;// (throttle < 0.2) ? throttle : 0.3;
 
 
 			if (throttle < 0.3 || Mpu.timed - Autopilot.time_at_startd < 3) {

@@ -43,7 +43,7 @@
 //#define FASLE_GPS_STILL
 
 //#define NO_BATTERY
-
+//---------------------------------
 #ifdef FALSE_WIRE
 //#define FASLE_GPS_STILL
 #define MOTORS_OFF
