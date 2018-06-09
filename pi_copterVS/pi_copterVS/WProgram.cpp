@@ -5,26 +5,27 @@
 #include <sys/shm.h>
 #include <sys/ipc.h>
 
-uint32_t start_seconds = 0;
+__time_t start_seconds = 0;
+
 uint32_t millis_g() {
 	timespec t;
 	clock_gettime(CLOCK_REALTIME, &t);
 	uint32_t ret;
 	
-	ret = ((t.tv_sec ) * 1000) + (t.tv_nsec / 1000000);
+	ret = (uint32_t)(((t.tv_sec ) * 1000L) + (t.tv_nsec / 1000000L));
 	return ret;
 }
 uint32_t millis(){
 	timespec t;
 	clock_gettime(CLOCK_REALTIME,&t);
 	uint32_t ret;
-	if (start_seconds == 0)
+	if (start_seconds == 0L)
 #ifdef FALSE_WIRE
-		start_seconds = t.tv_sec-30;
+		start_seconds = t.tv_sec-30L;
 #else
 		start_seconds = t.tv_sec;
 #endif
-	ret=((t.tv_sec-start_seconds)*1000)+(t.tv_nsec/1000000);
+	ret=(uint32_t)(((t.tv_sec-start_seconds)*1000L)+(t.tv_nsec/1000000L));
 	return ret;
 }
 
@@ -34,13 +35,13 @@ int64_t micros(void){
 	timespec t;
 	clock_gettime(CLOCK_REALTIME,&t);
 	int64_t ret;
-	if (start_seconds == 0)
+	if (start_seconds == 0L)
 #ifdef FALSE_WIRE
-		start_seconds = t.tv_sec - 30;
+		start_seconds = t.tv_sec - 30L;
 #else
 		start_seconds = t.tv_sec;
 #endif
-	ret=((int64_t)(t.tv_sec-start_seconds)*1000000)+(t.tv_nsec/1000);
+	ret=((int64_t)(t.tv_sec-start_seconds)*1000000L)+(t.tv_nsec/1000L);
 	return ret;
 }
 
