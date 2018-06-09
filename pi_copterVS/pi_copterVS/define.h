@@ -20,7 +20,7 @@
 
 
 //#define XY_SAFE_AREA 200
-//#define Z_SAFE_AREA 60
+#define Z_SAFE_AREA 80
 
 
 #define MAX_ACC 7
@@ -43,7 +43,7 @@
 //#define FASLE_GPS_STILL
 
 //#define NO_BATTERY
-//---------------------------------
+
 #ifdef FALSE_WIRE
 //#define FASLE_GPS_STILL
 #define MOTORS_OFF
@@ -95,8 +95,8 @@
 
 #define MIDDLE_POSITION 0.5f
 #define HOVER_THROTHLE 0.5
-#define MIN_THROTTLE_ 0.4
-#define FALLING_THROTTLE 0.45
+#define MIN_THROTTLE_ 0.3
+#define FALLING_THROTTLE 0.4
 
 #define STOP_THROTTLE_ 0.2f
 

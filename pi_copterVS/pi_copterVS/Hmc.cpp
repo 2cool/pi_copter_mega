@@ -368,31 +368,7 @@ bool HmcClass::calibration(const bool newc){
 	return true;
 }
 
-bool HmcClass::selfTest(){
-	printf("COMPAS TEST\n");
-	if (ok){
-		int mx, my, mz;
-		int tx = 0, ty = 0, tz = 0;
-		int error = 0;
-		for (int8_t i = 0; i < 10; i++){
-			readBytes(devAddr, HMC5883L_RA_DATAX_H, 6, buffer);
-			if (mode == HMC5883L_MODE_SINGLE) writeByte(devAddr, HMC5883L_RA_MODE, HMC5883L_MODE_SINGLE << (HMC5883L_MODEREG_BIT - HMC5883L_MODEREG_LENGTH + 1));
-			mx = (((int)buffer[0]) << 8) | buffer[1];
-			my = (((int)buffer[4]) << 8) | buffer[5];
-			mz = (((int)buffer[2]) << 8) | buffer[3];
-			printf("%i %i %i\n", mx, my, mz); 
-			error += (tx == mx || ty == my || tz == mz);
-			tx = mx;
-			ty = my;
-			tz = mz;
-			delay(10);
-		}
-		ok &= error < 10;
-	}
-	if (!ok)
-		printf("ERROR\n");
-	return ok;
-}
+
 
 /** Default constructor, uses default I2C address.
 * @see HMC5883L_DEFAULT_ADDRESS

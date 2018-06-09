@@ -69,6 +69,12 @@
     <ClInclude Include="Balance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="hmc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Telemetry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -108,6 +114,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Balance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hmc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Telemetry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

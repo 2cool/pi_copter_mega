@@ -322,6 +322,8 @@ bool BalanceClass::loop()
 			float roll_stab_output = f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED);
 			float yaw_stab_output = f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED);
 
+			//yaw_stab_output = 0;
+
 			// rate PIDS
 
 			const float max_delta = 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
@@ -346,7 +348,7 @@ bool BalanceClass::loop()
 			f_[0] = f_constrain((throttle - roll_output - pitch_output + m_yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 
 
-		//	f_[0] = f_[1] = f_[2] = f_[3] = throttle;// (throttle < 0.2) ? throttle : 0.3;
+			//f_[0] = f_[1] = f_[2] = f_[3] = 0;// (throttle < 0.2) ? throttle : 0.3;
 
 
 			if (throttle < 0.3 || Mpu.timed - Autopilot.time_at_startd < 3) {
@@ -360,7 +362,10 @@ bool BalanceClass::loop()
 				f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.2;
 			}
 
-		//	Debug.dump(f_[0], f_[1], f_[2], f_[3]);
+
+
+
+
 
 			
 			/*
@@ -408,6 +413,11 @@ bool BalanceClass::loop()
 		if (propeller_lost[1] || propeller_lost[2]) {
 		//	f_[1] = f_[2] = 0;
 		}
+
+
+		//f_[0] = f_[1] = f_[2] = f_[3] = 0;///////////////////////////////////////////////////
+
+
 		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros
 #endif
 

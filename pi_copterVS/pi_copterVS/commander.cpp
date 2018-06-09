@@ -101,12 +101,12 @@ float * load(const string  buf, const uint8_t  * filds){
 	ar_t333[SETTINGS_ARRAY_SIZE] = SETTINGS_IS_OK;
 	for (int i = 0; i <SETTINGS_ARRAY_SIZE; i++){
 		float val= (float)stod(buf.substr(filds[i], filds[i + 1]- filds[i] - 1));
-		if (val != 0 || buf.substr(filds[i], filds[i + 1]- filds[i] - 1).find("0.0")==0)
+		if (val != 0 || buf.substr(filds[i], filds[i + 1]- filds[i] - 1).find("0.0") != string::npos)
 			ar_t333[i] = val;
 		else{
 			//Out.println(buf.substr(filds[i], filds[i + 1]- filds[i] - 1));
 			cout << buf.substr(filds[i], filds[i + 1] - filds[i] - 1) << endl;
-			ar_t333[10] = SETTINGS_ERROR;
+			ar_t333[SETTINGS_ARRAY_SIZE] = SETTINGS_ERROR;
 			cout << i << endl;
 			return ar_t333;
 		}

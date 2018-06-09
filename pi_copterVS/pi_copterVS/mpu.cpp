@@ -145,7 +145,7 @@ void MpuClass::log_sens() {
 	if (Log.writeTelemetry) {
 		Log.block_start(LOG::MPU_SENS);
 
-		Log.loaduint64t(oldmpuTimed);
+		Log.loaduint64t(oldmpuTimed*1000);//new
 		Log.loadMem((uint8_t*)g, 6, false);
 		Log.loadMem((uint8_t*)a, 6, false);
 		Log.loadMem((uint8_t*)_q, 16, false);
@@ -302,41 +302,32 @@ void MpuClass::init()
 
 
 
+
+
+
+
+
 	ms_open();
+	
+	writeWord(104, MPU6050_RA_XA_OFFS_H, -5525);
+	writeWord(104, MPU6050_RA_YA_OFFS_H, -1349);
+	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1291);
+	writeWord(104, MPU6050_RA_XG_OFFS_USRH, -43);
+	writeWord(104, MPU6050_RA_YG_OFFS_USRH, 36);
+	writeWord(104, MPU6050_RA_ZG_OFFS_USRH, -49);
+		
+	
 
-/*
-	accelgyro.initialize();
-	cout << "Testing device connections...\n");
-	if (accelgyro.testConnection())
-	{
-		cout << "MPU6050 connection successful\n");
-	}
-	else
-	{
-		cout << "MPU6050 connection failed\n");
-		delay(10000);
-	}
+	
+	
 
-	accelgyro.setDLPFMode(MPU6050_DLPF_BW_256);
-	//accelgyro.setDLPFMode(MPU6050_DLPF_BW_188);//
-	//accelgyro.setDLPFMode(MPU6050_DLPF_BW_98);
-*/
+
 #ifdef GYRO_CALIBR
 	gyro_calibratioan = false;
 #else
 	gyro_calibratioan = true;
 #endif
-	//int16_t offset_[6];
-//	mpu_calibrated = Settings.readMpuSettings(offset_);
-//	gyro_calibratioan &= mpu_calibrated;
 
-	//if (mpu_calibrated) {
-		/*accelgyro.setXAccelOffset(offset_[ax_offset]);
-		accelgyro.setYAccelOffset(offset_[ay_offset]);
-		accelgyro.setZAccelOffset(offset_[az_offset]);
-		accelgyro.setXGyroOffset(offset_[gx_offset]);
-		accelgyro.setYGyroOffset(offset_[gy_offset]);
-		accelgyro.setZGyroOffset(offset_[gz_offset]);*/
 #ifdef DEBUG_MODE
 		//for (int i = 0; i < 6; i++)
 		//	Out.println(offset_[i]);
@@ -536,7 +527,7 @@ uint8_t GetGravity(VectorFloat *v, Quaternion *q) {
 #define ROLL_COMPENSATION_IN_YAW_ROTTATION 0.02
 #define PITCH_COMPENSATION_IN_YAW_ROTTATION 0.025
 
-float ac_accX = 0, ac_accY = 0, ac_accZ = -0.3664f;
+float ac_accX = 0, ac_accY = 0, ac_accZ = 0;// 1.15504527;
 float agpitch = 0, agroll = 0, agyaw = 0;
 
 uint64_t maxG_firs_time = 0;
@@ -582,15 +573,18 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	timed = 0.000001*(double)micros();
 
 	//dmp
+
 	if (dmp_read_fifo(g, a, _q, &sensors, &fifoCount) != 0) //gyro and accel can be null because of being disabled in the efeatures
 		return false;
 
 	dt = (timed - oldmpuTimed);// *div;
-	/*if (dt > 0.012)
-		cout << "MPU DT too long %f\n",dt);
+
+	/*
+	if (dt > 0.012)
+		cout << "MPU DT too long "<<dt<<"\n";
 	if (dt < 0.008)
-		cout << "MPU DT too short %f\n", dt);
-*/
+		cout << "MPU DT too short "<<dt<<"\n";
+		*/
 
 
 	rdt = 1.0 / dt;
@@ -682,21 +676,31 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	accX = 9.8f*(x*cosPitch - z*sinPitch) - ac_accX;
 	accY = 9.8f*(y*cosRoll + z*sinRoll) - ac_accY;
 
+
+	//Debug.load(2, accX, accY);
+	//Debug.load(3, accZ, 0);
+
+	//Debug.load(1, x, y);
+	//Debug.load(0, accZ, accY);
+
+
+
+	//Debug.dump();
 	if (Autopilot.motors_is_on() == false) {
-		if (timed > 20) {
-			maccX += (accX - maccX)*0.01f;
-			maccY += (accY - maccY)*0.01f;
-			maccZ += (accZ - maccZ)*0.01f;
+		//if (timed > 20) {
+			//maccX += (accX - maccX)*0.01f;
+			//maccY += (accY - maccY)*0.01f;
+			//maccZ += (accZ - maccZ)*0.01f;
 			
-		}
+		//}
 
 		if (timed > 30 && acc_callibr_timed > timed) {
-			ac_accZ += accZ*0.01;
-			ac_accY += accY*0.01;
-			ac_accX += accX*0.01;
-			agpitch += gyroPitch*0.01;
-			agroll += gyroRoll*0.01;
-			agyaw += gyroYaw*0.01;
+		//	ac_accZ += accZ*0.01;
+			//ac_accY += accY*0.01;
+			//ac_accX += accX*0.01;
+			agpitch += (gyroPitch - agpitch)*0.01;
+			agroll += (gyroRoll - agroll)*0.01;
+			agyaw += (gyroYaw - agyaw) *0.01;
 			
 		}
 	}
@@ -728,53 +732,7 @@ void MpuClass::setDLPFMode_(uint8_t bandwidth){
 	accelgyro.setDLPFMode(bandwidth);
 }
 
-bool MpuClass::selfTest(){
 
-
-	int16_t xa = 0, ya = 0, za = 0;
-	int16_t xr = 0, yr = 0, zr = 0;
-	uint8_t trys = 0;
-	bool ok;
-	do {
-		int count = 0;
-		int errors = 0;
-
-		while (++count < 10){
-			int16_t xt, yt, zt;
-			accelgyro.getAcceleration(&xt, &yt, &zt);
-			errors += (xt == xa || yt == ya || zt == za);
-			xa = xt;
-			ya = yt;
-			za = zt;
-			accelgyro.getRotation(&xt, &yt, &zt);
-
-			cout << xt << " " << yt << " " << zt << endl;
-	
-			errors += (xt == xr || yt == yr || zt == zr || abs(xt) > 10 || abs(yt) > 10 || abs(zt) > 10);
-			xr = xt;
-			yr = yt;
-			zr = zt;
-			delay(10);
-		}
-
-		ok = errors <= 7;
-		if (ok == false){
-			cout << "ERROR\n";
-			accelgyro.setXAccelOffset(1354);
-			accelgyro.setYAccelOffset(451);
-			accelgyro.setZAccelOffset(1886);
-			accelgyro.setXGyroOffset(101);
-			accelgyro.setYGyroOffset(-32);
-			accelgyro.setZGyroOffset(9);
-		}
-		else
-			return ok;
-	} while (++trys < 2);
-
-	return ok;
-
-
-}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MpuClass::new_calibration(const bool onlyGyro){

@@ -11,6 +11,7 @@
 #include "Kalman.h"
 #include "KK.h"
 #include "MYfILTER.h"
+
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
@@ -28,8 +29,12 @@ enum {
 enum {
 	PITCH,ROLL,R_PITCH,R_ROLL,YAW,HEADING,C_PITCH,C_ROLL,EMU_PITCH,EMU_ROLL,
 	GYRO_PITCH,GYRO_ROLL,GYRO_YAW, MAXACC,MI0,MI1,MI2,MI3,BAT_F,ACC,ACCX,ANGLE,GACC,ACCY,ACCZ,GACCX,GACCY,GACCZ,PRESSURE,PRESSURE_SPEED,PRESSURE_ACC,SX,SY,X2HOME,Y2HOME,G_SPEED_X,G_SPEED_Y,G_SPEED,GX,GY,dX,SPEED_X,dY,SPEED_Y,
-	SZ,GPS_Z,SPEED_Z,THROTTLE,F0,F1,F2,F3,I_THROTHLE,I_YAW,I_YAW_OFFSET,I_PITCH,I_ROLL, Y,X,TIME,DT,M_C_PITCH,M_C_ROLL,EXP0,EXP1,EXP2,EXP3, ROTATE, FILTER, ALL_ELEMENTS
+	SZ,GPS_Z,SPEED_Z,THROTTLE,F0,F1,F2,F3,I_THROTHLE,I_YAW,I_YAW_OFFSET,I_PITCH,I_ROLL, Y,X,TIME,DT,M_C_PITCH,M_C_ROLL,EXP0,EXP1,EXP2,EXP3, ROTATE, FILTER, CONTROL_BITS, ALL_ELEMENTS
 };
+
+
+
+
 
 struct SensorsData {
 	double sd[ALL_ELEMENTS];
@@ -88,6 +93,9 @@ private:
 	char * buffer;
 	int  sensorsData;
 	long lSize;
+
+
+	void drawModes(Graphics &g, RectF rect);
 	void draw(Graphics &g, RectF rect, float max, float min, int sdi);
 	MODE modes[100];
 	uint32_t def_mode =  Z_STAB + XY_STAB;
@@ -97,15 +105,15 @@ private:
 	double press_dt = 0;
 
 
-
+/*
 	float pitch, roll, sinPitch, sinRoll, cosPitch, cosRoll,yaw;
 	float e_speedX, e_speedY;
 	float e_accX, e_accY,_sinYaw,_cosYaw;
 	float m7_accX, m7_accY;
 	float f_pitch, f_roll;
-	float w_accX, w_accY;
+	float w_accX, w_accY;*/
 	void do_magic();
-
+	
 
 public:
 	int readLog();

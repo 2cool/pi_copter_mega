@@ -71,4 +71,20 @@ int Pressure::decode(char buffer[], int &i)
 	i += 5;
 	return 0;
 }
+
+
+void Pressure::parser(byte buf[], int n) {
+	temp = buf[n];
+	n++;
+	float pf = *(float*)&buf[n];
+	pressure = pf;
+	if (pressure > 80000 && pressure < 120000) {
+		altitude = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));
+		min_alt = min(altitude, min_alt);
+		max_alt = max(altitude, max_alt);
+	}
+	else
+		pressure = 0;
+}
+
 Pressure press;

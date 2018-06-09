@@ -83,7 +83,7 @@ double MS5611Class::getAltitude(const double pressure) {
 
 void MS5611Class::log_sens() {
 	if (Log.writeTelemetry) {
-		Log.block_start(LOG::MPU_SENS);
+		Log.block_start(LOG::MS5611_SENS);// (LOG::MPU_SENS);
 		Log.loadByte(i_readTemperature);
 		Log.loadFloat(pressure);
 		Log.block_end();
@@ -247,7 +247,7 @@ void MS5611Class::phase2() {
 		//float pr = (float)(D1 * SENS / 2097152 - OFF) * 0.000030517578125;
 
 		int32_t tP = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
-		if (tP < 80000) {
+		if (tP < 80000 || tP > 107000) {
 			cout << "PRESSURE ERROR " << tP << endl;
 			wrong_altitude_cnt++;
 		}

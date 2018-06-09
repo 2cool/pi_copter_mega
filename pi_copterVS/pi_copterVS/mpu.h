@@ -134,7 +134,7 @@ class MpuClass
 	 void set(const float  *ar);
 
 
-	 bool selfTest();
+	
 	 double dt,rdt;
 	 void set_yaw();
 

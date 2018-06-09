@@ -343,6 +343,7 @@ void Megai2c::getiiiiv(char *iiiiv) {
 #define GRN 0,1,0
 #define BLE 0,0,1
 #define BLK 0,0,0
+#define YEL 1,1,0
 
 
 
@@ -350,6 +351,8 @@ const uint8_t collors[][8][3] = {
 	{ { GRN },{ GRN },{ GRN },{ GRN },{ GRN },{ GRN },{ GRN },{ GRN } } ,// green
 	{ { RED },{ RED },{ GRN },{ GRN },{ GRN },{ GRN },{ RED },{ RED } } ,// green red
 	{ { RED },{ RED },{ RED },{ RED },{ RED },{ RED },{ RED },{ RED } }, // red
+	{ { RED },{ RED },{ BLE },{ BLE },{ BLE },{ BLE },{ RED },{ RED } }, // blu red
+	{ { RED },{ RED },{ YEL },{ YEL },{ YEL },{ YEL },{ RED },{ RED } }, // yel red
 	{ { BLK },{ BLK },{ BLK },{ BLK },{ BLK },{ BLK },{ BLK },{ BLK } } // black
 };
 	

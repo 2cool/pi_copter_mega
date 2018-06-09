@@ -122,7 +122,7 @@ class AutopilotClass
 	 bool going2HomeStartStop(const bool hower);
 	 bool go2HomeProc(const float dt);
 
-	 bool selfTest();
+
 	 float get_Roll(){ return aRoll; }
 	 float get_Pitch(){ return aPitch; }
 

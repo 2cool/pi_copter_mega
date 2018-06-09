@@ -108,7 +108,7 @@ class HmcClass
 	void loop();
 	bool ok;
 	bool calibration(const bool newc=false);
-	bool selfTest();
+
 
 	float get_headingGrad(){ return heading*RAD2GRAD; }
 

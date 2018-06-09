@@ -8,9 +8,16 @@
 #include "Mpu.h"
 #include "MyMath.h"
 #include "Balance.h"
+#include "Telemetry.h"
 //#define LOG_FILE_NAME "d:/tel_log10011.log"
+
+
+
+
+
+uint32_t control_bits = 0;
 char *fname;
-enum LOG { MPU, HMC, MS5, GpS, COMM, STABXY, STABZ, BAL , EMU, AUTO, TELE, MPU_M, mMPU = 1, mHMC = 2, mMS5 = 4, mGpS = 8, mCOMM = 16, mSTABXY = 32, mSTABZ = 64, mBAL = 128
+enum LOG {/* MPU, HMC, MS5, GpS, COMM, STABXY, STABZ, BAL , EMU, AUTO, TELE, MPU_M, */mMPU = 1, mHMC = 2, mMS5 = 4, mGpS = 8, mCOMM = 16, mSTABXY = 32, mSTABZ = 64, mBAL = 128
 };
 
 
@@ -39,11 +46,11 @@ bool init_yaw = true;
 
 uint16_t log_bank_size;
 
-void Graph::filter(float src, int dataI, int elementi,float max) {
-	
+void Graph::filter(float src, int dataI, int elementi, float max) {
+
 	if (isnan(src) || abs(src) > max)
 		src = 0;
-	sensors_data[dataI].sd[elementi] = (flags[FILTER] && kalman[elementi].initialized == 77777) ? kalman[elementi].update(src):src;
+	sensors_data[dataI].sd[elementi] = (flags[FILTER] && kalman[elementi].initialized == 77777) ? kalman[elementi].update(src) : src;
 }
 
 
@@ -54,10 +61,10 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 
 	g.Clear(Color(255, 255, 255, 255));
 
-	p = lSize*pos;
+	p = lSize * pos;
 	step = (double)(lSize - p)*zoom / rect.Width;
-	double mull_y = SOME_K* (double)rect.Height / (gps_log.max_y - gps_log.min_y);
-	double mull_x = SOME_K*(double)rect.Width / (gps_log.max_x - gps_log.min_x);
+	double mull_y = SOME_K * (double)rect.Height / (gps_log.max_y - gps_log.min_y);
+	double mull_x = SOME_K * (double)rect.Width / (gps_log.max_x - gps_log.min_x);
 	mull_x = mull_y = min(mull_x, mull_y);
 	int startX, startY;
 	{
@@ -85,7 +92,7 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 			int y1 = dy[(ind - 1) & 1];
 			int y2 = dy[ind & 1];
 			//if ( sqrt((x1-x2)*(x1 - x2)+(y1-y2)*(y1 - y2))<10)
-				g.DrawLine(&pen, x1, y1, x2, y2);
+			g.DrawLine(&pen, x1, y1, x2, y2);
 			ind++;
 
 
@@ -136,11 +143,113 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 float old_speedX = 0, old_speedY = 0;
 boolean new_mode_ver = false;
 
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+enum { MPU_EMU, MPU_SENS, HMC_BASE, HMC_SENS, HMC_EMU, GPS_SENS, TELE, COMM, EMU, AUTO, BAL, MS5611_SENS
+};
+
+
+
+
+
+
+
+
+
+
+
+
+int load_uint8_(byte buf[], int i) {
+	int vall = buf[i];
+	vall &= 255;
+	return vall;
+}
+
+int16_t load_int16_(byte buf[], int i) {
+	int16_t *ip = (int16_t*)&buf[i];
+	return *ip;
+}
+
+
+int parser(byte buf[]) {
+	int i = 0;
+	int f_len = load_int16_(buf, i);
+	i += 2;
+	while (i<f_len) {
+		int b = buf[i++];
+		int len = load_uint8_(buf, i);
+		i++;
+		if (len == 0) {
+			len = load_int16_(buf, i);
+			i += 2;
+		}
+		switch (b) {
+
+		case MPU_SENS: {
+			if (len == 5)
+				press.parser(buf,i);
+			else
+				mpu.parser(buf, i);
+			break;
+		}
+		case MS5611_SENS: {
+			press.parser(buf, i);
+			break;
+		}
+		case HMC_BASE: {
+			
+			break;
+		}
+		case AUTO: {
+			control_bits = *(uint32_t*)&buf[i];
+			break;
+		}
+		case HMC_SENS: {
+
+			break;
+		}
+		case TELE: {
+			tel.parser(buf, i);
+			break;
+		}
+		case BAL: {
+			bal.parser(buf, i);
+			break;
+		}
+		}
+		i += len;
+	}
+
+	return i;
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int indexes[] = { 0,0,0,0,0,0,0,0,0,0,0 };
 
 int Graph::decode_Log() {
-	
+	/*
 	gps_log.init();
 
 
@@ -167,98 +276,168 @@ int Graph::decode_Log() {
 
 
 	modesI = 0;
-	
+	*/
 	int i = 0;
+	int j = 0;
+	int n = 1;
+
+	while (j < lSize) {
+
+		i = 0;
+		byte *buf = (byte*)&buffer[j];
+		int f_len = i + load_int16_(buf, i);
+		i += 2;
+		while (i<f_len) {
+			int b = buf[i++];
+			int len = load_uint8_(buf, i);
+			i++;
+			if (len == 0) {
+				len = load_int16_(buf, i);
+				i += 2;
+			}
+			i += len;
+		}
+		n++;
+		j += i;
+	}
+
+	sensors_data = (SensorsData*)malloc(sizeof(SensorsData)*n);
+
+
+	j = 0;
+	n = 0;
+	while (j < lSize) {
+
+
+		j+=parser((byte*)&buffer[j]);
+
+
+
+		sensors_data[n].sd[TIME] = mpu.time;
+		sensors_data[n].sd[DT] = mpu.dt;
+		sensors_data[n].sd[PITCH] = mpu.pitch;
+		sensors_data[n].sd[ROLL] = mpu.roll;
+		sensors_data[n].sd[YAW] = mpu.yaw;
+		sensors_data[n].sd[ACCX] = mpu.accX;
+		sensors_data[n].sd[ACCY] = mpu.accY;
+		sensors_data[n].sd[ACCZ] = mpu.accZ;
+
+		sensors_data[n].sd[F0] = bal.f0;
+		sensors_data[n].sd[F1] = bal.f1;
+		sensors_data[n].sd[F2] = bal.f2;
+		sensors_data[n].sd[F3] = bal.f3;
+		sensors_data[n].sd[C_PITCH] = bal.ap_pitch;
+		sensors_data[n].sd[C_ROLL] = bal.ap_roll;
+		sensors_data[n].sd[HEADING] = bal.ap_yaw;
+
+		sensors_data[n].sd[PRESSURE] = press.altitude;
+
+		sensors_data[n].sd[MI0] = tel.m_current[0];
+		sensors_data[n].sd[MI1] = tel.m_current[1];
+		sensors_data[n].sd[MI2] = tel.m_current[2];
+		sensors_data[n].sd[MI3] = tel.m_current[3];
+		sensors_data[n].sd[BAT_F] = tel.m_current[4];
+
+		(*(uint32_t*)&sensors_data[n].sd[CONTROL_BITS]) = control_bits;
+
+		n++;
+
+	}
+
+
+	/*
+
 	log_bank_size = *(uint16_t*)buffer;
 	i += 2;
 	bool starPointOK = false;
 
 
 	if (indexes[LOG::MPU] == 0) {
-		do {
-			//if (indexes[LOG::MPU] > 157000) { lSize = i; break; }
-			switch (buffer[i]) {
-			case LOG::MPU: {
-				mpu.view(indexes[LOG::MPU], buffer, i);
-				break;
-			}
-			case LOG::MPU_M: {
-				i += 17;
-				break;
-			}
-			case LOG::TELE: {
-				i += 11;
-				break;
-			}
-			case LOG::AUTO: {
-				i += 5;
-				break;
-			}
-			case LOG::HMC:
-				indexes[LOG::HMC]++;
-				i += 17;
-				break;
-			case LOG::MS5: {
-				press.view(indexes[LOG::MS5], buffer, i);
-				break;
-			}
-			case LOG::GpS:
-				indexes[LOG::GpS]++;
-				i += 1 + sizeof(SEND_I2C);
-				i += 8 * 4;
-				break;
+	do {
+	//if (indexes[LOG::MPU] > 157000) { lSize = i; break; }
+	switch (buffer[i]) {
+	case LOG::MPU: {
+	mpu.view(indexes[LOG::MPU], buffer, i);
+	break;
+	}
+	case LOG::MPU_M: {
+	i += 17;
+	break;
+	}
+	case LOG::TELE: {
+	i += 11;
+	break;
+	}
+	case LOG::AUTO: {
+	i += 5;
+	break;
+	}
+	case LOG::HMC:
+	indexes[LOG::HMC]++;
+	i += 17;
+	break;
+	case LOG::MS5: {
+	press.view(indexes[LOG::MS5], buffer, i);
+	break;
+	}
+	case LOG::GpS:
+	indexes[LOG::GpS]++;
+	i += 1 + sizeof(SEND_I2C);
+	i += 8 * 4;
+	break;
 
-			case LOG::COMM: {
-				indexes[LOG::COMM]++;
+	case LOG::COMM: {
+	indexes[LOG::COMM]++;
 
-				unsigned short len = *(unsigned short*)(buffer + i + 1);
-				i += len + 3;
-				break;
-			}
-			case LOG::STABXY: {
-				indexes[LOG::STABXY]++;
+	unsigned short len = *(unsigned short*)(buffer + i + 1);
+	i += len + 3;
+	break;
+	}
+	case LOG::STABXY: {
+	indexes[LOG::STABXY]++;
 
-			
 
-				i += 17;
-				break;
-			}
-			case LOG::STABZ: {
-				indexes[LOG::STABZ]++;
-				
-				i += 9;
-				break;
-			}
 
-			case  LOG::BAL: {
-				indexes[LOG::BAL]++;
-				bal.decode(buffer, i, false);
-				//i += 43;
-				log_bank_size = *(uint16_t*)(buffer + i);
-				i += 2;
-				break;
-			}
-			case LOG::EMU: {
-				indexes[LOG::EMU]++;
-				i += buffer[i + 1] + 2;
-				break;
-			}
+	i += 17;
+	break;
+	}
+	case LOG::STABZ: {
+	indexes[LOG::STABZ]++;
 
-			default: {
+	i += 9;
+	break;
+	}
 
-				int res = findLog(buffer, i, lSize);
-				if (res == -1) {
-					lSize = i - 2;
-					break;
-				}
-				else
-					i = res;
-			}
-			}
+	case  LOG::BAL: {
+	indexes[LOG::BAL]++;
+	bal.decode(buffer, i, false);
+	//i += 43;
+	log_bank_size = *(uint16_t*)(buffer + i);
+	i += 2;
+	break;
+	}
+	case LOG::EMU: {
+	indexes[LOG::EMU]++;
+	i += buffer[i + 1] + 2;
+	break;
+	}
 
-		} while (i < lSize);
+	default: {
 
-		sensors_data = (SensorsData*)malloc(sizeof(SensorsData)*(indexes[LOG::MPU] + 1));
+	int res = findLog(buffer, i, lSize);
+	if (res == -1) {
+	lSize = i - 2;
+	break;
+	}
+	else
+	i = res;
+	}
+	}
+
+	} while (i < lSize);
+
+	sensors_data = (SensorsData*)malloc(sizeof(SensorsData)*(indexes[LOG::MPU] + 1));
+
 	}
 	i = 2;
 	int dataI = 0;
@@ -322,140 +501,145 @@ int Graph::decode_Log() {
 
 
 	FILE *klm = fopen("d:/klm.txt", "w");
-;
+	;
 	do {
-		if (i > 3050)
-			i = i;
-		switch (buffer[i]) {
-		
-		case LOG::MPU: {
-			mpu.decode(buffer, i);
-			break;
-		}
-		case LOG::MPU_M: {
+	if (i > 3050)
+	i = i;
+	switch (buffer[i]) {
 
-#ifdef _MPU_M
-#endif
-			i += 17;
-			break;
-		}
-		case LOG::TELE: {
-			i += 11;
-			break;
-		}
-		case LOG::AUTO: {
-			new_mode_ver = true;
-			def_mode = *(uint32_t*)(&buffer[i + 1]);
-			modes[modesI].mode = def_mode;
-			modes[modesI].index = dataI;
-			if (def_mode&GO2HOME)
-				def_mode = def_mode;
-			modesI++;
-			i += 5;
-			break;
-		}
-		case LOG::HMC:
-			i += 17;
-			break;
-		case LOG::MS5: {
-			press.decode(buffer, i);
-			break;
-		}
-		case LOG::GpS: {
-			gps_log.decode(buffer, i);
-			//i += 1 + sizeof(SEND_I2C);
-			//i += 8 * 4;
+	case LOG::MPU: {
+	mpu.decode(buffer, i);
+	break;
+	}
+	case LOG::MPU_M: {
 
-			break;
-		}
+	#ifdef _MPU_M
+	#endif
+	i += 17;
+	break;
+	}
+	case LOG::TELE: {
+	i += 11;
+	break;
+	}
+	case LOG::AUTO: {
+	new_mode_ver = true;
+	def_mode = *(uint32_t*)(&buffer[i + 1]);
+	modes[modesI].mode = def_mode;
+	modes[modesI].index = dataI;
+	if (def_mode&GO2HOME)
+	def_mode = def_mode;
+	modesI++;
+	i += 5;
+	break;
+	}
+	case LOG::HMC:
+	i += 17;
+	break;
+	case LOG::MS5: {
+	press.decode(buffer, i);
+	break;
+	}
+	case LOG::GpS: {
+	gps_log.decode(buffer, i);
+	//i += 1 + sizeof(SEND_I2C);
+	//i += 8 * 4;
 
-		case LOG::COMM: {
+	break;
+	}
 
-			
-			unsigned short len = *(unsigned short*)(buffer + i + 1);
-			i += len + 3;
-			break;
-		}
-		case LOG::STABXY: {
-			
-			i += 17;
-			break;
-		}
-
-		case LOG::STABZ: {
-			
-			filter(*(float*)(&buffer[i + 1]), dataI, SZ);
-			filter(*(float*)(&buffer[i + 5]), dataI, SPEED_Z);
-
-			i += 9;
-			break;
-		}
-		case LOG::BAL: {
+	case LOG::COMM: {
 
 
-			//------------------------------------------------------------------------------------
-			sensors_data[dataI].sd[TIME] = mpu.time;
-			sensors_data[dataI].sd[DT] = mpu.dt;
-			sensors_data[dataI].sd[PITCH] = mpu.f[mPITCH];
-			sensors_data[dataI].sd[ROLL] = mpu.f[mROLL];
-			sensors_data[dataI].sd[GYRO_PITCH] = mpu.f[mGYRO_PITCH];
-			sensors_data[dataI].sd[F0] = bal.f[bF0];
+	unsigned short len = *(unsigned short*)(buffer + i + 1);
+	i += len + 3;
+	break;
+	}
+	case LOG::STABXY: {
+
+	i += 17;
+	break;
+	}
+
+	case LOG::STABZ: {
+
+	filter(*(float*)(&buffer[i + 1]), dataI, SZ);
+	filter(*(float*)(&buffer[i + 5]), dataI, SPEED_Z);
+
+	i += 9;
+	break;
+	}
+	case LOG::BAL: {
 
 
+	//------------------------------------------------------------------------------------
+	sensors_data[dataI].sd[TIME] = mpu.time;
+	sensors_data[dataI].sd[DT] = mpu.dt;
+	sensors_data[dataI].sd[PITCH] = mpu.f[mPITCH];
+	sensors_data[dataI].sd[ROLL] = mpu.f[mROLL];
+	sensors_data[dataI].sd[GYRO_PITCH] = mpu.f[mGYRO_PITCH];
+	sensors_data[dataI].sd[F0] = bal.f[bF0];
 
 
 
-			sensors_data[dataI].sd[MAXACC] = mpu.f[mMAXACC];
-			
-
-			sensors_data[dataI].sd[PRESSURE] = press.alt;
-			sensors_data[dataI].sd[PRESSURE_SPEED] = press.speed;
-			sensors_data[dataI].sd[PRESSURE_ACC] = press.acc;
-
-			sensors_data[dataI].sd[X] = gps_log.gx2home;
-			sensors_data[dataI].sd[Y] = gps_log.gy2home;
-			sensors_data[dataI].sd[GPS_Z] = gps_log.z;
 
 
+	sensors_data[dataI].sd[MAXACC] = mpu.f[mMAXACC];
 
-				
-				i += 43;
-				i += 2;
 
-				dataI++;
-				break;
-		}
+	sensors_data[dataI].sd[PRESSURE] = press.alt;
+	sensors_data[dataI].sd[PRESSURE_SPEED] = press.speed;
+	sensors_data[dataI].sd[PRESSURE_ACC] = press.acc;
 
-		case LOG::EMU: {
-			
-			i += buffer[i + 1]+2;
-			break;
-		}
-		default: {
+	sensors_data[dataI].sd[X] = gps_log.gx2home;
+	sensors_data[dataI].sd[Y] = gps_log.gy2home;
+	sensors_data[dataI].sd[GPS_Z] = gps_log.z;
 
-			int res = findLog(buffer, i, lSize);
-			if (res == -1) {
-				lSize = i - 2;
-				break;
-			}
-			else
-				i = res;
-		}
-		}
+
+
+
+	i += 43;
+	i += 2;
+
+	dataI++;
+	break;
+	}
+
+	case LOG::EMU: {
+
+	i += buffer[i + 1]+2;
+	break;
+	}
+	default: {
+
+	int res = findLog(buffer, i, lSize);
+	if (res == -1) {
+	lSize = i - 2;
+	break;
+	}
+	else
+	i = res;
+	}
+	}
 
 	} while (i < lSize);
 	fclose(klm);
 	lSize = dataI;
 	free(buffer);
-	
-	
+
+	*/
+
+
+	//fclose(klm);
+	lSize = n;
+
 	return 0;
 }
 
 
 
 
-int Graph::readLog(){
+int Graph::readLog() {
 
 	FILE * pFile;
 	size_t result;
@@ -483,7 +667,7 @@ int Graph::readLog(){
 	fclose(pFile);
 	//free(buffer);
 	return decode_Log();
-	
+
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -542,8 +726,8 @@ Graph::Graph(char*fn)
 	name[SZ] = L"SZ    ";
 	color[GPS_Z] = Color(255, 50, 180, 200);
 	name[GPS_Z] = L"GPS Z"
-		
-		
+
+
 		;
 	color[SPEED_Z] = Color(255, 255, 0, 180);
 	name[SPEED_Z] = L"speedZ    ";
@@ -577,7 +761,7 @@ Graph::Graph(char*fn)
 
 
 
-	color[PITCH] = Color(255, 0,200, 0);
+	color[PITCH] = Color(255, 0, 200, 0);
 	name[PITCH] = L"pitch";
 	color[R_PITCH] = Color(250, 0, 200, 100);
 	name[R_PITCH] = L"r_pitch";
@@ -600,7 +784,7 @@ Graph::Graph(char*fn)
 	name[C_PITCH] = L"c_pitch";
 	//color[TC_PITCH] = Color(100, 0, 200, 0);
 	//name[TC_PITCH] = L"t_c_pitch";
-	
+
 
 
 	color[C_ROLL] = Color(180, 255, 0, 0);
@@ -665,7 +849,7 @@ Graph::Graph(char*fn)
 
 
 
-	
+
 	color[M_C_ROLL] = Color(100, 200, 100, 200);
 	name[M_C_ROLL] = L"wspeed_y";
 
@@ -677,11 +861,11 @@ Graph::Graph(char*fn)
 	name[I_PITCH] = L"i_pitch";
 	color[I_ROLL] = Color(255, 0, 20, 200);
 	name[I_ROLL] = L"i_roll";
-	
 
 
 
-//	color[ROLL] =  Color(180,  255,    0,    0);
+
+	//	color[ROLL] =  Color(180,  255,    0,    0);
 	//color[YAW] =   Color(100,    0,    0,  255);
 
 
@@ -698,7 +882,7 @@ int Graph::drawText(HDC hdc, RectF rect, double pos) {
 		return 0;
 	Graphics g(hdc);
 	g.Clear(Color(255, 255, 255, 255));
-	int _p = lSize*pos;
+	int _p = lSize * pos;
 	if (_p >= lSize)
 		return -1;
 	Pen pen(Color(255, 255, 0, 0));
@@ -707,15 +891,13 @@ int Graph::drawText(HDC hdc, RectF rect, double pos) {
 
 	StringFormat format;
 	format.SetAlignment(StringAlignmentNear);
+
+	SolidBrush blackBrush(Color(0, 0, 0));
+
+
 	
-	SolidBrush blackBrush(Color(0,0,0));
+	uint32_t mode = *(uint32_t*)&sensors_data[_p].sd[CONTROL_BITS];
 
-
-	int mode = -1;
-	for (int i = 0; i < modesI; i++) {
-		if (_p > modes[i].index)
-			mode = modes[i].mode;
-	}
 	std::wstring mode_mask = (mode&MOTORS_ON) ? L"M ON, " : L"";
 	mode_mask += (mode&PROGRAM) ? L"PROG, " : L"";
 	mode_mask += (mode&XY_STAB) ? L"sXY ," : L"";
@@ -732,7 +914,7 @@ int Graph::drawText(HDC hdc, RectF rect, double pos) {
 	g.DrawString((WCHAR*)mode_mask.c_str(), mode_mask.size(), &myFont, rect, &format, &blackBrush);
 	rect.Y += 20;
 	std::wstring time = L"time: " + std::to_wstring(sensors_data[_p].sd[TIME]);
-	g.DrawString((WCHAR*)time.c_str(),time.size(),&myFont,rect,&format,&blackBrush);
+	g.DrawString((WCHAR*)time.c_str(), time.size(), &myFont, rect, &format, &blackBrush);
 	rect.Y += 20;
 	std::wstring wpos = L"pos: " + std::to_wstring(_p);
 	g.DrawString((WCHAR*)wpos.c_str(), wpos.size(), &myFont, rect, &format, &blackBrush);
@@ -740,7 +922,7 @@ int Graph::drawText(HDC hdc, RectF rect, double pos) {
 
 	rect.Y += 20;
 	for (int i = 0; i < ROTATE; i++) {
-		if ( flags[i]) {
+		if (flags[i]) {
 			SolidBrush coloredBrush(color[i]);
 			std::wstring text = name[i] + L" " + std::to_wstring(sensors_data[_p].sd[i]);
 			g.DrawString((WCHAR*)text.c_str(), text.size(), &myFont, rect, &format, &coloredBrush);
@@ -755,7 +937,7 @@ int Graph::drawText(HDC hdc, RectF rect, double pos) {
 int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 
 	Graphics g(hdc);
-	int _p = lSize*pos;
+	int _p = lSize * pos;
 
 	if (_p >= lSize)
 		return 0;
@@ -768,10 +950,10 @@ int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 
 
 
-	
+
 	Pen pen(Color(255, 0, 0, 0));
-	double mull_y = SOME_K* (double)rect.Height / (gps_log.max_y - gps_log.min_y);
-	double mull_x = SOME_K*(double)rect.Width / (gps_log.max_x - gps_log.min_x);
+	double mull_y = SOME_K * (double)rect.Height / (gps_log.max_y - gps_log.min_y);
+	double mull_x = SOME_K * (double)rect.Width / (gps_log.max_x - gps_log.min_x);
 	mull_x = mull_y = min(mull_x, mull_y);
 	int ind = 1;
 	int y = (sensors_data[_p].sd[Y] - gps_log.min_y) * mull_y;
@@ -794,7 +976,7 @@ int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 
 
 
-	
+
 	if (flags[SX] || flags[SY]) {
 		Pen pen(Color(255, 255, 0, 0));
 		int y = (sensors_data[_p].sd[SY] - gps_log.min_y) * mull_y;
@@ -812,214 +994,117 @@ int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 
 
 LONG old_time = 0;
-int Graph::update(HDC hdc, RectF rect,double zoom, double pos) {/////////////////////////////////////////////////////////////////////////////////////
+int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {/////////////////////////////////////////////////////////////////////////////////////
 
 	Graphics g(hdc);
 
-	p = lSize*pos;
+	p = lSize * pos;
 	step = (double)(lSize - p)*zoom / rect.Width;
 
 	//graphics.Clear(Color(255, 255, 255, 255));
 	RectF r;
 
 	r.X = 200;
+
 	
-	for (int i = 0; i < modesI; i++) {
-		int pow = ((modes[i].mode&MOTORS_ON) ? 100 : 50);
-		int R = pow +  ((modes[i].mode&Z_STAB)?20 : 0) + ((modes[i].mode&XY_STAB)?40 : 0) + ((modes[i].mode&COMPASS_ON)?80:0);
-		int gg = pow + ((modes[i].mode&PROGRAM) ? 20 : 0) + ((modes[i].mode&GO2HOME) ? 40 : 0);
-		int B = pow + ((modes[i].mode&HORIZONT_ON)?50:0);
 
-			SolidBrush coloredBrush(Color(100,R, gg, B));
-			double t0 = (modes[i].index - p)/ step;
-			double t1 = (i+1==modesI)?rect.Width:(modes[i+1].index - p) / step;
-			if (t1 < 0)
-				continue;
-
-			if (t0 < 0) {
-				r.X = rect.X;
-				t1 += t0;
-			}else
-				r.X=rect.X + t0;
-			
-			r.Y = rect.Y + 2;
-			r.Width = t1 - t0;
-
-			if (r.Width + r.X > rect.X + rect.Width) {
-				r.Width = rect.X + rect.Width - r.X;
-			}
-			r.Height = rect.Height - 4;
-			g.FillRectangle(&coloredBrush, r);		
-	}
-	
 #define MUL_4_ANG 45
-	
+
 
 
 	int y0 = (rect.Y + rect.Height / 2);
 	double mull = (double)rect.Height / 2 / 45;
 #
 
-	
-#ifdef DKDKDKDKDK
 
 
-	draw(g,  rect, y0, mull, ROLL);
-	draw(g, rect, y0, mull, R_PITCH);
-	draw(g, rect, y0, mull, R_ROLL);
-	draw(g, rect, y0, mull, ANGLE);
-
-	draw(g,  rect, y0, mull, C_PITCH);
-	//draw(g,  rect, y0, mull, TC_PITCH);
-	draw(g, rect, y0, mull, EMU_PITCH);
-	draw(g, rect, y0, mull, EMU_ROLL);
 
 	
-	draw(g,  rect, y0, mull, C_ROLL);
-	//draw(g,  rect, y0, mull, TC_ROLL);
-
-	mull = (double)rect.Height / 2 / 5;
-
-
-
-
-
-	draw(g,  rect, y0, mull, ACCX);
-	draw(g,  rect, y0, mull, ACCY);
-	draw(g,  rect, y0, mull, ACCZ);
-	draw(g, rect, y0, mull, GACCX);
-	draw(g, rect, y0, mull, GACCY);
-	draw(g, rect, y0, mull, GACCZ);
-	draw(g, rect, y0, mull, EXP2);
-	draw(g, rect, y0, mull, EXP3);
-	draw(g, rect, y0, mull, ACC);
-	draw(g, rect, y0, mull, GACC);
-
-
-	mull= (double)rect.Height / 2 / 360;
-	draw(g,  rect, y0, mull, HEADING);
-	draw(g,  rect, y0, mull, YAW);
-
-	mull = (double)rect.Height / 2 / 300;
-	draw(g,  rect, y0, mull, GYRO_PITCH);
-	draw(g,  rect, y0, mull, GYRO_ROLL);
-	draw(g,  rect, y0, mull, GYRO_YAW);
-
-	mull = (double)rect.Height / 2 / 20;
-	draw(g,  rect, y0, mull, SPEED_X);
-	draw(g,  rect, y0, mull, SPEED_Y);
-	draw(g, rect, y0, mull, G_SPEED_X);
-	draw(g, rect, y0, mull, G_SPEED_Y);
-
-	draw(g, rect, y0, mull, EXP0);
-	draw(g, rect, y0, mull, EXP1);
-
-
-
-	mull = (double)rect.Height / 2 / 40;
-	draw(g, rect, y0, mull, G_SPEED);
-
-
-	mull = (double)rect.Height / 2 / 45;
-	draw(g, rect, y0, mull, M_C_PITCH);
-	draw(g, rect, y0, mull, M_C_ROLL);
-
-
-
-//	mull = (double)rect.Height / 2 / (max_x-min_x);
-	draw(g, rect, y0, mull, SX);
-//	mull = (double)rect.Height / 2 / (max_y - min_y);
-	draw(g,  rect, y0, mull, SY);
-
-
-	mull = (double)rect.Height / 2 / 200;
-	draw(g, rect, y0, mull, I_YAW);
-
-	mull = (double)rect.Height / 2 / MUL_4_ANG;
-	draw(g, rect, y0, mull, I_PITCH);
-	draw(g, rect, y0, mull, I_ROLL);
-
-	y0 = (rect.Y + rect.Height);
-	
-
-	mull = (double)rect.Height ;
-	draw(g,  rect, y0, mull, F0);
-	draw(g, rect, y0, mull, F1);
-	draw(g, rect, y0, mull, F2);
-	draw(g, rect, y0, mull, F3);
-	draw(g, rect, y0, mull, THROTTLE);
-	draw(g, rect, y0, mull, I_THROTHLE);
-
-	y0 = (rect.Y + rect.Height);
-	mull = (double)rect.Height/150;
-	y0 -= mull * 100;
-	draw(g, rect, y0, mull, SZ);
-#endif
-	//----------------------------------------------------------
-
-
-	//draw(g, rect, y0, mull, PITCH);
+	drawModes(g, rect);
 	draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
 	draw(g, rect, mpu._max[mROLL], mpu._min[mROLL], ROLL);
+	draw(g, rect, mpu._max[mYAW], mpu._min[mYAW], YAW);
+	draw(g, rect, mpu._max[mACCX], mpu._min[mACCX], ACCX);
+	draw(g, rect, mpu._max[mACCY], mpu._min[mACCY], ACCY);
+	draw(g, rect, mpu._max[mACCZ], mpu._min[mACCZ], ACCZ);
+
+
+
 	draw(g, rect, mpu._max[mGYRO_PITCH], mpu._min[mGYRO_PITCH], GYRO_PITCH);
+	draw(g, rect, 10, 0, MI0);
+	draw(g, rect, 10, 0, MI1);
+	draw(g, rect, 10, 0, MI2);
+	draw(g, rect, 10, 0, MI3);
+	draw(g, rect, 1680, 1440, BAT_F);
 
 
 	draw(g, rect, 1, 0, F0);
+	draw(g, rect, 1, 0, F1);
+	draw(g, rect, 1, 0, F2);
+	draw(g, rect, 1, 0, F3);
 
-
-
-
-	draw(g, rect, mpu._max[mMAXACC], mpu._min[mMAXACC], MAXACC);
+	draw(g, rect, 20, -20, C_PITCH);
+	draw(g, rect, 20, -20, C_ROLL);
+	draw(g, rect, 20, -20, HEADING);
+//	draw(g, rect, mpu._max[mMAXACC], mpu._min[mMAXACC], MAXACC);
 	//draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
 
 
 	draw(g, rect, press.max_alt, press.min_alt, PRESSURE);
-	draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
-	draw(g, rect, press.max_sp, press.min_sp, PRESSURE_SPEED);
+	//draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
+	//draw(g, rect, press.max_sp, press.min_sp, PRESSURE_SPEED);
 
-#ifdef DKDKDOOOdo
-//	y0 = (rect.Y + rect.Height + 100);
-	//mull = (double)rect.Height / 50;// press.max_alt;
-	draw(g, rect, y0, mull, GPS_Z);
-
-	mull = (double)rect.Height / 2 / 300; 
-	y0 = (rect.Y + rect.Height / 2);
-	
-	mull = (double)rect.Height / 2 / 5;
-	
-
-	mull = (double)rect.Height / 3;
-//	y0 = (rect.Y + rect.Height / 2);
-	draw(g, rect, y0, mull, SPEED_Z);
-
-
-	y0 = (rect.Y + rect.Height / 2)+1100;
-	mull = (double)rect.Height / 2 / 2;
-	draw(g, rect, y0, mull, BAT_F);
-
-
-	y0 = (rect.Y + rect.Height / 2);
-	mull = (double)rect.Height / 2 / 10;
-	draw(g, rect, y0, mull, MI0);
-	draw(g, rect, y0, mull, MI1);
-	draw(g, rect, y0, mull, MI2);
-	draw(g, rect, y0, mull, MI3);
-
-
-
-#endif
 
 
 
 
 	return 0;
 }
+void Graph::drawModes(Graphics &g, RectF rect) {
+	int y0 = (rect.Y + rect.Height / 2);
+	float base = 0;
+
+	float mull = 1;
+
+	if (true) {
+		int dy[2];
+		int index = 0;
+
+
+
+		for (int x = rect.X + 1, i = 1; x < rect.X + rect.Width; x++, i++) {
+			int in = (int)((p)+(step*i));
+			if (in >= lSize)
+				return;
+			
+			
+			
+
+			uint32_t mode = *(uint32_t*)&sensors_data[in].sd[CONTROL_BITS];
+
+
+
+			int pow = ((mode&MOTORS_ON) ? 100 : 50);
+			int R = pow + ((mode&Z_STAB) ? 20 : 0) + ((mode&XY_STAB) ? 40 : 0) + ((mode&COMPASS_ON) ? 80 : 0);
+			int gg = pow + ((mode&PROGRAM) ? 20 : 0) + ((mode&GO2HOME) ? 40 : 0);
+			int B = pow + ((mode&HORIZONT_ON) ? 50 : 0);
+
+			
+
+
+
+			g.DrawLine(&Pen(Color(100, R, gg, B)), x - 1, (int)rect.Y, x, (int)(rect.Y+rect.Height));
+			index++;
+		}
+	}
+}
+
 
 void Graph::draw(Graphics &g, RectF rect, float max, float min, int sdi) {
 	//if (true)return;
 	//void Graph::draw_ang(Graphics &g, Pen &pen, RectF rect, double zoom, double pos, int sdi) {
 
-	int y0 = (rect.Y + rect.Height/2);
+	int y0 = (rect.Y + rect.Height / 2);
 	float base = min + (max - min) / 2;
 
 	float mull = (double)rect.Height / (max - min);
@@ -1029,7 +1114,7 @@ void Graph::draw(Graphics &g, RectF rect, float max, float min, int sdi) {
 		int index = 0;
 
 
-		dy[0] = y0 - (sensors_data[(int)(p)].sd[sdi]-base) * mull;
+		dy[0] = y0 - (sensors_data[(int)(p)].sd[sdi] - base) * mull;
 		if (dy[0] > rect.Height)
 			dy[0] = rect.Height;
 		if (dy[0] < rect.Y)
@@ -1038,7 +1123,7 @@ void Graph::draw(Graphics &g, RectF rect, float max, float min, int sdi) {
 			int in = (int)((p)+(step*i));
 			if (in >= lSize)
 				return;
-			dy[index & 1] = y0 - (sensors_data[in].sd[sdi]-base) * mull;
+			dy[index & 1] = y0 - (sensors_data[in].sd[sdi] - base) * mull;
 			if (dy[index & 1] > rect.Height + rect.Y)
 				dy[index & 1] = rect.Height + rect.Y;
 			if (dy[index & 1] < rect.Y)
@@ -1047,5 +1132,5 @@ void Graph::draw(Graphics &g, RectF rect, float max, float min, int sdi) {
 			index++;
 		}
 	}
-	
+
 }

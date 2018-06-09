@@ -45,15 +45,15 @@ void StabilizationClass::init(){
 	accZ_stabKP_Rep = 1.0f / accZ_stabKP;
 
 
-	pids[ACCZ_SPEED].kP(0.1f);
-	pids[ACCZ_SPEED].kI(0.06f);
+	pids[ACCZ_SPEED].kP(0.15f);
+	pids[ACCZ_SPEED].kI(0.25f);
 	pids[ACCZ_SPEED].imax(MAX_THROTTLE_-HOVER_THROTHLE);
 	max_stab_z_P =  MAX_VER_SPEED_PLUS;
 	max_stab_z_M = MAX_VER_SPEED_MINUS;
 
 
 	XY_FILTER = 0.06;
-	Z_FILTER = 0.1;
+	Z_FILTER = 0.2;
 	sX=sY=sZ = 0;
 	speedZ = speedX = speedY = mc_pitch=mc_roll=mc_z=0;
 	cout << "stab init\n";
@@ -220,7 +220,6 @@ void StabilizationClass::init_Z(){
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float StabilizationClass::Zgps() {
 
 }

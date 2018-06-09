@@ -32,6 +32,34 @@ void Balance::init()
 
 
 }
+
+
+void Balance::parser(byte buf[], int i) {
+
+	int bank_counter = *(uint32_t*)&buf[i];// load_int32(buf, i);
+	i += 4;
+	float *fb = (float*)&buf[i];
+	f0 = fb[0];
+	f1 = fb[1];
+	f2 = fb[2];
+	f3 = fb[3];
+
+	i += 16;
+	ap_roll = 1.0 / 16 * (double)(*(int16_t*)&buf[i]);
+	i += 2;
+	ap_pitch = 1.0 / 16 * (double)(*(int16_t*)&buf[i]); ;
+														  
+	i += 2;
+	ap_yaw = 1.0 / 16 * (double)(*(int16_t*)&buf[i]); ;
+
+
+
+}
+
+
+
+
+
 Balance bal;
 
 
