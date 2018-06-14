@@ -57,7 +57,7 @@ protected:
 	int wrong_altitude_cnt;
 	float gps_barometr_alt_dif;
 	void log_sens();
-	 int ct;
+	 uint64_t ct;
 	 float altitude_error;
 
 	  void phase0();

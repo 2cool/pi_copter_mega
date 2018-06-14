@@ -72,7 +72,7 @@ double MS5611Class::getAltitude(const double pressure) {
 			return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
 	}
 	else {
-		shmPTR->altitude = altitude_ = alt;
+		shmPTR->altitude = alt;
 		shmPTR->pressure = pressure;
 		gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif)*0.1;
 	}

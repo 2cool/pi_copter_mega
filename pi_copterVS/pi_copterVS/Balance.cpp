@@ -322,7 +322,7 @@ bool BalanceClass::loop()
 			float roll_stab_output = f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED);
 			float yaw_stab_output = f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED);
 
-			//yaw_stab_output = 0;
+		//	yaw_stab_output = 0;////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			// rate PIDS
 
@@ -368,7 +368,7 @@ bool BalanceClass::loop()
 
 
 			
-			/*
+			
 			if (Hmc.do_compass_motors_calibr) {
 				f_[0] = 0;
 				f_[1] = 0;
@@ -376,7 +376,7 @@ bool BalanceClass::loop()
 				f_[3] = 0;
 				f_[Hmc.motor_index] = 0.5;
 			}
-			*/
+			
 
 		}
 		else
@@ -415,7 +415,7 @@ bool BalanceClass::loop()
 		}
 
 
-		//f_[0] = f_[1] = f_[2] = f_[3] = 0;///////////////////////////////////////////////////
+	//	f_[0] = f_[1] = f_[2] = f_[3] = 0;///////////////////////////////////////////////////
 
 
 		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros

@@ -109,9 +109,11 @@ void HmcClass::start_motor_compas_calibr(){
 #define MAX_M_WORK_VOLTAGE 1250.0f
 
 float _base[3];
+float current = 0;
 void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 	if (Mpu.timed > startTimed){
 		if (baseI < 1000){
+			current  += Telemetry.get_current(motor_index);
 			_base[0] += fmx;
 			_base[1] += fmy;
 			_base[2] += fmz;
@@ -120,18 +122,26 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 		else{
 			if (motors_is_on_){
 
-				float fv = MAX_M_WORK_VOLTAGE / Telemetry.get_voltage();
-				fv*=(PRESSURE_AT_0/MS5611.pressure);
+				//float fv = MAX_M_WORK_VOLTAGE / Telemetry.get_voltage();
+
+				
+
+				//fv*=(PRESSURE_AT_0/MS5611.pressure);
 				Autopilot.motors_do_on(false, "CMT");
 				motors_is_on_ = false;
 				int index = motor_index * 3;
 
-				base[index]   = fv*(_base[0] - base[index])*0.001f;
-				base[index+1] = fv*(_base[1] - base[index+1])*0.001f;
-				base[index+2] = fv*(_base[2] - base[index+2])*0.001f;
+				printf(" MOTOR ON\n");
+				printf("compas test: 4 m %i\n", motor_index);
+				printf("%f\t%f\t%f\n", base[0], base[1], base[2]);
+				printf("current 4 m %i %f\n", motor_index, Telemetry.get_current(motor_index)/1000);
 
-				printf("%f\t%f\t%f MOTOR ON\n", base[index] * 1000, base[index + 1] * 1000, base[index + 2] * 1000);
-				printf("compas test: 4 m %i %f\n", motor_index, Telemetry.get_voltage());
+
+				base[index] =   ((_base[0] - base[index])   / current);
+				base[index+1] = ((_base[1] - base[index+1]) / current);
+				base[index+2] = ((_base[2] - base[index+2]) / current);
+
+							
 
 				if (motor_index < 3){
 					motor_index++;
@@ -150,13 +160,13 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 				base[index+2] = _base[2];
 				printf(" MOTOR OFF\n");
 				printf("compas test: 4 m %i\n",motor_index);
-				printf("%f\t%f\t%f\n",base[index],base[index + 1],base[index + 2]);
+				printf("%f\t%f\t%f\n",base[0],base[1],base[2]);
 				startTimed = Mpu.timed + 3;
 				Autopilot.motors_do_on(true, "CMT");
 				motors_is_on_ = true;
 			}
 			baseI = 0;
-			_base[0] = _base[1] = _base[2] = 0;
+			_base[0] = _base[1] = _base[2] = current=0;
 		}
 	}
 	
@@ -206,40 +216,29 @@ void HmcClass::loop(){
 	if (do_compass_motors_calibr)
 		motTest(fmx, fmy, fmz);
 
-	/*
+	
 	if (Autopilot.motors_is_on() && motors_power_on){
-		float kx, ky, kz;
+		float kx, ky, kz,k;
 		//m0;
-		//float pk = MS5611.pressure / 101663.0;
-
-		const float ek = MS5611.pressure * (float)(1.0 / PRESSURE_AT_0) * (Telemetry.get_voltage() * (float)(1.0 / MAX_M_WORK_VOLTAGE));
-		float k = Balance.gf0() * 2;
-			k *= k;
-			k *= ek;
+			k = Telemetry.get_current(0);
 			kx = base[0] * k;
 			ky = base[1] * k;
 			kz = base[2] * k;
 
 		//m1;
-			k = Balance.gf1() * 2;
-			k *= k;
-			k *= ek;
+			k = Telemetry.get_current(1);
 			kx += base[3] * k;
 			ky += base[4] * k;
 			kz += base[5] * k;
 
 		//m2
-			k = Balance.gf2() * 2;
-			k *= k;
-			k *= ek;
+			k = Telemetry.get_current(2);
 			kx += base[6] * k;
 			ky += base[7] * k;
 			kz += base[8] * k;
 
 		//m3
-			k = Balance.gf3() * 2;
-			k *= k;
-			k *= ek;
+			k = Telemetry.get_current(3);
 			kx += base[9]  * k;
 			ky += base[10] * k;
 			kz += base[11] * k;
@@ -248,7 +247,7 @@ void HmcClass::loop(){
 			fmy -= ky;
 			fmz -= kz;
 	}
-	*/
+	
 	// Tilt compensation
 	float Xh = fmx * Mpu.cosPitch - fmz * Mpu.sinPitch;
 	float Yh = fmx * Mpu.sinRoll * Mpu.sinPitch + fmy * Mpu.cosRoll - fmz * Mpu.sinRoll * Mpu.cosPitch;
@@ -342,7 +341,7 @@ bool HmcClass::calibration(const bool newc){
 	calibrated = Settings.readCompassSettings(sh);
 	if (calibrated == false) 
 		cout<< "! ! ! ! Comppas not Calibrated ! ! ! !\n";
-	bool mot_cal = true;// Settings.readCompasMotorSettings(base);
+	bool mot_cal = Settings.readCompasMotorSettings(base);
 	if (!mot_cal)
 		cout << "! ! ! ! Comppas motors not Calibrated ! ! ! !\n";
 	calibrated &= mot_cal;

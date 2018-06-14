@@ -301,10 +301,10 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 					connectionLost_();
 					return;
 				}
-
+#ifndef OFF_TIMELAG
 				if ((timelag > TIMEOUT_LAG))
 					Commander.data_reset();
-
+#endif
 				if (compass_onState())
 					aYaw_ = Commander.get_yaw_minus_offset();
 				if (control_bits & Z_STAB){
@@ -982,9 +982,9 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 		}
 	}
 	if (bits & COMPASS_MOTOR_CALIBR) {
-		//Hmc.start_motor_compas_calibr();
-		//if (Hmc.do_compass_motors_calibr)
-		//	control_bits |= COMPASS_MOTOR_CALIBR;
+		Hmc.start_motor_compas_calibr();
+		if (Hmc.do_compass_motors_calibr)
+			control_bits |= COMPASS_MOTOR_CALIBR;
 	}
 	if (bits & COMPASS_CALIBR) {
 		control_bits |= COMPASS_CALIBR;

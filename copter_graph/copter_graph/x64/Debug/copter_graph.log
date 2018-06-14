@@ -1,2 +1,5 @@
-﻿  Mpu.cpp
+﻿  graph.cpp
+  Mpu.cpp
+  Pressure.cpp
+  Generating Code...
   copter_graph.vcxproj -> C:\Users\2coolz\pi_copter_mega\copter_graph\x64\Debug\copter_graph.exe

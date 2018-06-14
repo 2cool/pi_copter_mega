@@ -333,7 +333,9 @@ public class MainActivity extends Activity implements SensorEventListener {
                 break;
             }
 
-
+            case R.id.COMP_M_CAL:
+                command_bits_|=COMPASS_MOTOR_CALIBR;
+                break;
             case R.id.COMP_CAL:
                 command_bits_|=COMPASS_CALIBR;
                 // Commander.button="CMC";

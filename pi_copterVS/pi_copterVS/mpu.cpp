@@ -150,6 +150,20 @@ void MpuClass::log_sens() {
 		Log.loadMem((uint8_t*)a, 6, false);
 		Log.loadMem((uint8_t*)_q, 16, false);
 
+
+
+		Log.loadFloat(f_pitch * RAD2GRAD);
+		Log.loadFloat(f_roll * RAD2GRAD);
+		Log.loadFloat(pitch);
+		Log.loadFloat(roll);
+		Log.loadFloat(yaw);
+		Log.loadFloat(gyroPitch);
+		Log.loadFloat(gyroRoll);
+		Log.loadFloat(gyroYaw);
+		Log.loadFloat(accX);
+		Log.loadFloat(accY);
+		Log.loadFloat(accZ);
+
 		Log.block_end();
 	}
 }

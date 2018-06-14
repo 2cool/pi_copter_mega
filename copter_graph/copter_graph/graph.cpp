@@ -9,6 +9,7 @@
 #include "MyMath.h"
 #include "Balance.h"
 #include "Telemetry.h"
+#include "Stab.h"
 //#define LOG_FILE_NAME "d:/tel_log10011.log"
 
 
@@ -159,7 +160,7 @@ boolean new_mode_ver = false;
 
 
 
-enum { MPU_EMU, MPU_SENS, HMC_BASE, HMC_SENS, HMC_EMU, GPS_SENS, TELE, COMM, EMU, AUTO, BAL, MS5611_SENS
+enum { MPU_EMU, MPU_SENS, HMC_BASE, HMC_SENS, HMC_EMU, GPS_SENS, TELE, COMM, EMU, AUTO, BAL, MS5611_SENS, XYSTAB, ZSTAB
 };
 
 
@@ -203,7 +204,7 @@ int parser(byte buf[]) {
 			if (len == 5)
 				press.parser(buf,i);
 			else
-				mpu.parser(buf, i);
+				mpu.parser(buf, i, len);
 			break;
 		}
 		case MS5611_SENS: {
@@ -224,6 +225,10 @@ int parser(byte buf[]) {
 		}
 		case TELE: {
 			tel.parser(buf, i);
+			break;
+		}
+		case ZSTAB:{
+			stab.parser(buf, i, len);
 			break;
 		}
 		case BAL: {
@@ -313,6 +318,22 @@ int Graph::decode_Log() {
 
 
 
+		if ((control_bits&MOTORS_ON) && !(old_control_bits&MOTORS_ON)) {
+			zero_alt = press.altitude;
+			fly_at_altitude = press.altitude;
+		}
+
+		if ((control_bits&MOTORS_ON) && (control_bits&Z_STAB) && !(old_control_bits&Z_STAB)) {
+			fly_at_altitude = press.altitude;
+
+		}
+
+
+
+		old_control_bits = control_bits;
+		
+
+
 		sensors_data[n].sd[TIME] = mpu.time;
 		sensors_data[n].sd[DT] = mpu.dt;
 		sensors_data[n].sd[PITCH] = mpu.pitch;
@@ -330,7 +351,7 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[C_ROLL] = bal.ap_roll;
 		sensors_data[n].sd[HEADING] = bal.ap_yaw;
 
-		sensors_data[n].sd[PRESSURE] = press.altitude;
+		sensors_data[n].sd[PRESSURE] = press.altitude;// -fly_at_altitude;
 
 		sensors_data[n].sd[MI0] = tel.m_current[0];
 		sensors_data[n].sd[MI1] = tel.m_current[1];
@@ -338,8 +359,17 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[MI3] = tel.m_current[3];
 		sensors_data[n].sd[BAT_F] = tel.m_current[4];
 
+
+		sensors_data[n].sd[STAB_SPEED_Z] = stab.speedZ;
+		sensors_data[n].sd[F_Z] = stab.fZ;
+		sensors_data[n].sd[STAB_Z] = stab.sZ;
+
 		(*(uint32_t*)&sensors_data[n].sd[CONTROL_BITS]) = control_bits;
 
+
+
+
+		
 		n++;
 
 	}
@@ -694,6 +724,22 @@ Graph::Graph(char*fn)
 	color[MI3] = Color(255, 0, 100, 200);
 	name[MI3] = L"MI3";
 
+	color[STAB_SPEED_Z] = Color(255, 100, 100, 0);
+	name[STAB_SPEED_Z] = L"Stab_SpZ";
+
+	color[F_Z] = Color(255, 100, 100, 0);
+	name[F_Z] = L"stab_FZ";
+
+	color[STAB_Z] = Color(255, 100, 100, 0);
+	name[STAB_Z] = L"stab_Z";
+
+
+
+
+	color[STAB_Z] = Color(255, 100, 100, 0);
+	name[STAB_Z] = L"stab_Z";
+
+
 	color[G_SPEED_X] = Color(255, 255, 0, 0);
 	name[G_SPEED_X] = L"G_SPEEDX";
 	color[G_SPEED_Y] = Color(255, 0, 180, 255);
@@ -1037,6 +1083,9 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 10, 0, MI3);
 	draw(g, rect, 1680, 1440, BAT_F);
 
+	draw(g, rect, 5, -5, STAB_SPEED_Z);
+	draw(g, rect, 2, -2, F_Z);
+	draw(g, rect, 2, -2, STAB_Z);
 
 	draw(g, rect, 1, 0, F0);
 	draw(g, rect, 1, 0, F1);
@@ -1050,7 +1099,7 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	//draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
 
 
-	draw(g, rect, press.max_alt, press.min_alt, PRESSURE);
+	draw(g, rect, 2, -2, PRESSURE);
 	//draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
 	//draw(g, rect, press.max_sp, press.min_sp, PRESSURE_SPEED);
 

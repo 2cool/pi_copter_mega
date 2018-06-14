@@ -146,7 +146,10 @@ void Mpu::toEulerianAngle()
 	g_yaw = RAD2GRAD * atan2(siny, cosy);
 }
 
-void Mpu::loadmax_min(const int n, const double val) {
+void Mpu::loadmax_min(const int n, const double val, bool simetric) {
+
+
+
 	if (_max_minC[n] == 0) {
 		_max[n] = _min[n] = val;
 		_max_minC[n]++;
@@ -154,12 +157,16 @@ void Mpu::loadmax_min(const int n, const double val) {
 	else {
 		_max[n] = max(mpu._max[n], val);
 		_min[n] = min(mpu._min[n], val);
+		if (simetric) {
+			_max[n] = max(mpu._max[n], -val);
+			_min[n] = min(mpu._min[n], -val);
+		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Mpu::parser(byte buf[], int n) {
+void Mpu::parser(byte buf[], int j, int len) {
 	static double old_time = 0;
-	int j = n;
+	
 	uint64_t itime = loaduint64t(buf, j);
 	time = (double)itime *0.001;
 
@@ -200,6 +207,19 @@ void Mpu::parser(byte buf[], int n) {
 	j += 4;
 
 
+	f_pitch = *(float*)&buf[j]; j += 4;
+	f_roll = *(float*)&buf[j]; j += 4;
+	pitch= *(float*)&buf[j]; j += 4;
+	roll= *(float*)&buf[j]; j += 4;
+	yaw = *(float*)&buf[j]; j += 4;;
+	gyroPitch = *(float*)&buf[j]; j += 4;
+	gyroRoll = *(float*)&buf[j]; j += 4;
+	gyroYaw = *(float*)&buf[j]; j += 4;
+	accX  = *(float*)&buf[j]; j += 4;
+	accY = *(float*)&buf[j]; j += 4;
+	accZ = *(float*)&buf[j]; j += 4;
+
+	/*
 	qw = 1.5259e-5f*(float)q[0] / 16384.0f;
 	qx = 1.5259e-5f*(float)q[1] / 16384.0f;
 	qy = 1.5259e-5f*(float)q[2] / 16384.0f;
@@ -229,16 +249,18 @@ void Mpu::parser(byte buf[], int n) {
 	accZ = z * cosPitch + sinPitch * x;
 	accZ = 9.8f*(accZ*cosRoll - sinRoll * y - 1) - ac_accZ;
 
-	accX = 9.8f*(x*cosPitch - z * sinPitch) - ac_accX;
-	accY = 9.8f*(y*cosRoll + z * sinRoll) - ac_accY;
+	accY = 9.8f*(x*cosPitch - z * sinPitch) - ac_accX;
+	//accY = 9.8f*(y*cosRoll + z * sinRoll) - ac_accY;
 
-	loadmax_min(mPITCH, pitch);
-	loadmax_min(mROLL, roll);
-	loadmax_min(mYAW, yaw);
+	*/
 
-	loadmax_min(mACCX, accX);
-	loadmax_min(mACCY, accY);
-	loadmax_min(mACCZ, accZ);
+	loadmax_min(mPITCH, pitch,true);
+	loadmax_min(mROLL, roll, true);
+	loadmax_min(mYAW, yaw, true);
+
+	loadmax_min(mACCX, accX, true);
+	loadmax_min(mACCY, accY, true);
+	loadmax_min(mACCZ, accZ, true);
 
 
 

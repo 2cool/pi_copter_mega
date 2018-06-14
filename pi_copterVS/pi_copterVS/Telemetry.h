@@ -68,6 +68,7 @@ class TelemetryClass
 	 void loop();
 
 	 float get_voltage(){ return voltage; }
+	 float get_current(const int i) { return m_current[i&3]; }
 	 int get_voltage4one_cell();
 	
 	
