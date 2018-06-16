@@ -29,8 +29,8 @@
 #define MAX_BAROMETR_ERRORS 10
 #define MAX_BAROMETR_ERROR 100
 
-#define OFF_MOTOR_IF_LOST_CONNECTION  
-#define OFF_TIMELAG
+//#define OFF_MOTOR_IF_LOST_CONNECTION  
+//#define OFF_TIMELAG
 
 
 //#define PLUS_CAMERA
@@ -40,7 +40,7 @@
 #define pwm_MAX_THROTTLE 32000
 #define pwm_OFF_THROTTLE 16000
 #define  ARDUINO_ADDR 9
-#define  DO_SOUND 0
+#define  DO_SOUND 1
 
 
 
@@ -99,8 +99,8 @@
 
 #define MIDDLE_POSITION 0.5f
 #define HOVER_THROTHLE 0.5
-#define MIN_THROTTLE_ 0.3
-#define FALLING_THROTTLE 0.4
+#define MIN_THROTTLE_ 0.35
+#define FALLING_THROTTLE 0.42
 
 #define STOP_THROTTLE_ 0.2f
 

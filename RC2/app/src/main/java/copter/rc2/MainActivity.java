@@ -26,6 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import android.widget.CheckBox;
@@ -142,7 +144,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 
         super.onCreate(savedInstanceState);
 
-
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         if (shouldAskPermissions()) {
             askPermissions();
         }
@@ -209,14 +212,21 @@ public class MainActivity extends Activity implements SensorEventListener {
     static boolean commands_off_full_th =false;
 
 
-
-    static private MenuItem reset=null;
-    static private MenuItem exit=null;
-    static private MenuItem gyroCalibr=null;
-    static private MenuItem setHor=null;
+    //
+    //settings
     static private MenuItem compass_cal=null;
+    static private MenuItem compassMOT_cal=null;
+    static private MenuItem gyroCalibr=null;
+    //gps
+    static private MenuItem exit=null;
+    static private MenuItem shutdown=null;
+    static private MenuItem reboot=null;
     static private MenuItem speed_r=null;
     static private MenuItem map=null;
+
+
+
+
 
 
 
@@ -231,42 +241,32 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 
         compass_cal         =menu.getItem(1);
-
-        setHor              =menu.getItem(3);
+        compassMOT_cal  =menu.getItem( 2);
+        //gps
         gyroCalibr            =menu.getItem(4);
         exit                =menu.getItem(5);
-        reset               =menu.getItem(6);
-        speed_r             =menu.getItem(7);
-        map             =menu.getItem(8);
+        shutdown               =menu.getItem(6);
+        reboot             =menu.getItem(7);
+        speed_r         =menu.getItem(8);
+        map             =menu.getItem(9);
 
-
-        //  max_thhrotle_menu.setEnabled(commands_off_full_th == 0);
-        boolean secure=Commander.link;
-
-        compass_cal.setEnabled(secure);
-        setHor.setEnabled(secure);
-        gyroCalibr.setEnabled(secure);
-        exit.setEnabled(true);
-        reset.setEnabled(secure);
-        DrawView.menu=true;
 
         speed_r.setTitle((sensorUpdateSpeedFastest)?"FASTEST":"NORMAL");
-
-
-
-
-
         return true;
     }
     @Override
     public boolean onPrepareOptionsMenu (Menu menu){
-        boolean secure=true;//Telemetry.realThrottle==0;
 
-        compass_cal.setEnabled(secure);
-        setHor.setEnabled(secure);
-        gyroCalibr.setEnabled(secure);
+        boolean link=Commander.link;
+        boolean secure=Telemetry.realThrottle==0;
+
+        compass_cal.setEnabled(secure&link);
+        compassMOT_cal.setEnabled(secure&link);
+        gyroCalibr.setEnabled(secure&link);
         exit.setEnabled(true);
-        reset.setEnabled(secure);
+        reboot.setEnabled(secure&link);
+        shutdown.setEnabled(secure&link);
+
         DrawView.menu=true;
         return super.onPrepareOptionsMenu(menu);
     }

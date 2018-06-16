@@ -2,7 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="copter.rc2.MainActivity" >
+    android:keepScreenOn="true"
+    tools:context="copter.rc2.MainActivity"
+    >
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        tools:context="com.example.fullscreen.MainActivity" >
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl1"

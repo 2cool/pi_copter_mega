@@ -17,14 +17,20 @@ void GPS_Loger::init() {
 
 
 uint32_t def_mode = Z_STAB + XY_STAB;
-int GPS_Loger::decode(char buffer[], int &i, bool rotate ) {
+
+
+
+//void Mpu::parser(byte buf[], int j, int len) {
+int GPS_Loger::decode(SEND_I2C*p, bool rotate ) {
 
 	
 
+	//if (p->hAcc < 10)
+	//	p->hAcc = 10;
 	//old_z = 0, gspeedZ, old_gspeeZ = 0
 	static double first_alt = 0;
 
-	SEND_I2C*p = (SEND_I2C*)&buffer[i + 1];
+
 	z = 0.001*p->height;
 	if (z_cor == 101010)
 		z_cor = z;
@@ -69,9 +75,9 @@ int GPS_Loger::decode(char buffer[], int &i, bool rotate ) {
 
 
 
+	
 
-
-
+	/*
 	if (startZ == 122222220)
 		startZ = z;
 	z -= startZ;
@@ -87,15 +93,15 @@ int GPS_Loger::decode(char buffer[], int &i, bool rotate ) {
 	gay = *(float*)(&buffer[i + 28]);
 	int vacc = p->vAcc;
 	int hacc = p->hAcc;
-
+	
 	//if (dataI > 44467)
 	{
-		std::wstring str = L" " + std::to_wstring(p->lon*0.0000001) + L"," + std::to_wstring(p->lat * 0.0000001) + L"," + std::to_wstring(p->height * 0.001) + L" ";
-		fwrite(str.c_str(), str.length(), 2, klm);
+		//std::wstring str = L" " + std::to_wstring(p->lon*0.0000001) + L"," + std::to_wstring(p->lat * 0.0000001) + L"," + std::to_wstring(p->height * 0.001) + L" ";
+		//fwrite(str.c_str(), str.length(), 2, klm);
 	}
 
 
-	i += 8 * 4;
+//	i += 8 * 4;
 
 
 	gy2home = distance *sin(bearing);
@@ -109,7 +115,7 @@ int GPS_Loger::decode(char buffer[], int &i, bool rotate ) {
 
 
 
-
+	*/
 
 
 

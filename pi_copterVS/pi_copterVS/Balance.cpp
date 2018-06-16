@@ -285,7 +285,7 @@ bool BalanceClass::loop()
 				true_throttle = Autopilot.get_throttle();
 				throttle = true_throttle;
 				throttle /= Mpu.tiltPower;
-				throttle = constrain(throttle, 0.3f, max_throttle);
+				throttle = constrain(throttle, MIN_THROTTLE_, max_throttle);
 				//	Debug.load(0, throttle, f_[0]);
 
 			}
@@ -351,7 +351,7 @@ bool BalanceClass::loop()
 			//f_[0] = f_[1] = f_[2] = f_[3] = 0;// (throttle < 0.2) ? throttle : 0.3;
 
 
-			if (throttle < 0.3 || Mpu.timed - Autopilot.time_at_startd < 3) {
+			if (throttle < MIN_THROTTLE_ || Mpu.timed - Autopilot.time_at_startd < 3) {
 
 				pids[PID_PITCH_RATE].reset_I();
 				pids[PID_ROLL_RATE].reset_I();

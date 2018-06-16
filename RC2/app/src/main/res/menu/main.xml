@@ -9,11 +9,9 @@
     <item android:id="@+id/GYRRO_CAL" android:title="Gyro calibr"></item>
     <item android:id="@+id/EXIT"    android:title="Exit"></item>
     <item
-        android:id="@+id/SHUTDOWN"
-        android:title="shutdown"></item>
+        android:id="@+id/SHUTDOWN"   android:title="shutdown"></item>
     <item
-        android:id="@+id/REBOOT"
-        android:title="reboot"></item>
+        android:id="@+id/REBOOT"      android:title="reboot"></item>
 
     <item android:id="@+id/SPEED_R"    android:title="FASTEST"></item>
     <item android:id="@+id/MAP"     android:title="MAP"></item>

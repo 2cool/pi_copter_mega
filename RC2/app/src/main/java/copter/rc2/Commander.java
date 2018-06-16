@@ -166,7 +166,7 @@ static int old_commande=0;
 
             return 4;
         }
-        link=true;
+
         int i=0;
      //   buf[0]=(byte)MainActivity.command_bits_;
      //  buf[1]=buf[2]=buf[3]=0;

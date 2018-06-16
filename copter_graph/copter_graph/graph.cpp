@@ -211,6 +211,11 @@ int parser(byte buf[]) {
 			press.parser(buf, i);
 			break;
 		}
+		case GPS_SENS: {
+			
+			gps_log.decode((SEND_I2C*)&buf[i]);
+			break;
+		}
 		case HMC_BASE: {
 			
 			break;
