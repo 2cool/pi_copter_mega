@@ -17,27 +17,24 @@
 #include "Log.h"
 void StabilizationClass::init(){
 
+	{
+		accXY_stabKP = 0.2f;//0.5
+		accXY_stabKP_Rep = 1.0f / accXY_stabKP;
+		set_acc_xy_speed_kp(5);
+		set_acc_xy_speed_kI(2);
+		set_acc_xy_speed_imax(Balance.get_max_angle());
+		max_speed_xy = MAX_HOR_SPEED;
 
-	accXY_stabKP = 0.2f;//0.5
-	accXY_stabKP_Rep = 1.0f / accXY_stabKP;
-	set_acc_xy_speed_kp(5);
-	set_acc_xy_speed_kI(2);
-	set_acc_xy_speed_imax(Balance.get_max_angle());
-	max_speed_xy = MAX_HOR_SPEED;
 
-
-	XY_KF_DIST = 0.1f;  
-	XY_KF_SPEED = 0.1f;
-	
-	
+		XY_KF_DIST = 0.1f;
+		XY_KF_SPEED = 0.1f;
+		XY_FILTER = 0.06;
+	}
 	//--------------------------------------------------------------------------
 	last_accZ = 1;
-	//Z_CF_DIST = 0.03;
-	//Z_CF_SPEED = 0.005;
 
-
-	Z_CF_DIST = 0.03;
-	Z_CF_SPEED = 0.005;
+	
+	//повистовляь фильтри низких и високих частот. подобранние для каждого источника и обединить
 
 
 
@@ -45,18 +42,21 @@ void StabilizationClass::init(){
 	accZ_stabKP_Rep = 1.0f / accZ_stabKP;
 
 
-	pids[ACCZ_SPEED].kP(0.15f);
-	pids[ACCZ_SPEED].kI(0.25f);
-	pids[ACCZ_SPEED].imax(MAX_THROTTLE_ - HOVER_THROTHLE);
+	pids[ACCZ_SPEED].kP(0.15);
+	pids[ACCZ_SPEED].kI(0.25);
+	pids[ACCZ_SPEED].imax( MAX_THROTTLE_ - HOVER_THROTHLE);
 	max_stab_z_P =  MAX_VER_SPEED_PLUS;
 	max_stab_z_M = MAX_VER_SPEED_MINUS;
 
 
-	XY_FILTER = 0.06;
-	Z_FILTER = 0.2;
+	Z_CF_DIST = 0.03;//CF filter
+	Z_CF_SPEED = 0.005;//CF filter
+	Z_FILTER = 0.2;//filter
+
+	//----------------------------------------------------------------------------
 	sX=sY=sZ = 0;
 	speedZ = speedX = speedY = mc_pitch=mc_roll=mc_z=0;
-	cout << "stab init\n";
+	//cout << "stab init\n";
 
 }
 //bool flx = false, fly = false;
@@ -246,13 +246,19 @@ float StabilizationClass::Zgps() {
 }
 float StabilizationClass::Z(bool onlyUpdate){////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//єти параметри ми вичеслили в mpu
-	float alt =  MS5611.altitude();
-
+	float alt = MS5611.altitude();
 	sZ += Mpu.dt*(speedZ + Mpu.accZ*Mpu.dt*0.5f);
 	sZ += (alt - sZ)*Z_CF_DIST;
 
 	speedZ += Mpu.accZ*Mpu.dt;
 	speedZ += (MS5611.speed - speedZ)*Z_CF_SPEED;
+
+	
+
+	Debug.load(0, Autopilot.fly_at_altitude()-sZ, Autopilot.fly_at_altitude()-alt);
+	Debug.load(1, speedZ, MS5611.speed);
+	Debug.dump();
+
 
 	if (onlyUpdate) {
 

@@ -35,7 +35,8 @@ class BalanceClass
  protected:
 	 float power_K;
 	 float mid_powerK;
-
+	 void reset();
+	 void log();
 
 	 
 	float throttle,true_throttle;

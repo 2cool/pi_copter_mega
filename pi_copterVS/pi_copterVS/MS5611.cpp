@@ -6,6 +6,9 @@
 #include "Log.h"
 #include "GPS.h"
 
+
+#define NORM_CT 10000
+
 static int fd4S;
 unsigned int PROM_read(int DA, char PROM_CMD)
 {
@@ -86,6 +89,7 @@ void MS5611Class::log_sens() {
 		Log.block_start(LOG::MS5611_SENS);// (LOG::MPU_SENS);
 		Log.loadByte(i_readTemperature);
 		Log.loadFloat(pressure);
+		//Log.loaduint32t(P);
 		Log.block_end();
 	}
 }
@@ -249,11 +253,13 @@ void MS5611Class::phase2() {
 		int32_t tP = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
 		if (tP < 80000 || tP > 107000) {
 			cout << "PRESSURE ERROR " << tP << endl;
+			ct = NORM_CT +NORM_CT;
 			wrong_altitude_cnt++;
 		}
 		else {
 			wrong_altitude_cnt = 0;
 			P = tP;
+			ct = NORM_CT;
 		}
 		const double dt = (Mpu.timed - old_timed);
 		old_timed = Mpu.timed;
@@ -268,6 +274,8 @@ void MS5611Class::phase2() {
 		powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
 		const float new_altitude = getAltitude(pressure);
 		speed = (new_altitude - altitude_) / dt;
+		//Debug.load(0, speed / 10, dt);
+		//Debug.dump();
 		altitude_ = new_altitude;
 
 
@@ -295,7 +303,7 @@ int MS5611Class::init() {
 	old_timed = 0;
 	bar_task = 0;
 	bar_zero = 0x0;
-	ct = 10000;
+	ct = NORM_CT;
 	
 
 	wrong_altitude_cnt = 0;

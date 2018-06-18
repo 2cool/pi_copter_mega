@@ -235,6 +235,32 @@ float BalanceClass::powerK(){
 	mid_powerK +=(Telemetry.powerK*MS5611.powerK- mid_powerK)*0.001;
 	return mid_powerK;
 }
+
+void BalanceClass::log() {
+	if (Log.writeTelemetry) {
+		Log.block_start(LOG::BAL);
+
+		Log.write_bank_cnt();
+		Log.loadMem((uint8_t*)f_, 16, false);
+		Log.loadInt16t((int)c_roll * 16);
+		Log.loadInt16t((int)c_pitch * 16);
+		Log.loadInt16t((int)Autopilot.get_yaw() * 16);
+
+		//при лагах в связи c_pitch,c_roll обнуляются.
+
+
+		Log.block_end();
+		Log.end();
+	}
+}
+void BalanceClass::reset() {
+	pids[PID_PITCH_RATE].reset_I();
+	pids[PID_ROLL_RATE].reset_I();
+	pids[PID_YAW_RATE].reset_I();
+	c_pitch = c_roll = 0;
+	Stabilization.resset_xy_integrator();
+	Stabilization.resset_z();
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #define MAX_ANGLE_SPEED 360
@@ -322,7 +348,7 @@ bool BalanceClass::loop()
 			float roll_stab_output = f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED);
 			float yaw_stab_output = f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED);
 
-		//	yaw_stab_output = 0;////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 			// rate PIDS
 
@@ -336,6 +362,8 @@ bool BalanceClass::loop()
 			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(yaw_stab_output - Mpu.gyroYaw, Mpu.dt);
 			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
 
+			yaw_output = 0;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече
 			if ((throttle + yaw_output) < min_throttle)
 				yaw_output = min_throttle - throttle;//???????????????????????????????????????????????????
@@ -347,61 +375,26 @@ bool BalanceClass::loop()
 			f_[2] = f_constrain((throttle - roll_output + pitch_output + yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 			f_[0] = f_constrain((throttle - roll_output - pitch_output + m_yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 
-
-			//f_[0] = f_[1] = f_[2] = f_[3] = 0;// (throttle < 0.2) ? throttle : 0.3;
-
-
-			if (throttle < MIN_THROTTLE_ || Mpu.timed - Autopilot.time_at_startd < 3) {
-
-				pids[PID_PITCH_RATE].reset_I();
-				pids[PID_ROLL_RATE].reset_I();
-				pids[PID_YAW_RATE].reset_I();
-				c_pitch = c_roll = 0;
-				Stabilization.resset_xy_integrator();
-				Stabilization.resset_z();
-				f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.2;
-			}
-
-
-
-
-
-
-			
-			
 			if (Hmc.do_compass_motors_calibr) {
-				f_[0] = 0;
-				f_[1] = 0;
-				f_[2] = 0;
-				f_[3] = 0;
+				f_[0] = f_[1] = f_[2] = f_[3] = 0;
 				f_[Hmc.motor_index] = 0.5;
 			}
-			
+			else {
+				if (Mpu.timed - Autopilot.time_at_startd < 1.5) {
+					f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.2;//
+				}
+
+				if (throttle < MIN_THROTTLE_) {
+					reset();
+				}
+
+			}
 
 		}
 		else
-		{
-			pids[PID_PITCH_RATE].reset_I();
-			pids[PID_ROLL_RATE].reset_I();
-			pids[PID_YAW_RATE].reset_I();
-			c_pitch = c_roll = 0;
-		}
+			reset();
 
-		if (Log.writeTelemetry) {
-			Log.block_start(LOG::BAL);
-
-			Log.write_bank_cnt();
-			Log.loadMem((uint8_t*)f_, 16, false);
-			Log.loadInt16t((int)c_roll*16);
-			Log.loadInt16t((int)c_pitch*16);
-			Log.loadInt16t((int)Autopilot.get_yaw()*16);
-
-			//при лагах в связи c_pitch,c_roll обнуляются.
-
-
-			Log.block_end();
-			Log.end();
-		}
+		log();
 
 #ifdef MOTORS_OFF
 		mega_i2c.throttle(0, 0, 0, 0);  //670 micros
@@ -415,7 +408,7 @@ bool BalanceClass::loop()
 		}
 
 
-	//	f_[0] = f_[1] = f_[2] = f_[3] = 0;///////////////////////////////////////////////////
+		//f_[0] = f_[1] = f_[2] = f_[3] = 0;///////////////////////////////////////////////////
 
 
 		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros
@@ -426,9 +419,6 @@ bool BalanceClass::loop()
 		Emu.update(f_, Mpu.dt);
 #endif
 		
-
-
-
 
 	}
 	return true;

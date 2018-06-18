@@ -664,11 +664,11 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		
 
 #define MAX_MACC 0.1f
-		if (Hmc.do_compass_motors_calibr == false && (abs(Mpu.maccX) > MAX_MACC || abs(Mpu.maccY) > MAX_MACC || abs(Mpu.maccZ) > MAX_MACC)) {
-			cout << "ACC ERROR!!! \n";
-			mega_i2c.beep_code(B_ACC_ERROR);
-			return false;
-		}
+	//	if (Hmc.do_compass_motors_calibr == false ) {
+		//	cout << "ACC ERROR!!! \n";
+		//	mega_i2c.beep_code(B_ACC_ERROR);
+			//return false;
+		//}
 
 		if (Hmc.do_compass_motors_calibr || (Mpu.gyro_calibratioan && Hmc.calibrated)){
 
@@ -689,7 +689,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			time_at_startd = Mpu.timed;
 			Telemetry.update_voltage();
 			
-			control_bits = MOTORS_ON;
+			control_bits = MOTORS_ON;// | HORIZONT_ON | COMPASS_ON;
 
 			cout << "OK\n";
 
@@ -700,8 +700,8 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			
 			Mpu.max_g_cnt = 0;
 
-			holdAltitude(shmPTR->fly_at_start);
-			holdLocation(GPS.loc.lat_, GPS.loc.lon_);
+			//holdAltitude(shmPTR->fly_at_start);
+			//holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 
 			Stabilization.resset_z();
 			Stabilization.resset_xy_integrator();
@@ -939,7 +939,7 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 	//	uint8_t mask = control_bits_^bits;
 	//printf("comm=%i\n", bits);
 	if (MOTORS_ON&bits)  {
-		Hmc.do_compass_motors_calibr = false;
+	//	Hmc.do_compass_motors_calibr = false;
 		bool on = motors_is_on() == false;
 		on = motors_do_on(on, m_START_STOP);
 		if (on == false) {

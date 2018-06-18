@@ -295,7 +295,6 @@ void MpuClass::init()
 
 	windFX = windFY = e_speedX = e_speedY = e_accX=e_accY=m7_accX=m7_accY=w_accX=w_accY=0;
 	yaw_off = 0;
-	maccX = maccY = maccZ = 0;
 	max_g_cnt = 0;
 	cosYaw = 1;
 	sinYaw = 0;
@@ -323,12 +322,12 @@ void MpuClass::init()
 
 	ms_open();
 	
-	writeWord(104, MPU6050_RA_XA_OFFS_H, -5525);
-	writeWord(104, MPU6050_RA_YA_OFFS_H, -1349);
-	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1291);
-	writeWord(104, MPU6050_RA_XG_OFFS_USRH, -43);
-	writeWord(104, MPU6050_RA_YG_OFFS_USRH, 36);
-	writeWord(104, MPU6050_RA_ZG_OFFS_USRH, -49);
+	writeWord(104, MPU6050_RA_XA_OFFS_H, -5685);//-5525);
+	writeWord(104, MPU6050_RA_YA_OFFS_H, -1406);// -1349);
+	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1345);// 1291);
+	writeWord(104, MPU6050_RA_XG_OFFS_USRH, -10);// -43);
+	writeWord(104, MPU6050_RA_YG_OFFS_USRH, 20);// 36);
+	writeWord(104, MPU6050_RA_ZG_OFFS_USRH, -35);// -49);
 		
 	
 
@@ -541,7 +540,6 @@ uint8_t GetGravity(VectorFloat *v, Quaternion *q) {
 #define ROLL_COMPENSATION_IN_YAW_ROTTATION 0.02
 #define PITCH_COMPENSATION_IN_YAW_ROTTATION 0.025
 
-float ac_accX = 0, ac_accY = 0, ac_accZ = 0;// 1.15504527;
 float agpitch = 0, agroll = 0, agyaw = 0;
 
 uint64_t maxG_firs_time = 0;
@@ -610,13 +608,12 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	q.z *= 1.5259e-5;
 	q.w *= 1.5259e-5;
 
-
-
 	float g_yaw;
-	toEulerianAngle(q, roll, pitch, g_yaw);
+	toEulerianAngle(q, pitch, roll, g_yaw);
+
+	roll = -roll;
 	pitch = -pitch;
 	g_yaw = -g_yaw;
-
 
 	if (set_yaw_flag) {
 		yaw_off = g_yaw-Hmc.heading;
@@ -661,79 +658,32 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	}
 #endif
 	tiltPower+=(constrain(cosPitch*cosRoll, 0.5f, 1)-tiltPower)*tiltPower_CF;
-	gyroPitch = -n006*(float)g[1] - agpitch;
-	gyroRoll = n006*(float)g[0] - agroll;
+	gyroPitch = -n006*(float)g[0] - agpitch;
+	gyroRoll = -n006*(float)g[1] - agroll;
 	gyroYaw = -n006*(float)g[2] - agyaw;
 
-	float x = n122*(float)a[0];
-	float y = -n122*(float)a[1]; 
+	float x = -n122*(float)a[1];
+	float y = -n122*(float)a[0]; 
 	float z = n122*(float)a[2];
 
-
-	/*
-
-	static float fx = 0, fy = 0, fz = 0;
-
-	fx += (x - fx)*0.01;
-	fy += (y - fy)*0.01;
-	fz += (z - fz)*0.01;
-
-
-	float acc=sqrt(fx*fx + fy * fy + fz * fz);
-	Debug.load(0, acc, 0, 0);
-	Debug.dump();
-	*/
-
 	accZ = z*cosPitch + sinPitch*x;
-	accZ = 9.8f*(accZ*cosRoll - sinRoll*y - 1) - ac_accZ;
+	accZ = 9.8f*(accZ*cosRoll - sinRoll*y - 1);
 
-	accX = 9.8f*(x*cosPitch - z*sinPitch) - ac_accX;
-	accY = 9.8f*(y*cosRoll + z*sinRoll) - ac_accY;
+	accX = 9.8f*(x*cosPitch - z*sinPitch);
+	accY = 9.8f*(y*cosRoll + z*sinRoll);
 
-
-	//Debug.load(2, accX, accY);
-	//Debug.load(3, accZ, 0);
-
-	//Debug.load(1, x, y);
-	//Debug.load(0, accZ, accY);
-
-
-
-	//Debug.dump();
 	if (Autopilot.motors_is_on() == false) {
-		//if (timed > 20) {
-			//maccX += (accX - maccX)*0.01f;
-			//maccY += (accY - maccY)*0.01f;
-			//maccZ += (accZ - maccZ)*0.01f;
-			
-		//}
-
 		if (timed > 30 && acc_callibr_timed > timed) {
-		//	ac_accZ += accZ*0.01;
-			//ac_accY += accY*0.01;
-			//ac_accX += accX*0.01;
 			agpitch += (gyroPitch - agpitch)*0.01;
 			agroll += (gyroRoll - agroll)*0.01;
 			agyaw += (gyroYaw - agyaw) *0.01;
 			
 		}
 	}
-
-
-
 	shmPTR->pitch = pitch *= RAD2GRAD;
 	shmPTR->roll = roll *= RAD2GRAD;
 	shmPTR->yaw = yaw*=RAD2GRAD;
-
-
-	
-//	mgaccX += (GPS.loc.accX - mgaccX)*gpsACC_F;
-//	mgaccY += (GPS.loc.accY - mgaccY)*gpsACC_F;
-
 	log_sens();
-
-
-
 	return true;
 }
 
