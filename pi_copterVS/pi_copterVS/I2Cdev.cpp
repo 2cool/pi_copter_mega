@@ -184,26 +184,31 @@ int8_t readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data
     int fd = open("/dev/i2c-0", O_RDWR);
 
     if (fd < 0) {
-        fprintf(stderr, "Failed to open device: %s\n", strerror(errno));
+		cout << "Failed to open device: "<< (int)devAddr<<":"<< errno << endl;
+        //fprintf(stderr, "Failed to open device: %s\n", strerror(errno));
         return(-1);
     }
     if (ioctl(fd, I2C_SLAVE, devAddr) < 0) {
-        fprintf(stderr, "Failed to select device: %s\n", strerror(errno));
+		cout << "Failed to select device: " << (int)devAddr << ":" << errno << endl;
+        //fprintf(stderr, "Failed to select device: %s\n", strerror(errno));
         close(fd);
         return(-1);
     }
     if (write(fd, &regAddr, 1) != 1) {
-        fprintf(stderr, "Failed to write reg: %s\n", strerror(errno));
+		cout << "Failed to write reg: " << (int)devAddr << ":" << errno << endl;
+       // fprintf(stderr, "Failed to write reg: %s\n", strerror(errno));
         close(fd);
         return(-1);
     }
     count = read(fd, data, length);
     if (count < 0) {
-        fprintf(stderr, "Failed to read device(%d): %s\n", count, strerror(errno));
+		cout << "Failed to read device(" <<count<<")"<<":"<< (int)devAddr << ":" << errno << endl;
+       // fprintf(stderr, "Failed to read device(%d): %s\n", count, strerror(errno));
         close(fd);
         return(-1);
     } else if (count != length) {
-        fprintf(stderr, "Short read  from device, expected %d, got %d\n", length, count);
+		cout << "Short read from device, expected "<<length<<", got "<< count << ":" << (int)devAddr << endl;
+      //  fprintf(stderr, "Short read  from device, expected %d, got %d\n", length, count);
         close(fd);
         return(-1);
     }

@@ -125,7 +125,7 @@ private:
 	float w_accX, w_accY;*/
 	void do_magic();
 	
-
+	int parser(byte buf[]);
 public:
 	int readLog();
 	bool flags[ALL_ELEMENTS];

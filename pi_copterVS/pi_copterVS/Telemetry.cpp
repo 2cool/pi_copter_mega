@@ -162,8 +162,9 @@ int TelemetryClass::check_time_left_if_go_to_home(){
 }
 
 
-
-//#define FULL_FW
+#ifdef FALSE_WIRE
+#define FULL_FW
+#endif
 
 void TelemetryClass::update_voltage() {
 	

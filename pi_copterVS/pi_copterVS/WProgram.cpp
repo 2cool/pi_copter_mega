@@ -5,7 +5,7 @@
 #include <sys/shm.h>
 #include <sys/ipc.h>
 
-__time_t start_seconds = 0;
+ static __time_t start_seconds = 0L;
 
 uint32_t millis_g() {
 	timespec t;

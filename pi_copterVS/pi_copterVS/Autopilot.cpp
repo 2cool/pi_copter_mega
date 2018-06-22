@@ -170,7 +170,8 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 }
 
 float AutopilotClass::corectedAltitude4tel() {
-	return ((control_bits & Z_STAB) == 0) ? MS5611.altitude() : Stabilization.getAltitude();
+	return MS5611.altitude();
+	//return ((control_bits & Z_STAB) == 0) ? MS5611.altitude() : Stabilization.getAltitude();
 }
 
 
@@ -664,11 +665,6 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		
 
 #define MAX_MACC 0.1f
-	//	if (Hmc.do_compass_motors_calibr == false ) {
-		//	cout << "ACC ERROR!!! \n";
-		//	mega_i2c.beep_code(B_ACC_ERROR);
-			//return false;
-		//}
 
 		if (Hmc.do_compass_motors_calibr || (Mpu.gyro_calibratioan && Hmc.calibrated)){
 
@@ -700,8 +696,8 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			
 			Mpu.max_g_cnt = 0;
 
-			//holdAltitude(shmPTR->fly_at_start);
-			//holdLocation(GPS.loc.lat_, GPS.loc.lon_);
+			holdAltitude(shmPTR->fly_at_start);
+			holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 
 			Stabilization.resset_z();
 			Stabilization.resset_xy_integrator();
@@ -939,7 +935,7 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 	//	uint8_t mask = control_bits_^bits;
 	//printf("comm=%i\n", bits);
 	if (MOTORS_ON&bits)  {
-	//	Hmc.do_compass_motors_calibr = false;
+		Hmc.do_compass_motors_calibr = false;
 		bool on = motors_is_on() == false;
 		on = motors_do_on(on, m_START_STOP);
 		if (on == false) {
@@ -1042,16 +1038,19 @@ int  AutopilotClass::exit() {
 
 
 
-float old_g_roll = 1000;
+
 #define MAX_GIMBAL_ROLL 20
 void AutopilotClass::gimBalRollCorrection() {
+	static float old_g_roll = 1000;
 	const float roll = Mpu.get_roll();
 	if (abs(roll) > MAX_GIMBAL_ROLL)
 		gimBalRollZero = 2 * (roll - ((roll > 0) ? MAX_GIMBAL_ROLL : -MAX_GIMBAL_ROLL));
 	else
 		gimBalRollZero = 0;
+
+
 	if (old_g_roll != gimBalRollZero) {
-		mega_i2c.gimagl(-(gimBalPitchZero + gimbalPitch), gimBalRollZero);
+		mega_i2c.gimagl(-(gimBalPitchZero + gimbalPitch), gimBalRollZero);??????????????
 		old_g_roll = gimBalRollZero;
 	}
 }

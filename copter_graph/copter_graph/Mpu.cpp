@@ -164,7 +164,7 @@ void Mpu::loadmax_min(const int n, const double val, bool simetric) {
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void Mpu::parser(byte buf[], int j, int len) {
+void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	static double old_time = 0;
 	
 	uint64_t itime = loaduint64t(buf, j);
@@ -207,6 +207,9 @@ void Mpu::parser(byte buf[], int j, int len) {
 	j += 4;
 
 
+
+
+
 	f_pitch = *(float*)&buf[j]; j += 4;
 	f_roll = *(float*)&buf[j]; j += 4;
 	pitch= *(float*)&buf[j]; j += 4;
@@ -215,9 +218,18 @@ void Mpu::parser(byte buf[], int j, int len) {
 	gyroPitch = *(float*)&buf[j]; j += 4;
 	gyroRoll = *(float*)&buf[j]; j += 4;
 	gyroYaw = *(float*)&buf[j]; j += 4;
-	accX  = *(float*)&buf[j]; j += 4;
-	accY = *(float*)&buf[j]; j += 4;
-	accZ = *(float*)&buf[j]; j += 4;
+
+
+#define ACC_CF 0.1
+
+
+
+	accX += ((*(float*)&buf[j] - accX)*(filter ? ACC_CF : 1));
+	j += 4;
+	accY += ((*(float*)&buf[j] - accY)*(filter ? ACC_CF :1));
+	j += 4;
+	accZ += ((*(float*)&buf[j] -accZ)*(filter? ACC_CF :1));
+	j += 4;
 
 	/*
 	qw = 1.5259e-5f*(float)q[0] / 16384.0f;

@@ -186,7 +186,7 @@ int16_t load_int16_(byte buf[], int i) {
 }
 
 
-int parser(byte buf[]) {
+int Graph::parser(byte buf[]) {
 	int i = 0;
 	int f_len = load_int16_(buf, i);
 	i += 2;
@@ -204,7 +204,7 @@ int parser(byte buf[]) {
 			if (len == 5)
 				press.parser(buf,i);
 			else
-				mpu.parser(buf, i, len);
+				mpu.parser(buf, i, len, flags[FILTER]);
 			break;
 		}
 		case MS5611_SENS: {

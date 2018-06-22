@@ -15,7 +15,7 @@ public:
 	int decode(char buffer[], int &i, bool rotate = false);
 	int view(int &indexes, char buffer[], int &i);
 
-	void parser(byte buf[], int n, int len);
+	void parser(byte buf[], int n, int len, bool filter);
 	void toEulerianAngle();
 
 

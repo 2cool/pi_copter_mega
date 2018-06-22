@@ -50,7 +50,7 @@ void StabilizationClass::init(){
 
 
 	Z_CF_DIST = 0.03;//CF filter
-	Z_CF_SPEED = 0.005;//CF filter
+	Z_CF_SPEED = 0.01;//CF filter //при 0.005 На ошибку в ACC на 0.1 ошибка в исоте на метр.
 	Z_FILTER = 0.2;//filter
 
 	//----------------------------------------------------------------------------
@@ -255,9 +255,9 @@ float StabilizationClass::Z(bool onlyUpdate){///////////////////////////////////
 
 	
 
-	Debug.load(0, Autopilot.fly_at_altitude()-sZ, Autopilot.fly_at_altitude()-alt);
-	Debug.load(1, speedZ, MS5611.speed);
-	Debug.dump();
+	//Debug.load(0, Autopilot.fly_at_altitude()-sZ, Autopilot.fly_at_altitude()-alt);
+	//Debug.load(1, speedZ, MS5611.speed);
+	//Debug.dump();
 
 
 	if (onlyUpdate) {

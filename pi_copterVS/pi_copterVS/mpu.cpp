@@ -598,6 +598,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 		cout << "MPU DT too short "<<dt<<"\n";
 		*/
 
+	dt = 0.01;
 
 	rdt = 1.0 / dt;
 	oldmpuTimed = timed;
@@ -654,7 +655,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 #ifdef MPU_MAGIC
 	if (abs(pitch) <= 65 * GRAD2RAD && abs(roll) <= 65 * GRAD2RAD) {
 		do_magic4Z();
-		do_magic();
+		//do_magic();
 	}
 #endif
 	tiltPower+=(constrain(cosPitch*cosRoll, 0.5f, 1)-tiltPower)*tiltPower_CF;
@@ -671,6 +672,10 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 
 	accX = 9.8f*(x*cosPitch - z*sinPitch);
 	accY = 9.8f*(y*cosRoll + z*sinRoll);
+
+
+	//Debug.load(0, accZ, accX);
+	//Debug.dump();
 
 	if (Autopilot.motors_is_on() == false) {
 		if (timed > 30 && acc_callibr_timed > timed) {

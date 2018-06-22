@@ -8,7 +8,7 @@
 #include "Balance.h"
 #include "Telemetry.h"
 
-#define MOTOR_FORCE 0.5
+#define MOTOR_FORCE 0.51
 
 //#define NOISE_ON
 

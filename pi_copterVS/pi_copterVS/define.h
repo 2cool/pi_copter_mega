@@ -12,7 +12,8 @@
 #include "WProgram.h"
 
 
-
+//#define OFF_MOTOR_IF_LOST_CONNECTION  
+//#define OFF_TIMELAG
 //------------------------------------------------
 #define MPU_MAGIC
 //#define FALSE_WIRE
@@ -29,8 +30,8 @@
 #define MAX_BAROMETR_ERRORS 10
 #define MAX_BAROMETR_ERROR 100
 
-#define OFF_MOTOR_IF_LOST_CONNECTION  
-#define OFF_TIMELAG
+
+
 
 
 //#define PLUS_CAMERA
@@ -40,7 +41,7 @@
 #define pwm_MAX_THROTTLE 32000
 #define pwm_OFF_THROTTLE 16000
 #define  ARDUINO_ADDR 9
-#define  DO_SOUND 0
+#define  DO_SOUND 1
 
 
 

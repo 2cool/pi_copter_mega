@@ -1,4 +1,4 @@
-#define PROG_VERSION "ver 3.180609\n"
+#define PROG_VERSION "ver 3.180621\n"
 
 #define ONLY_ONE_RUN
 #define SIM800_F
@@ -348,7 +348,7 @@ int main(int argc, char *argv[]) {
 
 
 
-
+	cout << millis() << endl;
 
 cout << PROG_VERSION << endl;
 #ifdef ONLY_ONE_RUN
@@ -525,19 +525,21 @@ cout << PROG_VERSION << endl;
 
 	if (shmPTR->run_main==false)
 		cout<< "\n exit\n";
-	if (string(argv[0]).find("out") == -1) {
-		if (shmPTR->reboot) {
-			switch (shmPTR->reboot) {
-			case 1:
-				system("reboot");
-				break;
-			case 2:
-				system("shutdown now");
-				break;
 
-			}
+	
+	if (shmPTR->reboot) {
+		switch (shmPTR->reboot) {
+		case 1:
+			if (string(argv[0]).find("out") == -1)
+				system("reboot");
+			break;
+		case 2:
+			system("shutdown now");
+			break;
+
 		}
 	}
+	
 	//close_shmPTR();
 	out.close();
 

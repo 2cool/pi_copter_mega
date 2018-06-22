@@ -72,7 +72,15 @@ int cntttttttttt = 0;
 static const float f_constrain(const float v, const float min, const float max){
 	return constrain(v, min, max);
 }
+void BalanceClass::set_pitch_roll_pids(const float kp, const float ki, const float imax) {
+	pids[PID_PITCH_RATE].kP(kp);
+	pids[PID_PITCH_RATE].kI(ki);
+	pids[PID_PITCH_RATE].imax(imax);
 
+	pids[PID_ROLL_RATE].kP(kp);
+	pids[PID_ROLL_RATE].kI(ki);
+	pids[PID_ROLL_RATE].imax(imax);
+}
 void BalanceClass::init()
 {
 //f/speed^2/0.5=cS;
@@ -95,25 +103,15 @@ void BalanceClass::init()
 	pitch_roll_stabKP = 2;
 	
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
-	//pitch_roll_rateKP = 0.0007;
-	//pitch_roll_rateKI = 0.001;
-	//pitch_roll_rateIMAX = 0.05;
 	
-
-	pids[PID_PITCH_RATE].kP(0.001);  //if >=0.001 No gyro filters? yes noise
-	pids[PID_PITCH_RATE].kI(0.003);
-	pids[PID_PITCH_RATE].imax(0.2);
-
-	pids[PID_ROLL_RATE].kP(0.001);
-	pids[PID_ROLL_RATE].kI(0.003);
-	pids[PID_ROLL_RATE].imax(0.2);
+	set_pitch_roll_pids(0.0005, 0.0015, 0.2);
 
 	yaw_stabKP = 2;
 
 	pids[PID_YAW_RATE].kP(0.0017f);
 	pids[PID_YAW_RATE].kI(0.0017f);
 	pids[PID_YAW_RATE].imax(0.1);
-
+	delay(5000);
 	Mpu.init();
 	Hmc.init();
 	Hmc.loop();
@@ -362,7 +360,7 @@ bool BalanceClass::loop()
 			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(yaw_stab_output - Mpu.gyroYaw, Mpu.dt);
 			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
 
-			yaw_output = 0;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//	yaw_output = 0;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече
 			if ((throttle + yaw_output) < min_throttle)
