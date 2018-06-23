@@ -111,7 +111,9 @@ void BalanceClass::init()
 	pids[PID_YAW_RATE].kP(0.0017f);
 	pids[PID_YAW_RATE].kI(0.0017f);
 	pids[PID_YAW_RATE].imax(0.1);
-	delay(5000);
+
+	delay(1500);
+
 	Mpu.init();
 	Hmc.init();
 	Hmc.loop();

@@ -20,8 +20,8 @@
 //#define MOTORS_OFF
 
 
-//#define XY_SAFE_AREA 200
-#define Z_SAFE_AREA 80
+#define XY_SAFE_AREA 200
+#define Z_SAFE_AREA 40
 
 
 #define MAX_ACC 7
@@ -77,8 +77,8 @@
 #define MIN_ANGLE 15
 #define COS_MIN_ANGLE 0.966f
 
-#define HIGHT_TO_LIFT_ON_TO_FLY_TO_HOME 50
-#define FAST_DESENDING_TO_HIGH 20
+#define HIGHT_TO_LIFT_ON_TO_FLY_TO_HOME 15
+#define FAST_DESENDING_TO_HIGH 10
 
 #define MAX_HOR_SPEED 10
 #define MAX_VER_SPEED_PLUS 5

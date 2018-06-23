@@ -1044,13 +1044,13 @@ void AutopilotClass::gimBalRollCorrection() {
 	static float old_g_roll = 1000;
 	const float roll = Mpu.get_roll();
 	if (abs(roll) > MAX_GIMBAL_ROLL)
-		gimBalRollZero = 2 * (roll - ((roll > 0) ? MAX_GIMBAL_ROLL : -MAX_GIMBAL_ROLL));
+		gimBalRollZero = -2 * (roll - ((roll > 0) ? MAX_GIMBAL_ROLL : -MAX_GIMBAL_ROLL));
 	else
 		gimBalRollZero = 0;
 
 
 	if (old_g_roll != gimBalRollZero) {
-		mega_i2c.gimagl(-(gimBalPitchZero + gimbalPitch), gimBalRollZero);??????????????
+		mega_i2c.gimagl(-(gimBalPitchZero + gimbalPitch), gimBalRollZero);
 		old_g_roll = gimBalRollZero;
 	}
 }

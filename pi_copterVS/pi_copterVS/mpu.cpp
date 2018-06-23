@@ -137,6 +137,7 @@ void MpuClass::do_magic() {
 	pitch = atan2((sinPitch + m7_accX*cosPitch / G), cosPitch);// +abs(gaccX*sinPitch));
 	roll = atan2((sinRoll - m7_accY*cosRoll / G), cosRoll);// +abs(gaccY*sinRoll));
 
+
 }
 
 //-----------------------------------------------------
@@ -655,7 +656,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 #ifdef MPU_MAGIC
 	if (abs(pitch) <= 65 * GRAD2RAD && abs(roll) <= 65 * GRAD2RAD) {
 		do_magic4Z();
-		//do_magic();
+		do_magic();
 	}
 #endif
 	tiltPower+=(constrain(cosPitch*cosRoll, 0.5f, 1)-tiltPower)*tiltPower_CF;
