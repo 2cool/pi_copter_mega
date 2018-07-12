@@ -337,7 +337,7 @@ int Graph::decode_Log() {
 
 		old_control_bits = control_bits;
 		
-
+		sensors_data[n].sd[GPS_Z] = gps_log.z;
 
 		sensors_data[n].sd[TIME] = mpu.time;
 		sensors_data[n].sd[DT] = mpu.dt;
@@ -347,6 +347,9 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[ACCX] = mpu.accX;
 		sensors_data[n].sd[ACCY] = mpu.accY;
 		sensors_data[n].sd[ACCZ] = mpu.accZ;
+		sensors_data[n].sd[GYRO_PITCH] = mpu.gyroPitch;
+		sensors_data[n].sd[GYRO_ROLL] = mpu.gyroRoll;
+		sensors_data[n].sd[GYRO_YAW] = mpu.gyroYaw;
 
 		sensors_data[n].sd[F0] = bal.f0;
 		sensors_data[n].sd[F1] = bal.f1;
@@ -356,7 +359,34 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[C_ROLL] = bal.ap_roll;
 		sensors_data[n].sd[HEADING] = bal.ap_yaw;
 
-		sensors_data[n].sd[PRESSURE] = press.altitude;// -fly_at_altitude;
+
+	static float sZ = 0, speedZ = 0;
+
+		float alt = press.altitude;
+	
+		sZ += 0.01*(speedZ + mpu.accZ*0.01*0.5f);
+		sZ += (alt - sZ)*0.03;
+
+		speedZ += mpu.accZ*0.01;
+		speedZ += (press.speed - speedZ)*0.01;
+
+
+
+		static float altt = 0;
+		if (altt == 0)
+			altt = press.altitude;
+		altt += (press.altitude - altt)*0.001;
+
+		sensors_data[n].sd[PRESSURE] = flags[FILTER]?sZ:press.altitude;// -fly_at_altitude;
+		sensors_data[n].sd[PRESSURE_SPEED] = flags[FILTER]?speedZ:press.speed;// -fly_at_altitude;
+
+
+
+		static double tacc_bar = 0;
+		tacc_bar += (press.acc - tacc_bar)*0.01;
+
+		sensors_data[n].sd[PRESSURE_ACC] = tacc_bar;
+
 
 		sensors_data[n].sd[MI0] = tel.m_current[0];
 		sensors_data[n].sd[MI1] = tel.m_current[1];
@@ -373,8 +403,9 @@ int Graph::decode_Log() {
 
 
 
-
-		
+		static double pres_alt = 0;
+		pres_alt += (sensors_data[n].sd[PRESSURE] - pres_alt)*0.0001;
+	//	sensors_data[n].sd[PRESSURE] = pres_alt;
 		n++;
 
 	}
@@ -1077,8 +1108,9 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, mpu._max[mYAW], mpu._min[mYAW], YAW);
 	draw(g, rect, mpu._max[mACCX], mpu._min[mACCX], ACCX);
 	draw(g, rect, mpu._max[mACCY], mpu._min[mACCY], ACCY);
-	draw(g, rect, mpu._max[mACCZ], mpu._min[mACCZ], ACCZ);
-
+	draw(g, rect, 5, -5, ACCZ);
+	draw(g, rect, 180, -180, GYRO_PITCH);
+	draw(g, rect, 180, -180, GYRO_ROLL);
 
 
 	draw(g, rect, mpu._max[mGYRO_PITCH], mpu._min[mGYRO_PITCH], GYRO_PITCH);
@@ -1090,7 +1122,7 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 
 	draw(g, rect, 5, -5, STAB_SPEED_Z);
 	draw(g, rect, 2, -2, F_Z);
-	draw(g, rect, 2, -2, STAB_Z);
+	draw(g, rect, 23, 0,  STAB_Z);
 
 	draw(g, rect, 1, 0, F0);
 	draw(g, rect, 1, 0, F1);
@@ -1100,15 +1132,21 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 20, -20, C_PITCH);
 	draw(g, rect, 20, -20, C_ROLL);
 	draw(g, rect, 20, -20, HEADING);
+
+
+	draw(g, rect, gps_log.min_z+2, gps_log.min_z, GPS_Z);
 //	draw(g, rect, mpu._max[mMAXACC], mpu._min[mMAXACC], MAXACC);
 	//draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
 
 
-	draw(g, rect, 2, -2, PRESSURE);
+
+
+
+	draw(g, rect, press.max_alt,  press.min_alt,PRESSURE);
 	//draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
-	//draw(g, rect, press.max_sp, press.min_sp, PRESSURE_SPEED);
+	draw(g, rect, 5, -5, PRESSURE_SPEED);
 
-
+	draw(g, rect, 5, -5, PRESSURE_ACC);
 
 
 

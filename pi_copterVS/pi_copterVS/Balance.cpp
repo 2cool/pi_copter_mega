@@ -104,7 +104,7 @@ void BalanceClass::init()
 	
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
 	
-	set_pitch_roll_pids(0.0005, 0.0015, 0.2);
+	set_pitch_roll_pids(0.0005, 0.003, 0.2);
 
 	yaw_stabKP = 2;
 
@@ -285,7 +285,7 @@ bool BalanceClass::loop()
 	else {
 		if (Autopilot.motors_is_on()) { 
 
-			const float pK = powerK();
+			float pK = powerK();
 			const float min_throttle = Mpu.min_thr*pK*power_K;
 			const float max_throttle = constrain(MAX_THROTTLE_*pK*power_K, MAX_THROTTLE_,0.9);
 
@@ -342,11 +342,16 @@ bool BalanceClass::loop()
 				}
 			}
 
-#define BCF 0.1
 
-			float pitch_stab_output = f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_pitch() - c_pitch)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED);
-			float roll_stab_output = f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED);
-			float yaw_stab_output = f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED);
+			static float pitch_stab_output =0;
+			static float roll_stab_output = 0;
+			static float yaw_stab_output = 0;
+
+#define BAL_F 0.33f
+
+			pitch_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_pitch() - c_pitch)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED)-pitch_stab_output)*BAL_F;
+			roll_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED)-roll_stab_output)*BAL_F;
+			yaw_stab_output += (f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED)-yaw_stab_output)*BAL_F;
 
 
 
@@ -354,6 +359,12 @@ bool BalanceClass::loop()
 
 			const float max_delta = 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
 
+			напоминание
+			//----------------------------------------------------
+			static float correction = 1;
+			correction += (0.5 / throttle - correction)*0.02;
+			pK *= correction;
+			//----------------------------------------------------
 
 			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(pitch_stab_output + Mpu.gyroPitch, Mpu.dt);
 			pitch_output = constrain(pitch_output, -max_delta, max_delta);
@@ -406,10 +417,6 @@ bool BalanceClass::loop()
 		if (propeller_lost[1] || propeller_lost[2]) {
 		//	f_[1] = f_[2] = 0;
 		}
-
-
-		//f_[0] = f_[1] = f_[2] = f_[3] = 0;///////////////////////////////////////////////////
-
 
 		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros
 #endif

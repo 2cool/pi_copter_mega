@@ -75,7 +75,7 @@ double MS5611Class::getAltitude(const double pressure) {
 			return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
 	}
 	else {
-		shmPTR->altitude = alt;
+		shmPTR->altitude_ = (int32_t)(alt*1000.0);
 		shmPTR->pressure = pressure;
 		gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif)*0.1;
 	}
@@ -261,22 +261,31 @@ void MS5611Class::phase2() {
 			P = tP;
 			ct = NORM_CT;
 		}
-		const double dt = (Mpu.timed - old_timed);
+		const double dt = 0.02;// (Mpu.timed - old_timed);
 		old_timed = Mpu.timed;
-		
+
+		static float low_alt=0, low_alt1=0, low_alt2=0;
+
 		if (pressure == PRESSURE_AT_0) {
 			pressure = P;
-			altitude_ = getAltitude(pressure);
+			altitude_ = low_alt= low_alt1 = low_alt2 = getAltitude(pressure);
 		}
 
 		pressure += ((double)P - pressure)*0.3;
 		log_sens();
 		powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
-		const float new_altitude = getAltitude(pressure);
+		const double new_altitude = getAltitude(pressure);
 		speed = (new_altitude - altitude_) / dt;
 		//Debug.load(0, speed / 10, dt);
 		//Debug.dump();
 		altitude_ = new_altitude;
+
+		//////////////////
+		low_alt += (altitude_ - low_alt)*0.001;
+		acc = (low_alt - (2 * low_alt1) + low_alt2) / (dt*dt);
+		low_alt2 = low_alt1;
+		low_alt1 = low_alt;
+		////////////////////
 
 
 #ifdef Z_SAFE_AREA
@@ -298,6 +307,7 @@ float MS5611Class::get_pressure(float h) {
 
 //-------------------------------------------init-------------------------
 int MS5611Class::init() {
+	acc = 0;
 	oldAltt = 100000;
 	gps_barometr_alt_dif = 0;
 	old_timed = 0;

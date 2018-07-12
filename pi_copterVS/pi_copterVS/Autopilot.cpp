@@ -194,13 +194,18 @@ void AutopilotClass::add_2_need_altitude(float speed, const float dt){
 			if (speed < MAX_VER_SPEED_MINUS)
 				speed = MAX_VER_SPEED_MINUS;
 
+
+		if (speed<-0.2 && (tflyAtAltitude < lowest_height || flyAtAltitude < lowest_height))
+			speed = max(-0.2, speed);
+
 		tflyAtAltitude += speed * dt;
-		if (tflyAtAltitude < lowest_height)
-			tflyAtAltitude = lowest_height;
+
+		//if (tflyAtAltitude < lowest_height)
+		//	tflyAtAltitude = lowest_height;
 
 		flyAtAltitude = tflyAtAltitude + Stabilization.getDist_Z(speed);
-		if (flyAtAltitude < lowest_height)
-			flyAtAltitude = lowest_height;
+		//if (flyAtAltitude < lowest_height)
+		//	flyAtAltitude = lowest_height;
 
 		//printf("f@alt %f\n", flyAtAltitude);
 	}

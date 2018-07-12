@@ -220,7 +220,8 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	gyroYaw = *(float*)&buf[j]; j += 4;
 
 
-#define ACC_CF 0.1
+
+#define ACC_CF 0.007
 
 
 
@@ -229,6 +230,9 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	accY += ((*(float*)&buf[j] - accY)*(filter ? ACC_CF :1));
 	j += 4;
 	accZ += ((*(float*)&buf[j] -accZ)*(filter? ACC_CF :1));
+	accZ = *(float*)&buf[j];
+
+
 	j += 4;
 
 	/*

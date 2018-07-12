@@ -611,9 +611,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	q.w *= 1.5259e-5;
 
 	float g_yaw;
-	toEulerianAngle(q, pitch, roll, g_yaw);
-
-	roll = -roll;
+	toEulerianAngle(q, roll, pitch, g_yaw);
 	pitch = -pitch;
 	g_yaw = -g_yaw;
 
@@ -659,20 +657,26 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 		do_magic();
 	}
 #endif
-	tiltPower+=(constrain(cosPitch*cosRoll, 0.5f, 1)-tiltPower)*tiltPower_CF;
-	gyroPitch = -n006*(float)g[0] - agpitch;
-	gyroRoll = -n006*(float)g[1] - agroll;
-	gyroYaw = -n006*(float)g[2] - agyaw;
+	tiltPower += (constrain(cosPitch*cosRoll, 0.5f, 1) - tiltPower)*tiltPower_CF;
+	gyroPitch = -n006 * (float)g[1] - agpitch;
+	gyroRoll = n006 * (float)g[0] - agroll;
+	gyroYaw = -n006 * (float)g[2] - agyaw;
 
-	float x = -n122*(float)a[1];
-	float y = -n122*(float)a[0]; 
-	float z = n122*(float)a[2];
+	float x = n122 * (float)a[0];
+	float y = -n122 * (float)a[1];
+	float z = n122 * (float)a[2];
+	static float low_accZ = 0;
 
 	accZ = z*cosPitch + sinPitch*x;
 	accZ = 9.8f*(accZ*cosRoll - sinRoll*y - 1);
+	/////////////////////////////////////////////////
+	low_accZ += (accZ - low_accZ)*0.001;
+	accZ -= low_accZ+MS5611.acc;
+	/////////////////////////////////////////////////
 
 	accX = 9.8f*(x*cosPitch - z*sinPitch);
 	accY = 9.8f*(y*cosRoll + z*sinRoll);
+
 
 
 	//Debug.load(0, accZ, accX);

@@ -17,7 +17,7 @@
 //------------------------------------------------
 #define MPU_MAGIC
 //#define FALSE_WIRE
-//#define MOTORS_OFF
+
 
 
 #define XY_SAFE_AREA 200
@@ -170,7 +170,7 @@ struct SEND_I2C {
 
 	int32_t lon;
 	int32_t lat;
-	int16_t height;
+	int32_t height;
 	uint8_t hAcc;
 	uint8_t vAcc;
 };

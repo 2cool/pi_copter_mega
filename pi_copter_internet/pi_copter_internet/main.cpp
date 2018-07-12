@@ -200,7 +200,7 @@ void sendsms() {
 
 //-----------------------------------------------
 string getLocation() {
-	std::string req = "lat:" + std::to_string(shmPTR->lat_) + " lon:" + std::to_string(shmPTR->lon_) + " alt:" + std::to_string((int)shmPTR->altitude) + " hor:" + std::to_string((int)shmPTR->accuracy_hor_pos_);
+	std::string req = "lat:" + std::to_string(shmPTR->lat_) + " lon:" + std::to_string(shmPTR->lon_) + " alt:" + std::to_string((int)(shmPTR->gps_altitude_/1000)) + " hor:" + std::to_string((int)shmPTR->accuracy_hor_pos_);
 	return req;
 }
 

@@ -31,12 +31,23 @@ int GPS_Loger::decode(SEND_I2C*p, bool rotate ) {
 	static double first_alt = 0;
 
 
-	z = 0.001*p->height;
-	if (z_cor == 101010)
+	z = 0.001*(double)p->height;
+	if (z_cor == 101010) {
 		z_cor = z;
+		max_z = -10000; min_z = 10000;
+	}
+
+
+
+
+
 
 //	z_cor += (z - z_cor)*0.01;
-	z -= z_cor;
+	//z -= z_cor;
+	max_z = max(max_z, z);
+	min_z = min(min_z, z);
+
+
 
 	if (first_alt == 0)
 		first_alt = z;

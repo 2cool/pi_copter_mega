@@ -80,10 +80,30 @@ void Pressure::parser(byte buf[], int n) {
 	temp = buf[n];
 	n++;
 	float pf = *(float*)&buf[n];
+	static double talt = 0;
+	static double old_alt = 0, told_alt1 = 0, told_alt2 = 0;
 	pressure = pf;
+	dt = 0.02;
+	static double t_alt = 0;
 	if (pressure > 80000 && pressure < 120000) {
 		altitude = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));
+
+		if (old_alt == 0)
+			old_alt=t_alt=told_alt2=told_alt1 = altitude;
+
+		t_alt += (altitude - t_alt)*0.007;
+
+		speed = ( altitude - old_alt) / dt;
+		acc = (t_alt - 2 * told_alt1 + told_alt2) / (dt*dt);
+		told_alt2 = told_alt1;
+		told_alt1 = t_alt;
+		old_alt = altitude;
+
 		
+		
+
+		max_alt = max(max_alt, altitude);
+		min_alt = min(min_alt, altitude);
 	}
 	
 

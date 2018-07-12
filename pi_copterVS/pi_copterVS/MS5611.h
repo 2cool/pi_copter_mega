@@ -70,6 +70,7 @@ protected:
 public:
 	bool fault();
 	bool compensation;
+	double acc;
 
 	float altitude();
 

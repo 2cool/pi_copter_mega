@@ -146,7 +146,8 @@ void LocationClass::proceed(SEND_I2C *d) {
 	dt = (dt < 1.6) ? 0.1 : 0.2;
 
 	old_iTOWd = last_gps_data_timed;
-	shmPTR->gps_altitude = altitude = 1.024*(double)d->height;
+	shmPTR->gps_altitude_ = d->height;
+	altitude = 0.001*(double)d->height;
 	shmPTR->lat_ = lat_ = d->lat;
 	shmPTR->lon_ = lon_ = d->lon;
 
