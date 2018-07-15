@@ -355,6 +355,7 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[F1] = bal.f1;
 		sensors_data[n].sd[F2] = bal.f2;
 		sensors_data[n].sd[F3] = bal.f3;
+		sensors_data[n].sd[THROTTLE] = bal.thr;
 		sensors_data[n].sd[C_PITCH] = bal.ap_pitch;
 		sensors_data[n].sd[C_ROLL] = bal.ap_roll;
 		sensors_data[n].sd[HEADING] = bal.ap_yaw;
@@ -364,10 +365,10 @@ int Graph::decode_Log() {
 
 		float alt = press.altitude;
 	
-		sZ += 0.01*(speedZ + mpu.accZ*0.01*0.5f);
+		sZ += 0.01*(speedZ + mpu.accZnF*0.01*0.5f);
 		sZ += (alt - sZ)*0.03;
 
-		speedZ += mpu.accZ*0.01;
+		speedZ += mpu.accZnF*0.01;
 		speedZ += (press.speed - speedZ)*0.01;
 
 
@@ -1106,9 +1107,9 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
 	draw(g, rect, mpu._max[mROLL], mpu._min[mROLL], ROLL);
 	draw(g, rect, mpu._max[mYAW], mpu._min[mYAW], YAW);
-	draw(g, rect, mpu._max[mACCX], mpu._min[mACCX], ACCX);
-	draw(g, rect, mpu._max[mACCY], mpu._min[mACCY], ACCY);
-	draw(g, rect, 5, -5, ACCZ);
+	draw(g, rect, 4, -4, ACCX);
+	draw(g, rect, 4, -4, ACCY);
+	draw(g, rect, 4, -4, ACCZ);
 	draw(g, rect, 180, -180, GYRO_PITCH);
 	draw(g, rect, 180, -180, GYRO_ROLL);
 
@@ -1128,7 +1129,7 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 1, 0, F1);
 	draw(g, rect, 1, 0, F2);
 	draw(g, rect, 1, 0, F3);
-
+	draw(g, rect, 1, 0, THROTTLE);
 	draw(g, rect, 20, -20, C_PITCH);
 	draw(g, rect, 20, -20, C_ROLL);
 	draw(g, rect, 20, -20, HEADING);

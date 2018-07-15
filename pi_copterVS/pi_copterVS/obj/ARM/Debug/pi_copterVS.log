@@ -1,9 +1,8 @@
 ﻿  Validating architecture
   Validating sources
-  Copying sources remotely to '192.168.0.106'
+  Copying sources remotely to '192.168.0.101'
   Starting remote build
   Compiling sources:
-  mpu.cpp
-  MS5611.cpp
+  main.cpp
   Linking objects
   pi_copterVS.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

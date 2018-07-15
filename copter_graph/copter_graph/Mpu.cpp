@@ -229,11 +229,13 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	j += 4;
 	accY += ((*(float*)&buf[j] - accY)*(filter ? ACC_CF :1));
 	j += 4;
-	accZ += ((*(float*)&buf[j] -accZ)*(filter? ACC_CF :1));
-	accZ = *(float*)&buf[j];
-
-
+	accZnF = *(float*)&buf[j];
 	j += 4;
+	accZ += ((accZnF -accZ)*(filter? ACC_CF :1));
+	//accZ = *(float*)&buf[j];
+
+
+	
 
 	/*
 	qw = 1.5259e-5f*(float)q[0] / 16384.0f;

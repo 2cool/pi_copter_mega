@@ -16,11 +16,11 @@ unsigned int PROM_read(int DA, char PROM_CMD)
 	uint8_t r8b[] = { 0, 0 };
 
 	if (write(DA, &PROM_CMD, 1) != 1){
-		cout << "read set reg Failed to write to the i2c bus.\n";
+		cout << "read set reg Failed to write to the i2c bus." << "\t"<<Mpu.timed << endl;
 	}
 
 	if (read(DA, r8b, 2) != 2){
-		cout << "Failed to read from the i2c bus.\n";
+		cout << "Failed to read from the i2c bus." << "\t"<<Mpu.timed << endl;
 	}
 
 	ret = r8b[0] * 256 + r8b[1];
@@ -41,7 +41,7 @@ int MS5611Class::error(int e) {
 
 int MS5611Class::writeReg(char bar_zero) {
 	if (write(fd4S, &bar_zero, 1) != 1) {
-		cout << "write reset 8 bit Failed to write to the i2c bus.\n";
+		cout << "write reset 8 bit Failed to write to the i2c bus." << "\t"<<Mpu.timed << endl;
 		bar_task = 0;
 		return error(2);
 	}
@@ -182,7 +182,7 @@ void MS5611Class::phase1()
 		writeReg(bar_zero);
 		bar_h = read(fd4S, &bar_D, 3);
 		if (bar_h != 3) {
-			cout << "Failed to read from the i2c bus " << bar_h << endl;
+			cout << "Failed to read from the i2c bus " << bar_h << "\t"<<Mpu.timed << endl;
 			error(3);
 			return;
 		}
@@ -217,7 +217,7 @@ void MS5611Class::phase2() {
 		bar_h = read(fd4S, &bar_D, 3);
 
 		if (bar_h != 3)
-			cout << "Failed to read from the i2c bus "<< bar_h << endl;
+			cout << "Failed to read from the i2c bus "<< bar_h << "\t"<<Mpu.timed << endl;
 
 		D1 = ((int32_t)bar_D[0] << 16) | ((int32_t)bar_D[1] << 8) | bar_D[2];
 		int32_t dT = D2 - (uint32_t)fc[4] * 256;
@@ -252,9 +252,10 @@ void MS5611Class::phase2() {
 
 		int32_t tP = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
 		if (tP < 80000 || tP > 107000) {
-			cout << "PRESSURE ERROR " << tP << endl;
+			cout << "PRESSURE ERROR " << tP << "\t"<<Mpu.timed << endl;
 			ct = NORM_CT +NORM_CT;
 			wrong_altitude_cnt++;
+			mega_i2c.beep_code(B_BARROMETR_ERR);
 		}
 		else {
 			wrong_altitude_cnt = 0;

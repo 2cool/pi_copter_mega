@@ -323,12 +323,12 @@ void MpuClass::init()
 
 	ms_open();
 	
-	writeWord(104, MPU6050_RA_XA_OFFS_H, -5685);//-5525);
-	writeWord(104, MPU6050_RA_YA_OFFS_H, -1406);// -1349);
-	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1345);// 1291);
-	writeWord(104, MPU6050_RA_XG_OFFS_USRH, -10);// -43);
-	writeWord(104, MPU6050_RA_YG_OFFS_USRH, 20);// 36);
-	writeWord(104, MPU6050_RA_ZG_OFFS_USRH, -35);// -49);
+	writeWord(104, MPU6050_RA_XA_OFFS_H, -535);//-5525);
+	writeWord(104, MPU6050_RA_YA_OFFS_H, 219);// -1349);
+	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1214);// 1291);
+	writeWord(104, MPU6050_RA_XG_OFFS_USRH, 165);// -43);
+	writeWord(104, MPU6050_RA_YG_OFFS_USRH, -39);// 36);
+	writeWord(104, MPU6050_RA_ZG_OFFS_USRH, 16);// -49);
 		
 	
 
@@ -586,22 +586,27 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	timed = 0.000001*(double)micros();
 
 	//dmp
-
+	
 	if (dmp_read_fifo(g, a, _q, &sensors, &fifoCount) != 0) //gyro and accel can be null because of being disabled in the efeatures
 		return false;
 
 	dt = (timed - oldmpuTimed);// *div;
 
-	/*
-	if (dt > 0.012)
-		cout << "MPU DT too long "<<dt<<"\n";
-	if (dt < 0.008)
-		cout << "MPU DT too short "<<dt<<"\n";
-		*/
+	static uint cnt2l = 0;
+	if (dt > 0.02) {
+		if (cnt2l++) {
+			cout << "MPU DT too long " << dt << "\t" << timed << endl;
+			mega_i2c.beep_code(B_MPU_TOO_LONG);
+		}
+
+	}
+	//if (dt < 0.008)
+	//	cout << "MPU DT too short "<<dt<<"\n";
+		
 
 	dt = 0.01;
 
-	rdt = 1.0 / dt;
+	rdt = 100;// 1.0 / dt;
 	oldmpuTimed = timed;
 
 	q = _q;

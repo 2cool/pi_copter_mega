@@ -42,8 +42,8 @@ void StabilizationClass::init(){
 	accZ_stabKP_Rep = 1.0f / accZ_stabKP;
 
 
-	pids[ACCZ_SPEED].kP(0.15);
-	pids[ACCZ_SPEED].kI(0.25);
+	pids[ACCZ_SPEED].kP(0.1);
+	pids[ACCZ_SPEED].kI(0.05);
 	pids[ACCZ_SPEED].imax( MAX_THROTTLE_ - HOVER_THROTHLE);
 	max_stab_z_P =  MAX_VER_SPEED_PLUS;
 	max_stab_z_M = MAX_VER_SPEED_MINUS;

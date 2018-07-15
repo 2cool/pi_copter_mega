@@ -7,7 +7,7 @@
 
 
 
-#define PROG_VERSION "ver 3.180711\n"
+#define PROG_VERSION "ver 3.180715\n"
 
 #define ONLY_ONE_RUN
 #define SIM800_F
@@ -284,7 +284,7 @@ void handler(int sig) { // can be called asynchronously
 	flag = 1; // set flag
 }
 void pipe_handler(int sig) {
-	cout << "pipe error\n";
+	cout << "pipe error" << "\t"<<Mpu.timed << endl;
 }
 
 
@@ -312,8 +312,10 @@ void watch_dog() {
 		if (start_wifi)
 			if (wifi_cnt == shmPTR->wifi_cnt  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
 				last_wifi_reloaded = Mpu.timed;
-				//cout << "--------------wifi starting\n";
+				cout << "--------------wifi killed:\t"<<Mpu.timed<<endl;
 				system("pkill wifi_p");
+				delay(1000);
+				cout << "--------------wifi started:\t" << Mpu.timed << endl;;
 				string t = "/root/projects/wifi_p ";
 				//if (stdout_file_ext.length()) {
 			//		t += stdout_file_ext + "wifi_"+to_string(wifi_start_cnt++);
@@ -325,7 +327,7 @@ void watch_dog() {
 		if (start_inet)
 			if (internet_cnt == shmPTR->internet_cnt) {
 
-				cout << "--------------ppp starting\n";
+				cout << "--------------ppp starting" << "\t"<<Mpu.timed << endl;
 				system("pkill ppp_p");
 				string t = "/root/projects/ppp_p ";
 				if (start_loger)
@@ -526,7 +528,7 @@ cout << PROG_VERSION << endl;
 
 
 	if (flag!=0)
-		cout<< "\n main Signal caught!\n";
+		cout<< "\n main Signal caught!" << "\t"<<Mpu.timed << endl;
 	//WiFi.stopServer();
 	Settings.write();
 	Log.close();

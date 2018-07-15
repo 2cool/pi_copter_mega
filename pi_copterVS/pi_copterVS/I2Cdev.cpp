@@ -57,7 +57,8 @@ THE SOFTWARE.
 #include <linux/i2c-dev.h>
 #include "I2Cdev.h"
 #include "debug.h"
-
+#include "mpu.h"
+#include "mi2c.h"
 /** Default timeout value for read operations.
  * Set this to 0 to disable timeout detection.
  */
@@ -184,31 +185,34 @@ int8_t readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data
     int fd = open("/dev/i2c-0", O_RDWR);
 
     if (fd < 0) {
-		cout << "Failed to open device: "<< (int)devAddr<<":"<< errno << endl;
+		cout << "Failed to open device: "<< (int)devAddr<<":"<< errno << "\t"<<Mpu.timed << endl;
         //fprintf(stderr, "Failed to open device: %s\n", strerror(errno));
         return(-1);
     }
     if (ioctl(fd, I2C_SLAVE, devAddr) < 0) {
-		cout << "Failed to select device: " << (int)devAddr << ":" << errno << endl;
+		cout << "Failed to select device: " << (int)devAddr << ":" << errno << "\t"<<Mpu.timed << endl;
         //fprintf(stderr, "Failed to select device: %s\n", strerror(errno));
         close(fd);
         return(-1);
     }
     if (write(fd, &regAddr, 1) != 1) {
-		cout << "Failed to write reg: " << (int)devAddr << ":" << errno << endl;
+		cout << "Failed to write reg: " << (int)devAddr << ":" << errno << "\t"<<Mpu.timed << endl;
+		mega_i2c.beep_code(6);
        // fprintf(stderr, "Failed to write reg: %s\n", strerror(errno));
         close(fd);
         return(-1);
     }
     count = read(fd, data, length);
     if (count < 0) {
-		cout << "Failed to read device(" <<count<<")"<<":"<< (int)devAddr << ":" << errno << endl;
+		cout << "Failed to read device(" <<(int)count<<")"<<":"<< (int)devAddr << ":" << errno <<":"<<Mpu.timed<< endl;
        // fprintf(stderr, "Failed to read device(%d): %s\n", count, strerror(errno));
+		mega_i2c.beep_code(6);
         close(fd);
         return(-1);
     } else if (count != length) {
-		cout << "Short read from device, expected "<<length<<", got "<< count << ":" << (int)devAddr << endl;
+		cout << "Short read from device, expected "<<length<<", got "<< (int)count << ":" << (int)devAddr << "\t"<<Mpu.timed << endl;
       //  fprintf(stderr, "Short read  from device, expected %d, got %d\n", length, count);
+		mega_i2c.beep_code(6);
         close(fd);
         return(-1);
     }

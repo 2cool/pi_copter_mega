@@ -379,7 +379,7 @@ void stop_stream() {
 	int pid = get_pid("ffmpeg");
 	if (pid != -1) {
 		kill(pid, SIGQUIT);
-		cout << "stream STOP\n";
+		cout << "stream STOP" << "\t"<<Mpu.timed << endl;
 	}
 
 }

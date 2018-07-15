@@ -41,7 +41,7 @@ static float  f_current = 0;
 
 void TelemetryClass::addMessage(const string msg, bool and2sms){
 
-	cout << msg << endl;
+	cout << msg << "\t"<<Mpu.timed << endl;;
 	if (message.length() + msg.length() >= TELEMETRY_BUF_SIZE)
 		return;
 
@@ -135,7 +135,7 @@ void TelemetryClass::loop()
 		testBatteryVoltage();
 
 		if (Autopilot.progState() && check_time_left_if_go_to_home() < 60 && ++no_time_cnt>3){ // на тестах ошибся на 5 минут.  
-			cout << "too far from HOME!\n";
+			cout << "too far from HOME!" << "\t"<<Mpu.timed << endl;
 			addMessage(e_BATERY_OFF_GO_2_HOME);
 			Autopilot.going2HomeStartStop(false);
 		}	

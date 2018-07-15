@@ -123,6 +123,7 @@ void GPSClass::loop(){
 SEND_I2C g_data;
 
 void GPSClass::loop(){
+static uint cnt2l = 0;
 static double last_gps_time1d = 0;
 	if (Mpu.timed - last_gps_time1d >= 0.05) {
 		last_gps_time1d = Mpu.timed;
@@ -133,7 +134,10 @@ static double last_gps_time1d = 0;
 		
 
 		if ( Mpu.timed - loc.last_gps_data_timed > 0.15){
-			cout << "gps update error  " << Mpu.timed - loc.last_gps_data_timed << "," << Mpu.timed << "," << loc.last_gps_data_timed << endl;
+			if (cnt2l++) {
+				cout << "gps update error  " << Mpu.timed - loc.last_gps_data_timed << "," << Mpu.timed << "," << loc.last_gps_data_timed << endl;
+				mega_i2c.beep_code(B_GPS_TOO_LONG);
+			}
 		}
 		if (Autopilot.motors_is_on() && Mpu.timed - loc.last_gps_accurasy_okd > NO_GPS_DATA) {
 			//printf( "gps accuracy error  %i\n", millis() / 1000);

@@ -25,7 +25,7 @@ THG out of Perimetr high
 
 
 
-enum { B_CONNECTION_LOST = 1, B_MS611_ERROR, B_ACC_ERROR, B_LOW_VOLTAGE, B_GPS_ACCURACY_E };
+
 
 
 #define WIND_X 5
@@ -338,7 +338,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 	else {
 
 		if (motors_is_on() == false) {
-			mega_i2c.set_led_mode(0, 1, false);
+			mega_i2c.set_led_mode(0, 100, false);
 		}
 		else {
 			if (control_bits&CONTROL_FALLING)
@@ -441,7 +441,7 @@ bool AutopilotClass::holdAltitude(float alt){
 		Stabilization.init_Z();
 	}
 	//setbuf(stdout, NULL);
-	cout << "FlyAt: " << flyAtAltitude << endl;
+	cout << "FlyAt: " << flyAtAltitude << "\t"<<Mpu.timed << endl;
 
 	return true;
 }
@@ -584,7 +584,7 @@ bool AutopilotClass::going2HomeON(const bool hower){
 		control_bits |= GO2HOME;
 		f_go2homeTimer = 0;
 		//Out.println("Hanging on the site!");
-		cout << "go2home\n";
+		cout << "go2home" << "\t"<<Mpu.timed << endl;
 		go2homeIndex=JUMP;
 	}
 	return res;
@@ -616,7 +616,7 @@ bool AutopilotClass::holdLocation(const long lat, const long lon){
 
 		
 		GPS.loc.setNeedLoc(lat,lon);
-		cout << "Hower at: " << GPS.loc.lat_ << " " << GPS.loc.lon_ << endl;
+		cout << "Hower at: " << GPS.loc.lat_ << " " << GPS.loc.lon_ << "\t"<<Mpu.timed << endl;;
 
 		Stabilization.init_XY(0, 0);
 
@@ -660,7 +660,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 #ifndef FALSE_WIRE
 		cout << "on ";
 		if (Mpu.timed < 25) {
-			cout << "\n!!!calibrating!!! to end:"<< 25-millis()/1000 <<" sec.\n";
+			cout << "\n!!!calibrating!!! to end:"<< 25-millis()/1000 <<" sec." << "\t"<<Mpu.timed << endl;
 			mega_i2c.beep_code(B_MS611_ERROR);
 			return false;
 		}
@@ -675,13 +675,13 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 
 			if (Telemetry.low_voltage){
 				Telemetry.addMessage(e_LOW_VOLTAGE);
-				cout << " LOW VOLTAGE\n";
+				cout << " LOW VOLTAGE" << "\t"<<Mpu.timed << endl;
 				mega_i2c.beep_code(B_LOW_VOLTAGE);
 				return false;
 			}
 
 			if (Hmc.do_compass_motors_calibr==false && GPS.loc.accuracy_hor_pos_ > MIN_ACUR_HOR_POS_2_START ){
-				cout << " GPS error\n";
+				cout << " GPS error" << "\t"<<Mpu.timed << endl;
 				mega_i2c.beep_code(B_GPS_ACCURACY_E);
 				Telemetry.addMessage(e_GPS_ERROR);
 
@@ -692,7 +692,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			
 			control_bits = MOTORS_ON;// | HORIZONT_ON | COMPASS_ON;
 
-			cout << "OK\n";
+			cout << "OK" << "\t"<<Mpu.timed<<endl;
 
 			GPS.loc.setHomeLoc();
 
@@ -734,7 +734,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 				mega_i2c.beep_code(5);
 
 			}
-			cout << " calibr FALSE\n";
+			cout << " calibr FALSE" << "\t"<<Mpu.timed<<endl;
 		}
 	}//------------------------------OFF----------------
 	else {
@@ -746,7 +746,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		Telemetry.addMessage(i_OFF_MOTORS);
 		off_throttle(true, msg);
 
-		cout << "OK\n";
+		cout << "OK" << "\t"<<Mpu.timed<<endl;
 
 		//if (camera_mode) {//----------------------------------
 		//	thread t(stop_video);
@@ -801,7 +801,7 @@ bool AutopilotClass::off_throttle(const bool force, const string msg){//////////
 
 void AutopilotClass::connectionLost_(){ ///////////////// LOST
 
-	cout << "connection lost\n";
+	cout << "connection lost" << "\t"<<Mpu.timed<<endl;
 	//Out.println("CONNECTION LOST");
 	
 
@@ -923,7 +923,7 @@ bool AutopilotClass::start_stop_program(const bool stopHere){
 				res &= holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 				if (res) {
 					control_bits |= PROGRAM;
-					cout << "prog started\n";
+					cout << "prog started" << "\t"<<Mpu.timed << endl;;
 					return true;
 				}
 			}
@@ -944,7 +944,7 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 		bool on = motors_is_on() == false;
 		on = motors_do_on(on, m_START_STOP);
 		if (on == false) {
-			cout << "motors on denied!\n";
+			cout << "motors on denied!"<< "\t"<<Mpu.timed<<endl;
 		}
 	}
 
@@ -1010,7 +1010,7 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 
 int  AutopilotClass::reboot() {
 	if (motors_is_on() == false) {
-		cout << "REBOOT \n";
+		cout << "REBOOT" << "\t"<<Mpu.timed << endl;
 		shmPTR->reboot = 1;
 		shmPTR->run_main = false;
 		return 0;
@@ -1019,7 +1019,7 @@ int  AutopilotClass::reboot() {
 }
 int  AutopilotClass::shutdown() {
 	if (motors_is_on() == false) {
-		cout << "SHUTD \n";
+		cout << "SHUTD" << "\t"<<Mpu.timed << endl;
 		shmPTR->reboot = 2;
 		shmPTR->run_main = false;
 		return 0;
@@ -1029,7 +1029,7 @@ int  AutopilotClass::shutdown() {
 }
 int  AutopilotClass::exit() {
 	if (motors_is_on() == false) {
-		cout << "EXIT \n";
+		cout << "EXIT" << "\t"<<Mpu.timed << endl;
 		shmPTR->reboot = 3;
 		shmPTR->run_main = false;
 		return 0;

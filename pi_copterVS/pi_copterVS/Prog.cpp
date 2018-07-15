@@ -80,7 +80,7 @@ void ProgClass::loop(){
 		go_next = distFlag = altFlag = false;
 		if (load_next(true) == false){
 			//if (Autopilot.lost_conection_time == 0){
-				cout << "PROG END\n";
+				cout << "PROG END" << "\t"<<Mpu.timed << endl;
 				Autopilot.start_stop_program(false);
 			//}
 		}
@@ -116,7 +116,7 @@ bool ProgClass::program_is_OK(){
 				
 				fullTime += time;
 				if (fullTime>timeLeft){//MAX_TIME_LONG_FLIGHT){
-					cout << "to long fly for prog!\n";
+					cout << "to long fly for prog!" << "\t"<<Mpu.timed << endl;
 					return false;
 				}
 			old_lat = lat;
@@ -136,11 +136,11 @@ bool ProgClass::program_is_OK(){
 
 
 		if (dist >= 20 || alt  >= 20){
-			cout << "end poitn to far from star!!!\n";
+			cout << "end poitn to far from star!!!" << "\t"<<Mpu.timed << endl;;
 			return false;
 		}
 
-		cout << "time for flyghy: " << (int)fullTime << endl;
+		cout << "time for flyghy: " << (int)fullTime << "\t"<<Mpu.timed << endl;
 		return true;
 	}
 else
@@ -546,14 +546,14 @@ bool ProgClass::add(byte*buf)
 		byte*lb = (byte*)&prog_steps_count_must_be;
 		lb[0] = buf[i++];
 		lb[1] = buf[i++];
-		cout << "prog steps=" << prog_steps_count_must_be << endl;
+		cout << "prog steps=" << prog_steps_count_must_be << "\t"<<Mpu.timed << endl;
 	}
 	
 	
 
 	prog_data_size = pi;
 	steps_count++;
-	cout << steps_count << ". dot added! " << prog_data_size << endl;
+	cout << steps_count << ". dot added! " << prog_data_size << "\t"<<Mpu.timed << endl;
 	return true;
 }
 

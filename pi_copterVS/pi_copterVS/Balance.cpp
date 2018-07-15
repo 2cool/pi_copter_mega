@@ -359,18 +359,16 @@ bool BalanceClass::loop()
 
 			const float max_delta = 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
 
-			напоминание
+			//напоминание
 			//----------------------------------------------------
 			static float correction = 1;
-			correction += (0.5 / throttle - correction)*0.02;
-			pK *= correction;
-			//----------------------------------------------------
-
-			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(pitch_stab_output + Mpu.gyroPitch, Mpu.dt);
+			correction += (0.5 / min(throttle,0.5) - correction)*0.2;
+		
+			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(correction*(pitch_stab_output + Mpu.gyroPitch), Mpu.dt);
 			pitch_output = constrain(pitch_output, -max_delta, max_delta);
-			float roll_output = pK*pids[PID_ROLL_RATE].get_pid(roll_stab_output + Mpu.gyroRoll, Mpu.dt);
+			float roll_output = pK*pids[PID_ROLL_RATE].get_pid(correction*(roll_stab_output + Mpu.gyroRoll), Mpu.dt);
 			roll_output = constrain(roll_output, -max_delta, max_delta);
-			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(yaw_stab_output - Mpu.gyroYaw, Mpu.dt);
+			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(correction*(yaw_stab_output - Mpu.gyroYaw), Mpu.dt);
 			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
 
 		//	yaw_output = 0;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -391,7 +389,7 @@ bool BalanceClass::loop()
 				f_[Hmc.motor_index] = 0.5;
 			}
 			else {
-				if (Mpu.timed - Autopilot.time_at_startd < 1.5) {
+				if (Mpu.timed - Autopilot.time_at_startd < 3) {
 					f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.2;//
 				}
 
@@ -406,7 +404,7 @@ bool BalanceClass::loop()
 			reset();
 
 		log();
-
+//#define MOTORS_OFF
 #ifdef MOTORS_OFF
 		mega_i2c.throttle(0, 0, 0, 0);  //670 micros
 #else

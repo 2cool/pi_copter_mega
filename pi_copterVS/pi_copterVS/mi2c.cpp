@@ -68,7 +68,7 @@ static int sms_received = 0;
 			}
 			else {
 				sms_received = smsN;
-				cout << "SMS " << sms_received << endl;
+				cout << "SMS " << sms_received << "\t"<<Mpu.timed << endl;
 				smsN ^= smsN;
 
 			//	sim.readSMS(sms_received,  true, true);
@@ -88,7 +88,7 @@ static int sms_received = 0;
 				if (str[i] == ring[ringi++]) {
 					if (ringi == sizeof(ring) - 1) {
 						ring_received = true;
-						cout << "RING\n";
+						cout << "RING" << "\t"<<Mpu.timed << endl;
 						ringi ^= ringi;
 					}
 				}
@@ -99,7 +99,7 @@ static int sms_received = 0;
 				if (str[i] == no_carrier[no_carrieri++]) {
 					if (no_carrieri == sizeof(no_carrier) - 1) {
 						ring_received = false;
-						cout << "NO CARRIER\n";
+						cout << "NO CARRIER" << "\t"<<Mpu.timed << endl;
 						no_carrieri ^= no_carrieri;
 					}
 				}
@@ -119,7 +119,7 @@ int Megai2c::gsm_loop()
 		fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
 		if (fd_in < 0)
 		{
-			cout << "error " << errno << " opening /dev/tnt1: " << strerror(errno) << endl;
+			cout << "error " << errno << " opening /dev/tnt1: " << strerror(errno) << "\t"<<Mpu.timed << endl;
 			return -1;
 		}
 	}
@@ -183,11 +183,11 @@ int Megai2c::init()
 
 
 	if ((fd = open("/dev/i2c-0", O_RDWR)) < 0) {
-		cout << "Failed to open /dev/i2c-0\n";
+		cout << "Failed to open /dev/i2c-0" << "\t"<<Mpu.timed << endl;
 		return -1;
 	}
 	if (ioctl(fd, I2C_SLAVE, ARDUINO_ADDR) < 0) {
-		cout << "Failed to acquire /dev/i2c-0 access and/or talk to slave.\n";
+		cout << "Failed to acquire /dev/i2c-0 access and/or talk to slave." << "\t"<<Mpu.timed << endl;
 		return -1;
 	}
 	
@@ -195,7 +195,7 @@ int Megai2c::init()
 	fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd_in < 0)
 	{
-		cout << "error " << errno << " opening /dev/tnt1: " << strerror(errno) << endl;
+		cout << "error " << errno << " opening /dev/tnt1: " << strerror(errno) << "\t"<<Mpu.timed << endl;
 		return -1;
 	}
 	
@@ -305,14 +305,14 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 	if (last_ring_time > 0 && last_ring_time + 10 < Mpu.timed) {
 		last_ring_time = 0;
 		shmPTR->stop_ppp_read_sms_start_ppp = true;
-		cout << "RING_BIT sended...\n";
+		cout << "RING_BIT sended..." << "\t"<<Mpu.timed << endl;
 		
 	}
 
 
 	if (bit_field & 1 && shmPTR->sim800_reset_time == 0) {
 		if (last_ring_time==0)
-			cout << "RING_BIT\n";//при заходе смс при ppp
+			cout << "RING_BIT" << "\t"<<Mpu.timed << endl;//при заходе смс при ppp
 		last_ring_time = Mpu.timed;
 		
 		///stop servises, stop ppp? read sms and do. start ppp and services again
