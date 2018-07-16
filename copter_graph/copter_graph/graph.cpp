@@ -256,6 +256,23 @@ int Graph::parser(byte buf[]) {
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+int findLOg(int &pos, int lsize,char * buffer) {
+	while (pos < lsize) {
+
+		byte *buf = (byte*)&buffer[pos];
+
+		if (buf[0] == BAL && buf[1] == 26) {
+			pos +=26;
+			return 0;
+		}
+		pos += 1;
+	}
+	return -1;
+}
+
 int indexes[] = { 0,0,0,0,0,0,0,0,0,0,0 };
 
 int Graph::decode_Log() {
@@ -290,22 +307,40 @@ int Graph::decode_Log() {
 	int i = 0;
 	int j = 0;
 	int n = 1;
-
+	int f_len = 0;
+	byte *buf;
+	int b, len;
 	while (j < lSize) {
-
+if (j > 185000)
+				j = j;
 		i = 0;
-		byte *buf = (byte*)&buffer[j];
-		int f_len = i + load_int16_(buf, i);
+		buf = (byte*)&buffer[j];
+		f_len = i + load_int16_(buf, i);
 		i += 2;
 		while (i<f_len) {
-			int b = buf[i++];
-			int len = load_uint8_(buf, i);
+			b = buf[i++];
+			len = load_uint8_(buf, i);
+			
+			while (true){//f_len <= 0 || f_len>200) {
+				
+				if (findLOg(j, lSize, buffer) == -1)
+					return -1;
+				i = 0;
+				buf = (byte*)&buffer[j];
+				f_len = i + load_int16_(buf, i);
+				i += 2;
+				b = buf[i++];
+				len = load_uint8_(buf, i);
+			}
+			
 			i++;
 			if (len == 0) {
 				len = load_int16_(buf, i);
 				i += 2;
 			}
 			i += len;
+			if (i < 0)
+				i = i;
 		}
 		n++;
 		j += i;

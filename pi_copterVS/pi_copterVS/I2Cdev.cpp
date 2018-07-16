@@ -197,7 +197,7 @@ int8_t readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data
     }
     if (write(fd, &regAddr, 1) != 1) {
 		cout << "Failed to write reg: " << (int)devAddr << ":" << errno << "\t"<<Mpu.timed << endl;
-		mega_i2c.beep_code(6);
+		mega_i2c.beep_code(B_I2C_ERR);
        // fprintf(stderr, "Failed to write reg: %s\n", strerror(errno));
         close(fd);
         return(-1);
@@ -206,13 +206,13 @@ int8_t readBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data
     if (count < 0) {
 		cout << "Failed to read device(" <<(int)count<<")"<<":"<< (int)devAddr << ":" << errno <<":"<<Mpu.timed<< endl;
        // fprintf(stderr, "Failed to read device(%d): %s\n", count, strerror(errno));
-		mega_i2c.beep_code(6);
+		mega_i2c.beep_code(B_I2C_ERR);
         close(fd);
         return(-1);
     } else if (count != length) {
 		cout << "Short read from device, expected "<<length<<", got "<< (int)count << ":" << (int)devAddr << "\t"<<Mpu.timed << endl;
       //  fprintf(stderr, "Short read  from device, expected %d, got %d\n", length, count);
-		mega_i2c.beep_code(6);
+		mega_i2c.beep_code(B_I2C_ERR);
         close(fd);
         return(-1);
     }
