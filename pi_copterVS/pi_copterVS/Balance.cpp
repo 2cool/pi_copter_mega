@@ -104,7 +104,7 @@ void BalanceClass::init()
 	
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
 	
-	set_pitch_roll_pids(0.0005, 0.003, 0.2);
+	set_pitch_roll_pids(0.0012, 0.0012, 0.2);
 
 	yaw_stabKP = 2;
 
@@ -409,12 +409,13 @@ bool BalanceClass::loop()
 		mega_i2c.throttle(0, 0, 0, 0);  //670 micros
 #else
 
-		if (propeller_lost[0] || propeller_lost[3]) {
-		//	f_[0]=f_[3] = 0;
-		}
-		if (propeller_lost[1] || propeller_lost[2]) {
-		//	f_[1] = f_[2] = 0;
-		}
+		//if (propeller_lost[0] || propeller_lost[3]) 	f_[0]=f_[3] = 0;
+		
+		//if (propeller_lost[1] || propeller_lost[2]) 	f_[1] = f_[2] = 0;
+		
+
+		//if (f_[0]!=0)	f_[0] = f_[1] = f_[2] = f_[3] = 0.5;
+
 
 		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros
 #endif

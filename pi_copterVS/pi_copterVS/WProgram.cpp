@@ -6,7 +6,7 @@
 #include <sys/ipc.h>
 #include "mpu.h"
 
- static __time_t start_seconds = 0L;
+ static __time_t start_seconds = -5;
 
 uint32_t millis_g() {
 	timespec t;
@@ -20,7 +20,7 @@ uint32_t millis(){
 	timespec t;
 	clock_gettime(CLOCK_REALTIME,&t);
 	uint32_t ret;
-	if (start_seconds == 0L)
+	if (start_seconds < 0L)
 #ifdef FALSE_WIRE
 		start_seconds = t.tv_sec-30L;
 #else
@@ -36,7 +36,7 @@ int64_t micros(void){
 	timespec t;
 	clock_gettime(CLOCK_REALTIME,&t);
 	int64_t ret;
-	if (start_seconds == 0L)
+	if (start_seconds < 0L)
 #ifdef FALSE_WIRE
 		start_seconds = t.tv_sec - 30L;
 #else

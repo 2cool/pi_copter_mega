@@ -321,7 +321,7 @@ if (j > 185000)
 			b = buf[i++];
 			len = load_uint8_(buf, i);
 			
-			while (true){//f_len <= 0 || f_len>200) {
+			/*while (true){//f_len <= 0 || f_len>200) {
 				
 				if (findLOg(j, lSize, buffer) == -1)
 					return -1;
@@ -332,7 +332,7 @@ if (j > 185000)
 				b = buf[i++];
 				len = load_uint8_(buf, i);
 			}
-			
+			*/
 			i++;
 			if (len == 0) {
 				len = load_int16_(buf, i);

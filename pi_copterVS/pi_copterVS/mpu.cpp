@@ -215,7 +215,7 @@ int MpuClass::ms_open() {
 		return -1;
 	}
 	cout << "Setting ACCEL sensitivity...\n";
-	if (mpu_set_accel_fsr(4) != 0) {
+	if (mpu_set_accel_fsr(8) != 0) {
 		cout << "Failed to set accel sensitivity!\n";
 		return -1;
 	}
@@ -582,11 +582,13 @@ static void toEulerianAngle(const Quaternion& q, float& roll, float& pitch, floa
 
 
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
-	
+	static double olddtt = 0;
 	timed = 0.000001*(double)micros();
 
 	//dmp
-	
+	if (timed - olddtt > 0.02)
+		cout << "too_long" << "\t" << timed << endl;
+	olddtt = timed;
 	if (dmp_read_fifo(g, a, _q, &sensors, &fifoCount) != 0) //gyro and accel can be null because of being disabled in the efeatures
 		return false;
 
@@ -667,9 +669,9 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	gyroRoll = n006 * (float)g[0] - agroll;
 	gyroYaw = -n006 * (float)g[2] - agyaw;
 
-	float x = n122 * (float)a[0];
-	float y = -n122 * (float)a[1];
-	float z = n122 * (float)a[2];
+	float x = n122*2 * (float)a[0];
+	float y = -n122*2 * (float)a[1];
+	float z = n122*2 * (float)a[2];
 	static float low_accZ = 0;
 
 	accZ = z*cosPitch + sinPitch*x;
