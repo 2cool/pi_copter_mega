@@ -104,7 +104,7 @@ void BalanceClass::init()
 	
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
 	
-	set_pitch_roll_pids(0.0012, 0.0012, 0.2);
+	set_pitch_roll_pids(0.0015, 0.0012, 0.2); 
 
 	yaw_stabKP = 2;
 
@@ -119,7 +119,7 @@ void BalanceClass::init()
 	Hmc.loop();
 	Mpu.initYaw(Hmc.heading*RAD2GRAD);
 	mid_powerK = 1;
-	power_K = 1;
+	power_K = 0.1;  //Єто теперь не повер к.
 #ifdef DEBUG_MODE
 	printf( "Heading :%i\n", (int)Hmc.get_headingGrad());
 	
@@ -200,13 +200,14 @@ void BalanceClass::set(const float *ar, int n){
 			}
 
 			t = power_K;
-			if ((error += Commander._set(ar[i++], t)) == 0) {
+			if ((error += Commander._set(ar[i++], t,false)) == 0) {
 
-				power_K = constrain(t, 1, 1.2);
+				//power_K = constrain(t, 1, 1.2);
+				power_K = t;
 			}
-			error += Commander._set(ar[i++], yaw_stabKP);
+			//error += Commander._set(ar[i++], yaw_stabKP);
 
-			error += Commander._set(ar[i], _max_angle_);
+			//error += Commander._set(ar[i], _max_angle_);
 
 			//	error += Commander._set(ar[i], stop_throttle);
 
@@ -286,13 +287,13 @@ bool BalanceClass::loop()
 		if (Autopilot.motors_is_on()) { 
 
 			float pK = powerK();
-			const float min_throttle = Mpu.min_thr*pK*power_K;
-			const float max_throttle = constrain(MAX_THROTTLE_*pK*power_K, MAX_THROTTLE_,0.9);
+			const float min_throttle = Mpu.min_thr*pK;
+			const float max_throttle = constrain(MAX_THROTTLE_*pK, MAX_THROTTLE_,0.9);
 
 			maxAngle = _max_angle_;
 			if (Autopilot.z_stabState()) {
 				true_throttle=Stabilization.Z(false);
-				throttle = pK*power_K*true_throttle;
+				throttle = pK*true_throttle;
 				throttle = constrain(throttle, min_throttle, max_throttle);
 
 				const float thr = throttle / Mpu.tiltPower;
@@ -353,8 +354,8 @@ bool BalanceClass::loop()
 			roll_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED)-roll_stab_output)*BAL_F;
 			yaw_stab_output += (f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED)-yaw_stab_output)*BAL_F;
 
-
-
+			float pitch_gk = min(abs(pitch_stab_output*power_K), 1);
+			float roll_gk = min(abs(roll_stab_output*power_K), 1);
 			// rate PIDS
 
 			const float max_delta = 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
@@ -364,14 +365,14 @@ bool BalanceClass::loop()
 			static float correction = 1;
 			correction += (0.5 / min(throttle,0.5) - correction)*0.2;
 		
-			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(correction*(pitch_stab_output + Mpu.gyroPitch), Mpu.dt);
+			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(pitch_gk*correction*(pitch_stab_output + Mpu.gyroPitch), Mpu.dt);
 			pitch_output = constrain(pitch_output, -max_delta, max_delta);
-			float roll_output = pK*pids[PID_ROLL_RATE].get_pid(correction*(roll_stab_output + Mpu.gyroRoll), Mpu.dt);
+			float roll_output = pK*pids[PID_ROLL_RATE].get_pid(roll_gk*correction*(roll_stab_output + Mpu.gyroRoll), Mpu.dt);
 			roll_output = constrain(roll_output, -max_delta, max_delta);
 			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(correction*(yaw_stab_output - Mpu.gyroYaw), Mpu.dt);
 			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
 
-		//	yaw_output = 0;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			yaw_output = 0;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече
 			if ((throttle + yaw_output) < min_throttle)
@@ -409,6 +410,8 @@ bool BalanceClass::loop()
 		mega_i2c.throttle(0, 0, 0, 0);  //670 micros
 #else
 
+
+		//отключить двигатели при сильном токе
 		//if (propeller_lost[0] || propeller_lost[3]) 	f_[0]=f_[3] = 0;
 		
 		//if (propeller_lost[1] || propeller_lost[2]) 	f_[1] = f_[2] = 0;
