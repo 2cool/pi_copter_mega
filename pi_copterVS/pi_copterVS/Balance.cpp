@@ -9,6 +9,43 @@
 #include "Log.h"
 #include "mpu.h"
 
+
+
+
+
+
+
+class Pendulum {
+private:
+	float possition, speed;
+	float mass, stiff;
+	float k;
+public:
+	
+	Pendulum(float m, float s, float _k) {
+		k = 0.1;
+		possition = 1;
+		mass = 1;
+		speed = 10;
+		stiff = 1;
+	}
+	void loop(float pos) {
+		const float dt = 0.01;
+		float force = possition * stiff + (pos-possition)*k;
+		float a = force / mass;
+		speed -= a * dt;
+		
+
+	}
+
+
+};
+
+
+
+
+
+
 void correct(float & f){
 	if (f < 0)
 		f = 0;
@@ -356,6 +393,10 @@ bool BalanceClass::loop()
 
 			float pitch_gk = min(abs(pitch_stab_output*power_K), 1);
 			float roll_gk = min(abs(roll_stab_output*power_K), 1);
+			заменить на подавление частоти раскачивания.
+
+
+
 			// rate PIDS
 
 			const float max_delta = 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
@@ -390,8 +431,10 @@ bool BalanceClass::loop()
 				f_[Hmc.motor_index] = 0.5;
 			}
 			else {
-				if (Mpu.timed - Autopilot.time_at_startd < 3) {
-					f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.2;//
+				if (Mpu.timed - Autopilot.time_at_startd < 6) {
+					f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.3;//
+					//if (Mpu.vibration_max > 1)
+						//Autopilot.off_throttle(true, "VBR");
 				}
 
 				if (throttle < MIN_THROTTLE_) {
@@ -417,7 +460,7 @@ bool BalanceClass::loop()
 		//if (propeller_lost[1] || propeller_lost[2]) 	f_[1] = f_[2] = 0;
 		
 
-		//if (f_[0]!=0)	f_[0] = f_[1] = f_[2] = f_[3] = 0.5;
+		//if (f_[0]>=0.4 || f_[1]>0.4 || f_[2]>0.4 || f_[3]>0.4)	f_[0] = f_[1] = f_[2] = f_[3] = 0.4;
 
 
 		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros

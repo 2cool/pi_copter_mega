@@ -30,7 +30,7 @@
 #define MAX_FLY_TIME 900
 #define BAT_ZERO 350.0f
 #define BAT_50P 385.0f
-#define BAT_timeout 0.1
+#define BAT_timeout 0.05
 #define BAT_timeoutRep  2
 //#define BAT_100P 422
 #define MAX_UPD_COUNTER 100
@@ -126,21 +126,35 @@ void TelemetryClass::init_()
 	battery_charge = BAT_Ampere_hour * 3600*  ((voltage- (BAT_ZERO*SN))/(70*SN));
 }
 
-
+uint16_t data[5];
 void TelemetryClass::loop()
 {
-	
+
 	if (next_battery_test_timed<Mpu.timed){
 		next_battery_test_timed = Mpu.timed + BAT_timeout;
 		testBatteryVoltage();
-
-		if (Autopilot.progState() && check_time_left_if_go_to_home() < 60 && ++no_time_cnt>3){ // на тестах ошибся на 5 минут.  
+		uint16_t time_left = check_time_left_if_go_to_home();
+		if (Autopilot.progState() && time_left < 60 && ++no_time_cnt>3){ 
 			cout << "too far from HOME!" << "\t"<<Mpu.timed << endl;
 			addMessage(e_BATERY_OFF_GO_2_HOME);
 			Autopilot.going2HomeStartStop(false);
 		}	
+
+		static uint8_t log_cnt = 0;
+		if (Log.writeTelemetry) {
+			Log.block_start(LOG::TELE);
+			Log.loadMem((uint8_t*)data, 10, false);
+			if (++log_cnt > 50) {
+				Log.loadInt16t(time_left);
+				//cout << time_left << endl;
+			}
+			Log.block_end();
+		}
 	}
 	update_buf();
+
+	
+
 }
 
 int TelemetryClass::get_voltage4one_cell() { return (int)(voltage / SN); }
@@ -171,15 +185,34 @@ void TelemetryClass::update_voltage() {
 #ifdef FULL_FW
 	Emu.battery(m_current,voltage);
 #else
-	uint16_t data[5];
+
 	mega_i2c.getiiiiv((char*)data);
 #define max_V 1022
-	shmPTR->m_current[0] = m_current[0] = 0.01953125*(float)(1005 - data[0]);
-	shmPTR->m_current[1] = m_current[1] = 0.01953125*(float)(1010 - data[1]);
-	shmPTR->m_current[2] = m_current[2] = 0.01953125*(float)(1006 - data[2]);
-	shmPTR->m_current[3] = m_current[3] = 0.01953125*(float)(1006 - data[3]);
+#define current_k 0.01953125
+//#define current_k 1
+
+	shmPTR->m_current[0] = m_current[0] = current_k *(float)(995 - data[0]);
+	shmPTR->m_current[1] = m_current[1] = current_k *(float)(1003 - data[1]);
+	shmPTR->m_current[2] = m_current[2] = current_k *(float)(998 - data[2]);
+	shmPTR->m_current[3] = m_current[3] = current_k *(float)(996 - data[3]);
 
 	//Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
+#define MOTORS_STALLED_I_MAX 15
+#define MOTORS_STALLED_I_MIN -1
+#define MOT_STALLED "msd"
+
+	if (Autopilot.motors_is_on() && MS5611.altitude()<10 && 
+		(
+			m_current[0]>MOTORS_STALLED_I_MAX || m_current[0]< MOTORS_STALLED_I_MIN ||
+			m_current[1]>MOTORS_STALLED_I_MAX || m_current[1]< MOTORS_STALLED_I_MIN ||
+			m_current[2]>MOTORS_STALLED_I_MAX || m_current[2]< MOTORS_STALLED_I_MIN ||
+			m_current[3]>MOTORS_STALLED_I_MAX || m_current[3]< MOTORS_STALLED_I_MIN)
+		) 
+	{
+		Autopilot.off_throttle(true, MOT_STALLED);
+		cout<<"motors stalled\n";
+
+	}
 
 #define WORK_I 1.5
 
@@ -195,11 +228,7 @@ void TelemetryClass::update_voltage() {
 //	Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
 	shmPTR->voltage = voltage = 1.725*(float)(data[4]);
 	full_power += ( (m_current[0] + m_current[1] + m_current[2] + m_current[3]) * voltage - full_power)*0.2;  //152 вата  - 274, 9.24 amper
-	if (Log.writeTelemetry) {
-		Log.block_start(LOG::TELE);
-		Log.loadMem((uint8_t*)data, 10, false);
-		Log.block_end();
-	}
+	
 #endif
 }
 
@@ -312,6 +341,12 @@ void TelemetryClass::update_buf() {
 	loadBUF8(i, Balance.c_pitch);
 	loadBUF8(i, Balance.c_roll);
 	loadBUF16(i, voltage/SN*4);
+
+
+
+	//----
+	loadBUF16(i, full_power*10);
+	loadBUF16(i, Mpu.vibration * 1000);
 
 	buf[i++] = (int8_t)Autopilot.getGimbalPitch();
 

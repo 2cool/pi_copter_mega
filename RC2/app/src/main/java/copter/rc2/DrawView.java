@@ -90,6 +90,9 @@ import android.widget.Toast;
 
 static boolean onDrawAtwork=false;
     public void onDraw(Canvas c) {
+
+
+
 		if (onDrawAtwork)
 			return;
 		else
@@ -106,7 +109,7 @@ static boolean onDrawAtwork=false;
 				black.getTextBounds("11", 0, 1, bounds);
 
 				int textHeight=bounds.height()*4/3;
-				int textI=textHeight;
+				int textI=textHeight+10;
 
 				 touchHigh=this.getHeight()-BORDER*2;
 				touch=new Rect(BORDER,BORDER,BORDER+thumbWidth,touchHigh+BORDER);
@@ -172,6 +175,8 @@ static boolean onDrawAtwork=false;
     	 int wY=(int)(1.5*thumbWidth);
     	 
 			Paint gps_paint=black;
+			black.setTextSize(28);
+				red.setTextSize(28);
 			//Telemetry.maxTelemetry) {
 			/*	if (MainActivity.motorsOnF()) {
 					String sx=(Double.toString(( (Telemetry.lat*(1.0/25600)))))+"00";
@@ -185,13 +190,16 @@ static boolean onDrawAtwork=false;
 					c.drawText(sx, wY, textI += textHeight * 2, gps_paint);
 					c.drawText(sy, wY, textI += textHeight, gps_paint);
 				}else {*/
-					c.drawText((Double.toString(Telemetry.lat) + "0000000").substring(0, 10), wY, textI += textHeight * 2, gps_paint);
-					c.drawText((Double.toString(Telemetry.lon) + "0000000").substring(0, 10), wY, textI += textHeight, gps_paint);
+					c.drawText((Double.toString(Telemetry.lat) + "0000000").substring(0, 10), wY, textI += textHeight * 2, black);
+					c.drawText((Double.toString(Telemetry.lon) + "0000000").substring(0, 10), wY, textI += textHeight, black);
 					c.drawText("2h:"+Integer.toString((int)Telemetry.dist)+" H:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"  V:"+Integer.toString(Telemetry.r_acuracy_ver_pos), wY, textI += textHeight, gps_paint);
 				//}
-				c.drawText((Double.toString(Telemetry.realThrottle)+"00").substring(0,4) + " Power", wY, textI += textHeight, (Telemetry.realThrottle == 0) ? black : red);
+				c.drawText((Double.toString(Telemetry.realThrottle)+"00").substring(0,4) + " Throt", wY, textI += textHeight, (Telemetry.realThrottle == 0) ? black : red);
 
-
+                c.drawText((Double.toString(Math.abs((double)Telemetry.power/1000))+"00").substring(0,4) + " Power", wY, textI += textHeight, (Telemetry.realThrottle == 0) ? black : red);
+				textI += 4;
+				c.drawText((Double.toString((double)Telemetry.vibration/1000)+"00").substring(0,4) + " Vibr", wY, textI += textHeight, (Telemetry.realThrottle == 0) ? black : red);
+				textI += 4;
 				c.drawText("bat " + Telemetry.batery + "v", wY, textI += textHeight, (Telemetry.F_MIN_VOLT)?red:black);
 
 				//c.drawText(Integer.toString(Telemetry.satilites) + " sat " + Telemetry.r_accuracy_hor_pos + " acu", wY, textI += textHeight, gps_paint);

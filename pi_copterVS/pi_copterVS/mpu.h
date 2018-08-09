@@ -97,9 +97,10 @@ class MpuClass
 	void calibrationF0(int16_t ar[]);
 	void calibrationPrint(int16_t ar[],const bool onlyGyro);
 	float yaw,yaw_offset;
-	
+	void test_vibration( float x,  float y,  float z);
 	float DRAG_K,_0007;
  public:
+	 float vibration;
 	 double acc_callibr_timed;
 	 float hower_thr, min_thr, fall_thr;
 	 float e_accZ, e_speedZ, w_accZ;

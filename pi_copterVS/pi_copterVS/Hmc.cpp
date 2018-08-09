@@ -66,10 +66,10 @@ void HmcClass::set(const float buf[]){
 }
 //---------------------------------------------------------
 
-void HmcClass::log_emu() {
+void HmcClass::log() {
 	if (Log.writeTelemetry) {
-		Log.block_start(LOG::HMC_EMU);
-		Log.loadFloat(heading);
+		Log.block_start(LOG::HMC);
+		Log.loadFloat(heading * RAD2GRAD);
 		Log.block_end();
 	}
 }
@@ -79,7 +79,7 @@ void HmcClass::log_base() {
 		Log.loadMem((uint8_t*)c_base, 6, false);
 		Log.block_end();
 	}
-}
+}  
 void HmcClass::log_sens() {
 	if (Log.writeTelemetry) {
 		Log.block_start(LOG::HMC_SENS);
@@ -190,7 +190,7 @@ static double comTimed = 0;
 	headingGrad = 0;
 #endif
 	calibrated = true;
-	log_emu();
+	log();
 }
 
 #else
@@ -253,7 +253,7 @@ void HmcClass::loop(){
 	float Yh = fmx * Mpu.sinRoll * Mpu.sinPitch + fmy * Mpu.cosRoll - fmz * Mpu.sinRoll * Mpu.cosPitch;
 	
 	heading = (float)atan2(Yh, Xh);
-	log_sens();
+	log();
 
 	
 

@@ -10,6 +10,7 @@
 #include "Balance.h"
 #include "Telemetry.h"
 #include "Stab.h"
+#include "Hmc.h"
 //#define LOG_FILE_NAME "d:/tel_log10011.log"
 
 
@@ -160,7 +161,7 @@ boolean new_mode_ver = false;
 
 
 
-enum { MPU_EMU, MPU_SENS, HMC_BASE, HMC_SENS, HMC_EMU, GPS_SENS, TELE, COMM, EMU, AUTO, BAL, MS5611_SENS, XYSTAB, ZSTAB
+enum { MPU_EMU, MPU_SENS, HMC_BASE, HMC_SENS, HMC, GPS_SENS, TELE, COMM, EMU, AUTO, BAL, MS5611_SENS, XYSTAB, ZSTAB
 };
 
 
@@ -216,16 +217,13 @@ int Graph::parser(byte buf[]) {
 			gps_log.decode((SEND_I2C*)&buf[i]);
 			break;
 		}
-		case HMC_BASE: {
-			
-			break;
-		}
+
 		case AUTO: {
 			control_bits = *(uint32_t*)&buf[i];
 			break;
 		}
-		case HMC_SENS: {
-
+		case HMC: {
+			hmc.parser(buf, i);
 			break;
 		}
 		case TELE: {
@@ -304,15 +302,19 @@ int Graph::decode_Log() {
 
 	modesI = 0;
 	*/
+
+	int t1 = load_int16_((byte*)buffer, 0);
+	int t2 = load_int16_((byte*)buffer, 2);
+	
+	int log_from_telephone = 2*(t1 == t2);
 	int i = 0;
-	int j = 0;
+	int j = log_from_telephone;
 	int n = 1;
 	int f_len = 0;
 	byte *buf;
 	int b, len;
 	while (j < lSize) {
-if (j > 185000)
-				j = j;
+
 		i = 0;
 		buf = (byte*)&buffer[j];
 		f_len = i + load_int16_(buf, i);
@@ -349,7 +351,7 @@ if (j > 185000)
 	sensors_data = (SensorsData*)malloc(sizeof(SensorsData)*n);
 
 
-	j = 0;
+	j = log_from_telephone;
 	n = 0;
 	while (j < lSize) {
 
@@ -393,7 +395,9 @@ if (j > 185000)
 		sensors_data[n].sd[THROTTLE] = bal.thr;
 		sensors_data[n].sd[C_PITCH] = bal.ap_pitch;
 		sensors_data[n].sd[C_ROLL] = bal.ap_roll;
-		sensors_data[n].sd[HEADING] = bal.ap_yaw;
+	//	sensors_data[n].sd[HEADING] = bal.ap_yaw;
+
+		sensors_data[n].sd[HEADING] = hmc.heading;
 
 
 	static float sZ = 0, speedZ = 0;
@@ -1139,9 +1143,14 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 
 	
 	drawModes(g, rect);
-	draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
-	draw(g, rect, mpu._max[mROLL], mpu._min[mROLL], ROLL);
-	draw(g, rect, mpu._max[mYAW], mpu._min[mYAW], YAW);
+	//draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
+	//draw(g, rect, mpu._max[mROLL], mpu._min[mROLL], ROLL);
+
+	draw(g, rect, 15, -15, PITCH);
+	draw(g, rect,15, -15, ROLL);
+
+
+	draw(g, rect, 180, -180, YAW);
 	draw(g, rect, 4, -4, ACCX);
 	draw(g, rect, 4, -4, ACCY);
 	draw(g, rect, 4, -4, ACCZ);
@@ -1167,7 +1176,7 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 1, 0, THROTTLE);
 	draw(g, rect, 20, -20, C_PITCH);
 	draw(g, rect, 20, -20, C_ROLL);
-	draw(g, rect, 20, -20, HEADING);
+	draw(g, rect, 180, -180, HEADING);
 
 
 	draw(g, rect, gps_log.min_z+2, gps_log.min_z, GPS_Z);

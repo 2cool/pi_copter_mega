@@ -5,6 +5,39 @@
 
 
 
+class Pendulum {
+private:
+	
+	float mass, stiff;
+	float k;
+	float q;
+public:
+	float possition;
+	float  speed;
+	Pendulum(float m, float s, float _k,float q_) {
+		k =0.2;
+		possition = 0;
+		mass = m;
+		speed = 0;
+		stiff = 90;
+		q = q_;
+	}
+	void loop(float pos) {
+
+		const float dt = 0.01;
+		float force = possition * stiff - (pos - possition)*k;
+		force += (speed > 0) ? q : -q;
+
+		float a = force / mass;
+		speed -= a * dt;
+		
+		possition += speed * dt;
+
+
+	}
+
+
+};
 
 
 
@@ -164,7 +197,34 @@ void Mpu::loadmax_min(const int n, const double val, bool simetric) {
 	}
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Pendulum p0(1,0, 0, 0.3);
+Pendulum p1(1.01, 0, 0,0);
 void Mpu::parser(byte buf[], int j, int len, bool filter) {
+
+
+
+
+
+
+
+
+
+
+	//while (true) {
+	
+		
+
+	//}
+
+
+
+
+
+
+
+
+
 	static double old_time = 0;
 	
 	uint64_t itime = loaduint64t(buf, j);
@@ -219,7 +279,12 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	gyroRoll = *(float*)&buf[j]; j += 4;
 	gyroYaw = *(float*)&buf[j]; j += 4;
 
+	//p1.loop(0);
+	p0.loop(pitch);
+	
 
+	roll = pitch;
+	pitch = p0.possition*10;
 
 #define ACC_CF 0.007
 
@@ -290,6 +355,8 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 
 
 void Mpu::init() {
+
+
 
 	time = rdt = 0;
 	for (int i = 0; i < mALL_E; i++) {

@@ -309,7 +309,7 @@ void MpuClass::init()
 	tiltPower = cosPitch = cosRoll = 1;
 	timed = 0;
 	//COMP_FILTR = 0;// 0.003;
-
+	vibration = 0;
 	cout << "Initializing MPU6050\n";
 
 #ifndef FALSE_WIRE
@@ -579,37 +579,45 @@ static void toEulerianAngle(const Quaternion& q, float& roll, float& pitch, floa
 	yaw = atan2(siny, cosy);
 }
 
-
+void MpuClass::test_vibration( float x,  float y,  float z){
+	static float lx = 0, ly = 0, lz = 0;
+	lx += (x - lx)*0.1;
+	ly += (y - ly)*0.1;
+	lz += (z - lz)*0.1;
+	x -= lx;
+	y -= ly;
+	z -= lz;
+	const float vibr = sqrt(x * x + y * y + z * z);
+	vibration += (vibr - vibration)*0.01;
+	
+}
 
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
-	static double olddtt = 0;
+
 	timed = 0.000001*(double)micros();
-
-	//dmp
-	if (timed - olddtt > 0.02)
-		cout << "too_long" << "\t" << timed << endl;
-	olddtt = timed;
-	if (dmp_read_fifo(g, a, _q, &sensors, &fifoCount) != 0) //gyro and accel can be null because of being disabled in the efeatures
+	if (dmp_read_fifo(g, a, _q, &sensors, &fifoCount) != 0) { //gyro and accel can be null because of being disabled in the efeatures
+		//cout << ".\n";
 		return false;
-
+	}
+	//cout << "...\n";
 	dt = (timed - oldmpuTimed);// *div;
+	
+
 
 	static uint cnt2l = 0;
 	if (dt > 0.02) {
 		if (cnt2l++) {
-			cout << "MPU DT too long " << dt << "\t" << timed << endl;
+			cout << "MPU DT too long " << dt <<":"<<dt<< ":" << timed << endl;
 			mega_i2c.beep_code(B_MPU_TOO_LONG);
 		}
 
 	}
 	//if (dt < 0.008)
 	//	cout << "MPU DT too short "<<dt<<"\n";
-		
-
-	dt = 0.01;
-
-	rdt = 100;// 1.0 / dt;
 	oldmpuTimed = timed;
+	dt = 0.01;
+	rdt = 100;// 1.0 / dt;
+	
 
 	q = _q;
 	q.x *= 1.5259e-5;
@@ -672,6 +680,10 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	float x = n122*2 * (float)a[0];
 	float y = -n122*2 * (float)a[1];
 	float z = n122*2 * (float)a[2];
+
+	
+
+
 	static float low_accZ = 0;
 
 	accZ = z*cosPitch + sinPitch*x;
@@ -684,7 +696,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	accX = 9.8f*(x*cosPitch - z*sinPitch);
 	accY = 9.8f*(y*cosRoll + z*sinRoll);
 
-
+	test_vibration(accX, accY, accZ);
 
 	//Debug.load(0, accZ, accX);
 	//Debug.dump();

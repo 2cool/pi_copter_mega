@@ -5,14 +5,31 @@
 //сравнить показания барометрами  с показаниями на старой конфигурации. походу старая конфигурация била куда более гладкой может из за єтого вся хуита
 //также напомню что надо перекомпилить ардуину єту и инет
 
+/*
 
+Виставить максимальние показатели
+Some boards allow to adjust CPU speed.
+
+nano /etc/default/cpufrequtils
+Alter min_speed or max_speed variable.
+
+service cpufrequtils restart
+
+
+
+
+
+
+
+
+*/
 
 #define PROG_VERSION "ver 3.180718\n"
 
-#define ONLY_ONE_RUN
+
 #define SIM800_F
 
-
+//при стартре замерять вибрацию после чего делать корекцию или вообще запрещать полет при сильной вибрации
 
 #include <sys/sem.h>
 #include  <sys/types.h>
@@ -131,48 +148,7 @@ void video_stream() {
 
 
 
-int semid;
-bool is_clone(char *argv0) {
-	
-	struct sembuf my_sembuf;
-	key_t IPC_key = ftok(argv0, 0);
-	if (0 > IPC_key)
-	{
-		printf("Can\'t generate IPC key\n");
-		std::cout << argv0 << std::endl;
-		std::cout << IPC_key << std::endl;
-		
-	}
-	semid = semget(IPC_key, 1, 0666 | IPC_CREAT);
-	if (0 > semid)
-	{
-		printf("Can\'t get semid\n");
-	}
-	my_sembuf.sem_op = 1;
-	my_sembuf.sem_flg = 0;
-	my_sembuf.sem_num = 0;
-	if (0 > semop(semid, &my_sembuf, 1))
-	{
-		printf("Error increment semaphore!\n");
-	}
-	int sem_value = semctl(semid, 0, GETVAL, 0);
-	if (-1 != sem_value)
-	{
-		//std::cout << sem_value << std::endl;
-	}
-	else
-	{
-		std::cout << " Error get senafor value! " << std::endl;
-	}
-	if (sem_value > 1)
-	{
-		//std::cout << " Error! 2 COPY! " << std::endl;
-		return true;
-	}
 
-	
-	return false;
-}
 
 
 
@@ -244,7 +220,7 @@ int max_dt = 0;
 int old_debug = 0;
 bool loop()
 {
-
+	usleep(5000);
 #ifndef WORK_WITH_WIFI
 	if (temp4test && Autopilot.motors_is_on() == false && millis() > 2000) {
 		//Autopilot.motors_do_on(true, "FALSE WIFI");
@@ -257,6 +233,7 @@ bool loop()
 
 
 	if (Balance.loop()) {
+		
 
 #ifdef WORK_WITH_WIFI
 		Telemetry.loop();
@@ -357,25 +334,26 @@ std::streambuf *coutbuf;// старый буфер
 
 int main(int argc, char *argv[]) {
 
-
-
-	cout << millis() << endl;
-
 cout << PROG_VERSION << endl;
-#ifdef ONLY_ONE_RUN
-	if (is_clone(argv[0]) == true) {
-		cout << "clone\n";
-		if (-1 == semctl(semid, 0, IPC_RMID, 0))
-		{
-			printf("Error delete!\n");
-		}
-		return 0;
-	}
-#endif	
 
 
 	if (init_shmPTR())
 		return 0;
+
+	{
+		uint8_t temp = shmPTR->main_cnt;
+
+		usleep(51123);
+		if (temp != shmPTR->main_cnt) {
+			cout << "clone\n";
+			return 0;
+		}
+	}
+
+	init_millis_micros();
+	if (millis() > 3000)
+		return 0;
+
 	shmPTR->in_fly = (shmPTR->control_bits&MOTORS_ON);
 	shmPTR->wifi_cnt = 0;
 	shmPTR->run_main = true;

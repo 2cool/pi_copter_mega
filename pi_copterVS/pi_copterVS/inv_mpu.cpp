@@ -1014,6 +1014,7 @@ uint8_t mpu_set_accel_bias(const int32_t *accel_bias)
 */
 uint8_t mpu_reset_fifo(void)
 {
+	//printf("!!!!_____________________reset fifo\n");
 	uint8_t data;
 
 	if (!(st.chip_cfg.sensors))

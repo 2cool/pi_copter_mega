@@ -6,7 +6,18 @@
 #include <sys/ipc.h>
 #include "mpu.h"
 
- static __time_t start_seconds = -5;
+ static __time_t start_seconds;
+
+ void  init_millis_micros() {
+	 timespec t;
+	 clock_gettime(CLOCK_REALTIME, &t);
+#ifdef FALSE_WIRE
+	 start_seconds = t.tv_sec - 30L;
+#else
+	 start_seconds = t.tv_sec;
+#endif
+	 cout << "start_seccons=" << start_seconds << endl;
+ }
 
 uint32_t millis_g() {
 	timespec t;
@@ -20,12 +31,6 @@ uint32_t millis(){
 	timespec t;
 	clock_gettime(CLOCK_REALTIME,&t);
 	uint32_t ret;
-	if (start_seconds < 0L)
-#ifdef FALSE_WIRE
-		start_seconds = t.tv_sec-30L;
-#else
-		start_seconds = t.tv_sec;
-#endif
 	ret=(uint32_t)(((t.tv_sec-start_seconds)*1000L)+(t.tv_nsec/1000000L));
 	return ret;
 }
@@ -36,12 +41,6 @@ int64_t micros(void){
 	timespec t;
 	clock_gettime(CLOCK_REALTIME,&t);
 	int64_t ret;
-	if (start_seconds < 0L)
-#ifdef FALSE_WIRE
-		start_seconds = t.tv_sec - 30L;
-#else
-		start_seconds = t.tv_sec;
-#endif
 	ret=((int64_t)(t.tv_sec-start_seconds)*1000000L)+(t.tv_nsec/1000L);
 	return ret;
 }
