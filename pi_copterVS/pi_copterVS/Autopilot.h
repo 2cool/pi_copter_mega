@@ -68,7 +68,7 @@ class AutopilotClass
 	 int reboot();
 	 int shutdown();
 	 int exit();
-	 double  time_at_startd;
+	 double  time_at_startd,old_time_at_startd;
 	 void gimBalRollCorrection();
 	 bool busy() { return (control_bits & (MPU_ACC_CALIBR | MPU_GYRO_CALIBR | COMPASS_CALIBR)); }
 	 volatile double last_time_data_recivedd;

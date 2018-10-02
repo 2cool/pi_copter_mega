@@ -13,7 +13,7 @@
 
 
 
-int fd, fd_in;
+int fd;
 
 int Megai2c::getsim(char * str) {
 	char reg = 3;
@@ -109,68 +109,6 @@ static int sms_received = 0;
 		}
 	}
 }
-char gsm_in_buf[4096];
-int Megai2c::gsm_loop()
-{
-	if (shmPTR->sim800_reset_time > 0 && shmPTR->sim800_reset_time + 40000 < millis())
-		shmPTR->sim800_reset_time = 0;
-	int a_in;
-	if (fd_in < 0) {
-		fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
-		if (fd_in < 0)
-		{
-			cout << "error " << errno << " opening /dev/tnt1: " << strerror(errno) << "\t"<<Mpu.timed << endl;
-			return -1;
-		}
-	}
-
-	//перенести гпс и симку на орандж и не ебать мозк
-	ioctl(fd_in, FIONREAD, &a_in); //max 4095
-	if (a_in) {
-		//printf("a_in=%i\n",a_in);
-	/*	if (a_in > 300) {
-			read(fd_in, gsm_in_buf, a_in);
-			printf("     CLEAR---------------------------------%i\n", a_in);
-			return 0;
-		}
-		if (a_in > 200)
-			printf("    ERROR---------------------------------%i\n",a_in);
-		if (a_in > 16)
-			a_in = 16;
-			*/
-		int av = read(fd_in, &gsm_in_buf, a_in);
-/*
-		printf("<-");
-		for (int i = 0; i < av; i++)
-			printf("%c (%i) ", (char)gsm_in_buf[i],(int)gsm_in_buf[i]);
-		printf("\n");
-	*/	
-		send2sim(gsm_in_buf, a_in);
-	}
-	int res = getsim(gsm_in_buf);
-
-
-	
-
-	if (res) {
-		//if no ppp
-		m_parser(gsm_in_buf, res);
-		/*
-		printf("->");
-		for (int i = 0; i < res; i++)
-			printf("%c (%i) ", (char)gsm_in_buf[i], (int)gsm_in_buf[i]);
-		printf("\n");
-		*/
-		write(fd_in, gsm_in_buf, res);
-	}
-
-	
-
-	return 0;
-
-}
-
-
 
 
 int Megai2c::init()
@@ -192,12 +130,7 @@ int Megai2c::init()
 	}
 	
 	
-	fd_in = open("/dev/tnt1", O_RDWR | O_NOCTTY | O_SYNC);
-	if (fd_in < 0)
-	{
-		cout << "error " << errno << " opening /dev/tnt1: " << strerror(errno) << "\t"<<Mpu.timed << endl;
-		return -1;
-	}
+	
 	
 	
 	//--------------------------------init sound & colors 
@@ -226,10 +159,10 @@ int Megai2c::init()
 }
 
 void Megai2c::beep_code(uint8_t c) {
-
-	char chBuf[] = { 1,c };
-	write(fd, chBuf, 2);
-
+	if (DO_SOUND) {
+		char chBuf[] = { 1,c };
+		write(fd, chBuf, 2);
+	}
 }
 
 

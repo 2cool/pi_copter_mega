@@ -38,7 +38,7 @@
 #define  ARDUINO_ADDR 9
 #define  DO_SOUND 0
 
-
+#define YAW_OFF
 
 //#define FASLE_GPS_STILL
 

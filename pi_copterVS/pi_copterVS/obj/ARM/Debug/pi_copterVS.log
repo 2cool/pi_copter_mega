@@ -1,8 +1,8 @@
-﻿  Validating architecture
-  Validating sources
-  Copying sources remotely to '192.168.1.103'
+﻿  Validating sources
+  Copying sources remotely to '192.168.1.112'
+  Validating architecture
   Starting remote build
   Compiling sources:
-  Balance.cpp
+  Telemetry.cpp
   Linking objects
   pi_copterVS.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

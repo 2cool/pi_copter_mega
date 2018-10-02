@@ -3,9 +3,11 @@
 // 
 
 #include "debug.h"
-
-
-
+	 uint64_t d_old_t = 0;
+	 int d_delay = 300;
+	 double d_dt = (double)d_delay *0.001;
+	 // int cnt = 0;
+	 uint32_t old_time = 0;
 void DebugClass::graphic(const int n, const float x, const float y) {
 	printf("%i,%f,%f\n", (unsigned int)n, x, y);
 
@@ -19,6 +21,12 @@ void DebugClass::graphic(const int n, const float x, const float y,const float z
 		 printf("\n%i,%i,%i,%i\n", f1, f2, f3, f4);
 	 }
 	 void DebugClass::dump(const float f1, float f2, float f3, float f4) {
+
+		 uint32_t t = millis();
+		 if (t - old_time < d_delay)//20)
+			 return;
+		 old_time = t;
+
 		 printf("\n%f,%f,%f,%f\n", f1, f2, f3, f4);
 
 
@@ -30,11 +38,10 @@ void DebugClass::graphic(const int n, const float x, const float y,const float z
 		 printf("%i,%i,%i,%i\n", (unsigned int)f1, (unsigned int)f2, (unsigned int)f3, (unsigned int)f4);
 
 	 }
-	 uint64_t d_old_t = 0;
 
 
-	 int d_delay = 50;
-	 double d_dt = (double)d_delay *0.001;
+
+
 
 	 void DebugClass::load(const uint8_t i, const float x, const float y) {
 		 if (d_old_t == 0) {
@@ -75,8 +82,7 @@ void DebugClass::graphic(const int n, const float x, const float y,const float z
 
 
 	 }
-	// int cnt = 0;
-	 uint32_t old_time = 0;
+
 	 void DebugClass::dump(bool thre) {//--------------------------------------------------------------
 		 if (n_debug > 9)
 			 return;

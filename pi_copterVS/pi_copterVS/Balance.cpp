@@ -391,29 +391,34 @@ bool BalanceClass::loop()
 			roll_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED)-roll_stab_output)*BAL_F;
 			yaw_stab_output += (f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED)-yaw_stab_output)*BAL_F;
 
-			float pitch_gk = min(abs(pitch_stab_output*power_K), 1);
-			float roll_gk = min(abs(roll_stab_output*power_K), 1);
-			заменить на подавление частоти раскачивания.
+			//float pitch_gk = min(abs(pitch_stab_output*power_K), 1);
+			//float roll_gk = min(abs(roll_stab_output*power_K), 1);
+			//заменить на подавление частоти раскачивания.
 
 
 
 			// rate PIDS
 
-			const float max_delta = 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
+
+		//	уменьшить макс дельту думаю из за слишком большой происходит раскачивание
+		//		или по крайней мере динамическую дельту надо уменьшить.
+			const float max_delta = 0.3;// 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
 
 			//напоминание
 			//----------------------------------------------------
 			static float correction = 1;
-			correction += (0.5 / min(throttle,0.5) - correction)*0.2;
+			//correction += (0.5 / min(throttle,0.5) - correction)*0.2;
 		
-			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(pitch_gk*correction*(pitch_stab_output + Mpu.gyroPitch), Mpu.dt);
+			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(correction*(pitch_stab_output + Mpu.gyroPitch), Mpu.dt);
 			pitch_output = constrain(pitch_output, -max_delta, max_delta);
-			float roll_output = pK*pids[PID_ROLL_RATE].get_pid(roll_gk*correction*(roll_stab_output + Mpu.gyroRoll), Mpu.dt);
+			float roll_output = pK*pids[PID_ROLL_RATE].get_pid(correction*(roll_stab_output + Mpu.gyroRoll), Mpu.dt);
 			roll_output = constrain(roll_output, -max_delta, max_delta);
 			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(correction*(yaw_stab_output - Mpu.gyroYaw), Mpu.dt);
 			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
 
-			yaw_output = 0;//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#ifdef YAW_OFF
+			yaw_output = 0;
+#endif
 
 			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече
 			if ((throttle + yaw_output) < min_throttle)
@@ -431,10 +436,11 @@ bool BalanceClass::loop()
 				f_[Hmc.motor_index] = 0.5;
 			}
 			else {
-				if (Mpu.timed - Autopilot.time_at_startd < 6) {
+				if (Mpu.timed - Autopilot.time_at_startd < 5 || Autopilot.time_at_startd - Autopilot.old_time_at_startd > 8) {
 					f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.3;//
-					//if (Mpu.vibration_max > 1)
+					//if (Mpu.vibration > 3)
 						//Autopilot.off_throttle(true, "VBR");
+
 				}
 
 				if (throttle < MIN_THROTTLE_) {
@@ -454,13 +460,13 @@ bool BalanceClass::loop()
 #else
 
 
-		//отключить двигатели при сильном токе
+		//отключить двигатели при слабом токе
 		//if (propeller_lost[0] || propeller_lost[3]) 	f_[0]=f_[3] = 0;
 		
 		//if (propeller_lost[1] || propeller_lost[2]) 	f_[1] = f_[2] = 0;
 		
 
-		//if (f_[0]>=0.4 || f_[1]>0.4 || f_[2]>0.4 || f_[3]>0.4)	f_[0] = f_[1] = f_[2] = f_[3] = 0.4;
+	//	if (f_[0]>=0.4 || f_[1]>0.4 || f_[2]>0.4 || f_[3]>0.4)	f_[0] = f_[1] = f_[2] = f_[3] = 0.3;
 
 
 		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros

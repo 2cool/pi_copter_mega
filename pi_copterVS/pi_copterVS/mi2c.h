@@ -134,7 +134,7 @@ public:
 
 	 void Buzzer(const bool on);
 
-	 int gsm_loop();
+	
 	
 	 int send2sim(const char *str, int len);
 	 int getsim(char * str);

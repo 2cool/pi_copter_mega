@@ -191,13 +191,35 @@ void TelemetryClass::update_voltage() {
 #define current_k 0.01953125
 //#define current_k 1
 
-	shmPTR->m_current[0] = m_current[0] = current_k *(float)(995 - data[0]);
-	shmPTR->m_current[1] = m_current[1] = current_k *(float)(1003 - data[1]);
-	shmPTR->m_current[2] = m_current[2] = current_k *(float)(998 - data[2]);
-	shmPTR->m_current[3] = m_current[3] = current_k *(float)(996 - data[3]);
 
-	//Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
-#define MOTORS_STALLED_I_MAX 15
+/*
+No-Load Current (Io/10V) 0.45 Amps
+Motor Resistance (Rm) 0.117 Ohms
+Max Continuous Current 14 Amps
+Max Continuous Power 220 Watts
+*/
+
+	shmPTR->m_current[0] = m_current[0] = 0.027 *(float)(1004- data[0]);
+	shmPTR->m_current[1] = m_current[1] = 0.027 *(float)(995 - data[1]);
+	shmPTR->m_current[2] = m_current[2] = 0.022 *(float)(999 - data[2]);
+	shmPTR->m_current[3] = m_current[3] = 0.025 *(float)(996 - data[3]);
+	
+	
+
+	//////////////
+	static float mc0 = 0, mc1 = 0, mc2 = 0, mc3 = 0;
+	mc0 += (m_current[0] - mc0)*0.03;
+	mc1 += (m_current[1] - mc1)*0.03;
+	mc2 += (m_current[2] - mc2)*0.03;
+	mc3 += (m_current[3] - mc3)*0.03;
+	Debug.dump(mc0, mc1, mc2, mc3);
+
+	//////////////
+
+
+	//Debug.dump((float)data[0], data[1], data[2], data[3]);
+
+#define MOTORS_STALLED_I_MAX 10
 #define MOTORS_STALLED_I_MIN -1
 #define MOT_STALLED "msd"
 

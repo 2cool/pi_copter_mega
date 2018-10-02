@@ -132,7 +132,7 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 
 
 	shmPTR->sim800_reset = false;
-	time_at_startd = 0;
+	time_at_startd = old_time_at_startd = 0;
 	camera_mode = CAMMERA_OFF;
 	lowest_height = shmPTR->lowest_altitude_to_fly;
 	last_time_data_recivedd = 0;
@@ -738,7 +738,9 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 		}
 	}//------------------------------OFF----------------
 	else {
-		time_at_startd = 0;
+		old_time_at_startd = Mpu.timed;
+		
+
 #ifdef FALSE_WIRE
 		Emu.init(WIND_X, WIND_Y, WIND_Z);
 #endif
