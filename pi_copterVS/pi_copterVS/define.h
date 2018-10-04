@@ -18,8 +18,8 @@
 #define MPU_MAGIC
 //#define FALSE_WIRE
 
-
-
+#define  DO_SOUND 0 
+//#define YAW_OFF
 //#define XY_SAFE_AREA 200
 //#define Z_SAFE_AREA 40
 
@@ -29,19 +29,17 @@
 #define GPS_ALT_MAX_ERROR 30
 #define MAX_BAROMETR_ERRORS 10
 
-//#define PLUS_CAMERA
 #define WORK_WITH_WIFI
 #define LED_ON
 #define LOST_BEEP
 #define pwm_MAX_THROTTLE 32000
 #define pwm_OFF_THROTTLE 16000
 #define  ARDUINO_ADDR 9
-#define  DO_SOUND 0
 
-#define YAW_OFF
+
+
 
 //#define FASLE_GPS_STILL
-
 //#define NO_BATTERY
 
 #ifdef FALSE_WIRE

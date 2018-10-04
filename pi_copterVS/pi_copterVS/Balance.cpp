@@ -141,7 +141,7 @@ void BalanceClass::init()
 	
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
 	
-	set_pitch_roll_pids(0.0015, 0.0012, 0.2); 
+	set_pitch_roll_pids(0.001, 0.001, 0.2); 
 
 	yaw_stabKP = 2;
 
@@ -418,6 +418,7 @@ bool BalanceClass::loop()
 
 #ifdef YAW_OFF
 			yaw_output = 0;
+			pitch_output=0;
 #endif
 
 			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече

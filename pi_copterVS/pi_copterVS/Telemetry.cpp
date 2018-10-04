@@ -206,7 +206,7 @@ Max Continuous Power 220 Watts
 	
 	
 
-	//////////////
+	/*/////////////
 	static float mc0 = 0, mc1 = 0, mc2 = 0, mc3 = 0;
 	mc0 += (m_current[0] - mc0)*0.03;
 	mc1 += (m_current[1] - mc1)*0.03;
@@ -214,12 +214,12 @@ Max Continuous Power 220 Watts
 	mc3 += (m_current[3] - mc3)*0.03;
 	Debug.dump(mc0, mc1, mc2, mc3);
 
-	//////////////
+	/////////////*/
 
 
 	//Debug.dump((float)data[0], data[1], data[2], data[3]);
 
-#define MOTORS_STALLED_I_MAX 10
+#define MOTORS_STALLED_I_MAX 15
 #define MOTORS_STALLED_I_MIN -1
 #define MOT_STALLED "msd"
 

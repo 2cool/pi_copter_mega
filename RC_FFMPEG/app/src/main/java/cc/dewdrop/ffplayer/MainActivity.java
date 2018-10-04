@@ -1,23 +1,30 @@
 package cc.dewdrop.ffplayer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import cc.dewdrop.ffplayer.utils.FFUtils;
+import cc.dewdrop.ffplayer.widget.DrawView;
 import cc.dewdrop.ffplayer.widget.FFVideoView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity  implements SensorEventListener {
 
-    private TextView mTextView;
     private FFVideoView mVideoView;
 
-
-
+    RelativeLayout rl1;
+    static DrawView drawView=null  ;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -50,44 +57,78 @@ public class MainActivity extends Activity {
 
 
 
-
-
-
+    private SensorManager mSensorManager;
+    private Sensor accelerometer;
+    static protected boolean sensorUpdateSpeedFastest=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        mTextView = findViewById(R.id.sample_text);
         mVideoView = findViewById(R.id.videoView);
+
+        rl1 =findViewById(R.id.rl1);
+
+        drawView = new DrawView(MainActivity.this);
+        drawView.setBackgroundColor(Color.WHITE);
+        rl1.addView(drawView);
+
+        drawView.setBackgroundColor(00);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
+        int speed=(sensorUpdateSpeedFastest)?SensorManager.SENSOR_DELAY_FASTEST:SensorManager.SENSOR_DELAY_NORMAL;
+        mSensorManager.registerListener(this, accelerometer,speed );
+
+
+
+
     }
+
+
+
+
 
     public void onButtonClick(View view) {
         int id = view.getId();
 
         switch (id) {
             case R.id.button_protocol:
-                setInfoText(FFUtils.urlProtocolInfo());
+
                 break;
             case R.id.button_codec:
-                setInfoText(FFUtils.avCodecInfo());
+
                 break;
             case R.id.button_filter:
-                setInfoText(FFUtils.avFilterInfo());
+
                 break;
             case R.id.button_format:
-                setInfoText(FFUtils.avFormatInfo());
+
                 break;
             case R.id.button_play:
-                String videoPath = Environment.getExternalStorageDirectory() + "/Movies/PERU.MP4";
+               // String videoPath = "udp://192.168.1.100:5544";//
+                String videoPath =  Environment.getExternalStorageDirectory() + "/Movies/PERU.MP4";
                 mVideoView.playVideo(videoPath);
                 break;
         }
     }
 
-    private void setInfoText(String content) {
-        if (mTextView != null) {
-            mTextView.setText(content);
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+
+        if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER) {
+            if (MainActivity.drawView != null)
+                MainActivity.drawView.postInvalidate();
         }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
     }
 }
