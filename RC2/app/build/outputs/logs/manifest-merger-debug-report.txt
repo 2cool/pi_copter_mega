@@ -4,8 +4,8 @@ ADDED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\309efa1550d72e34819f3ba2d5efe1bd\AndroidManifest.xml:14:4-17:12
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\f2c7667da75c3895b5ffdd5995af288f\AndroidManifest.xml:14:4-17:12
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\c1f3e990b519769c0788d67e5de71fc3\AndroidManifest.xml:14:4-17:12
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\190f09c8c87a69cef03c4e81330b7ea7\AndroidManifest.xml:14:4-17:12
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
@@ -27,10 +27,10 @@ uses-sdk
 ADDED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:7:5-47
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:7:5-47
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:7:5-47
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\309efa1550d72e34819f3ba2d5efe1bd\AndroidManifest.xml:15:5-42
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\309efa1550d72e34819f3ba2d5efe1bd\AndroidManifest.xml:15:5-42
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\f2c7667da75c3895b5ffdd5995af288f\AndroidManifest.xml:15:5-42
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\f2c7667da75c3895b5ffdd5995af288f\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\c1f3e990b519769c0788d67e5de71fc3\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\c1f3e990b519769c0788d67e5de71fc3\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\190f09c8c87a69cef03c4e81330b7ea7\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\190f09c8c87a69cef03c4e81330b7ea7\AndroidManifest.xml:15:5-42
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:7:5-47
 INJECTED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:7:5-47
 	android:targetSdkVersion
@@ -79,10 +79,10 @@ ADDED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2
 		ADDED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:20:22-76
 application
 ADDED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:23:5-50:19
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\309efa1550d72e34819f3ba2d5efe1bd\AndroidManifest.xml:16:5-19
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\309efa1550d72e34819f3ba2d5efe1bd\AndroidManifest.xml:16:5-19
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\f2c7667da75c3895b5ffdd5995af288f\AndroidManifest.xml:16:5-19
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\f2c7667da75c3895b5ffdd5995af288f\AndroidManifest.xml:16:5-19
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\c1f3e990b519769c0788d67e5de71fc3\AndroidManifest.xml:16:5-19
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\c1f3e990b519769c0788d67e5de71fc3\AndroidManifest.xml:16:5-19
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\190f09c8c87a69cef03c4e81330b7ea7\AndroidManifest.xml:16:5-19
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\2coolz\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\190f09c8c87a69cef03c4e81330b7ea7\AndroidManifest.xml:16:5-19
 	android:label
 		ADDED from C:\Users\2coolz\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:26:9-41
 	android:icon

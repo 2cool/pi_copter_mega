@@ -4,9 +4,11 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 
+import cc.dewdrop.ffplayer.MainActivity;
 
 
 public class DrawView extends View {
@@ -18,13 +20,14 @@ public class DrawView extends View {
 
     int upPI = 0;
     int downPI = 0;
-    boolean inTouch = false;
+    static boolean inTouch = false;
 
 
 
 
 
-
+    static float sizeX=0;
+    static float sizeY=0;
 
 
     Paint white=new Paint();
@@ -33,6 +36,9 @@ public class DrawView extends View {
         super(context);
         mouse_x = new float[10];
         mouse_y=new float[10];
+
+        sizeX = MainActivity.screenMetrix[0] / MainActivity.screenMetrix[2];
+        sizeY = MainActivity.screenMetrix[1] / MainActivity.screenMetrix[3];
 
     }
 
@@ -114,8 +120,8 @@ static int i=0;
 
         white.setColor(Color.WHITE);
         black.setColor(Color.BLACK);
-        c.drawCircle(mouse_x[0]    , mouse_y[0], 100, white);
-        c.drawCircle(mouse_x[1]    , mouse_y[1], 100, white);
+        c.drawCircle(mouse_x[0]    , mouse_y[0]-400, 10, white);
+        c.drawCircle(mouse_x[1]    , mouse_y[1]-400, 10, white);
 
 
         i+=1;
