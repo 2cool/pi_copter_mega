@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\2coolz\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-ka-rGE\\values-ka-rGE.xml",
+            "outputFile": "C:\\Users\\Igor\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-ka-rGE\\values-ka-rGE.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\2coolz\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\309efa1550d72e34819f3ba2d5efe1bd\\res\\values-ka-rGE\\values.xml",
+                    "source": "C:\\Users\\Igor\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\c1f3e990b519769c0788d67e5de71fc3\\res\\values-ka-rGE\\values.xml",
                     "from": {
                         "startLines": "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

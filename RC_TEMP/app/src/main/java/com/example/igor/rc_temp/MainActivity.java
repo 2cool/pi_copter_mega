@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static float [] screenMetrix;
+    public static float [] screenMetrics;
     RelativeLayout rl1;
     static DrawView drawView=null  ;
     float[] get_screen_size_in_pixels(){
@@ -73,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
         rl1 =findViewById(R.id.rl1);
 
 
-        screenMetrix=get_screen_size_in_pixels();
+        screenMetrics=get_screen_size_in_pixels();
 
         drawView = new DrawView(MainActivity.this);
 
         rl1.addView(drawView);
 
-        drawView.setBackgroundColor(Color.BLACK);
+        drawView.setBackgroundColor(Color.rgb(60,0,0));
 
 
     }

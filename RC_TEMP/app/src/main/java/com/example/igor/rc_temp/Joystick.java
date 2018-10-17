@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 
 public class Joystick {
     private Paint color;
-    private boolean return_back;
+    private boolean return_backX,return_backY, block_X, block_Y;
     private float x,y,size;
 
     private float trackX,trackY,old_posX,old_posY,shiftX,shiftY;
@@ -17,10 +17,13 @@ public class Joystick {
 
     public float getX(){return jx;}
     public float getY(){return jy;}
+
+
     private boolean setX(float xp){
         float t_jx=(xp-x - size*0.5f)/(size*0.5f);
         if (t_jx<=1 && t_jx>=-1){
             jx=t_jx;
+
             return true;
         }else
             return false;
@@ -35,16 +38,18 @@ public class Joystick {
     }
     private void end(){
         index=-1;
-        if (return_back) {
-
-            jx = jy = 0;
+        if (return_backX) {
+            jx=0;
             old_posX=x+size*0.5f;
-            old_posY=y+size*0.5f;
-        }else{
+        }else
             old_posX-=shiftX;
+        if (return_backY) {
+            jy=0;
+            old_posY=y+size*0.5f;
+        }else
             old_posY-=shiftY;
 
-        }
+
         shiftX=shiftY=0;
 
     }
@@ -74,28 +79,18 @@ public class Joystick {
         // событие
         int actionMask = event.getActionMasked();
         // индекс касания
-     //   int pointerIndex = event.getActionIndex();
+        int pointerIndex = event.getActionIndex();
         // число касаний
-        int pointerCount = event.getPointerCount();
-
-
+        //  int pointerCount = event.getPointerCount();
         switch (actionMask) {
             case MotionEvent.ACTION_DOWN: // первое касание
-                Log.d("TOUCH","ACTION_DOWN");
             case MotionEvent.ACTION_POINTER_DOWN: // последующие касания
             {
-
-                Log.d("TOUCH","ACTION_POINTER_DOWN");
-
-
-
-                final float gx = event.getX(pointerCount - 1);
-                final float gy = event.getY(pointerCount - 1);
-                index=findPointerIndex(event);
-
-                if (index==-1 && gx >= x && gx <= x + size && gy >= y && gy <= y + size) {
+                final float gx = event.getX(pointerIndex);
+                final float gy = event.getY(pointerIndex);
+                if (index<=0 && gx >= x && gx <= x + size && gy >= y && gy <= y + size) {
                     end();
-                    index=pointerCount - 1;
+                    index=pointerIndex;
                     shiftX = gx - old_posX;//??
                     shiftY = gy - old_posY;
                     trackX=old_posX=gx;
@@ -104,52 +99,64 @@ public class Joystick {
                 break;
             }
             case MotionEvent.ACTION_UP: // прерывание последнего касания
-                Log.d("TOUCH","ACTION_UP");
+                end();
+                break;
             case MotionEvent.ACTION_POINTER_UP: // прерывания касаний
-                Log.d("TOUCH", "ACTION_POINTER_UP");
-
-               // index=findPointerIndex(event);
-
+                if (index==event.getActionIndex()){
+                    end();
+                }
                 break;
             case MotionEvent.ACTION_MOVE: // движение
-
-                //sb.setLength(0);
-
                 if (index>=0)
                     index=findPointerIndex(event);
                 if (index >= 0) {
                     trackX = event.getX(index);
                     trackY = event.getY(index);
-
                     if (setX(trackX - shiftX)) {
                         old_posX = trackX;
                     }
                     if (setY(trackY - shiftY))
                         old_posY = trackY;
+
                 }else{
-                    Log.d("TOUCH", "-1");
                     end();
                 }
-
                 break;
         }
+        if (block_X){
+            jx=0;
 
+        }
+        if (block_Y){
+            jy=0;
 
+        }
 
-
+      //  Log.d("JOSTIC",Float.toString(jx)+" , "+Float.toString(jy));
         return true;
 
     }
 
+    Paint cc;
 
-    public Joystick(int _x, int _y, int _size, boolean return_back_, Paint c) {
+    public void set_return_back_X(boolean b){return_backX=b;}
+    public void set_return_back_Y(boolean b){return_backY=b;}
+    public void set_block_X(boolean b){block_X=b;}
+    public void set_block_Y(boolean b){block_Y=b;}
+    public Joystick(float _x, float _y, float _size, boolean return_back_X, boolean return_back_Y,boolean blockX, boolean blockY, Paint c) {
         x=_x;
         y=_y;
         size=_size;
-        return_back =return_back_;
-        color=c;
+        return_backX =return_back_X;
+        return_backY=return_back_Y;
+        block_X=blockX;
+        block_Y=blockY;
+        color=new Paint(c);
+        color.setStyle(Paint.Style.STROKE);
+        cc=new Paint(c);
+        cc.setStrokeWidth(1);
         index=-1;
-       end();
+        end();
         jx = jy = 0;
         shiftY=shiftX=0;
         old_posX=x+size*0.5f;
@@ -159,14 +166,18 @@ public class Joystick {
     }
 
     public void paint(Canvas c) {
-        c.drawCircle(old_posX-shiftX, old_posY-shiftY , 50, color);
 
 
 
-        c.drawLine(x, y,x+size, y,color);
-        c.drawLine(x,y,x,y+size,color);
-        c.drawLine(x, y+size,x+size, y+size,color);
-        c.drawLine(x+size,y,x+size,y+size,color);
+        c.drawCircle( block_X?x+size*0.5f:old_posX-shiftX, block_Y?y+size*0.5f:old_posY-shiftY , size/10, color);
+
+        // c.drawLine(x+size/2,y,x+size/2,y+size,cc);
+        // c.drawLine(x,y+size/2,x+size,y+size/2,cc);
+
+
+        c.drawCircle(x+size*0.5f, y+size*0.5f , size*0.5f, color);
+
+
     }
 
 }

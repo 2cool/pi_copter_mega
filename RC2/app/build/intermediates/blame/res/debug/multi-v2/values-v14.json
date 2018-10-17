@@ -1,29 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\2coolz\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v14\\values-v14.xml",
+            "outputFile": "C:\\Users\\Igor\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v14\\values-v14.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\2coolz\\pi_copter_mega\\RC2\\app\\src\\main\\res\\values-v14\\styles.xml",
-                    "from": {
-                        "startLines": "7",
-                        "startColumns": "4",
-                        "startOffsets": "227",
-                        "endLines": "9",
-                        "endColumns": "12",
-                        "endOffsets": "372"
-                    },
-                    "to": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endLines": "4",
-                        "endColumns": "12",
-                        "endOffsets": "198"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\2coolz\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\309efa1550d72e34819f3ba2d5efe1bd\\res\\values-v14\\values.xml",
+                    "source": "C:\\Users\\Igor\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\c1f3e990b519769c0788d67e5de71fc3\\res\\values-v14\\values.xml",
                     "from": {
                         "startLines": "3,11,19,27,35,37,39,41",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -39,6 +20,25 @@
                         "endLines": "11,18,25,32,33,34,35,36",
                         "endColumns": "12,12,12,12,78,92,90,104",
                         "endOffsets": "712,1240,1766,2306,2385,2478,2569,2674"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Igor\\pi_copter_mega\\RC2\\app\\src\\main\\res\\values-v14\\styles.xml",
+                    "from": {
+                        "startLines": "7",
+                        "startColumns": "4",
+                        "startOffsets": "227",
+                        "endLines": "9",
+                        "endColumns": "12",
+                        "endOffsets": "372"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "198"
                     }
                 }
             ]

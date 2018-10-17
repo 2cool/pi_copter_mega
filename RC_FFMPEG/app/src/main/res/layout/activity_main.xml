@@ -84,13 +84,7 @@
             android:text="@string/button_play"
             android:textSize="12sp" />
     </LinearLayout>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/linear_layout"
-        android:padding="16dp">
-
-    </ScrollView>
+ 
 
 
 </RelativeLayout>

@@ -16,20 +16,54 @@ import android.view.Display;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import cc.dewdrop.ffplayer.utils.FFUtils;
-import cc.dewdrop.ffplayer.widget.DrawView;
+
 import cc.dewdrop.ffplayer.widget.FFVideoView;
 
 public class MainActivity extends Activity  implements SensorEventListener {
 
     private FFVideoView mVideoView;
    public static float [] screenMetrix;
-    RelativeLayout rl1;
+
     static DrawView drawView=null  ;
+
+
+    public static float [] screenMetrics;
+    RelativeLayout rl1;
+
+    float[] get_screen_size_in_pixels(){
+        float [] screenXY=new float[4];
+        final DisplayMetrics metrics = new DisplayMetrics();
+        Display display = getWindowManager().getDefaultDisplay();
+        Method mGetRawH = null, mGetRawW = null;
+        try {
+
+
+            display.getRealMetrics(metrics);
+            screenXY[0] = metrics.widthPixels;
+            screenXY[1] = metrics.heightPixels;
+            screenXY[2] = metrics.xdpi;
+            screenXY[3] = metrics.ydpi;
+
+
+        } catch (Exception e3) {
+            e3.printStackTrace();
+        }
+        return screenXY;
+    }
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -67,26 +101,6 @@ public class MainActivity extends Activity  implements SensorEventListener {
     static protected boolean sensorUpdateSpeedFastest=false;
 
 
-    float[] get_screen_size_in_pixels(){
-        float [] screenXY=new float[4];
-        final DisplayMetrics metrics = new DisplayMetrics();
-        Display display = getWindowManager().getDefaultDisplay();
-        Method mGetRawH = null, mGetRawW = null;
-        try {
-
-
-            display.getRealMetrics(metrics);
-            screenXY[0] = metrics.widthPixels;
-            screenXY[1] = metrics.heightPixels;
-            screenXY[2] = metrics.xdpi;
-            screenXY[3] = metrics.ydpi;
-
-
-        } catch (Exception e3) {
-            e3.printStackTrace();
-        }
-        return screenXY;
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,14 +109,26 @@ public class MainActivity extends Activity  implements SensorEventListener {
         mVideoView = findViewById(R.id.videoView);
 
 
+
         rl1 =findViewById(R.id.rl1);
 
 
-        screenMetrix=get_screen_size_in_pixels();
+        screenMetrics=get_screen_size_in_pixels();
 
         drawView = new DrawView(MainActivity.this);
-        drawView.setBackgroundColor(Color.WHITE);
+
         rl1.addView(drawView);
+
+        drawView.setBackgroundColor(Color.rgb(60,0,0));
+
+
+
+
+
+
+
+
+
 
         drawView.setBackgroundColor(00);
 
@@ -154,7 +180,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
 
         if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER) {
             if (MainActivity.drawView != null)
-                MainActivity.drawView.postInvalidate();
+               ;// MainActivity.drawView.postInvalidate();
         }
     }
 
