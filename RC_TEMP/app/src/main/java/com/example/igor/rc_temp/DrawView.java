@@ -14,7 +14,7 @@ public class DrawView extends View {
 
 
     Joystick j_left,j_right;
-    Img_button yaw_onoff;
+    Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,settings;
 
     static float sizeX = 0;
     static float sizeY = 0;
@@ -45,12 +45,29 @@ public class DrawView extends View {
 
         int bs=(int)(sm[2]/2.5);
         yaw_onoff=new Img_button(10,10,bs,
-                context.getResources().getDrawable(R.drawable.yaw),
-                context.getResources().getDrawable(R.drawable.yaw_off),true);
+                context.getResources().getDrawable(R.drawable.x_on),
+                context.getResources().getDrawable(R.drawable.x_off),true);
+
+        desc_onoff=new Img_button(50+bs,10,bs,
+                context.getResources().getDrawable(R.drawable.y_on),
+                context.getResources().getDrawable(R.drawable.y_off),true);
+
+        pitch_onoff=new Img_button(sm[0]-bs-10,10,bs,
+                context.getResources().getDrawable(R.drawable.x_on),
+                context.getResources().getDrawable(R.drawable.x_off),true);
+
+        roll_onoff=new Img_button(sm[0]-bs -bs-50,10,bs,
+                context.getResources().getDrawable(R.drawable.y_on),
+                context.getResources().getDrawable(R.drawable.y_off),true);
 
 
-
-
+        compass_onoff=new Img_button((int)((sm[0]-bs)*0.5),10,bs,
+                context.getResources().getDrawable(R.drawable.compass_on),
+                context.getResources().getDrawable(R.drawable.compass_off),true);
+        int bs2= (int)(0.5*bs);
+        settings=new Img_button((int)((sm[0]-bs2)*0.5),sm[1]-bs2-10,bs2,
+                context.getResources().getDrawable(R.drawable.settings),
+                context.getResources().getDrawable(R.drawable.settings),false);
     }
 
 
@@ -61,17 +78,23 @@ public class DrawView extends View {
 
 
         yaw_onoff.onTouchEvent(event);
-
+        desc_onoff.onTouchEvent(event);
+        pitch_onoff.onTouchEvent(event);
+        roll_onoff.onTouchEvent(event);
 
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
-
+        compass_onoff.onTouchEvent(event);
 
         //  if (bt.pressed())
         //  Log.d("BUTTON","YES");
         // событие
 
         j_left.set_block_X(yaw_onoff.pressed());
+        j_left.set_block_Y(desc_onoff.pressed());
+        j_right.set_block_X(pitch_onoff.pressed());
+        j_right.set_block_Y(roll_onoff.pressed());
+
         invalidate();
         return true;
 
@@ -85,6 +108,11 @@ public class DrawView extends View {
         super.onDraw(c);
 
         yaw_onoff.paint(c);
+        desc_onoff.paint(c);
+        pitch_onoff.paint(c);
+        roll_onoff.paint(c);
+        compass_onoff.paint(c);
+        settings.paint(c);
 
        // mCustomImage.draw(c);
         j_left.paint(c);
