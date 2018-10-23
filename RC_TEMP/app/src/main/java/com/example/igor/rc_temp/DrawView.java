@@ -1,14 +1,18 @@
 package com.example.igor.rc_temp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 public class DrawView extends View {
 
@@ -102,10 +106,34 @@ public class DrawView extends View {
 
 
     static int i = 0;
-
+float angle;
     public void onDraw(Canvas c) {
 
         super.onDraw(c);
+
+
+       // context.getResources().getDrawable(R.drawable.x_off)
+
+
+
+
+       // ImageView imageView = (ImageView) findViewById(R.drawable.x_off);
+        Bitmap myImg = BitmapFactory.decodeResource(getResources(), R.drawable.x_off);
+        Matrix matrix = new Matrix();
+        matrix.postTranslate(-120,-120);
+        matrix.postRotate(angle);
+        angle+=1;
+       // matrix.postScale(0.5f,0.5f);
+
+
+        Bitmap rotated = Bitmap.createBitmap(myImg, 0, 0, 240, 240,
+                matrix, true);
+        matrix.postTranslate(200,200);
+        c.drawBitmap(myImg,matrix,white);
+        c.drawBitmap(rotated,100,100,white);
+
+
+
 
         yaw_onoff.paint(c);
         desc_onoff.paint(c);
