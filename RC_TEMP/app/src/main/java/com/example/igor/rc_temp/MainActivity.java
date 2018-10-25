@@ -13,6 +13,17 @@ import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
 
+
+    public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, COMPASS_ON=64,HORIZONT_ON=128;
+    public final static int MPU_ACC_CALIBR=0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR=0x400, COMPASS_MOTOR_CALIBR=0x800, SHUTDOWN=0x1000, GIMBAL_PLUS=0x2000,GIMBAL_MINUS=0x4000,REBOOT=0x8000,SEC_MASK=0xFF000000;
+    static public int control_bits=0;
+    static public int command_bits_=0;
+    private static boolean secure_flug=false;
+
+    public static double zoomN=0.17453292519943295769236907684886*2;//0.69813170079773183076947630739545;
+    //private static boolean game_speed=false;
+
+
     public static float [] screenMetrics;
     RelativeLayout rl1;
     static DrawView drawView=null  ;

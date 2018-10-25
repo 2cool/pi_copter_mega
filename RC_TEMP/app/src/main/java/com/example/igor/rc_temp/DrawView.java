@@ -20,6 +20,8 @@ public class DrawView extends View {
     Joystick j_left,j_right;
     Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,settings;
 
+    AngleMon anglem;
+
     static float sizeX = 0;
     static float sizeY = 0;
 
@@ -39,6 +41,8 @@ public class DrawView extends View {
         float k=0.1f;
       //  j_left=new Joystick((int)(sm[2]*k),(int)(sm[1]-sm[2]*(1+k)),(int)sm[2],true,false,white);
       //  j_right=new Joystick((int)(sm[0]-sm[2]*(1+k)),(int)(sm[1]-sm[2]*(1+k)),(int)sm[2],true,true,white);
+
+        anglem=new AngleMon((int)(sm[0]/2),(int)(sm[1]/4*3),160,BitmapFactory.decodeResource(getResources(), R.drawable.angle));
 
         j_left=new Joystick(bR*k,sm[1]-bR*(1+k),bR,true,true,false,false,white);
         j_right=new Joystick(sm[0]-bR*(1+k),sm[1]-bR*(1+k),bR,true,true,false,false,white);
@@ -107,6 +111,11 @@ public class DrawView extends View {
 
     static int i = 0;
 float angle;
+
+
+
+
+    float pitch,roll;
     public void onDraw(Canvas c) {
 
         super.onDraw(c);
@@ -118,23 +127,15 @@ float angle;
 
 
        // ImageView imageView = (ImageView) findViewById(R.drawable.x_off);
-        Bitmap myImg = BitmapFactory.decodeResource(getResources(), R.drawable.x_off);
-        Matrix matrix = new Matrix();
-        matrix.postTranslate(-120,-120);
-        matrix.postRotate(angle);
-        angle+=1;
-       // matrix.postScale(0.5f,0.5f);
-
-
-        Bitmap rotated = Bitmap.createBitmap(myImg, 0, 0, 240, 240,
-                matrix, true);
-        matrix.postTranslate(200,200);
-        c.drawBitmap(myImg,matrix,white);
-        c.drawBitmap(rotated,100,100,white);
 
 
 
+        roll+=j_right.getY();
+        pitch+=j_right.getX();
+        anglem.setRoll(roll);
+        anglem.setPitch(pitch);
 
+        anglem.paint(c);
         yaw_onoff.paint(c);
         desc_onoff.paint(c);
         pitch_onoff.paint(c);
@@ -147,6 +148,12 @@ float angle;
         j_right.paint(c);
 
     }
+
+
+
+
+
+
 }
 
 
