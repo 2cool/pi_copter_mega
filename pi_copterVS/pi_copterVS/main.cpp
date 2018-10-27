@@ -237,9 +237,12 @@ bool loop()
 
 #ifdef WORK_WITH_WIFI
 		Telemetry.loop();
+		Mpu.telem_timed = 0.000001*(double)micros();
 #endif
 		Commander.input();
+		Mpu.com_timed = 0.000001*(double)micros();
 		Autopilot.loop();
+		Mpu.autopilot_timed = 0.000001*(double)micros();
 		//mega_i2c.gsm_loop();
 		if (shmPTR->sim800_reset_time > 0 && shmPTR->sim800_reset_time + 40000 < millis())
 			shmPTR->sim800_reset_time = 0;

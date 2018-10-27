@@ -321,6 +321,10 @@ bool BalanceClass::loop()
 		return false;
 	}
 	else {
+
+
+		
+
 		if (Autopilot.motors_is_on()) { 
 
 			float pK = powerK();
@@ -453,7 +457,7 @@ bool BalanceClass::loop()
 		}
 		else
 			reset();
-
+			
 		log();
 //#define MOTORS_OFF
 #ifdef MOTORS_OFF
@@ -478,8 +482,11 @@ bool BalanceClass::loop()
 		Emu.update(f_, Mpu.dt);
 #endif
 		
-
+//cout << "BAL " << micros() - tttBal << endl;
 	}
+
+
+	Mpu.balance_timed = 0.000001*(double)micros();
 	return true;
 }
 

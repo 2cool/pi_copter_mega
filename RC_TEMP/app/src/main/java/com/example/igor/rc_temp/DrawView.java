@@ -103,7 +103,7 @@ public class DrawView extends View {
         j_right.set_block_X(pitch_onoff.pressed());
         j_right.set_block_Y(roll_onoff.pressed());
 
-        invalidate();
+       // invalidate();
         return true;
 
     }
@@ -130,8 +130,8 @@ float angle;
 
 
 
-        roll+=j_right.getY();
-        pitch+=j_right.getX();
+        roll+=(j_right.getY()*35-roll)*0.03f;
+        pitch+=(j_right.getX()*35-pitch)*0.03f;
         anglem.setRoll(roll);
         anglem.setPitch(pitch);
 

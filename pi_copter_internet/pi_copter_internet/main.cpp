@@ -467,14 +467,14 @@ void sms_loop() {
 		if (shmPTR->sms_at_work == 1) {
 			shmPTR->ppp_run = false;
 			while (shmPTR->inet_ok)
-				sleep(100);
+				delay(100);
 			readsms();
 		
 		}
 		if (shmPTR->sms_at_work == 2) {
 			shmPTR->ppp_run = false;
 			while (shmPTR->inet_ok)
-				sleep(100);
+				delay(100);
 			sendsms();
 		}
 

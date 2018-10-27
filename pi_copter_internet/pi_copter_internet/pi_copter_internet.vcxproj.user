@@ -4,6 +4,6 @@
     <RemoteDebuggingMode>gdbserver</RemoteDebuggingMode>
     <DebuggerFlavor>LinuxDebugger</DebuggerFlavor>
     <RemoteDebuggerCommandArguments>y y</RemoteDebuggerCommandArguments>
-    <RemoteTarget>-1216062944;192.168.0.106 (username=, port=22, authentication=Password)</RemoteTarget>
+    <RemoteTarget>-11341636;192.168.1.112 (username=, port=22, authentication=Password)</RemoteTarget>
   </PropertyGroup>
 </Project>

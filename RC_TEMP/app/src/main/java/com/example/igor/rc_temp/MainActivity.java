@@ -13,16 +13,20 @@ import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
 
-
+    private static boolean runMainUpdate=true;
     public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, COMPASS_ON=64,HORIZONT_ON=128;
     public final static int MPU_ACC_CALIBR=0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR=0x400, COMPASS_MOTOR_CALIBR=0x800, SHUTDOWN=0x1000, GIMBAL_PLUS=0x2000,GIMBAL_MINUS=0x4000,REBOOT=0x8000,SEC_MASK=0xFF000000;
     static public int control_bits=0;
     static public int command_bits_=0;
     private static boolean secure_flug=false;
-
+    static boolean progF(){return (PROGRAM&control_bits)!=0;}
+    static boolean toHomeF(){return (GO2HOME&control_bits)!=0;}
+    static boolean motorsOnF(){return (MOTORS_ON&control_bits)!=0;}
+    static boolean smartCntrF(){return (XY_STAB&control_bits)!=0;}
+    static boolean altHoldF(){return (Z_STAB&control_bits)!=0;}
     public static double zoomN=0.17453292519943295769236907684886*2;//0.69813170079773183076947630739545;
     //private static boolean game_speed=false;
-
+    Net net=null;
 
     public static float [] screenMetrics;
     RelativeLayout rl1;
@@ -92,6 +96,37 @@ public class MainActivity extends AppCompatActivity {
 
         drawView.setBackgroundColor(Color.rgb(60,0,0));
 
+
+
+
+
+
+        Telemetry.logThread_f=true;
+        Telemetry.startlogThread();
+        Net.net_runing=true;
+
+        // setWifiTetheringEnabled(true);
+        Net.context=this;
+        net=new Net(9876,1000);
+
+
+
+
+            new Thread() {
+                @Override
+                public void run() {
+
+                    while(runMainUpdate) {
+                        try {
+                            sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        if (MainActivity.drawView != null)
+                            MainActivity.drawView.postInvalidate();
+                    }
+                }
+            }.start();
 
     }
 }

@@ -23,7 +23,8 @@ using namespace std;
 //#define FORTEST
 #include <thread>
 #ifdef FORTEST
-#include "../../../../repos/pi_copter_mega/pi_copterVS/pi_copterVS/glob_header.h"
+#include"C:/Users/2coolz/pi_copter_mega/pi_copterVS/pi_copterVS/glob_header.h"
+//#include "../../../../repos/pi_copter_mega/pi_copterVS/pi_copterVS/glob_header.h"
 
 #else
 #include "../pi_copterVS/glob_header.h"
@@ -217,7 +218,7 @@ void server() {
 
 
 		while (shmPTR->wifibuffer_data_len_4_read != 0)
-			usleep(1000);
+			usleep(20000);
 				
 		int len = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
 		if (len <= 0) {
@@ -244,7 +245,7 @@ void server() {
 		}
 		
 		while (shmPTR->wifibuffer_data_len_4_write == 0)
-			usleep(1000);
+			usleep(20000);
 
 		
 		n = write(newsockfd, shmPTR->wifiWbuffer, shmPTR->wifibuffer_data_len_4_write);

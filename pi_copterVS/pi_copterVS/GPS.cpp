@@ -56,7 +56,7 @@ void GPSClass::loop(){
 
 
 
-	gpsttime = millis()/100;
+	//gpsttime = millis()/100;
 	
 	if (loc.mseconds != gpsttime)
 		loc.mseconds = gpsttime;
@@ -123,6 +123,7 @@ void GPSClass::loop(){
 SEND_I2C g_data;
 
 void GPSClass::loop(){
+	double ttt = micros();
 static uint cnt2l = 0;
 static double last_gps_time1d = 0;
 	if (Mpu.timed - last_gps_time1d >= 0.05) {
@@ -144,6 +145,8 @@ static double last_gps_time1d = 0;
 		}
 		
 	}
+
+	Mpu.gps_timed = 0.000001*(double)micros();
 }
 #endif
 

@@ -592,26 +592,38 @@ void MpuClass::test_vibration( float x,  float y,  float z){
 	
 }
 
+static int mpu_false = 0;
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
-
+	//написать тайм менеджер
+	double old_tied = timed;
 	timed = 0.000001*(double)micros();
 	if (dmp_read_fifo(g, a, _q, &sensors, &fifoCount) != 0) { //gyro and accel can be null because of being disabled in the efeatures
-		//cout << ".\n";
+		mpu_false++;
 		return false;
 	}
-	//cout << "...\n";
+
+	
 	dt = (timed - oldmpuTimed);// *div;
 	
 
-
+	mpu_timed = 0.000001*(double)micros();
 	static uint cnt2l = 0;
 	if (dt > 0.02) {
 		if (cnt2l++) {
-			cout << "MPU DT too long " << dt <<":"<<dt<< ":" << timed << endl;
+			cout << mpu_false << endl;
+			
+			cout << "MPU DT too long " << endl;// << dt << ":" << dt << ":" << timed << endl;
+
+			cout << endl << ms5611_timed- old_tied << " " << hmc_timed - old_tied << " " << gps_timed - old_tied <<
+				" " << telem_timed - old_tied << " " << com_timed - old_tied <<" "<< autopilot_timed - old_tied <<" "<< mpu_timed - old_tied << endl;
+
+
 			mega_i2c.beep_code(B_MPU_TOO_LONG);
 		}
 
 	}
+mpu_false = 0;
+
 	//if (dt < 0.008)
 	//	cout << "MPU DT too short "<<dt<<"\n";
 	oldmpuTimed = timed;

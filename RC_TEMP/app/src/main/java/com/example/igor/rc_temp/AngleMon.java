@@ -38,15 +38,8 @@ public class AngleMon {
     private Matrix matrix = new Matrix();
     public void paint(Canvas c) {
 
-
         matrix.reset();
-       // angle+=1;
-       // pitch=angle;
-       // roll=angle;
-       // pitch=0;
 
-       // if (roll>270)
-       //     roll=360-roll;
         if (roll>90) {
             roll = 180 - roll;
             pitch+=180;
@@ -57,15 +50,23 @@ public class AngleMon {
         }
         matrix.postRotate(pitch);
 
-
-
-        Bitmap cropped = Bitmap.createBitmap(bm, 0, 614+(int)(4.8*(roll)), bm.getWidth(), bm.getWidth(), matrix, false);
+        Bitmap cropped = Bitmap.createBitmap(
+                bm,
+                0,
+                614+(int)(4.8*(roll)),
+                bm.getWidth(),
+                bm.getWidth(),
+                matrix,
+                true);
         matrix.reset();
         matrix.postScale(scale,scale);
-        Bitmap cropped2=Bitmap.createBitmap(cropped,
+        Bitmap cropped2=Bitmap.createBitmap(
+                cropped,
                 (cropped.getHeight()-bm.getWidth())/2,
                 (cropped.getWidth()-bm.getWidth())/2,bm.getWidth(),
-                bm.getWidth(),matrix,false);
+                bm.getWidth(),
+                matrix,
+                true);
         c.drawBitmap(cropped2,xpos-cropped2.getWidth()/2,ypos-cropped2.getHeight()/2,white);
 
 

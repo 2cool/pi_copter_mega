@@ -155,7 +155,7 @@ uint8_t MS5611Class::loop(){
 	default:
 		phase2();
 	}
-
+	Mpu.ms5611_timed = 0.000001*(double)micros();
 	return 0;
 }
 

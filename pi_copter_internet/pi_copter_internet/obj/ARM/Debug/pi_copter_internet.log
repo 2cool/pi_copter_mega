@@ -1,6 +1,6 @@
-﻿  Validating architecture
-  Validating sources
-  Copying sources remotely to '192.168.0.106'
+﻿  Validating sources
+  Copying sources remotely to '192.168.1.112'
+  Validating architecture
   Starting remote build
   Compiling sources:
   main.cpp

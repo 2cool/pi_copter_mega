@@ -104,7 +104,7 @@ class MpuClass
 	 double acc_callibr_timed;
 	 float hower_thr, min_thr, fall_thr;
 	 float e_accZ, e_speedZ, w_accZ;
-	 double timed;
+	 double timed,mpu_timed, gps_timed, hmc_timed, autopilot_timed, balance_timed, ms5611_timed,telem_timed,com_timed;
 	float e_accX, e_accY;
 	 float cor_c_pitch, cor_c_roll;
 	 double oldmpuTimed;

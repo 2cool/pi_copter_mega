@@ -16,6 +16,7 @@
 #include "debug.h"
 #include "Log.h"
 
+
 #define DEFAULT_DEV "/dev/i2c-0"
 
 
@@ -196,6 +197,7 @@ static double comTimed = 0;
 #else
 
 void HmcClass::loop(){
+	//double ttt = micros();
 	//бельіе ноги
 	int16_t mx,my,mz;
 	float fmz, fmx, fmy;
@@ -258,7 +260,7 @@ void HmcClass::loop(){
 	
 
 
-
+	Mpu.hmc_timed = 0.000001*(double)micros();
 }
 
 #endif
