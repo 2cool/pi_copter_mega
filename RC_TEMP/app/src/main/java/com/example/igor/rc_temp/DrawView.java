@@ -1,18 +1,13 @@
 package com.example.igor.rc_temp;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 
 public class DrawView extends View {
 
@@ -20,7 +15,7 @@ public class DrawView extends View {
     Joystick j_left,j_right;
     Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,settings;
 
-    AngleMon anglem;
+    Monitor monitor;
 
     static float sizeX = 0;
     static float sizeY = 0;
@@ -42,7 +37,9 @@ public class DrawView extends View {
       //  j_left=new Joystick((int)(sm[2]*k),(int)(sm[1]-sm[2]*(1+k)),(int)sm[2],true,false,white);
       //  j_right=new Joystick((int)(sm[0]-sm[2]*(1+k)),(int)(sm[1]-sm[2]*(1+k)),(int)sm[2],true,true,white);
 
-        anglem=new AngleMon((int)(sm[0]/2),(int)(sm[1]/4*3),160,BitmapFactory.decodeResource(getResources(), R.drawable.angle));
+        monitor =new Monitor((int)(sm[0]/2),(int)(sm[1]/4*3),160,
+                BitmapFactory.decodeResource(getResources(), R.drawable.angle),
+                BitmapFactory.decodeResource(getResources(), R.drawable.cmps));
 
         j_left=new Joystick(bR*k,sm[1]-bR*(1+k),bR,true,true,false,false,white);
         j_right=new Joystick(sm[0]-bR*(1+k),sm[1]-bR*(1+k),bR,true,true,false,false,white);
@@ -115,7 +112,7 @@ float angle;
 
 
 
-    float pitch,roll;
+    float pitch,roll,yaw,speed,hight;
     public void onDraw(Canvas c) {
 
         super.onDraw(c);
@@ -130,12 +127,20 @@ float angle;
 
 
 
-        roll+=(j_right.getY()*35-roll)*0.03f;
-        pitch+=(j_right.getX()*35-pitch)*0.03f;
-        anglem.setRoll(roll);
-        anglem.setPitch(pitch);
+        pitch+=(j_right.getY()*35-pitch)*0.03f;
+        speed=-pitch;
 
-        anglem.paint(c);
+        roll+=(j_right.getX()*35-roll)*0.03f;
+        yaw+=j_left.getX()*3;
+        hight-=j_left.getY()*0.1;
+
+        monitor.setSpeed(speed);
+        monitor.setRoll(roll);
+        monitor.setPitch(pitch);
+       // monitor.setPitch((float)(Commander.pitch*180/Math.PI));
+        yaw= monitor.setYaw(yaw);
+        monitor.setHeight(hight);
+        monitor.paint(c);
         yaw_onoff.paint(c);
         desc_onoff.paint(c);
         pitch_onoff.paint(c);

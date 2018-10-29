@@ -18,6 +18,12 @@ public class Joystick {
     public float getX(){return jx;}
     public float getY(){return jy;}
 
+    public float setJosticX(float x){
+        return x;
+    }
+    public float setJosticY(float y){
+        return y;
+    }
 
     private boolean setX(float xp){
         float t_jx=(xp-x - size*0.5f)/(size*0.5f);
