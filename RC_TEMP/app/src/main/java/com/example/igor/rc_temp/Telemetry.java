@@ -1,6 +1,8 @@
 package com.example.igor.rc_temp;
 
 
+import android.util.Log;
+
 public class Telemetry {
 
     static public boolean maxTelemetry=false;
@@ -508,7 +510,7 @@ public class Telemetry {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     static public void bufferReader_(byte buf[],int buf_len){
-
+     //   Log.d("BUFREAD","bufRead");
         int i=0;
         Commander.copter_is_busy=(buf_len<=4);
         if (Commander.copter_is_busy){

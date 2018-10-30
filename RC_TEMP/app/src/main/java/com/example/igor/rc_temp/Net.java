@@ -107,7 +107,7 @@ public class Net {
 
                     //connect2esp();
                     String myIP=getIpAddress();
-                    String serverIPandPort[]=Disk.getIP(myIP);
+                    String serverIPandPort[]={"192.168.1.112:9876","192.168.1.112:9876"};//Disk.getIP(myIP);
                     int i=0;
                     while (serverIPandPort[i]!=null && serverIPandPort[i].length()>10) {
 
@@ -140,7 +140,7 @@ public class Net {
 
         if (dataloaded==false) {
             dataloaded=true;
-            Disk.loadLatLonAlt("/sdcard/RC/lostCon_location.save", true);
+          //  Disk.loadLatLonAlt("/sdcard/RC/lostCon_location.save", true);
         }
 
 

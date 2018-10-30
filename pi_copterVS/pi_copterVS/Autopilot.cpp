@@ -338,7 +338,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 	else {
 
 		if (motors_is_on() == false) {
-			mega_i2c.set_led_mode(0, 100, false);
+			mega_i2c.set_led_mode(0, 10, false);
 		}
 		else {
 			if (control_bits&CONTROL_FALLING)

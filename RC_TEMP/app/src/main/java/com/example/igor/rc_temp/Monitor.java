@@ -12,25 +12,24 @@ import static java.lang.Math.cos;
 
 public class Monitor {
     Paint white;
-    private float hight,speed;
-    private float pitch, roll, yaw;
+    private double hight,speed;
+    private double pitch, roll, yaw;
     private float xpos,ypos;
     private Bitmap bm,cmps;
-    public void setPitch(float a){
+    public void setPitch(double a){
         pitch=-a;
     }
-    public void setRoll(float a){
+    public void setRoll(double a){
         roll=-a;
     }
-    public void setHeight(float h){hight=h;}
-    public void setSpeed(float s){speed=s;}
-    public float setYaw(float a){
+    public void setHeight(double h){hight=h;}
+    public void setSpeed(double s){speed=s;}
+    public void setYaw(double a){
         while(a<0)
             a+=360;
         while (a>=360)
             a-=360;
         yaw=a;
-        return yaw;
     }
     private float scale;
     private float size;
@@ -63,7 +62,7 @@ public class Monitor {
 
         //draw monitoring of pitch and yaw;
         matrix.reset();
-        matrix.postRotate(roll);
+        matrix.postRotate((float)roll);
         float k=(float)bm.getWidth()/185.0f;
         Bitmap cropped = Bitmap.createBitmap(
                 bm,

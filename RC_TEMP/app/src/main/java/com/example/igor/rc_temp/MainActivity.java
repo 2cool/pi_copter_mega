@@ -17,6 +17,10 @@ import android.widget.RelativeLayout;
 import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
+
+
+
+
     public static double pitch,roll,heading_t;
     private static boolean runMainUpdate=true;
     public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, COMPASS_ON=64,HORIZONT_ON=128;
@@ -29,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     static boolean motorsOnF(){return (MOTORS_ON&control_bits)!=0;}
     static boolean smartCntrF(){return (XY_STAB&control_bits)!=0;}
     static boolean altHoldF(){return (Z_STAB&control_bits)!=0;}
-    public static double zoomN=0.17453292519943295769236907684886*2;//0.69813170079773183076947630739545;
+
     //private static boolean game_speed=false;
     private SensorManager mSensorManager;
     private Sensor accelerometer;
@@ -120,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // setWifiTetheringEnabled(true);
         Net.context=this;
         net=new Net(9876,1000);
-
+        net.start();
 
 
 
@@ -147,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        double k=Math.min(1,DrawView.maxAngle/35);
         if (event.sensor.getType()==Sensor.TYPE_GYROSCOPE){
 
             double dt=0.001*(now-old_time);
@@ -172,26 +177,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
 
-            double aRoll = Math.atan2(event.values[1], event.values[2]);
-            double aPitch = Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2]));
 
-            double dt=0.001*(now-old_time_acc);
+            double aRoll = k*Math.atan2(event.values[1], event.values[2])/ Math.PI * 180 ;
+            double aPitch = k*Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2]))/ Math.PI * 180 ;
+
+         //   double dt=0.001*(now-old_time_acc);
             old_time_acc=now;
             double F=1;//Math.min(1,dt*0.3);
             pitch+=(aPitch-pitch)*F;
             roll+=(aRoll-roll)*F;
 
-            double k=(float)(zoomN/0.69813170079773183076947630739545);
-            Commander.pitch=(float)(pitch*k);
-            Commander.roll=(float)(roll*k);
+
+
 
 
             //  Log.i("MATH","aroll="+(int)(aRoll*56.3)+", apitch="+(int)(aPitch*57.3));
 
 
-            k=(float)(zoomN/0.69813170079773183076947630739545);
-            Commander.ax+=((event.values[0]*k/9.8)-Commander.ax)*0.1;
-            Commander.ay+=((event.values[1]*k/9.8)-Commander.ay)*0.1;
+          //  k=(float)(zoomN/0.69813170079773183076947630739545);
+          //  Commander.ax+=((event.values[0]*k/9.8)-Commander.ax)*0.1;
+         //   Commander.ay+=((event.values[1]*k/9.8)-Commander.ay)*0.1;
 
             //Log.d("SENhD", "Andr "+Double.toString(event.values[0]));
 
@@ -206,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             if (heading_t>180)
                 heading_t-=360;
-            Commander.heading=(float)heading_t;
+          //  Commander.heading=(float)heading_t;
             //Log.d("SENhD", "Andr "+Double.toString(heading));
         }
 

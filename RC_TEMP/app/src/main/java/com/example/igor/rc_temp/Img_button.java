@@ -12,6 +12,7 @@ public class Img_button {
     private Drawable imageOn,imageOff;
 
     private boolean press;
+    private boolean thumb_on;
     private boolean toggle;
 
 
@@ -19,18 +20,24 @@ public class Img_button {
 
         return press;
     }
+    public boolean thumbON(){
+        return thumb_on;
+    }
+    public void set(boolean b){
+        press=b;
+    }
     Rect r;
     private int id;
-    public Img_button(float x, float y, float size, Drawable imgOff_, Drawable imgOn_, boolean toggle_){
+    public Img_button(Rect r_, Drawable imgOff_, Drawable imgOn_, boolean toggle_){
         imageOn=imgOn_;
         imageOff=imgOff_;
-       r=new Rect((int)x,(int)y,(int)(x+size),(int)(y+size));
 
+        r=r_;
         imageOn.setBounds(r);
         imageOff.setBounds(r);
 
         toggle=toggle_;
-        press=false;
+        press=thumb_on=false;
         id=-1;
 
     }
@@ -45,16 +52,17 @@ public class Img_button {
         //  int pointerCount = event.getPointerCount();
 
       //  index=event.findPointerIndex(pointerIndex);
-
+        final float gx = event.getX(pointerIndex);
+        final float gy = event.getY(pointerIndex);
         switch (actionMask) {
             case MotionEvent.ACTION_DOWN: // первое касание
             case MotionEvent.ACTION_POINTER_DOWN: // последующие касания
             {
-                final float gx = event.getX(pointerIndex);
-                final float gy = event.getY(pointerIndex);
+
                 if  (id<0){
                     if ( gx>=r.left && gx<=r.right && gy>=r.top && gy<=r.bottom) {
                         press^=true;
+                        thumb_on=true;
                         id= event.getPointerId(pointerIndex);
                     }
 
@@ -64,12 +72,12 @@ public class Img_button {
             }
             case MotionEvent.ACTION_UP: // прерывание последнего касания
             case MotionEvent.ACTION_POINTER_UP: // прерывания касаний
-                final float gx = event.getX(pointerIndex);
-                final float gy = event.getY(pointerIndex);
+
 
                 if (id==event.getPointerId(pointerIndex)) {
                     if (gx >= r.left && gx <= r.right && gy >= r.top && gy <= r.bottom) {
                         press ^= (toggle)?false:true;//pressDown & true;
+                        thumb_on=false;
                         id=-1;
 
                     }
@@ -77,6 +85,15 @@ public class Img_button {
                 }
                 break;
             case MotionEvent.ACTION_MOVE: // движение
+
+                if (id==event.getPointerId(pointerIndex)) {
+                    if (!(gx >= r.left && gx <= r.right && gy >= r.top && gy <= r.bottom)) {
+                        press ^= (toggle)?false:true;//pressDown & true;
+                        thumb_on=false;
+                        id=-1;
+                    }
+
+                }
                 break;
         }
         return true;

@@ -339,6 +339,8 @@ bool CommanderClass::input(){
 			yaw = -ANGK*(float)i_yaw;
 			yaw_offset = ANGK*(float)i_yaw_offset;
 			pitch = ANGK*(float)i_pitch;
+		//	Debug.load(0, pitch, roll);
+		//	Debug.dump();
 			roll = ANGK*(float)i_roll;
 			if ((i + 3) < shmPTR->wifibuffer_data_len_4_read) {
 				string msg = "";

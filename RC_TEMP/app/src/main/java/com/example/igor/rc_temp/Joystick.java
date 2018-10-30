@@ -3,26 +3,39 @@ package com.example.igor.rc_temp;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 
 public class Joystick {
-    private Paint color;
+    private Paint white;
     private boolean return_backX,return_backY, block_X, block_Y;
     private float x,y,size;
-
+    private String label="";
     private float trackX,trackY,old_posX,old_posY,shiftX,shiftY;
     private float jx,jy;
     private int index;
 
     public float getX(){return jx;}
     public float getY(){return jy;}
-
+    public void setLabel(String s){label=s;}
     public float setJosticX(float x){
-        return x;
+        jx=x;
+        if (jx>1)
+            jx=1;
+        else if (jx<-1)
+            jx=-1;
+
+        return jx;
     }
     public float setJosticY(float y){
-        return y;
+        jy=y;
+        if (jy>1)
+            jy=1;
+        else if (jy<-1)
+            jy=-1;
+
+        return jy;
     }
 
     private boolean setX(float xp){
@@ -149,7 +162,16 @@ public class Joystick {
     public void set_return_back_Y(boolean b){return_backY=b;}
     public void set_block_X(boolean b){block_X=b;}
     public void set_block_Y(boolean b){block_Y=b;}
-    public Joystick(float _x, float _y, float _size, boolean return_back_X, boolean return_back_Y,boolean blockX, boolean blockY, Paint c) {
+    public Joystick(
+            float _x,
+            float _y,
+            float _size,
+            boolean return_back_X,
+            boolean return_back_Y,
+            boolean blockX,
+            boolean blockY,
+            Paint c)
+    {
         x=_x;
         y=_y;
         size=_size;
@@ -157,8 +179,9 @@ public class Joystick {
         return_backY=return_back_Y;
         block_X=blockX;
         block_Y=blockY;
-        color=new Paint(c);
-        color.setStyle(Paint.Style.STROKE);
+        white=new Paint(c);
+        white.setStyle(Paint.Style.STROKE);
+        white.setTextSize(20);
         cc=new Paint(c);
         cc.setStrokeWidth(1);
         index=-1;
@@ -174,14 +197,15 @@ public class Joystick {
     public void paint(Canvas c) {
 
 
+        //sensor emulator
+        c.drawCircle( x+(size+jx*size)*0.5f, y+(size+jy*size)*0.5f , size/10, white);
+        if (label!=null && label.length()>0) {
+            Rect r=new Rect();
+            white.getTextBounds(label,0,label.length(),r);
+            c.drawText(label, x + (size+jx*size-r.right+r.left) * 0.5f, y + (size+jy*size+r.bottom-r.top) * 0.5f, white);
+        }
 
-        c.drawCircle( block_X?x+size*0.5f:old_posX-shiftX, block_Y?y+size*0.5f:old_posY-shiftY , size/10, color);
-
-        // c.drawLine(x+size/2,y,x+size/2,y+size,cc);
-        // c.drawLine(x,y+size/2,x+size,y+size/2,cc);
-
-
-        c.drawCircle(x+size*0.5f, y+size*0.5f , size*0.5f, color);
+        c.drawCircle(x+size*0.5f, y+size*0.5f , size*0.5f, white);
 
 
     }

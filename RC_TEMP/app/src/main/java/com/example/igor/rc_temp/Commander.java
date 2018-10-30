@@ -44,22 +44,8 @@ public class Commander {
     //     c_heading=heading-(float)Telemetry.heading;//-heading;
     // }
 
-    static public float correct(float n){
-        float max=(float)Math.sin(MainActivity.zoomN);
-        if (n>max)
-            n=max;
-        if (n<-max)
-            n=-max;
-        return n;
-    }
-    static public void zoomChanged(){
-        ax=correct(ax);
-        ay=correct(ay);
-    }
-    static public void setXY(float x, float y){
-        ax=correct(x);
-        ay=correct(y);
-    }
+
+
 
 
 
@@ -213,6 +199,10 @@ public class Commander {
             tax=(float)(ax*Math.cos(da)-ay*Math.sin(da));
             tay=(float)(ax*Math.sin(da)+ay*Math.cos(da));
         }
+
+
+        tax=(float)(roll*GRAD2RAD);
+        tay=(float)(pitch*GRAD2RAD);
 
         t = (int) (tax*RAD2GRAD * RANGK);
         load_16int2buf(buf, i, t);
