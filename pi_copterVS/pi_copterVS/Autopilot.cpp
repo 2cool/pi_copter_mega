@@ -23,7 +23,6 @@ THG out of Perimetr high
 
 
 
-
 #define WIND_X 5
 #define WIND_Y 1
 #define WIND_Z 0.5
