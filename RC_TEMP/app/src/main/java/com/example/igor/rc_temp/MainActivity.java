@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
 
-
+    public static int updateTimeMsec=20;
     public static double pitch,roll,heading_t;
     private static boolean runMainUpdate=true;
     public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, COMPASS_ON=64,HORIZONT_ON=128;
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                     while(runMainUpdate) {
                         try {
-                            sleep(20);
+                            sleep(updateTimeMsec);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }

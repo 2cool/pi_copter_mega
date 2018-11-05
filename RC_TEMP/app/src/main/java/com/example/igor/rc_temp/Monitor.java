@@ -50,7 +50,7 @@ public class Monitor {
         white = new Paint();
         white.setColor(Color.WHITE);
         white.setStrokeWidth(2);
-        white.setTextSize(25);
+        white.setTextSize(size_/6);
      //   white.setAlpha(255);
     }
 

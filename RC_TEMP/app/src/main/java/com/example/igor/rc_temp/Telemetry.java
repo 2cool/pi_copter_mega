@@ -4,7 +4,7 @@ package com.example.igor.rc_temp;
 import android.util.Log;
 
 public class Telemetry {
-
+    static public int batVolt;
     static public boolean maxTelemetry=false;
     static private boolean connected=false;
     static private boolean motors_is_on=false;
@@ -507,7 +507,7 @@ public class Telemetry {
 
 
 
-
+    static public int telemetry_couter=0;
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     static public void bufferReader_(byte buf[],int buf_len){
      //   Log.d("BUFREAD","bufRead");
@@ -518,6 +518,7 @@ public class Telemetry {
         }
         //if (buf_len<=4)
         //	return;
+        telemetry_couter++;
         MainActivity.control_bits=load_int32(buf,i);
 
         i+=4;
@@ -610,7 +611,7 @@ public class Telemetry {
 
         //i+=4;
 
-        int batVolt=load_int16(buf,i);
+        batVolt=load_int16(buf,i);
         i+=2;
         //int b0= 256+load_uint8(buf,i++);
         //int b1= 256+load_uint8(buf,i++);

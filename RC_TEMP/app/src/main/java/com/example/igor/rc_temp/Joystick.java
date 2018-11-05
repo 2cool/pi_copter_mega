@@ -17,7 +17,7 @@ public class Joystick {
     private int index;
 
     public float getX(){return jx;}
-    public float getY(){return jy;}
+    public float getY(){return -jy;}
     public void setLabel(String s){label=s;}
     public float setJosticX(float x){
         jx=x;
