@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public static float [] screenMetrics;
     RelativeLayout rl1;
     static DrawView drawView=null  ;
+
     float[] get_screen_size_in_pixels(){
         float [] screenXY=new float[4];
         final DisplayMetrics metrics = new DisplayMetrics();
@@ -115,6 +116,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         screenMetrics=get_screen_size_in_pixels();
         drawView = new DrawView(MainActivity.this);
         rl1.addView(drawView);
+
+
+
+
         drawView.setBackgroundColor(Color.rgb(60,0,0));
 
         Telemetry.logThread_f=true;

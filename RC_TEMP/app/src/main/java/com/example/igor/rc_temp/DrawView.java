@@ -12,6 +12,10 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public class DrawView extends View {
+    final static int  viewMain=0;
+    final static int  viewMenu=1;
+
+
     static public float sm[];
     BatteryMonitor batMon;
     Joystick j_left,j_right;
@@ -20,10 +24,10 @@ public class DrawView extends View {
     static public Img_button[]on_off=new Img_button[2];
     static public float maxAngle=35;
     Monitor monitor;
+    static public int screen=viewMain;
 
-    static float sizeX = 0;
-    static float sizeY = 0;
-
+    static public Img_button exitMenu,exitProg,reboot,shutdown,comp_calibr,comp_m_calibr,gps_on_off;
+    static public Img_button prog_route,go2home;
     Drawable connectedImg;
     static Paint white = new Paint();
 
@@ -33,11 +37,13 @@ public class DrawView extends View {
 
 
      */
-    Rect getRect(double x, double y){
+    static float RectSize=3.8f;
+    static float RectBorder=0.3f;
+    static public Rect getRect(double x, double y){
         int addX=0;
         int addY=0;
-        double size=sm[2]/3.8;//1sm
-        double border=size*0.3;
+        double size=sm[2]/RectSize;
+        double border=size*RectBorder;
         double maxX=Math.floor(sm[0]/(border+size));
         double maxY=Math.floor(sm[1]/(border+size));
         double borderX=(sm[0]-maxX*size)/(maxX+1);
@@ -75,21 +81,59 @@ public class DrawView extends View {
         return new Rect(x0,y0,(int)(x0+size),(int)(y0+size));
     }
 
-//--------------------------------------------------------------------------------------------
-    public DrawView(Context context) {
-        super(context);
 
-        sm=MainActivity.screenMetrics;
+    void menu_DrawView(final Context context){
 
-        white.setColor(Color.WHITE);
-        white.setStrokeWidth(sm[2]/100);
-        white.setAlpha(255);
+
+        RectSize=2f;
+        RectBorder=0.3f;
+
+        exitMenu =new Img_button(getRect(1,1),
+                context.getResources().getDrawable(R.drawable.left),
+                context.getResources().getDrawable(R.drawable.left),false);
+
+        exitProg=new Img_button(getRect(1,2),
+                context.getResources().getDrawable(R.drawable.exit),
+                context.getResources().getDrawable(R.drawable.exit),false);
+
+        reboot=new Img_button(getRect(-1,2),
+                context.getResources().getDrawable(R.drawable.reboot),
+                context.getResources().getDrawable(R.drawable.reboot),false);
+
+        shutdown=new Img_button(getRect(-1,1),
+                context.getResources().getDrawable(R.drawable.shutdown),
+                context.getResources().getDrawable(R.drawable.shutdown),false);
+        comp_calibr=new Img_button(getRect(5,1),
+                context.getResources().getDrawable(R.drawable.compass_on),
+                context.getResources().getDrawable(R.drawable.compass_on),true);
+        comp_m_calibr=new Img_button(getRect(5,2),
+                context.getResources().getDrawable(R.drawable.comp_m_c),
+                context.getResources().getDrawable(R.drawable.comp_m_c),true);
+        gps_on_off=new Img_button(getRect(5,3),
+                context.getResources().getDrawable(R.drawable.gps),
+                context.getResources().getDrawable(R.drawable.gps_off),true);
+        prog_route=new Img_button(getRect(5,4),
+                context.getResources().getDrawable(R.drawable.route),
+                context.getResources().getDrawable(R.drawable.route),false);
+
+
+
+
+    }
+    void main_DrawView(final Context context){
         float bR=sm[2]*1.2f;
         float thumb=sm[1]/sm[3];
         float k=0.1f;
-      //  j_left=new Joystick((int)(sm[2]*k),(int)(sm[1]-sm[2]*(1+k)),(int)sm[2],true,false,white);
-      //  j_right=new Joystick((int)(sm[0]-sm[2]*(1+k)),(int)(sm[1]-sm[2]*(1+k)),(int)sm[2],true,true,white);
+        //  j_left=new Joystick((int)(sm[2]*k),(int)(sm[1]-sm[2]*(1+k)),(int)sm[2],true,false,white);
+        //  j_right=new Joystick((int)(sm[0]-sm[2]*(1+k)),(int)(sm[1]-sm[2]*(1+k)),(int)sm[2],true,true,white);
         final float monSize=bR/2.5f;
+
+
+        RectSize=3.8f;
+        RectBorder=0.3f;
+
+
+
         monitor =new Monitor((int)(sm[0]/2),(int)(sm[1]-monSize/2),(int)(monSize),
                 BitmapFactory.decodeResource(getResources(), R.drawable.angle),
                 BitmapFactory.decodeResource(getResources(), R.drawable.cmps));
@@ -100,7 +144,7 @@ public class DrawView extends View {
         j_right=new Joystick(sm[0]-bR*(1+k),sm[1]-bR*(1+k),bR,true,true,false,false,white);
         j_right.setLabel(Integer.toString((int)maxAngle));
 
-      ///  Rect r=new Rect(100,100,100+(int)(sm[2]/3f),100+(int)(sm[2]/3f));
+        ///  Rect r=new Rect(100,100,100+(int)(sm[2]/3f),100+(int)(sm[2]/3f));
 
 
         final int bs=(int)(sm[2]/3);
@@ -113,6 +157,9 @@ public class DrawView extends View {
 
 
 
+        go2home=new Img_button(getRect(-3,1),
+                context.getResources().getDrawable(R.drawable.go2home_on),
+                context.getResources().getDrawable(R.drawable.go2home),true);
 
         pitch_onoff=new Img_button(getRect(-1,-5),
                 context.getResources().getDrawable(R.drawable.x_on),
@@ -143,7 +190,7 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.compass_on),
                 context.getResources().getDrawable(R.drawable.compass_off),true);
 
-        settings=new Img_button(getRect(6,1),
+        settings=new Img_button(getRect(8,1),
                 context.getResources().getDrawable(R.drawable.settings),
                 context.getResources().getDrawable(R.drawable.settings),false);
 
@@ -158,8 +205,19 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.red),true);
 
 
+    }
+//--------------------------------------------------------------------------------------------
+    public DrawView(Context context) {
+        super(context);
 
+        sm=MainActivity.screenMetrics;
 
+        white.setColor(Color.WHITE);
+        white.setStrokeWidth(sm[2]/100);
+        white.setAlpha(255);
+
+        main_DrawView(context);
+        menu_DrawView(context);
 
 
     }
@@ -197,11 +255,18 @@ public class DrawView extends View {
            on_off[1].set(f);
        }
     }
-
     static public boolean thumbed = false;
+    boolean main_onTouchEvent(final MotionEvent event){
+        settings.onTouchEvent(event);
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
+
+
+        if (settings.getStat()==3)
+            screen=viewMenu;
+
+
+
+
 
 
         yaw_onoff.onTouchEvent(event);
@@ -214,7 +279,7 @@ public class DrawView extends View {
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
         compass_onoff.onTouchEvent(event);
-
+        go2home.onTouchEvent(event);
         //  if (bt.pressed())
         //  Log.d("BUTTON","YES");
         // событие
@@ -228,11 +293,42 @@ public class DrawView extends View {
         }
 
 
-       // invalidate();
+
+        // invalidate();
         return true;
 
     }
+    boolean menu_onTouchEvent(final MotionEvent event){
+        exitMenu.onTouchEvent(event);
+        if (exitMenu.getStat()==3) {
+            screen = viewMain;
+            return true;
+        }
 
+        exitProg.onTouchEvent(event);
+        reboot.onTouchEvent(event);
+        shutdown.onTouchEvent(event);
+        comp_calibr.onTouchEvent(event);
+        comp_calibr.onTouchEvent(event);
+        comp_m_calibr.onTouchEvent(event);
+        gps_on_off.onTouchEvent(event);
+        prog_route.onTouchEvent(event);
+
+
+
+
+        return true;
+    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch(screen) {
+            case viewMain:
+                return main_onTouchEvent(event);
+            case viewMenu:
+                return menu_onTouchEvent(event);
+        }
+        return true;
+    }
 
     static int i = 0;
 float angle;
@@ -248,17 +344,8 @@ float angle;
 //-------------------------------------------------------------------------------------------
     float pitch,roll,yaw,speed,hight;
 
-
-    public void onDraw(Canvas c) {
-
-        super.onDraw(c);
-        //
-
-
-
+    void main_onDraw(final Canvas c){
         testPowerButtons();
-
-
 
         if (Commander.link ){
             connectedImg.draw(c);
@@ -279,17 +366,14 @@ float angle;
         Commander.heading=yaw;
 
         Log.d("COMM","Yaw="+Float.toString(yaw)+". Roll="+Float.toString(Commander.roll));
-       // pitch+=(j_right.getY()*maxAngle-pitch)*0.03f;
-       // speed=-pitch;
+        // pitch+=(j_right.getY()*maxAngle-pitch)*0.03f;
+        // speed=-pitch;
 
-       // roll+=(j_right.getX()*maxAngle-roll)*0.03f;
-      //  yaw+=j_left.getX()*3;
-      //  hight-=j_left.getY()*0.1;
+        // roll+=(j_right.getX()*maxAngle-roll)*0.03f;
+        //  yaw+=j_left.getX()*3;
+        //  hight-=j_left.getY()*0.1;
 
         setMonitor();
-
-
-
 
         monitor.paint(c);
         yaw_onoff.paint(c);
@@ -304,6 +388,35 @@ float angle;
         on_off[0].paint(c);
         on_off[1].paint(c);
         batMon.paint(c);
+        go2home.paint(c);
+    }
+    void menu_onDraw(final Canvas c){
+
+        exitMenu.paint(c);
+        exitProg.paint(c);
+        reboot.paint(c);
+        shutdown.paint(c);
+        comp_calibr.paint(c);
+        comp_calibr.paint(c);
+        comp_m_calibr.paint(c);
+        gps_on_off.paint(c);
+        prog_route.paint(c);
+    }
+
+
+    public void onDraw(Canvas c) {
+
+        super.onDraw(c);
+        //
+        switch(screen) {
+            case viewMain:
+            main_onDraw(c);
+            break;
+            case viewMenu:
+            menu_onDraw(c);
+            break;
+        }
+
 
     }
 

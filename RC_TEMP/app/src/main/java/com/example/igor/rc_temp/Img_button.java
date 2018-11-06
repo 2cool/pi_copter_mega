@@ -14,11 +14,18 @@ public class Img_button {
     private boolean press;
     private boolean thumb_on;
     private boolean toggle;
+    private int status;
 
 
     public boolean pressed(){
 
         return press;
+    }
+    public int getStat(){
+        int stat=status;
+        if (status==3)
+            status=0;
+        return stat;
     }
     public boolean thumbON(){
         return thumb_on;
@@ -63,6 +70,7 @@ public class Img_button {
                     if ( gx>=r.left && gx<=r.right && gy>=r.top && gy<=r.bottom) {
                         press^=true;
                         thumb_on=true;
+                        status=1;
                         id= event.getPointerId(pointerIndex);
                     }
 
@@ -79,6 +87,7 @@ public class Img_button {
                         press ^= (toggle)?false:true;//pressDown & true;
                         thumb_on=false;
                         id=-1;
+                        status=3;
 
                     }
 
@@ -91,6 +100,7 @@ public class Img_button {
                         press ^= (toggle)?false:true;//pressDown & true;
                         thumb_on=false;
                         id=-1;
+                        status=2;
                     }
 
                 }
