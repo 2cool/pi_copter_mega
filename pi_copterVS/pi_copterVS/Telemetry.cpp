@@ -231,7 +231,7 @@ Max Continuous Power 220 Watts
 			m_current[3]>MOTORS_STALLED_I_MAX || m_current[3]< MOTORS_STALLED_I_MIN)
 		) 
 	{
-		Autopilot.off_throttle(true, MOT_STALLED);
+		//Autopilot.off_throttle(true, MOT_STALLED);
 		cout<<"motors stalled\n";
 
 	}

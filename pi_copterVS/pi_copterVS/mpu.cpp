@@ -673,6 +673,7 @@ mpu_false = 0;
 		yaw_off += ( wrap_PI( wrap_PI(g_yaw - Hmc.heading) - yaw_off) )*0.0031f;
 
 	yaw = wrap_PI(g_yaw - yaw_off);
+	//cout << yaw << endl;
 
 	sin_cos(yaw, sinYaw, cosYaw);
 	sin_cos(pitch, sinPitch, cosPitch);

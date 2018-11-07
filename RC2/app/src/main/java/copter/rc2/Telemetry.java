@@ -633,7 +633,7 @@ static void startlogThread(){
 
 		gimbalPitch= buf[i++];
 		heading=1.4173228346456692913385826771654*(float)buf[i++];
-
+//Log.d("HEAD",Float.toString((float)heading));
 		//тут читаем сообщения если они кому нужни так как у нас все данніе риходят и муд
 		int mes_len=load_int16(buf,i);
 		i+=2;

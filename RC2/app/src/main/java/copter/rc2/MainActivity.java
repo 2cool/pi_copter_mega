@@ -79,7 +79,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 
 
     static public Bitmap blank;
-
+    public static int updateTimeMsec=20;
+    private static boolean runMainUpdate=true;
     static public int control_bits=0;
     static public int command_bits_=0;
     private static boolean secure_flug=false;
@@ -175,7 +176,21 @@ public class MainActivity extends Activity implements SensorEventListener {
         // setWifiTetheringEnabled(true);
         Net.context=this;
         net=new Net(9876,1000);
+        new Thread() {
+            @Override
+            public void run() {
 
+                while(runMainUpdate) {
+                    try {
+                        sleep(updateTimeMsec);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (MainActivity.drawView != null)
+                        MainActivity.drawView.postInvalidate();
+                }
+            }
+        }.start();
         //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
@@ -425,16 +440,7 @@ SensorEvent.values[2]	Rate of rotation around the z axis.
            // Log.i("MATHr","roll="+(int)(Commander.roll*56.3)+", pitch="+(int)(Commander.pitch*57.3)+", yaw="+(int)(Commander.yaw*57.3));
 
             dt_update+=dt;
-            if (dt_update>0.05) {
-                dt_update=0;
-                new Thread() {
-                    @Override
-                    public void run() {
-                        if (MainActivity.drawView != null)
-                            MainActivity.drawView.postInvalidate();
-                    }
-                }.start();
-            }
+
         }
 
         if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
