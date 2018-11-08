@@ -9,7 +9,7 @@ public class BatteryMonitor {
 
     float x,  y,  sizeX,  sizeY;
     float border;
-    Paint white,green;
+    Paint white,green,black;
     float charge;
     public BatteryMonitor(float x_, float y_, float size){
         x=x_;
@@ -17,8 +17,11 @@ public class BatteryMonitor {
         sizeX=size;
         border=size*0.02f;
         sizeY=size*0.2f;
-        white = new Paint();
-        white.setColor(Color.BLACK);
+        black = new Paint();
+        black.setColor(Color.BLACK);
+
+        white=new Paint();
+        white.setColor(Color.WHITE);
         green=new Paint();
         green.setColor(Color.GREEN);
         charge=(sizeX-border-border)*1;
@@ -41,6 +44,7 @@ public class BatteryMonitor {
 
     public void paint(Canvas c){
         c.drawRect(x,y,(x+sizeX),(y+sizeY),white);
+        c.drawRect(x+1,y+1,(x+sizeX-1),(y+sizeY-1),black);
         c.drawRect(x+border,y+border,x+charge,y+sizeY-border,green);
     }
 }

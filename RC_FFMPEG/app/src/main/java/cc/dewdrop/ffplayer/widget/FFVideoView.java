@@ -51,8 +51,11 @@ public class FFVideoView extends SurfaceView {
 
     }
 
+    public void stopVideo(){
+        FFUtils.stopVideo();
+    }
     public void playVideo(final String videoPath) {
-        new Thread(new Runnable() {
+         new Thread(new Runnable() {
             @Override
             public void run() {
                 Log.d("FFVideoView", "run: playVideo");

@@ -1,6 +1,5 @@
 package cc.dewdrop.ffplayer;
 
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -26,7 +25,7 @@ public class Button {
             press=false;
         return pressed;
     }
-    public Button(int x, int y, int size, String text, Paint pnt, boolean toggle_){
+    public Button(float x, float y, float size, String text, Paint pnt, boolean toggle_){
         toggle=toggle_;
         press=pressDown=false;
         r = new RectF();

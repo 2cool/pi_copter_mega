@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Igor\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v21\\values-v21.xml",
+            "outputFile": "C:\\Users\\2coolz\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v21\\values-v21.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Igor\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\420f2d4b91f58d30ae5f2d624b35f2d3\\res\\values-v21\\values.xml",
+                    "source": "C:\\Users\\2coolz\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\420f2d4b91f58d30ae5f2d624b35f2d3\\res\\values-v21\\values.xml",
                     "from": {
                         "startLines": "3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,89,96,104,111,149,187,225,263,265,267,269,271,273,281,283,285,287,289,291,293,295,300,302,304,306,308,313,315,317,319,325,327,332,337,342",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

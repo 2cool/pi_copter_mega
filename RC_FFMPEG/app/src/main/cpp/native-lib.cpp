@@ -12,6 +12,20 @@
 #define ALOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__))
 #define ALOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__))
 
+
+
+
+
+static bool run_video=false;
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_cc_dewdrop_ffplayer_utils_FFUtils_stopVideo(JNIEnv *env, jclass type) {
+
+    // TODO
+    run_video=false;
+}
+
 extern "C" {
 
 #include <libavcodec/avcodec.h>
@@ -113,6 +127,7 @@ Java_cc_dewdrop_ffplayer_utils_FFUtils_avFilterInfo(JNIEnv *env, jclass type) {
     ALOGI("%s", info);
     return env->NewStringUTF(info);
 }
+
 
 JNIEXPORT void JNICALL
 Java_cc_dewdrop_ffplayer_utils_FFUtils_playVideo(JNIEnv *env, jclass type, jstring videoPath_,
@@ -243,64 +258,65 @@ Java_cc_dewdrop_ffplayer_utils_FFUtils_playVideo(JNIEnv *env, jclass type, jstri
     int videoHeight = codecContext->height;
     ALOGI("VideoSize: [%d,%d]", videoWidth, videoHeight);
 
-    // 设置native window的buffer大小,可自动拉伸
+    // Set the buffer size of the native window to automatically stretch
     ALOGI("set native window");
     ANativeWindow_setBuffersGeometry(nativeWindow, videoWidth, videoHeight,
                                      WINDOW_FORMAT_RGBA_8888);
 
 
     ALOGI("read frame");
-    while (av_read_frame(formatContext, packet) == 0) {
+    run_video=true;
+    while (run_video && av_read_frame(formatContext, packet) == 0) {
         // Is this a packet from the video stream?
         if (packet->stream_index == video_stream_index) {
 
             // Send origin data to decoder
             int sendPacketState = avcodec_send_packet(codecContext, packet);
             if (sendPacketState == 0) {
-                ALOGD("向解码器-发送数据");
+                ALOGD("Send data to the decoder");
 
                 int receiveFrameState = avcodec_receive_frame(codecContext, frame);
                 if (receiveFrameState == 0) {
-                    ALOGD("从解码器-接收数据");
+                    ALOGD("Receive data from the decoder");
                     // lock native window buffer
                     ANativeWindow_lock(nativeWindow, &windowBuffer, NULL);
 
-                    // 格式转换
+                    // Format conversion
                     sws_scale(swsContext, (uint8_t const *const *) frame->data,
                               frame->linesize, 0, codecContext->height,
                               renderFrame->data, renderFrame->linesize);
 
-                    // 获取stride
+                    // Get stride
                     uint8_t *dst = (uint8_t *) windowBuffer.bits;
                     uint8_t *src = (renderFrame->data[0]);
                     int dstStride = windowBuffer.stride * 4;
                     int srcStride = renderFrame->linesize[0];
 
-                    // 由于window的stride和帧的stride不同,因此需要逐行复制
+                    // Since the stride of the window is different from the stride of the frame, it needs to be copied line by line.
                     for (int i = 0; i < videoHeight; i++) {
                         memcpy(dst + i * dstStride, src + i * srcStride, srcStride);
                     }
 
                     ANativeWindow_unlockAndPost(nativeWindow);
                 } else if (receiveFrameState == AVERROR(EAGAIN)) {
-                    ALOGD("从解码器-接收-数据失败：AVERROR(EAGAIN)");
+                    ALOGD("Receiver-receive-data failure：AVERROR(EAGAIN)");
                 } else if (receiveFrameState == AVERROR_EOF) {
-                    ALOGD("从解码器-接收-数据失败：AVERROR_EOF");
+                    ALOGD("Receiver-receive-data failure：AVERROR_EOF");
                 } else if (receiveFrameState == AVERROR(EINVAL)) {
-                    ALOGD("从解码器-接收-数据失败：AVERROR(EINVAL)");
+                    ALOGD("Receiver-receive-data failure：AVERROR(EINVAL)");
                 } else {
-                    ALOGD("从解码器-接收-数据失败：未知");
+                    ALOGD("Receiver-receive-data failure：未知");
                 }
-            } else if (sendPacketState == AVERROR(EAGAIN)) {//发送数据被拒绝，必须尝试先读取数据
-                ALOGD("向解码器-发送-数据包失败：AVERROR(EAGAIN)");//解码器已经刷新数据但是没有新的数据包能发送给解码器
+            } else if (sendPacketState == AVERROR(EAGAIN)) {//Send data is rejected, you must try to read the data first
+                ALOGD("Send to the decoder - send - packet failed：AVERROR(EAGAIN)");//The decoder has refreshed the data but no new packets can be sent to the decoder.
             } else if (sendPacketState == AVERROR_EOF) {
-                ALOGD("向解码器-发送-数据失败：AVERROR_EOF");
-            } else if (sendPacketState == AVERROR(EINVAL)) {//遍解码器没有打开，或者当前是编码器，也或者需要刷新数据
-                ALOGD("向解码器-发送-数据失败：AVERROR(EINVAL)");
-            } else if (sendPacketState == AVERROR(ENOMEM)) {//数据包无法压如解码器队列，也可能是解码器解码错误
-                ALOGD("向解码器-发送-数据失败：AVERROR(ENOMEM)");
+                ALOGD("Send to the decoder - data failed:AVERROR_EOF");
+            } else if (sendPacketState == AVERROR(EINVAL)) {//The pass decoder is not open, or it is currently an encoder, or it needs to refresh the data.
+                ALOGD("Send to the decoder - data failed:AVERROR(EINVAL)");
+            } else if (sendPacketState == AVERROR(ENOMEM)) {//The packet cannot be compressed like a decoder queue, or it may be a decoder decoding error.
+                ALOGD("Send to the decoder - data failed:AVERROR(ENOMEM)");
             } else {
-                ALOGD("向解码器-发送-数据失败：未知");
+                ALOGD("Send to decoder - send - data failed: unknown");
             }
 
         }
@@ -308,7 +324,7 @@ Java_cc_dewdrop_ffplayer_utils_FFUtils_playVideo(JNIEnv *env, jclass type, jstri
     }
 
 
-    //内存释放
+    //Memory release
     ALOGI("release memory");
     ANativeWindow_release(nativeWindow);
     av_frame_free(&frame);
@@ -319,6 +335,8 @@ Java_cc_dewdrop_ffplayer_utils_FFUtils_playVideo(JNIEnv *env, jclass type, jstri
     avformat_close_input(&formatContext);
     avformat_free_context(formatContext);
     env->ReleaseStringUTFChars(videoPath_, videoPath);
+
+    run_video=false;
 }
 
 }

@@ -1,8 +1,3 @@
 ﻿  Validating sources
   Copying sources remotely to '192.168.1.112'
-  Validating architecture
-  Starting remote build
-  Compiling sources:
-  Balance.cpp
-  Linking objects
-  pi_copterVS.vcxproj -> C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Application Type\Linux\1.0\Linux.targets(157,5): error : Could not connect to the remote system. Please verify your connection settings, and that your machine is on the network and reachable.

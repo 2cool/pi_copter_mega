@@ -1,4 +1,1 @@
-#Wed Nov 07 17:26:52 EET 2018
-base.0=C\:\\Users\\Igor\\pi_copter_mega\\RC2\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\2
-path.0=classes.dex
-renamed.0=classes.dex
+#Thu Nov 08 15:38:11 EET 2018

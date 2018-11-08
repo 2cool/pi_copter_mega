@@ -138,7 +138,7 @@ public class DrawView extends View {
                 BitmapFactory.decodeResource(getResources(), R.drawable.angle),
                 BitmapFactory.decodeResource(getResources(), R.drawable.cmps));
 
-        batMon=new BatteryMonitor((float)((sm[0]-monSize)/2),4,monSize);
+        batMon=new BatteryMonitor((float)((sm[0]-monSize)/2),(int)(sm[1]-monSize*1.7),monSize);
 
         j_left=new Joystick(bR*k,sm[1]-bR*(1+k),bR,true,false,false,false,white);
         j_right=new Joystick(sm[0]-bR*(1+k),sm[1]-bR*(1+k),bR,true,true,false,false,white);

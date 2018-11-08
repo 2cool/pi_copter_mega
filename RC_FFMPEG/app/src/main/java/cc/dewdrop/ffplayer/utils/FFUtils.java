@@ -24,4 +24,5 @@ public class FFUtils {
     public static native String avFilterInfo();
 
     public static native void playVideo(String videoPath, Surface surface);
+    public static native void stopVideo();
 }

@@ -34,55 +34,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/button_protocol"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onButtonClick"
-            android:text="@string/button_protocol"
-            android:textSize="10sp" />
-
-        <Button
-            android:id="@+id/button_codec"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onButtonClick"
-            android:text="@string/button_codec"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/button_filter"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onButtonClick"
-            android:text="@string/button_filter"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/button_format"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onButtonClick"
-            android:text="@string/button_format"
-            android:textSize="12sp" />
-
-        <Button
-            android:id="@+id/button_play"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onButtonClick"
-            android:text="@string/button_play"
-            android:textSize="12sp" />
     </LinearLayout>
  
 
