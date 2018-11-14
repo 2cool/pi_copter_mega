@@ -21,6 +21,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
 
 
 public class Map extends Activity {
@@ -43,13 +46,40 @@ public class Map extends Activity {
 
 
 
-
+    public static float [] screenMetrics;
     static public Programmer prog=new Programmer();
     static public boolean openMenu=false;
     @Override
     protected  void onStart() {
         super.onStart();
     }
+
+
+
+    float[] get_screen_size_in_pixels(){
+        float [] screenXY=new float[4];
+        final DisplayMetrics metrics = new DisplayMetrics();
+        Display display = getWindowManager().getDefaultDisplay();
+        Method mGetRawH = null, mGetRawW = null;
+        try {
+
+
+            display.getRealMetrics(metrics);
+            screenXY[0] = metrics.widthPixels;
+            screenXY[1] = metrics.heightPixels;
+            screenXY[2] = metrics.xdpi;
+            screenXY[3] = metrics.ydpi;
+
+
+        } catch (Exception e3) {
+            e3.printStackTrace();
+        }
+        return screenXY;
+    }
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +98,7 @@ public class Map extends Activity {
         blank= BitmapFactory.decodeStream(this.getResources().openRawResource(R.raw.blank));
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
 
+        screenMetrics=get_screen_size_in_pixels();
 
         DrawMap.zoom=settings.getInt("zoom",3);
         DrawMap.screenP.x=settings.getInt("screenPX",0);

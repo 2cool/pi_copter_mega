@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -201,6 +202,31 @@ public static void verifyPermissions(Activity activity){
             Log.e("Socket exception", ex.toString());
         }
         return null;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            //Log.i("KEY","DOWN "+Integer.toString(keyCode));
+            command_bits_|=GIMBAL_MINUS;
+            return true;
+        }else
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            //Log.i("KEY","DOWN "+Integer.toString(keyCode));
+            command_bits_|=GIMBAL_PLUS;
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // your code
+            if (DrawView.screen==DrawView.viewMenu) {
+                DrawView.screen=DrawView.viewMain;
+                return true;
+            }
+        }
+
+
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

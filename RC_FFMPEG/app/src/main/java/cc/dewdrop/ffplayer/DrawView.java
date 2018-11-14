@@ -36,56 +36,32 @@ public class DrawView extends View {
 
 
      */
-    static float RectSize=3.8f;
+   // static float RectSize=3.8f;
     static float RectBorder=0.3f;
+    static float RectSize;
+    static int nX,nY;
+    static double size;
+    static double border;
+    static public void setRectX(int x){
+        RectSize=sm[0]/x;
+        nX=x;
+        nY=(int)(sm[1]/RectSize);
+        border=RectSize*RectBorder;
+        size=(sm[0]-(border+1)*nX)/nX;
+    }
     static public Rect getRect(double x, double y){
-        int addX=0;
-        int addY=0;
-        double size=sm[2]/RectSize;
-        double border=size*RectBorder;
-        double maxX=Math.floor(sm[0]/(border+size));
-        double maxY=Math.floor(sm[1]/(border+size));
-        double borderX=(sm[0]-maxX*size)/(maxX+1);
-        double borderY=(sm[1]-maxY*size)/(maxY+1);
-        if (x<0)
-            x=maxX+x;
-        else
-        if (x>0)
-            x--;
-        else {
-            x = Math.floor(maxX / 2 - 1);
-            if (maxX/2==Math.ceil(maxX/2)) {
-                addX=(int)(size/2+borderX);
-            }else{
-                x++;
-            }
-        }
-        if (y<0)
-            y=maxY+y;
-        else
-        if (y>0)
-            y--;
-        else
-        {
-            y = Math.floor(maxY / 2 - 1);
-            if (maxY/2==Math.ceil(maxY/2)) {
-                addY=(int)(size/2+borderY);
-            }else{
-                y++;
-            }
-        }
-
-        int x0=addX+(int)(x*(size+borderX)+borderX);
-        int y0=addY+(int)(y*(size+borderY)+borderY);
-        return new Rect(x0,y0,(int)(x0+size),(int)(y0+size));
+        int x0=(int)(x*(size+border));
+        int y0=(int)(y*(size+border));
+        return new Rect((int)(x0+border),(int)(y0+border),(int)(x0+border+size),(int)(y0+border+size));
     }
 
 
     void menu_DrawView(final Context context){
 
 
-        RectSize=2f;
-        RectBorder=0.3f;
+
+
+        setRectX(7);
         showMap =new Img_button(getRect(3,1),
                 context.getResources().getDrawable(R.drawable.route),
                 context.getResources().getDrawable(R.drawable.route),false);
@@ -130,8 +106,7 @@ public class DrawView extends View {
         final float monSize=bR/2.5f;
 
 
-        RectSize=3.8f;
-        RectBorder=0.3f;
+        setRectX(13);
 
 
 
@@ -154,29 +129,29 @@ public class DrawView extends View {
 
 
         connectedImg=context.getResources().getDrawable(R.drawable.wifi_on);
-        connectedImg.setBounds(getRect(2,1));
+        connectedImg.setBounds(getRect(1,0));
 
 
 
-        fpv =new Img_button(getRect(-3,1),
+        fpv =new Img_button(getRect(nX-2,0),
                 context.getResources().getDrawable(R.drawable.fpv_off),
                 context.getResources().getDrawable(R.drawable.fpv),true);
 
-        pitch_onoff=new Img_button(getRect(-1,-5),
+        pitch_onoff=new Img_button(getRect(nX-2,nY/2),
                 context.getResources().getDrawable(R.drawable.x_on),
                 context.getResources().getDrawable(R.drawable.x_off),true);
 
-        roll_onoff=new Img_button(getRect(-2,-5),
+        roll_onoff=new Img_button(getRect(nX-1,nY/2),
                 context.getResources().getDrawable(R.drawable.y_on),
                 context.getResources().getDrawable(R.drawable.y_off),true);
 
 
 
-        yaw_onoff=new Img_button(getRect(1,-5),
+        yaw_onoff=new Img_button(getRect(0,nY/2),
                 context.getResources().getDrawable(R.drawable.x_on),
                 context.getResources().getDrawable(R.drawable.x_off),true);
 
-        desc_onoff=new Img_button(getRect(2,-5),
+        desc_onoff=new Img_button(getRect(1,nY/2),
                 context.getResources().getDrawable(R.drawable.y_on),
                 context.getResources().getDrawable(R.drawable.y_off),true);
 
@@ -197,11 +172,11 @@ public class DrawView extends View {
 
 
 
-        on_off[0]=new Img_button(getRect(1,1),
+        on_off[0]=new Img_button(getRect(0,0),
                 context.getResources().getDrawable(R.drawable.green),
                 context.getResources().getDrawable(R.drawable.red),true);
 
-        on_off[1]=new Img_button(getRect(-1,1),
+        on_off[1]=new Img_button(getRect(nX-1,0),
                 context.getResources().getDrawable(R.drawable.green),
                 context.getResources().getDrawable(R.drawable.red),true);
 

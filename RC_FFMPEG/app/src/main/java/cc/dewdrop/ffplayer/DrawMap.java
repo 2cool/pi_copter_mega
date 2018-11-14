@@ -24,12 +24,12 @@ import android.view.View;
 public class DrawMap extends View {
 
 
-
+    static public float sm[];
     static public Point screenP=new Point();
     static public int zoom=1;
     static public int type=7;
 
-
+    static Img_button ib_zoom_out,ib_zoom_in;
     static MYButton bZoom_out,bAddDot,bProgLoad, bEdit,bDelite,bMenu;
     static MySlider sDirection;
 
@@ -42,9 +42,69 @@ public class DrawMap extends View {
 
     Paint black = new Paint();
 
-    public DrawMap(Context context) {
 
+
+
+    static float RectSize=3.8f;
+    static float RectBorder=0.3f;
+    static public Rect getRect(double x, double y){
+        int addX=0;
+        int addY=0;
+        double size=sm[2]/RectSize;
+        double border=size*RectBorder;
+        double maxX=Math.floor(sm[0]/(border+size));
+        double maxY=Math.floor(sm[1]/(border+size));
+        double borderX=(sm[0]-maxX*size)/(maxX+1);
+        double borderY=(sm[1]-maxY*size)/(maxY+1);
+        if (x<0)
+            x=maxX+x;
+        else
+        if (x>0)
+            x--;
+        else {
+            x = Math.floor(maxX / 2 - 1);
+            if (maxX/2==Math.ceil(maxX/2)) {
+                addX=(int)(size/2+borderX);
+            }else{
+                x++;
+            }
+        }
+        if (y<0)
+            y=maxY+y;
+        else
+        if (y>0)
+            y--;
+        else
+        {
+            y = Math.floor(maxY / 2 - 1);
+            if (maxY/2==Math.ceil(maxY/2)) {
+                addY=(int)(size/2+borderY);
+            }else{
+                y++;
+            }
+        }
+
+        int x0=addX+(int)(x*(size+borderX)+borderX);
+        int y0=addY+(int)(y*(size+borderY)+borderY);
+        return new Rect(x0,y0,(int)(x0+size),(int)(y0+size));
+    }
+
+
+
+
+
+
+    public DrawMap(Context context) {
         super(context);
+
+       sm=Map.screenMetrics;
+        ib_zoom_out=new Img_button(getRect(1,1),
+                context.getResources().getDrawable(R.drawable.minus),
+                context.getResources().getDrawable(R.drawable.minus),false);
+
+        ib_zoom_in=new Img_button(getRect(1,3),
+                context.getResources().getDrawable(R.drawable.plus),
+                context.getResources().getDrawable(R.drawable.plus),false);
 
     }
     private int oldtx=0, oldty=0;
@@ -111,6 +171,9 @@ public class DrawMap extends View {
     private void init(Canvas c){
         Rect r=c.getClipBounds();
         updater();
+
+
+
         bZoom_out=new MYButton(45,45,40,"zoom",Color.GRAY);
         bAddDot=new MYButton(r.width()-80,500,40,"add",Color.GREEN);
         bEdit=new MYButton(r.width()-80,400,40,"edit",Color.YELLOW);
@@ -258,6 +321,19 @@ public class DrawMap extends View {
             invalidate();
             return true;
         }
+
+
+        ib_zoom_out.onTouchEvent(event);
+        if (ib_zoom_out.getStat()==3)
+            addZoom(-1);
+        ib_zoom_in.onTouchEvent(event);
+        if (ib_zoom_in.getStat()==3) {
+            addZoom(1);
+            tap=0;
+        }
+
+
+        /*
         if (bZoom_out.onTouchEvent(event)) {
             if (bZoom_out.pressed()){
                 addZoom(-1);
@@ -293,14 +369,7 @@ public class DrawMap extends View {
             return true;
         }
 
-     /*   if (bProgStart.onTouchEvent(event)){
-            if (bProgStart.pressed()) {
-                Commander.button =  "SRP";
-
-            }
-            return true;
-        }
-*/
+     */
 
 
 
@@ -624,12 +693,12 @@ public class DrawMap extends View {
         //  Log.i("MAP","onDraw");
 
         drawMap(c);
-        bZoom_out.draw(c);
-        bAddDot.draw(c);
-        bProgLoad.draw(c);
-        bEdit.draw(c);
-        bDelite.draw(c);
-        bMenu.draw(c);
+      //  bZoom_out.draw(c);
+       // bAddDot.draw(c);
+       // bProgLoad.draw(c);
+       // bEdit.draw(c);
+       // bDelite.draw(c);
+       // bMenu.draw(c);
 
         sDirection.draw(c);
         drawCross(c);
@@ -661,5 +730,8 @@ public class DrawMap extends View {
             c.drawRect(0,400,c.getWidth(),c.getHeight(),white);
 
         }
+
+        ib_zoom_out.paint(c);
+        ib_zoom_in.paint(c);
     }
 }
