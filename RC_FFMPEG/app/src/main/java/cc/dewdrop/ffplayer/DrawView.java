@@ -19,7 +19,7 @@ public class DrawView extends View {
     BatteryMonitor batMon;
     Joystick j_left,j_right;
     static public Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,settings;
-    static public Img_button control_type;
+    static public Img_button control_type,showMap;
     static public Img_button[]on_off=new Img_button[2];
     static public float maxAngle=35;
     Monitor monitor;
@@ -86,7 +86,9 @@ public class DrawView extends View {
 
         RectSize=2f;
         RectBorder=0.3f;
-
+        showMap =new Img_button(getRect(3,1),
+                context.getResources().getDrawable(R.drawable.route),
+                context.getResources().getDrawable(R.drawable.route),false);
         exitMenu =new Img_button(getRect(1,1),
                 context.getResources().getDrawable(R.drawable.left),
                 context.getResources().getDrawable(R.drawable.left),false);
@@ -102,16 +104,16 @@ public class DrawView extends View {
         shutdown=new Img_button(getRect(-1,1),
                 context.getResources().getDrawable(R.drawable.shutdown),
                 context.getResources().getDrawable(R.drawable.shutdown),false);
-        comp_calibr=new Img_button(getRect(5,1),
+        comp_calibr=new Img_button(getRect(0,1),
                 context.getResources().getDrawable(R.drawable.compass_on),
                 context.getResources().getDrawable(R.drawable.compass_on),true);
-        comp_m_calibr=new Img_button(getRect(5,2),
+        comp_m_calibr=new Img_button(getRect(0,2),
                 context.getResources().getDrawable(R.drawable.comp_m_c),
                 context.getResources().getDrawable(R.drawable.comp_m_c),true);
-        gps_on_off=new Img_button(getRect(5,3),
-                context.getResources().getDrawable(R.drawable.gps),
-                context.getResources().getDrawable(R.drawable.gps_off),true);
-        prog_route=new Img_button(getRect(5,4),
+        gps_on_off=new Img_button(getRect(0,3),
+                context.getResources().getDrawable(R.drawable.gps_off),
+                context.getResources().getDrawable(R.drawable.gps),true);
+        prog_route=new Img_button(getRect(0,4),
                 context.getResources().getDrawable(R.drawable.route),
                 context.getResources().getDrawable(R.drawable.route),false);
 
@@ -152,7 +154,7 @@ public class DrawView extends View {
 
 
         connectedImg=context.getResources().getDrawable(R.drawable.wifi_on);
-        connectedImg.setBounds(getRect(0,1));
+        connectedImg.setBounds(getRect(2,1));
 
 
 
@@ -292,10 +294,18 @@ public class DrawView extends View {
         }
 
         if (fpv.getStat()==3) {
-            if (fpv.pressed())
+            if (fpv.pressed()) {
                 MainActivity.startVideo();
-            else
+                String myIP=Net.getIpAddress();
+                Commander.fpv_addr=(byte)Integer.parseInt(myIP.substring(myIP.lastIndexOf('.')+1));
+                Commander.fpv_port=5544;
+                Commander.fpv_zoom=1;
+                Commander.fpv=true;
+            }else {
                 MainActivity.stopVideo();
+                Commander.fpv_zoom=0;
+                Commander.fpv=true;
+            }
         }
 
         // invalidate();
@@ -308,7 +318,7 @@ public class DrawView extends View {
             screen = viewMain;
             return true;
         }
-
+        showMap.onTouchEvent(event);
         exitProg.onTouchEvent(event);
         reboot.onTouchEvent(event);
         shutdown.onTouchEvent(event);
@@ -325,13 +335,17 @@ public class DrawView extends View {
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        boolean ret = true;
         switch(screen) {
             case viewMain:
-                return main_onTouchEvent(event);
+                ret = main_onTouchEvent(event);
+                break;
             case viewMenu:
-                return menu_onTouchEvent(event);
+                ret = menu_onTouchEvent(event);
+                break;
         }
-        return true;
+        MainActivity.update=true;
+        return ret;
     }
 
     static int i = 0;
@@ -395,7 +409,7 @@ public class DrawView extends View {
         fpv.paint(c);
     }
     void menu_onDraw(final Canvas c){
-
+        showMap.paint(c);
         exitMenu.paint(c);
         exitProg.paint(c);
         reboot.paint(c);

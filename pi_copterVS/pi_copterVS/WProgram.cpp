@@ -56,6 +56,7 @@ std::string exec(const std::string cmd) {
 	//printf("\n");
 	char buffer[128];
 	std::string result = "";
+	//cout << exec << endl;
 	FILE* pipe = popen(cmd.c_str(), "r");
 	if (!pipe) {
 		//throw std::runtime_error("popen() failed!");
@@ -70,29 +71,6 @@ std::string exec(const std::string cmd) {
 	return result;
 }
 
-int get_pid(const char* name) {
-
-	FILE *in;
-	char buff[512];
-
-	if (!(in = popen("ps -e", "r"))) {
-		return 1;
-	}
-
-	while (fgets(buff, sizeof(buff), in) != NULL) {
-		//	cout << buff;
-		string s = string(buff);
-		if (s.find(name) != -1) {
-			cout << s;
-			int pid = stoi(s.substr(0, 5));
-			fclose(in);
-			return pid;
-
-		}
-	}
-	pclose(in);
-	return -1;
-}
 
 key_t          ShmKEY;
 int            ShmID;

@@ -34,7 +34,7 @@ void CommanderClass::init()
 
 
 	//Out.println("COMMANDER INIT");
-	vedeo_stream_client_addr = 0;
+	//vedeo_stream_client_addr = 0;
 	ppp_inet = true;
 	telegram_bot = false;
 
@@ -356,7 +356,12 @@ bool CommanderClass::input(){
 				else if (msg.find(m_UPLOAD_SETTINGS) == 0) {
 					Telemetry.getSettings(buf[i++]);
 				}
-				
+				else if (msg.find(m_FPV) == 0) {
+					shmPTR->fpv_adr = *(buf+i++);
+					shmPTR->fpv_port = *(int16_t*)(buf + i);
+					i += 2;
+					shmPTR->fpv_zoom = *(buf + i++);
+				}
 			}
 		}
 		else {
@@ -376,22 +381,12 @@ bool CommanderClass::input(){
 }
 
 
-void stop_stream() {
 
-	int pid = get_pid("ffmpeg");
-	if (pid != -1) {
-		kill(pid, SIGQUIT);
-		cout << "stream STOP" << "\t"<<Mpu.timed << endl;
-	}
-
-}
 
 
 
 string CommanderClass::get_set() {
-	string s = std::to_string(vedeo_stream_client_addr);
-	s += ",";
-	s += (ppp_inet) ? "1" : "0";
+	string s = (ppp_inet) ? "1" : "0";
 	s += ",";
 	s+= (telegram_bot) ? "1" : "0";
 	s += ",";
@@ -400,14 +395,18 @@ string CommanderClass::get_set() {
 }
 
 void CommanderClass::set(const float buf[]) {
-	vedeo_stream_client_addr = buf[0];
-	ppp_inet = buf[1] > 0;
-	telegram_bot = buf[2] > 0;
+
+	
+	//shmPTR->fpv_adr = (shmPTR->client_addr&0xffffff00) | (uint8_t)buf[0];
+	//shmPTR->fpv_port = buf[1];
+	//shmPTR->fpv_zoom = buf[2];//0
+	ppp_inet = buf[0] > 0;
+	telegram_bot = buf[1] > 0;
 	if (telegram_bot)
 		ppp_inet = true;
-	cout << "trans adr %f\n", buf[0];
-	thread t(stop_stream);
-	t.detach();
+	//cout << "trans adr %f\n", buf[0];
+	//thread t(stop_stream);
+//	t.detach();
 
 }
 

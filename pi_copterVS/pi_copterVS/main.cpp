@@ -104,7 +104,8 @@ int zzz = 1;
 
 
 
-void video_stream() {
+void video_stream1() {
+#ifdef SKSKSKSKSKSK
 	while (true) {
 		//ffmpeg - rtsp_transport udp - i "rtsp://192.168.42.1:554/live" - c copy - f h264 udp ://android_phone_address:5544
 		delay(6000);
@@ -143,14 +144,8 @@ void video_stream() {
 		//printf( "%s\n", ret.c_str());
 			
 	}
+#endif
 }
-
-
-
-
-
-
-
 
 
 int setup(int cnt) {////--------------------------------------------- SETUP ------------------------------
@@ -361,6 +356,7 @@ cout << PROG_VERSION << endl;
 	shmPTR->wifi_cnt = 0;
 	shmPTR->run_main = true;
 	shmPTR->inet_ok = false;
+	shmPTR->fpv_zoom = 0;
 	//shmPTR->internet_run = false;
 	thread tl(watch_dog);
 	tl.detach();

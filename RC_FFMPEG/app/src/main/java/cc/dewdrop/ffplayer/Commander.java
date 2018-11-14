@@ -81,6 +81,11 @@ public class Commander {
     static public int upload_settings=-1;
     static public boolean program=false;
     static boolean firstProgStep=false;
+    static boolean fpv=false;
+    static byte fpv_addr;
+    static short fpv_port;
+    static byte fpv_zoom=0;
+
     //static boolean exit_main=false;
 
     static public void startLoadingProgram(){
@@ -215,7 +220,17 @@ public class Commander {
         i+=2;
 
         buf[3]=(byte)mask;
+        if (fpv){
+            fpv=false;
+            buf[i++]='F';
+            buf[i++]='P';
+            buf[i++]='V';
+            buf[i++]=fpv_addr;
+            buf[i++]=(byte)(0xff&fpv_port);
+            buf[i++]=(byte)(0xff&(fpv_port>>8));
+            buf[i++]=fpv_zoom;
 
+        }else
 
         if (program){
             buf[i++]='P';

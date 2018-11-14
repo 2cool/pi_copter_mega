@@ -60,4 +60,8 @@ struct Memory {
 	uint32_t client_addr;
 	uint8_t wifiRbuffer[TELEMETRY_BUF_SIZE];
 	uint8_t wifiWbuffer[TELEMETRY_BUF_SIZE];
+
+	uint8_t fpv_adr;
+	uint16_t fpv_port;
+	uint8_t fpv_zoom; //if 0 then fpv off;
 };

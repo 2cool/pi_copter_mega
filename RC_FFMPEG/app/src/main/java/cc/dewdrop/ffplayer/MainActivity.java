@@ -1,17 +1,23 @@
 package cc.dewdrop.ffplayer;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,15 +27,21 @@ import android.widget.TextView;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 import cc.dewdrop.ffplayer.utils.FFUtils;
 
 import cc.dewdrop.ffplayer.widget.FFVideoView;
 
 public class MainActivity extends Activity  implements SensorEventListener {
-
+    Activity this_act;
    static private FFVideoView mVideoView;
-    public static int updateTimeMsec=20;
+   public static boolean update=true;
+    public static int updateTimeMsec=50;
     public static double pitch,roll,heading_t;
     private static boolean runMainUpdate=true;
     public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, COMPASS_ON=64,HORIZONT_ON=128;
@@ -54,6 +66,33 @@ public class MainActivity extends Activity  implements SensorEventListener {
     public static float [] screenMetrics;
     RelativeLayout rl1;
     static DrawView drawView=null  ;
+
+
+
+
+
+     void exit(){
+        Net.net_runing = false;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+        Telemetry.logThread_f=false;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+        Disk.close_();
+
+        super.finish();
+        System.exit(0);
+
+    }
+
+
+
 
     float[] get_screen_size_in_pixels(){
         float [] screenXY=new float[4];
@@ -103,9 +142,73 @@ public class MainActivity extends Activity  implements SensorEventListener {
     }
 
 
+
+    static int PERMISSION_ALL = 1;
+    static String[] PERMISSIONS = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+public static void verifyPermissions(Activity activity){
+
+    while(!hasPermissions(activity, PERMISSIONS)){
+        ActivityCompat.requestPermissions(activity, PERMISSIONS, PERMISSION_ALL);
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+    //open map
+    void openMap(){
+        DrawView.fpv.set(false);
+        mVideoView.stopVideo();
+        Intent myIntent = new Intent(this_act, Map.class);
+        this_act.startActivity(myIntent);
+    }
+    public static String getIpAddress() {
+        try {
+            for (Enumeration en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
+                NetworkInterface intf = (NetworkInterface) en.nextElement();
+                for (Enumeration enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
+                    InetAddress inetAddress = (InetAddress) enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()&&inetAddress instanceof Inet4Address) {
+                        String ipAddress=inetAddress.getHostAddress().toString();
+                        Log.e("IP address",""+ipAddress);
+                        return ipAddress;
+                    }
+                }
+            }
+        } catch (SocketException ex) {
+            Log.e("Socket exception", ex.toString());
+        }
+        return null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        verifyPermissions(this);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -119,15 +222,12 @@ public class MainActivity extends Activity  implements SensorEventListener {
         mSensorManager.registerListener(this, accelerometer,speed );
         mSensorManager.registerListener(this, magnetic_field, speed);
         mSensorManager.registerListener(this, gyroscop, speed);
-
-
-
-
         rl1 =findViewById(R.id.rl1);
         mVideoView = findViewById(R.id.videoView);
         screenMetrics=get_screen_size_in_pixels();
         drawView = new DrawView(MainActivity.this);
         rl1.addView(drawView);
+
 
 
 
@@ -143,7 +243,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
         net=new Net(9876,1000);
         net.start();
 
-
+        this_act=this;
 
         new Thread() {
             @Override
@@ -155,8 +255,24 @@ public class MainActivity extends Activity  implements SensorEventListener {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (MainActivity.drawView != null)
+                    if (MainActivity.drawView != null ){//&& update) {
+                        update=false;
                         MainActivity.drawView.postInvalidate();
+                        if (DrawView.showMap.getStat()==3)
+                            openMap();
+                        if (DrawView.exitProg.getStat()==3)
+                            exit();
+                        if (DrawView.reboot.getStat()==3)
+                            command_bits_|=REBOOT;
+                        if (DrawView.shutdown.getStat()==3)
+                            command_bits_|=SHUTDOWN;
+                        if (DrawView.gps_on_off.getStat()==3){
+                            if (DrawView.gps_on_off.pressed())
+                                startService(new Intent(MainActivity.this, GPSservice.class));
+                            else
+                                stopService(new Intent(MainActivity.this, GPSservice.class));
+                        }
+                    }
                 }
             }
         }.start();
@@ -164,12 +280,13 @@ public class MainActivity extends Activity  implements SensorEventListener {
     }
 
 
-static boolean video_started=false;
-    static public void startVideo(){
 
-    // String videoPath = "udp://192.168.1.100:5544";//
+    static public void startVideo(){
+        String adr=getIpAddress();
+
+        String videoPath = "udp://"+adr+":5544";//
     //   if (video_started==false) {
-        String videoPath = Environment.getExternalStorageDirectory() + "/Movies/PERU.MP4";
+       // String videoPath = Environment.getExternalStorageDirectory() + "/Movies/PERU.MP4";
         mVideoView.playVideo(videoPath);
     }
     static public void stopVideo(){
@@ -235,7 +352,7 @@ static boolean video_started=false;
 
             //az=midZ.get(event.values[2]*k/10f);
 
-
+            update=DrawView.control_type.pressed();
 
         }
 

@@ -1,0 +1,14 @@
+﻿  Validating sources
+  Copying sources remotely to '192.168.1.112'
+  Validating architecture
+  Starting remote build
+  Compiling sources:
+  main.cpp
+C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(257,8): warning : unused variable ‘token’ [-Wunused-variable]
+C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(257,8): warning :     int token = stoi(stoken);
+C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(257,8): warning :         ^
+C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(296,20): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
+C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(296,20): warning :    if (s.find(name) != -1) {
+C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(296,20): warning :                     ^
+  Linking objects
+  fpv.vcxproj -> C:\Users\Igor\pi_copter_mega\fpv\fpv\bin\ARM\Debug\fpv.out

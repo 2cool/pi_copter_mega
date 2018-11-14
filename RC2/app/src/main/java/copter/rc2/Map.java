@@ -76,7 +76,7 @@ public class Map extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //setContentView(drawmap);
 
 
@@ -93,6 +93,7 @@ public class Map extends Activity {
 
         drawmap = new DrawMap(Map.this);
         drawmap.setBackgroundColor(Color.WHITE);
+
         setContentView(drawmap);
         cont=this;
 
