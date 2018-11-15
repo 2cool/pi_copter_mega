@@ -84,6 +84,7 @@ public class Commander {
     static boolean fpv=false;
     static byte fpv_addr;
     static short fpv_port;
+    static short fpv_code=0;
     static byte fpv_zoom=0;
 
     //static boolean exit_main=false;
@@ -229,6 +230,9 @@ public class Commander {
             buf[i++]=(byte)(0xff&fpv_port);
             buf[i++]=(byte)(0xff&(fpv_port>>8));
             buf[i++]=fpv_zoom;
+            buf[i++]=(byte)(0xff&fpv_code);
+            buf[i++]=(byte)(0xff&(fpv_code>>8));
+            fpv_code=0;
 
         }else
 

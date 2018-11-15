@@ -2,8 +2,19 @@
 <project version="4">
   <component name="AndroidLayouts">
     <shared>
-      <config />
+      <config>
+        <device id="Nexus 4" />
+        <device id="Nexus One" />
+        <device id="wear_round" />
+        <device id="Galaxy Nexus" />
+        <device id="Nexus 5" />
+        <device id="pixel" />
+      </config>
     </shared>
+  </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="SCALE" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -11,7 +22,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b141cfe-1c4e-4b56-89d4-15464644449d" name="Default" comment="" />
+    <list default="true" id="2f869606-85d6-409a-9653-d1c079f15fd0" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,64 +43,91 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="DrawView.java" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="DrawView.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="40">
-              <caret line="48" selection-start-line="48" selection-end-line="48" />
+            <state relative-caret-position="291">
+              <caret line="280" column="38" selection-start-line="280" selection-start-column="38" selection-end-line="280" selection-end-column="38" />
+              <folding>
+                <element signature="e#10221#10222#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Map.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java">
+      <file leaf-file-name="Joystick.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Joystick.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-447">
-              <caret line="48" column="41" selection-start-line="48" selection-start-column="41" selection-end-line="48" selection-end-column="41" />
+            <state relative-caret-position="275">
+              <caret line="184" column="40" selection-start-line="184" selection-start-column="13" selection-end-line="184" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DrawMap.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3805">
-              <caret line="453" column="11" selection-start-line="453" selection-start-column="11" selection-end-line="453" selection-end-column="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="66" column="40" selection-start-line="66" selection-start-column="27" selection-end-line="66" selection-end-column="40" />
+            <state relative-caret-position="-42">
+              <caret line="290" column="17" selection-start-line="290" selection-start-column="17" selection-end-line="290" selection-end-column="17" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Net.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Net.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="496">
+              <caret line="124" selection-start-line="100" selection-start-column="7" selection-end-line="129" selection-end-column="23" />
+              <folding>
+                <element signature="e#1600#1601#0" expanded="true" />
+                <element signature="e#1636#1637#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Commander.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="207">
+              <caret line="232" column="41" selection-start-line="232" selection-start-column="33" selection-end-line="232" selection-end-column="41" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="layoutResourceFile" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>onKeyDown</find>
-      <find>sTimer</find>
-      <find>yaw_onoff</find>
-      <find>bZoom_out</find>
-      <find>main_DrawView</find>
-      <find>screenMetrics</find>
-      <find>get_screen_size_in_pixels</find>
-      <find>sm</find>
-      <find>getR</find>
-      <find>ib_Zoom_out</find>
-      <find>RectSize</find>
+      <find>connectedImg</find>
+      <find>disconnectedImg</find>
+      <find>ScaleListener</find>
+      <find>mScaleFactor</find>
+      <find>Log.d</find>
+      <find>100</find>
+      <find>mScaleGestureDetector</find>
+      <find>Commander.fpv</find>
+      <find>black</find>
+      <find>fpv_zoom</find>
+      <find>fpv_code</find>
+      <find>red</find>
+      <find>fpv</find>
+      <find>exitProg</find>
+      <find>vrc</find>
     </findStrings>
   </component>
   <component name="GradleLocalSettings">
     <option name="myGradleHomes">
       <map>
-        <entry key="$PROJECT_DIR$" value="C:\Users\Igor\.gradle\wrapper\dists\gradle-4.6-all\bcst21l2brirad8k2ben1letg\gradle-4.6" />
+        <entry key="$PROJECT_DIR$" value="C:\Users\2coolz\.gradle\wrapper\dists\gradle-4.6-all\bcst21l2brirad8k2ben1letg\gradle-4.6" />
       </map>
     </option>
     <option name="myGradleVersions">
@@ -2385,26 +2423,26 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/settings.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Img_button.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Joystick.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
+    <option name="x" value="572" />
+    <option name="y" value="39" />
     <option name="width" value="916" />
-    <option name="height" value="1586" />
+    <option name="height" value="1220" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
-      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -2423,17 +2461,24 @@
               <item name="java" type="edd41e36:AndroidSourceTypeNode" />
               <item name="ffplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
             </path>
+            <path>
+              <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
+              <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="android.sdk.path" value="C:/android/Sdk" />
-    <property name="device.picker.selection" value="0123456789ABCDEF" />
+    <property name="android.sdk.path" value="D:/android/sdk" />
+    <property name="device.picker.selection" value="16d59c207d27" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -2552,47 +2597,57 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="0b141cfe-1c4e-4b56-89d4-15464644449d" name="Default" comment="" />
-      <created>1542181178307</created>
+      <changelist id="2f869606-85d6-409a-9653-d1c079f15fd0" name="Default" comment="" />
+      <created>1542226329817</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1542181178307</updated>
+      <updated>1542226329817</updated>
     </task>
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Android Profiler" />
-      <window_info anchor="right" id="Palette&#9;" />
-      <window_info id="Image Layers" />
-      <window_info id="Build Variants" side_tool="true" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Version Control" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Logcat" />
+      <window_info anchor="bottom" id="Android Profiler" order="7" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32851636" />
+      <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="Build Variants" order="2" side_tool="true" />
+      <window_info anchor="right" id="Capture Analysis" order="3" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32947975" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Logcat" order="7" weight="0.32851636" />
       <window_info id="Captures" order="2" weight="0.25" />
-      <window_info id="Capture Tool" />
-      <window_info id="Designer" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
-      <window_info anchor="bottom" id="Build" weight="0.328877" />
-      <window_info anchor="right" id="Gradle" />
+      <window_info id="Capture Tool" order="2" />
+      <window_info id="Designer" order="2" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22814499" />
+      <window_info active="true" anchor="bottom" id="Build" order="7" visible="true" weight="0.32851636" />
+      <window_info anchor="right" id="Gradle" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39973262" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info anchor="right" id="Device File Explorer" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39980733" />
+      <window_info anchor="right" id="Device File Explorer" order="3" side_tool="true" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Preview" order="4" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -2600,51 +2655,124 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <breakpoint enabled="true" type="OCSymbolicBreakpointType">
-          <properties>
-            <option name="moduleName" value="libart.so" />
-            <option name="symbolPattern" value="art_sigsegv_fault" />
-          </properties>
-          <option name="timeStamp" value="13" />
-        </breakpoint>
-      </breakpoints>
-      <option name="time" value="14" />
+      <option name="time" value="7" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="493">
-          <caret line="81" column="18" selection-start-line="81" selection-start-column="12" selection-end-line="81" selection-end-column="18" />
+        <state relative-caret-position="7327">
+          <caret line="431" lean-forward="true" selection-start-line="431" selection-end-line="431" />
+          <folding>
+            <element signature="e#10221#10222#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="66" column="40" selection-start-line="66" selection-start-column="27" selection-end-line="66" selection-end-column="40" />
+        <state relative-caret-position="3502">
+          <caret line="243" column="20" lean-forward="true" selection-start-line="243" selection-start-column="20" selection-end-line="243" selection-end-column="33" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-447">
-          <caret line="48" column="41" selection-start-line="48" selection-start-column="41" selection-end-line="48" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3805">
-          <caret line="453" column="11" selection-start-line="453" selection-start-column="11" selection-end-line="453" selection-end-column="11" />
+        <state relative-caret-position="1411">
+          <caret line="83" column="19" selection-start-line="83" selection-start-column="19" selection-end-line="83" selection-end-column="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="48" selection-start-line="48" selection-end-line="48" />
+        <state relative-caret-position="2941">
+          <caret line="173" column="44" selection-start-line="173" selection-start-column="44" selection-end-line="173" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Joystick.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2754">
+          <caret line="167" column="23" selection-start-line="167" selection-start-column="18" selection-end-line="167" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/settings.xml">
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2941">
+          <caret line="173" column="44" selection-start-line="173" selection-start-column="44" selection-end-line="173" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Joystick.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2839">
+          <caret line="167" column="23" selection-start-line="167" selection-start-column="18" selection-end-line="167" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Img_button.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="110" column="18" selection-start-line="110" selection-start-column="18" selection-end-line="110" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/settings.xml">
+      <provider selected="true" editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Joystick.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="184" column="40" selection-start-line="184" selection-start-column="13" selection-end-line="184" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="232" column="41" selection-start-line="232" selection-start-column="33" selection-end-line="232" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Net.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="496">
+          <caret line="124" selection-start-line="100" selection-start-column="7" selection-end-line="129" selection-end-column="23" />
+          <folding>
+            <element signature="e#1600#1601#0" expanded="true" />
+            <element signature="e#1636#1637#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="291">
+          <caret line="280" column="38" selection-start-line="280" selection-start-column="38" selection-end-line="280" selection-end-column="38" />
+          <folding>
+            <element signature="e#10221#10222#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-42">
+          <caret line="290" column="17" selection-start-line="290" selection-start-column="17" selection-end-line="290" selection-end-column="17" />
         </state>
       </provider>
     </entry>

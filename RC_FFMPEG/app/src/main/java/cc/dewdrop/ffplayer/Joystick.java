@@ -94,7 +94,7 @@ public class Joystick {
 
 
     public boolean onTouchEvent(MotionEvent event) {
-
+        boolean ret=false;
         // событие
         int actionMask = event.getActionMasked();
         // индекс касания
@@ -114,6 +114,7 @@ public class Joystick {
                     shiftY = gy - old_posY;
                     trackX=old_posX=gx;
                     trackY=old_posY=gy;
+                    ret=true;
                 }
                 break;
             }
@@ -123,6 +124,7 @@ public class Joystick {
             case MotionEvent.ACTION_POINTER_UP: // прерывания касаний
                 if (index==event.getActionIndex()){
                     end();
+                    ret=true;
                 }
                 break;
             case MotionEvent.ACTION_MOVE: // движение
@@ -152,7 +154,7 @@ public class Joystick {
         }
 
         //  Log.d("JOSTIC",Float.toString(jx)+" , "+Float.toString(jy));
-        return true;
+        return ret;
 
     }
 

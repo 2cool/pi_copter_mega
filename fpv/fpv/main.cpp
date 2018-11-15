@@ -162,49 +162,7 @@ void delay(unsigned long t) {
 string wlan_fpv = "wlx7cdd901e13d5";
 
 
-
-void video_stream() {
-	while (true) {
-		//ffmpeg - rtsp_transport udp - i "rtsp://192.168.42.1:554/live" - c copy - f h264 udp ://android_phone_address:5544
-		delay(6000);
-		if (shmPTR->fpv_adr == 0)
-			continue;
-
-#define uchar unsigned char
-		int iadr = shmPTR->client_addr;
-		if (iadr == 0)
-			return;
-		string adr = to_string((uchar)(iadr & 255)) + "." + to_string((uchar)(255 & (iadr >> 8))) + "." + to_string((uchar)(255 & (iadr >> 16))) + "." + to_string((uchar)(iadr >> 24));
-
-
-
-		int last_dot = adr.find_last_of(".");
-		adr = adr.substr(0, last_dot + 1) += std::to_string(shmPTR->fpv_adr);
-		//printf("%s\n", adr.c_str());
-		string ret = exec("ping -c 1 " + adr);
-		if (ret.find("1 received") != string::npos) {
-			ret = exec("ping -c 1 192.168.42.1");
-			if (ret.find("1 received") != string::npos) {
-				//printf( "try stream to %s\n", adr.c_str());
-				cout << "try stream to " << adr << endl;
-
-				string s = "ffmpeg -rtsp_transport udp -i \"rtsp://192.168.42.1:554/live\" -c copy -f h264 udp://" + adr + ":554 > /dev/null 2>&1";
-				system(s.c_str());
-				cout << "stream stoped\n";
-			}
-		}
-
-		/*
-		ffmpeg -rtsp_transport udp -i "rtsp://192.168.42.1:554/live" -c copy -f h264 udp://192.168.0.104:554
-
-		*/
-
-		//printf( "%s\n", ret.c_str());
-
-	}
-}
-
-
+string stoken;
 struct sockaddr_in address;
 int sock = 0, valread;
 struct sockaddr_in serv_addr;
@@ -236,13 +194,40 @@ int open_socket() {
 		cout<<"\nConnection Failed \n";
 		return -1;
 	}
+
+	
+	return 0;
+}
+char buffer[1024] = { 0 };
+
+// 769 cam foto
+// 513 video start
+// 514 video stop
+
+int send_msg(uint16_t msg) {
+	const string tosend= "{\"msg_id\":"+to_string(msg)+",\"token\":" + stoken + "}";
+
+	send(sock, tosend.c_str(), strlen(tosend.c_str()), 0);
+	read(sock, buffer, 1024);
+}
+
+//      tosend = '{"msg_id":14,"token":%s,"type":"fast","param":"%s"}' %(self.token, self.ZoomLevelValue)
+
+int set_zoom(int zoom) {
+	cout << "zoom=" << zoom << endl;
+	string tosend = "{\"msg_id\":14,\"token\":" + stoken + ",\"type\":\"fast\",\"param\":\"" + to_string(zoom) + "\"}";
+	//cout << tosend << endl;
+	send(sock, tosend.c_str(), strlen(tosend.c_str()), 0);
+	read(sock, buffer, 1024);
+	//cout << "Live webcam stream is now available.\n";
+
 	return 0;
 }
 
-int camera_video_stream(){
+int camera_video_stream() {
 	//-------------------------------------------------------
 	string tosend = "{\"msg_id\":257,\"token\":0}";
-	char buffer[1024] = { 0 };
+
 	int cnt = 0;
 	do {
 		send(sock, tosend.c_str(), strlen(tosend.c_str()), 0);
@@ -250,84 +235,88 @@ int camera_video_stream(){
 		string str = buffer;
 		int rval_i = str.find("rval");
 		if (rval_i >= 0) {
-			cout << str << endl;
+			//cout << str.c_str() << endl;
 			int beg = 9 + str.find("\"param\": ");
 			int len = str.substr(beg).find(" }");
-			string stoken = str.substr(beg, len);
-			int token = stoi(stoken);
-			//tosend = '{"msg_id":259,"token":%s,"param":"none_force"}' %token
-			tosend = "{\"msg_id\":259,\"token\":" + stoken +",\"param\":\"none_force\"";
+			stoken = str.substr(beg, len);
+
+			tosend = "{\"msg_id\":259,\"token\":" + stoken + ",\"param\":\"none_force\"}";
+			//cout << tosend.c_str() << endl;
 			send(sock, tosend.c_str(), strlen(tosend.c_str()), 0);
 			read(sock, buffer, 1024);
-			cout << "Live webcam stream is now available.\n";
+			//cout << "Live webcam stream is now available.\n";
 			return 0;
 		}
-	} while (cnt++ < 3 );
-	return -1;
-	
-
-	
+	} while (cnt++ < 3);
 
 
-
-
-
-	
 	printf("%s\n", buffer);
 	return 0;
 }
 /////////////////////////////////////////////////////////////////////////////////
 
 
-int zoom;
-
-int get_pid(const char* name) {
-
-	FILE *in;
-	char buff[512];
-
-	if (!(in = popen("ps -e", "r"))) {
-		return 1;
-	}
-
-	while (fgets(buff, sizeof(buff), in) != NULL) {
-		//	cout << buff;
-		string s = string(buff);
-		if (s.find(name) != -1) {
-			cout << s;
-			int pid = stoi(s.substr(0, 5));
-			fclose(in);
-			return pid;
-
-		}
-	}
-	pclose(in);
-	return -1;
-}
-void stop_ffmpeg_stream() {
-	system("pkill ffmpeg");
-	
-
-}
 string intIP2strIP(uint32_t ip) {
 
 	string sip = to_string(ip & 255) + "." + to_string((ip >> 8) & 255) + "." + to_string((ip >> 16) & 255)+"."+ to_string(ip >> 24);
 	return sip;
 }
+void stop_ffmpeg_stream() {
+	system("pkill ffmpeg");
+}
+void start_ffmpeg_stream() {
+	uint32_t ip = (shmPTR->client_addr & 0x00ffffff) | shmPTR->fpv_adr << 24;
+	string s = "ffmpeg -rtsp_transport udp -i \"rtsp://192.168.42.1:554/live\" -c copy -f h264 udp://" + intIP2strIP(ip) + ":" + to_string(shmPTR->fpv_port) + " > /dev/null 2>&1  &";
+	//cout << s << endl;
+	system(s.c_str());
+}
 
 
 
 
+/*
+добавил сюда
+
+/etc/network/interfaces
+
+вот это что предотвртило автоматически подключатся 
+
+auto wlx7cdd901e13d5
+iface wlx7cdd901e13d5 inet static
+wireless-essid YDXJ_1234567
+wireless-key 1234567890
 
 
+/etc/wpa_supplicant.conf
+
+network={
+	ssid="YDXJ_1234567"
+	psk="1234567890"
+}
+
+sudo wpa_supplicant -B -iwlx7cdd901e13d5 -c /etc/wpa_supplicant.conf -Dwext
+sudo dhclient wlx7cdd901e13d5
+
+*/
+
+const static string connect2camera = "wpa_supplicant -B -iwlx7cdd901e13d5 -c /etc/wpa_supplicant.conf -Dwext";
+const static string dhclient = "dhclient wlx7cdd901e13d5";
 
 int main()
 {
+	stop_ffmpeg_stream();
+	init_shmPTR();
 	//wlx7cdd901e13d5
 
+	string ret = exec("ping -c 1 192.168.42.1");
+	if (ret.find("1 received") == string::npos) {
+		system(connect2camera.c_str());
+		sleep(5);
+		system(dhclient.c_str());
+		sleep(5);
+	}
 
-
-	init_shmPTR();
+	
 	int old_main_cnt = shmPTR->main_cnt;
 	
 	while (true) {
@@ -338,29 +327,40 @@ int main()
 			old_main_cnt = shmPTR->main_cnt;
 		}
 		
-		//zoom = shmPTR->fpv_zoom;
+		int zoom = shmPTR->fpv_zoom;
 
 
 
-		//open_socket();
+		open_socket();
 
-		//camera_video_stream();
-		uint32_t ip = (shmPTR->client_addr & 0x00ffffff) | shmPTR->fpv_adr<<24;
-	//	string s = "ffmpeg -rtsp_transport udp -i rtsp://192.168.42.1:554/live -c copy -f h264 udp://192.168.1.102:5544";// > / dev / null 2 > & 1";
-		string s = "ffmpeg -rtsp_transport udp -i \"rtsp://192.168.42.1:554/live\" -c copy -f h264 udp://" + intIP2strIP(ip) + ":" + to_string(shmPTR->fpv_port) + " > /dev/null 2>&1";
-		cout << s << endl;
-		//system(s.c_str());
+		camera_video_stream();
+		
 
+		
+
+		start_ffmpeg_stream();
+
+		set_zoom(zoom - 1);
 		while (shmPTR->fpv_zoom > 0) {
+			if (zoom != shmPTR->fpv_zoom) {
+				zoom = shmPTR->fpv_zoom;
+				set_zoom(zoom-1);
+			}
+			if (shmPTR->fpv_code) {
+				send_msg(shmPTR->fpv_code);
+				shmPTR->fpv_code = 0;
+			}
 			delay(200);
 			if (shmPTR->main_cnt == old_main_cnt) {
 				stop_ffmpeg_stream();
 				return 0;
 			}
 			old_main_cnt = shmPTR->main_cnt;
+			
 		}
 
 		stop_ffmpeg_stream();
+		shutdown(sock, SHUT_RDWR);
 	}
 
   

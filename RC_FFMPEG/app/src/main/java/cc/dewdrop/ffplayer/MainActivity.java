@@ -20,6 +20,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
@@ -75,13 +76,13 @@ public class MainActivity extends Activity  implements SensorEventListener {
      void exit(){
         Net.net_runing = false;
         try {
-            Thread.sleep(1000);
+            Thread.sleep(100);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
         Telemetry.logThread_f=false;
         try {
-            Thread.sleep(1000);
+            Thread.sleep(100);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }
@@ -229,6 +230,27 @@ public static void verifyPermissions(Activity activity){
         return super.onKeyDown(keyCode, event);
     }
 
+    public static float mScaleFactor = 1.0f;
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector scaleGestureDetector){
+            mScaleFactor *= scaleGestureDetector.getScaleFactor();
+            mScaleFactor = Math.max(1f, Math.min(mScaleFactor, 4));
+           // Log.d("SCALE",Float.toString((mScaleFactor-1)*33.667f+1));
+            if (DrawView.fpv.pressed()){
+                byte zoom=(byte)((mScaleFactor-1)*33.667f+1);
+                if (zoom!=Commander.fpv_zoom){
+                    Commander.fpv_zoom=zoom;
+                    Commander.fpv=true;
+                }
+            }
+
+            return true;
+        }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -254,8 +276,8 @@ public static void verifyPermissions(Activity activity){
         drawView = new DrawView(MainActivity.this);
         rl1.addView(drawView);
 
-
-
+        DrawView.mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+        hideSystemUI();
 
 
      //   drawView.setBackgroundColor(Color.rgb(255,255,255));

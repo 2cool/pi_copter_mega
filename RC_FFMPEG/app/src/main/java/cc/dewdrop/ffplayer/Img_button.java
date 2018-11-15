@@ -50,7 +50,7 @@ public class Img_button {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-
+        boolean ret=false;
         // событие
         int actionMask = event.getActionMasked();
         // индекс касания
@@ -72,6 +72,7 @@ public class Img_button {
                         thumb_on=true;
                         status=1;
                         id= event.getPointerId(pointerIndex);
+                        ret=true;
                     }
 
 
@@ -88,7 +89,7 @@ public class Img_button {
                         thumb_on=false;
                         id=-1;
                         status=3;
-
+                        ret=true;
                     }
 
                 }
@@ -101,12 +102,13 @@ public class Img_button {
                         thumb_on=false;
                         id=-1;
                         status=2;
+                        ret=true;
                     }
 
                 }
                 break;
         }
-        return true;
+        return ret;
 
     }
 

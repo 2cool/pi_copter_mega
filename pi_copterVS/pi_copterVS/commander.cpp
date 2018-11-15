@@ -361,6 +361,8 @@ bool CommanderClass::input(){
 					shmPTR->fpv_port = *(int16_t*)(buf + i);
 					i += 2;
 					shmPTR->fpv_zoom = *(buf + i++);
+					shmPTR->fpv_code = *(int16_t*)(buf + i);
+					i += 2;
 				}
 			}
 		}

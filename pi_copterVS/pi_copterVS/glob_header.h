@@ -64,4 +64,5 @@ struct Memory {
 	uint8_t fpv_adr;
 	uint16_t fpv_port;
 	uint8_t fpv_zoom; //if 0 then fpv off;
+	uint16_t fpv_code; // code for control xiaomi
 };

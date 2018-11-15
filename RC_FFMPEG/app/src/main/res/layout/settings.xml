@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="155dp"
+        android:layout_height="34dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        tools:layout_editor_absoluteX="142dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="285dp"
+        android:layout_height="42dp"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="32dp" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="128dp"
+        android:layout_height="30dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="2dp" />
+</android.support.constraint.ConstraintLayout>
