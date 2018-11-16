@@ -33,6 +33,10 @@
             android:name=".MapEdit"
             android:label="Map edit" >
         </activity>
+        <activity
+            android:name=".Settings"
+            android:label="Settings" >
+        </activity>
         <service android:enabled="true" android:name=".GPSservice" />
     </application>
 

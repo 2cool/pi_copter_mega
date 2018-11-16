@@ -27,7 +27,7 @@ public class DrawView extends View {
     BatteryMonitor batMon;
     Joystick j_left,j_right;
     static public Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,menu;
-    static public Img_button control_type,showMap;
+    static public Img_button control_type,showMap,showSettings;
     static public Img_button[]on_off=new Img_button[2];
     static public float maxAngle=35;
     Monitor monitor;
@@ -105,7 +105,9 @@ public class DrawView extends View {
         showMap =new Img_button(getRect(nX/2,3),
                 context.getResources().getDrawable(R.drawable.route),
                 context.getResources().getDrawable(R.drawable.route),false);
-
+        showSettings=new Img_button(getRect(nX/2,4),
+                context.getResources().getDrawable(R.drawable.settings),
+                context.getResources().getDrawable(R.drawable.settings),false);
 
     }
     void main_DrawView(final Context context){
@@ -363,7 +365,7 @@ public class DrawView extends View {
         comp_calibr.onTouchEvent(event);
         comp_m_calibr.onTouchEvent(event);
         gps_on_off.onTouchEvent(event);
-
+        showSettings.onTouchEvent(event);
 
 
 
@@ -469,7 +471,7 @@ public class DrawView extends View {
         comp_calibr.paint(c);
         comp_m_calibr.paint(c);
         gps_on_off.paint(c);
-
+        showSettings.paint(c);
     }
 
 

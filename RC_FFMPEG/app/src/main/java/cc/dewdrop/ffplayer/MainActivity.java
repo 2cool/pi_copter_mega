@@ -177,7 +177,10 @@ public static void verifyPermissions(Activity activity){
     }
 }
 
-
+    void openSettings(){
+        Intent myIntent = new Intent(this, Settings.class);
+        this.startActivity(myIntent);
+    }
 
     //open map
     void openMap(){
@@ -308,6 +311,8 @@ public static void verifyPermissions(Activity activity){
                         MainActivity.drawView.postInvalidate();
                         if (DrawView.showMap.getStat()==3)
                             openMap();
+                        if (DrawView.showSettings.getStat()==3)
+                            openSettings();
                         if (DrawView.exitProg.getStat()==3)
                             exit();
                         if (DrawView.reboot.getStat()==3)
