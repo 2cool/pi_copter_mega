@@ -8,12 +8,12 @@ package cc.dewdrop.ffplayer;
 
 
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -22,21 +22,22 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ScaleGestureDetector;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 
 
@@ -77,29 +78,37 @@ public class Map extends Activity {
         return screenXY;
     }
 
+    float scale=1;
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector scaleGestureDetector){
+            scale*=scaleGestureDetector.getScaleFactor();
+                Log.d("SCALE",Float.toString(scale));
+                if (scale>=1.3) {
+                    DrawMap.addZoom(1);
+                    scale=1;
+                }
+                else
+                    if (scale<=0.7) {
+                        DrawMap.addZoom(-1);
+                        scale=1;
+                    }
+            return true;
+        }
+    }
 
-
-
-
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
      //   setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-
-
-
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        //setContentView(drawmap);
-
         blank= BitmapFactory.decodeStream(this.getResources().openRawResource(R.raw.blank));
         SharedPreferences settings = getPreferences(MODE_PRIVATE);
-
         screenMetrics=get_screen_size_in_pixels();
-
+        DrawMap.mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
         DrawMap.zoom=settings.getInt("zoom",3);
         DrawMap.screenP.x=settings.getInt("screenPX",0);
         DrawMap.screenP.y=settings.getInt("screenPY",0);
@@ -113,9 +122,10 @@ public class Map extends Activity {
 
         setContentView(drawmap);
         cont=this;
+        registerForContextMenu(drawmap);
+        drawmap.setLongClickable(false);
 
     }
-
 
     void save(){
         DrawMap.threadRun=false;
@@ -143,30 +153,16 @@ public class Map extends Activity {
 
     }
 
-
-
-    static private MenuItem load_prog=null;
-    static private MenuItem save_prog=null;
-
-
-    public static boolean menuON=false;
-
-
     static String[] progName=new String[100];
     static int progs=0;
-
-
     static String[] logName=new String[1000];
     static int logs=0;
-
-
-
-
-    public  void openMenu(){
-        openOptionsMenu();
-    }
+    final int PROGS_I=20;
+    final int MAX_STR_IN_LIST =100;
+    final int LOGS_I=1000;
 
     void add2menu_prog_loading(Menu menu){
+
         SubMenu fileMenu = menu.addSubMenu("Load prog");
 
         File f = new File("/sdcard/RC/PROGS");
@@ -181,20 +177,18 @@ public class Map extends Activity {
             if (t[t.length-1].endsWith(".prog")) {
                 String ts=t[t.length - 1];
                 ts=ts.substring(0,ts.length()-5);
-                fileMenu.add(0, progs+20, 0, ts);
+                fileMenu.add(0, progs+PROGS_I, 0, ts);
                 progName[progs]=t[t.length - 1];
                 progs++;
-                if (progs>=100)
+                if (progs>= MAX_STR_IN_LIST)
                     break;
             }
 
         }
     }
 
-
-
     void add2menu_log_loading(Menu menu){
-        SubMenu fileMenu = menu.addSubMenu("Load log");
+        SubMenu fileMenu = menu.addSubMenu( "Load log");
 
         File f = new File("/sdcard/RC");
         if (f.exists()==false) {
@@ -211,48 +205,28 @@ public class Map extends Activity {
                 fileMenu.add(0, logs+1000, 0, ts);
                 logName[logs]=t[t.length - 1];
                 logs++;
-                if (logs>=100)
+                if (logs>= MAX_STR_IN_LIST)
                     break;
             }
 
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.map_menu, menu);
-
-
-        load_prog   = menu.getItem(0);
-        save_prog   = menu.getItem(1);
-
         add2menu_prog_loading(menu);
         add2menu_log_loading(menu);
-
-
-        //  fileMenu.add(0, 415, 0, "Back");
-
-
-
-
-        return true;
     }
 
-
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+    public boolean onContextItemSelected(MenuItem item){
         int id = item.getItemId();
-        if (id>=20 && id <120){
-
-
+        if (id>=PROGS_I && id <PROGS_I+ MAX_STR_IN_LIST){
             try {
-                FileInputStream stream = new FileInputStream("/sdcard/RC/PROGS/"+progName[id-20]);
+                FileInputStream stream = new FileInputStream("/sdcard/RC/PROGS/"+progName[id-PROGS_I]);
                 int len=stream.available();
                 byte buf[]=new byte[len];
                 try {
@@ -264,17 +238,11 @@ public class Map extends Activity {
                 }
             }
             catch (Exception e) {
-
             }
-
-
         }
-
-        if (id>=1000 ){
-
-
+        if (id>=LOGS_I ){
             try {
-                FileInputStream stream = new FileInputStream("/sdcard/RC/"+logName[id-1000]);
+                FileInputStream stream = new FileInputStream("/sdcard/RC/"+logName[id-LOGS_I]);
                 int len=stream.available();
                 byte buf[]=new byte[len];
                 try {
@@ -285,26 +253,8 @@ public class Map extends Activity {
                 }
             }
             catch (Exception e) {
-
             }
-
-
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         switch(id) {
 
             case R.id.GOOGLE_MAP:{
@@ -319,21 +269,15 @@ public class Map extends Activity {
                 DrawMap.type=7;
                 break;
             }
-
             case R.id.SAVE_PROG:{
-
-
-
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(Map.this);
                 alertDialog.setTitle("File name");
-
                 final EditText input = new EditText(Map.this);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
                 input.setLayoutParams(lp);
                 alertDialog.setView(input);
-
                 alertDialog.setPositiveButton("YES",
                         new DialogInterface.OnClickListener() {
                             @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -353,8 +297,6 @@ public class Map extends Activity {
                                 }
                             }
                         });
-
-
                 alertDialog.setNegativeButton("NO",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -362,45 +304,13 @@ public class Map extends Activity {
                             }
                         });
                 alertDialog.show();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 break;
             }
             case R.id.EXIT:{
                 super.finish();
                 break;
             }
-
-
         }
-        menuON=false;
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
-    public boolean onPrepareOptionsMenu (Menu menu){
-        menuON=true;
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-
-    @Override
-    public void onOptionsMenuClosed(Menu menu)
-    {
-        menuON=false;
-        super.onOptionsMenuClosed(menu);
+        return super.onContextItemSelected(item);
     }
 }

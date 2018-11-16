@@ -89,7 +89,7 @@ public class Commander {
 
     //static boolean exit_main=false;
 
-    static public void startLoadingProgram(){
+    static public void startUPLoadingProgram(){
         if (program==false){
             firstProgStep=true;
             program=true;

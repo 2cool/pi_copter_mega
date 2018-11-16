@@ -230,7 +230,7 @@ public static void verifyPermissions(Activity activity){
         return super.onKeyDown(keyCode, event);
     }
 
-    public static float mScaleFactor = 1.0f;
+    public  float mScaleFactor = 1.0f;
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector){

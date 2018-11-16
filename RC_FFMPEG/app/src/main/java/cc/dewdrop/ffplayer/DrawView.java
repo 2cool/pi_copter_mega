@@ -26,7 +26,7 @@ public class DrawView extends View {
     static public float sm[];
     BatteryMonitor batMon;
     Joystick j_left,j_right;
-    static public Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,settings;
+    static public Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,menu;
     static public Img_button control_type,showMap;
     static public Img_button[]on_off=new Img_button[2];
     static public float maxAngle=35;
@@ -186,9 +186,9 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.photo),
                 context.getResources().getDrawable(R.drawable.photo),false);
 
-        settings=new Img_button(getRect(7,0),
-                context.getResources().getDrawable(R.drawable.settings),
-                context.getResources().getDrawable(R.drawable.settings),false);
+        menu=new Img_button(getRect(7,0),
+                context.getResources().getDrawable(R.drawable.menu),
+                context.getResources().getDrawable(R.drawable.menu),false);
 
 
 
@@ -257,11 +257,11 @@ public class DrawView extends View {
     static boolean vrcf=false;
     static public boolean thumbed = false;
     boolean main_onTouchEvent(final MotionEvent event){
-        settings.onTouchEvent(event);
+        menu.onTouchEvent(event);
 
 
 
-        if (settings.getStat()==3)
+        if (menu.getStat()==3)
             screen=viewMenu;
 
 
@@ -444,7 +444,7 @@ public class DrawView extends View {
         pitch_onoff.paint(c);
         roll_onoff.paint(c);
         compass_onoff.paint(c);
-        settings.paint(c);
+        menu.paint(c);
         control_type.paint(c);
         j_left.paint(c);
         j_right.paint(c);

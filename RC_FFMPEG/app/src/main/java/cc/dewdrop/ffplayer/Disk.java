@@ -183,6 +183,8 @@ public class Disk {
             if (f.exists()==false) {
                 File folder = new File("/sdcard/RC");
                 folder.mkdirs();
+                folder = new File("/sdcard/RC/PROGS");
+                folder.mkdir();
             }
 
             final File file = new File("/sdcard/RC/ip.set");

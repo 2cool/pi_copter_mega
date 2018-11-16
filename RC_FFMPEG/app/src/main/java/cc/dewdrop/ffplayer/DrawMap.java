@@ -19,18 +19,18 @@ import android.os.Build;
 import android.support.constraint.solver.widgets.Rectangle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 
 public class DrawMap extends View {
 
-
+    public static ScaleGestureDetector mScaleGestureDetector;
     static public float sm[];
     static public Point screenP=new Point();
     static public int zoom=1;
     static public int type=7;
 
-    static Img_button ib_zoom_out,ib_zoom_in;
-    static MYButton bZoom_out,bAddDot,bProgLoad, bEdit,bDelite,bMenu;
+    static Img_button ib_zoom_out,ib_zoom_in,ib_menu,ib_add,ib_edit,ib_upload,ib_del;
     static MySlider sDirection;
 
 
@@ -45,7 +45,7 @@ public class DrawMap extends View {
 
 
 
-    static float RectSize=3.8f;
+    static float RectSize=4f;
     static float RectBorder=0.3f;
     static public Rect getRect(double x, double y){
         int addX=0;
@@ -105,7 +105,21 @@ public class DrawMap extends View {
         ib_zoom_in=new Img_button(getRect(1,3),
                 context.getResources().getDrawable(R.drawable.plus),
                 context.getResources().getDrawable(R.drawable.plus),false);
-
+        ib_menu=new Img_button(getRect(1,4),
+                context.getResources().getDrawable(R.drawable.menu),
+                context.getResources().getDrawable(R.drawable.menu),false);
+        ib_add=new Img_button(getRect(1,5),
+                context.getResources().getDrawable(R.drawable.add_mark),
+                context.getResources().getDrawable(R.drawable.add_mark),false);
+        ib_edit=new Img_button(getRect(1,6),
+                context.getResources().getDrawable(R.drawable.edit),
+                context.getResources().getDrawable(R.drawable.edit),false);
+        ib_upload=new Img_button(getRect(1,7),
+                context.getResources().getDrawable(R.drawable.upload),
+                context.getResources().getDrawable(R.drawable.upload),false);
+        ib_del=new Img_button(getRect(1,8),
+                context.getResources().getDrawable(R.drawable.delite),
+                context.getResources().getDrawable(R.drawable.delite),false);
     }
     private int oldtx=0, oldty=0;
     private void dragImgM(final Point c){
@@ -144,7 +158,7 @@ public class DrawMap extends View {
 
 
 
-    Rectangle r = new Rectangle();
+    static Rectangle r = new Rectangle();
     MyTile [][]imgM;
 
     private void updater(){
@@ -171,20 +185,6 @@ public class DrawMap extends View {
     private void init(Canvas c){
         Rect r=c.getClipBounds();
         updater();
-
-
-
-        bZoom_out=new MYButton(45,45,40,"zoom",Color.GRAY);
-        bAddDot=new MYButton(r.width()-80,500,40,"add",Color.GREEN);
-        bEdit=new MYButton(r.width()-80,400,40,"edit",Color.YELLOW);
-        bDelite=new MYButton(r.width()-80,300,40,"del",Color.RED);
-        bMenu=new MYButton(r.width()-80,r.height()-200,40,"menu",Color.WHITE);
-        bProgLoad=new MYButton(r.width()-80,45,40,"load",Color.RED);;
-        // bProgStart=new MYButton(440,300,40);;
-
-
-
-
 
         int sx=(c.getWidth()+512)>>8;
         int sy=(c.getHeight()+512)>>8;
@@ -248,7 +248,7 @@ public class DrawMap extends View {
 
 
 
-    private void addZoom(int z){
+    public static void addZoom(int z){
         zoom+=z;
         if (zoom>19) {
             zoom = 19;
@@ -261,7 +261,8 @@ public class DrawMap extends View {
 
 
 
-
+        xDown=r.width>>1;
+        yDown=r.height>>1;
 
         if (z==1) {
             screenP.x-=(r.width>>1)-(int)xDown;
@@ -301,9 +302,9 @@ public class DrawMap extends View {
 
 
 
-    float xDown=0,yDown=0;
-    long timeDown=0,timeUp=0;
-    int tap=0;
+    static float xDown=0,yDown=0;
+
+
     final long tap_max_time = 1000;
     final int DRAG_LEN=1;//      32;
     static public boolean progLoaded=false;
@@ -312,6 +313,11 @@ public class DrawMap extends View {
     public boolean onTouchEvent(MotionEvent event) {
         // get pointer index from the event object
         boolean update=false;
+
+        super.onTouchEvent(event);
+        int pointerIndex = event.getActionIndex();
+
+
         if (sDirection.onTouchEvent(event)) {
             double angle=360*sDirection.getPos()-180;
 
@@ -329,116 +335,82 @@ public class DrawMap extends View {
         ib_zoom_in.onTouchEvent(event);
         if (ib_zoom_in.getStat()==3) {
             addZoom(1);
-            tap=0;
+
+        }
+        ib_menu.onTouchEvent(event);
+        if (ib_menu.getStat()==3){
+            this.showContextMenu();
+        }
+
+        ib_add.onTouchEvent(event);
+        if (ib_add.getStat()==3){
+            addDot();
+            progLoaded=false;
+        }
+
+        ib_upload.onTouchEvent(event);
+        if (ib_upload.getStat()==3){
+            progLoaded=true;
+            Commander.startUPLoadingProgram();
+        }
+        ib_edit.onTouchEvent(event);
+        if (ib_edit.getStat()==3 && MapEdit.active==false && prog.getSize()>0){
+            MapEdit.active=true;
+            Intent myIntent = new Intent(Map.cont, MapEdit.class);
+            Map.cont.startActivity(myIntent);
         }
 
 
-        /*
-        if (bZoom_out.onTouchEvent(event)) {
-            if (bZoom_out.pressed()){
-                addZoom(-1);
-
-            }
-            invalidate();
-            return true;
-        }
-        if (bAddDot.onTouchEvent(event) ) {
-            if (bAddDot.pressed() && progLoaded==false){
-                addDot();
-                progLoaded=false;
-
-            }
-            invalidate();
-            return true;
-        }
-        if (bMenu.onTouchEvent(event)){
-            if (bMenu.pressed()){
-                Map.openMenu=true;
-
-            }
-            invalidate();
-            return true;
-        }
-        if (bProgLoad.onTouchEvent(event)){
-            if (bProgLoad.pressed()){
-                progLoaded=true;
-                Commander.startLoadingProgram();
-
-            }
-            invalidate();
-            return true;
-        }
-
-     */
-
-
-
-        if (bDelite.onTouchEvent(event) ){
-            if (bDelite.pressed() && MapEdit.active==false) {
+        ib_del.onTouchEvent(event);
+        if (ib_del.getStat()==3 && MapEdit.active==false) {
                 prog.deliteLast();
                 if (prog.noData())
                     progLoaded=false;
-                invalidate();
-            }
-            return true;
+                //invalidate();
         }
 
-        if (bEdit.onTouchEvent(event) ){
-            if (bEdit.pressed() && MapEdit.active==false && prog.getSize()>0) {
-                MapEdit.active=true;
-                Intent myIntent = new Intent(Map.cont, MapEdit.class);
-                Map.cont.startActivity(myIntent);
-            }
-            return true;
-        }
+
 
 
         int pIndex = event.getActionIndex();
-        //p=new Point[event.getPointerCount()];
-        // get pointer ID
-        int pointerId = event.getPointerId(pIndex);
-        // get masked (not specific to a pointer) action
+
         int maskedAction = event.getActionMasked();
         switch (maskedAction) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN: {
-                timeDown=System.currentTimeMillis();
-                if (timeDown-timeUp>tap_max_time)
-                    tap=0;
-
-                // We have a new pointer. Lets add it to the list of pointers
-                // Log.e("DOWN","DOWN "+Integer.toString(pIndex)+" "+Float.toString(event.getX(pIndex))+" "+Float.toString(event.getY(pIndex)));
-                xDown=event.getX(pIndex);
-                yDown=event.getY(pIndex);
+                    xDown = event.getX(pIndex);
+                    yDown = event.getY(pIndex);
+                }
                 break;
-            }
+
             case MotionEvent.ACTION_MOVE:  // a pointer was moved
-                float x=event.getX(pIndex);
-                float y=event.getY(pIndex);
-                int deltaX=(int)(xDown-x);
-                int deltaY=(int)(yDown-y);
-                if (Math.abs(deltaX)>=DRAG_LEN || Math.abs(deltaY)>=DRAG_LEN) {
-                    int addx=(int) (xDown - x);//>>2;
-                    int addy=(int) (yDown - y);//>>2;
-                    if (addx==0 && addy==0)
-                        return true;
-                    screenP.x += addx;
-                    screenP.y += addy;
-                    xDown = x;
-                    yDown = y;
-                    tap=0;
+                if (event.getPointerCount()==1) {
+                    float x = event.getX(pIndex);
+                    float y = event.getY(pIndex);
+                    int deltaX = (int) (xDown - x);
+                    int deltaY = (int) (yDown - y);
+                    if (Math.abs(deltaX) >= DRAG_LEN || Math.abs(deltaY) >= DRAG_LEN) {
+                        int addx = (int) (xDown - x);//>>2;
+                        int addy = (int) (yDown - y);//>>2;
+                        if ((addx*addx+addy*addy)<10000) {
+                            screenP.x += addx;
+                            screenP.y += addy;
+                            xDown = x;
+                            yDown = y;
+                        }
+
+                    }
                 }
 
                 break;
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_POINTER_UP:
+
+                break;
             case MotionEvent.ACTION_CANCEL:
-                timeUp=System.currentTimeMillis();
-                if (timeUp-timeDown<tap_max_time)
-                    tap++;
-                else
-                    tap=0;
+
+
 
                 //  Log.i("MAP", "tap= "+tap);
                 break;
@@ -450,10 +422,9 @@ public class DrawMap extends View {
         }
 
 
-        if (tap==2){
-            addZoom(1);
-            tap=0;
-        }
+
+        mScaleGestureDetector.onTouchEvent(event);
+
 
 
         invalidate();
@@ -724,14 +695,21 @@ public class DrawMap extends View {
         c.drawText("dots. "+Integer.toString(Programmer.size()),100,yind+=20,black);
         //drawMap(c);
 
-        if (Map.menuON){
-            Paint white=new Paint();
-            white.setColor(Color.WHITE);
-            c.drawRect(0,400,c.getWidth(),c.getHeight(),white);
 
-        }
 
         ib_zoom_out.paint(c);
         ib_zoom_in.paint(c);
+        ib_menu.paint(c);
+        ib_add.paint(c);
+        ib_edit.paint(c);
+        ib_del.paint(c);
+        ib_upload.paint(c);
     }
+
+
+
+
+
+
+
 }
