@@ -4,32 +4,39 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-public class Settings extends Activity {
+public class Settings extends AppCompatActivity implements AdapterView.OnItemSelectedListener,SeekBar.OnSeekBarChangeListener{
 
     String _null="NULL";
     String a[][]={
-            {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE","powerK","balance"},
-            {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","MAX_SPEED_P","MAX_SPEED_M","CF_SPEED","CF_DIST","FILTR",_null,"Z stab"},
-            {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","max_speed","KF_SPEED","KF_DIST","FILTR",_null,_null,"XY stab"},
-            {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z","secur"},
-            {"DRAG_K","_0007","tiltPower_CF",_null,_null,_null,_null,_null,_null,_null,"mpu"},
-            {"m power on",_null,_null,_null,_null,_null,_null,_null,_null,_null,"compas"},
-            {"vedeoAdr","ppp_inet","telegram",_null,_null,_null,_null,_null,_null,_null,"rest"}
+            {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE","powerK"},
+            {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","MAX_SPEED_P","MAX_SPEED_M","CF_SPEED","CF_DIST","FILTR",_null},
+            {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","max_speed","KF_SPEED","KF_DIST","FILTR",_null,_null},
+            {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z"},
+            {"DRAG_K","_0007","tiltPower_CF",_null,_null,_null,_null,_null,_null,_null},
+            {"m power on",_null,_null,_null,_null,_null,_null,_null,_null,_null},
+            {"vedeoAdr","ppp_inet","telegram",_null,_null,_null,_null,_null,_null,_null}
 
     };
 
-    EditText k0, k1, k4, k3, k5, k6, k7,k8,k9,k10,n;
+    TextView[] textV=new TextView[20];
+    SeekBar seekbar0;
     Button set;
 
     protected static int menu_n=0;
+    float copter_set[][]=new float[6][9];
 
     protected void setTextView(final int num){
         if (a.length>num) {
@@ -106,11 +113,6 @@ public class Settings extends Activity {
             n.setText("" + num);
     }
 
-
-
-
-
-
     @Override
     protected  void onStart(){
         super.onStart();
@@ -122,6 +124,78 @@ public class Settings extends Activity {
 
 
 
+    void update(){
+
+
+
+
+
+
+
+        k0.setText(Float.toString(Telemetry.settings[0]));
+        k1.setText(Float.toString(Telemetry.settings[1]));
+        k3.setText(Float.toString(Telemetry.settings[2]));
+        k4.setText(Float.toString(Telemetry.settings[3]));
+        k5.setText(Float.toString(Telemetry.settings[4]));
+        k6.setText(Float.toString(Telemetry.settings[5]));
+        k7.setText(Float.toString(Telemetry.settings[6]));
+        k8.setText(Float.toString(Telemetry.settings[7]));
+        k9.setText(Float.toString(Telemetry.settings[8]));
+        k10.setText(Float.toString(Telemetry.settings[9]));
+
+
+
+
+
+
+
+
+        int i=0;
+
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+        textV[i].setText(Float.toString(copter_set[menu_n][i]=Telemetry.settings[i]));
+        i++;
+
+//------------------------------------------
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+        textV[i].setText(a[menu_n][i-10]);
+        i++;
+    }
+
 
 
     @Override
@@ -129,8 +203,54 @@ public class Settings extends Activity {
         try {
             super.onCreate(savedInstanceState);
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            setContentView(R.layout.settings);
-            set = (Button) findViewById(R.id.button);
+            setContentView(R.layout.settings_scrolling);
+
+
+            set = findViewById(R.id.upload);
+
+            Spinner spinner = findViewById(R.id.spinner1);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.settings_list, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(this);
+
+
+            (seekbar0 = findViewById(R.id.sb0)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb1)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb2)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb3)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb4)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb5)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb6)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb7)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb8)).setOnSeekBarChangeListener(this);
+            ((SeekBar)findViewById(R.id.sb9)).setOnSeekBarChangeListener(this);
+
+            int i=0;
+            textV[i++]=findViewById(R.id.ek0);
+            textV[i++]=findViewById(R.id.ek1);
+            textV[i++]=findViewById(R.id.ek2);
+            textV[i++]=findViewById(R.id.ek3);
+            textV[i++]=findViewById(R.id.ek4);
+            textV[i++]=findViewById(R.id.ek5);
+            textV[i++]=findViewById(R.id.ek6);
+            textV[i++]=findViewById(R.id.ek7);
+            textV[i++]=findViewById(R.id.ek8);
+            textV[i++]=findViewById(R.id.ek9);
+//------------------------------------------
+            textV[i++]=findViewById(R.id.tv0);
+            textV[i++]=findViewById(R.id.tv1);
+            textV[i++]=findViewById(R.id.tv2);
+            textV[i++]=findViewById(R.id.tv3);
+            textV[i++]=findViewById(R.id.tv4);
+            textV[i++]=findViewById(R.id.tv5);
+            textV[i++]=findViewById(R.id.tv6);
+            textV[i++]=findViewById(R.id.tv7);
+            textV[i++]=findViewById(R.id.tv8);
+            textV[i++]=findViewById(R.id.tv9);
+            update();
+
+
 
             k0 = (EditText) findViewById(R.id.e_k0);
             k1 = (EditText) findViewById(R.id.e_k1);
@@ -221,6 +341,31 @@ public class Settings extends Activity {
 
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        menu_n=position;
+
+    }
 
 
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
 }
