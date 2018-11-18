@@ -66,6 +66,8 @@ public class Telemetry {
 
     static public void init(){
         //Log.i("TTZZ","INIT TELEM");
+        for (int i=0; i<10; i++)
+            settings[i]=Commander.NO_DATA;
 
         old_control_bits=satilites=0;
         r_accuracy_hor_pos=0;
@@ -237,7 +239,7 @@ public class Telemetry {
             settings[i-1]=Float.parseFloat(v[i]);
         }
         for (; i<=10; i++){
-            settings[i-1]=1;
+            settings[i-1]=Commander.NO_DATA;
         }
         n_settings=n;
     }

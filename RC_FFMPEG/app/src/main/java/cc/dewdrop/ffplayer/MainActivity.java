@@ -178,6 +178,7 @@ public static void verifyPermissions(Activity activity){
 }
 
     void openSettings(){
+        DrawView.turn2MainScreen();
         Intent myIntent = new Intent(this, Settings.class);
         this.startActivity(myIntent);
     }
@@ -222,9 +223,8 @@ public static void verifyPermissions(Activity activity){
         }
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // your code
-            if (DrawView.screen==DrawView.viewMenu) {
-                DrawView.screen=DrawView.viewMain;
+            if (DrawView.is_on_screen_the_menu()) {
+                DrawView.turn2MainScreen();
                 return true;
             }
         }
@@ -284,7 +284,7 @@ public static void verifyPermissions(Activity activity){
 
 
      //   drawView.setBackgroundColor(Color.rgb(255,255,255));
-
+        Telemetry.init();
         Telemetry.logThread_f=true;
         Telemetry.startlogThread();
         Net.net_runing=true;

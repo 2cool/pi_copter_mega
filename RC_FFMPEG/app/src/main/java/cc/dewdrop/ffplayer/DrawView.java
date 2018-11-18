@@ -31,12 +31,19 @@ public class DrawView extends View {
     static public Img_button[]on_off=new Img_button[2];
     static public float maxAngle=35;
     Monitor monitor;
-    static public int screen=viewMain;
+    static private int screen=viewMain;
 
     static public Img_button exitMenu,exitProg,reboot,shutdown,comp_calibr,comp_m_calibr,gps_on_off;
     static public Img_button  fpv,vrc,photo;
     Drawable connectedImg,disconnectedImg;
     static Paint green_c = new Paint();
+
+    static public boolean is_on_screen_the_menu(){
+        return screen==viewMenu;
+    }
+    static public void turn2MainScreen(){
+        screen=viewMain;
+    }
 
     /*
     |1 2 3 4 ....... -4 -3 -2 -1|
@@ -105,7 +112,7 @@ public class DrawView extends View {
         showMap =new Img_button(getRect(nX/2,3),
                 context.getResources().getDrawable(R.drawable.route),
                 context.getResources().getDrawable(R.drawable.route),false);
-        showSettings=new Img_button(getRect(nX/2,4),
+        showSettings=new Img_button(getRect(1,0),
                 context.getResources().getDrawable(R.drawable.settings),
                 context.getResources().getDrawable(R.drawable.settings),false);
 
@@ -404,7 +411,7 @@ public class DrawView extends View {
         monitor.setSpeed(Telemetry.speed);
         monitor.setRoll(-Telemetry.roll);
         monitor.setPitch(Telemetry.pitch);
-        monitor.setYaw(yaw);//Telemetry.heading);
+        monitor.setYaw(Telemetry.heading);
         monitor.setHeight(Telemetry._alt);
     }
     //-------------------------------------------------------------------------------------------

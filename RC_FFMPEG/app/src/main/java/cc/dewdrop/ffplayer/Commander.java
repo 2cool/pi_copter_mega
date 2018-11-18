@@ -17,11 +17,12 @@ public class Commander {
     static public boolean settings=false;
     static public float heading=0,yaw=0,roll=0,pitch=0,ax=0,ay=0, throttle =0.5f,c_heading=0,headingOffset=0;
     static public float gx=0,gy=0,gz=0;
-    static public float k0 =1, k1 =1, k4 =1, k3 =1, k5 =1,k6=1,k7=1,k8=1,k9=1,k10=1;
+    //static public float k0 =1, k1 =1, k4 =1, k3 =1, k5 =1,k6=1,k7=1,k8=1,k9=1,k10=1;
+    static public float []sets=new float[10];
     static public int n=0;
     static public boolean link=false;
 
-
+    static final public float NO_DATA=Float.POSITIVE_INFINITY;
     static public float sended_ax=0,sended_ay=0;
     static public byte buf[];
     static public boolean copter_is_busy=true;
@@ -33,7 +34,8 @@ public class Commander {
         heading=ax=ay=roll=pitch=yaw=0;
         throttle =0.5f;
         c_heading=headingOffset=0;
-        k0 =k1 =k4 =k3 =k5 =k6=k7=k8=k9=k10=1;
+        for (int i=0; i<10;i++)
+            sets[i]=NO_DATA;
         n=0;
         link=false;
 
@@ -112,22 +114,23 @@ public class Commander {
 
 
     static private int getSettings(byte buf[],int offset){
+        int i=0;
         String msg = ""  +
                 Integer.toString(n) + "," +
-                Float.toString(k0) + "," +
-                Float.toString(k1) + "," +
-                Float.toString(k3) + "," +
-                Float.toString(k4) + "," +
-                Float.toString(k5) + "," +
-                Float.toString(k6) + "," +
-                Float.toString(k7) + "," +
-                Float.toString(k8) + "," +
-                Float.toString(k9) + "," +
-                Float.toString(k10)+ "," ;
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++]) + "," +
+                Float.toString(sets[i++])+ "," ;
         // Disk.write("SETTINGS:"+msg+"\n");
         // Log.i("OUT_M", msg);
         //  System.arraycopy(msg,0,buf,0,msg.length());
-        for (int i=0; i<msg.length(); i++){
+        for (i=0; i<msg.length(); i++){
             buf[offset+i]=(byte)msg.charAt(i);
         }
         return msg.length();

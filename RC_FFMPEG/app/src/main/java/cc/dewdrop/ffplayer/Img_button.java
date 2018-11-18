@@ -38,11 +38,16 @@ public class Img_button {
     public Img_button(Rect r_, Drawable imgOff_, Drawable imgOn_, boolean toggle_){
         imageOn=imgOn_;
         imageOff=imgOff_;
-
         r=r_;
         imageOn.setBounds(r);
         imageOff.setBounds(r);
+        if (toggle_==false){
+            imageOn.getBounds().top+=2;
+            imageOn.getBounds().left+=2;
+            imageOn.getBounds().bottom-=2;
+            imageOn.getBounds().right-=2;
 
+        }
         toggle=toggle_;
         press=thumb_on=false;
         id=-1;

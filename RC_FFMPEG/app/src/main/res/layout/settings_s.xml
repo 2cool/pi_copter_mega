@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ScrollingActivity"
-    tools:showIn="@layout/activity_scrolling">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
 
@@ -32,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
+
                 android:textAlignment="center" />
 
             <TextView
@@ -81,7 +79,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
+
                 android:textAlignment="center" />
 
             <TextView
@@ -130,7 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
+
                 android:textAlignment="center" />
 
             <TextView
@@ -179,7 +177,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
+
                 android:textAlignment="center" />
 
             <TextView
@@ -228,7 +226,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
+
                 android:textAlignment="center" />
 
             <TextView
@@ -277,7 +275,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
+
                 android:textAlignment="center" />
 
             <TextView
@@ -326,16 +324,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
                 android:textAlignment="center" />
-
             <TextView
                 android:id="@+id/tv6"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
                 android:layout_gravity="right"
-
                 android:text="PITCH_PID"
                 android:gravity="left"
                 android:textAlignment="gravity" />
@@ -358,7 +353,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="15dp" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
@@ -375,7 +369,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
                 android:textAlignment="center" />
 
             <TextView
@@ -384,7 +377,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
                 android:layout_gravity="right"
-
                 android:text="PITCH_PID"
                 android:gravity="left"
                 android:textAlignment="gravity" />
@@ -424,7 +416,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
                 android:textAlignment="center" />
 
             <TextView
@@ -433,7 +424,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
                 android:layout_gravity="right"
-
                 android:text="PITCH_PID"
                 android:gravity="left"
                 android:textAlignment="gravity" />
@@ -473,7 +463,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.7"
-                android:text="0.015"
                 android:textAlignment="center" />
 
             <TextView
@@ -482,7 +471,6 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.3"
                 android:layout_gravity="right"
-
                 android:text="PITCH_PID"
                 android:gravity="left"
                 android:textAlignment="gravity" />
