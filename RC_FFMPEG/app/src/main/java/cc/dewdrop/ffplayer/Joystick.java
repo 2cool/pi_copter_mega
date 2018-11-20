@@ -160,8 +160,20 @@ public class Joystick {
 
     Paint cc;
 
-    public void set_return_back_X(boolean b){return_backX=b;}
-    public void set_return_back_Y(boolean b){return_backY=b;}
+    public void set_return_back_X(boolean b){
+        if (b!=return_backX) {
+            return_backX = b;
+            if (return_backX && index == -1)
+                end();
+        }
+    }
+    public void set_return_back_Y(boolean b){
+        if (b!=return_backY) {
+            return_backY = b;
+            if (return_backY && index == -1)
+                end();
+        }
+    }
     public void set_block_X(boolean b){block_X=b;}
     public void set_block_Y(boolean b){block_Y=b;}
     public Joystick(

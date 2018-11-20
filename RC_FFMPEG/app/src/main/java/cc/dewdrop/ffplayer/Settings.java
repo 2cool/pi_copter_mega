@@ -40,6 +40,12 @@ public class Settings extends AppCompatActivity implements AdapterView.OnItemSel
        // SharedPreferences settings = getPreferences(MODE_PRIVATE);
         Log.i("UPS", "SET_EDIT_TEXT");
         if (upload_anyway || Telemetry.n_settings!=num ||  Telemetry.settings[0]==Commander.NO_DATA) {
+
+
+            new Thread() {
+                @Override
+                public void run() {
+
             Commander.upload_settings = num;//Integer.parseInt(n.getText().toString());
             //   Commander.button="UP"+Integer.parseInt(n.getText().toString());
             Log.i("UPS", "DOWNLOADING SETINGS");
@@ -66,12 +72,26 @@ public class Settings extends AppCompatActivity implements AdapterView.OnItemSel
             if (uploaded==false)
                 for (int i=0; i<10; i++)
                     Telemetry.settings[i] = Commander.NO_DATA;
-            update();
+
+
+                    update();
+                }
+            }.start();
+
+
+
+
         }
 
 
       //  if (flag)
         //    n.setText("" + num);
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        DrawView.turn2MainScreen();
     }
 
     @Override
@@ -169,7 +189,7 @@ public class Settings extends AppCompatActivity implements AdapterView.OnItemSel
             textV[i++]=findViewById(R.id.tv8);
             textV[i++]=findViewById(R.id.tv9);
 
-            download_settings(menu_n,true);
+           // download_settings(menu_n,true);
 
         }catch (Exception e){
             Log.i("ERROR","settings "+e.toString());

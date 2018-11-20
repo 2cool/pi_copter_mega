@@ -77,7 +77,6 @@ enum { CAMMERA_OFF, CAMERA_RECORDING, CAMERA_TRANCLATE };
 
 
 
-
 /*
 chtoby zapustit' strim
 python  Camera_video_stream.py
@@ -148,7 +147,7 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 	aPitch = aRoll = aYaw_=0;
 
 	//was_connected_to_wifi = NO_WIFI_WATCH_DOG_IN_SECONS < 30;
-	control_bits = COMPASS_ON|HORIZONT_ON;
+	control_bits = DEFAULT_STATE;
 	old_control_bits = 0;
 	aPitch = aRoll = 0;
 
@@ -431,10 +430,7 @@ void AutopilotClass::set_new_altitude(float alt){
 bool AutopilotClass::holdAltitude(float alt){
 
 	tflyAtAltitude = flyAtAltitude = alt;
-	if ((control_bits & Z_STAB) == 0){
-		control_bits |= Z_STAB;
-		Stabilization.init_Z();
-	}
+	control_bits |= Z_STAB;
 	//setbuf(stdout, NULL);
 	cout << "FlyAt: " << flyAtAltitude << "\t"<<Mpu.timed << endl;
 
@@ -685,7 +681,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			time_at_startd = Mpu.timed;
 			Telemetry.update_voltage();
 			
-			control_bits = MOTORS_ON;// | HORIZONT_ON | COMPASS_ON;
+			control_bits |= MOTORS_ON;
 
 			cout << "OK" << "\t"<<Mpu.timed<<endl;
 
@@ -696,10 +692,13 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			
 			Mpu.max_g_cnt = 0;
 
-			//holdAltitude(shmPTR->fly_at_start);
-			//holdLocation(GPS.loc.lat_, GPS.loc.lon_);
+			if (control_bits&Z_STAB) 
+				holdAltitude(shmPTR->fly_at_start);
+			
+			if (control_bits&XYSTAB)
+				holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 
-			control_bits |= (HORIZONT_ON | COMPASS_ON);
+			//control_bits |= (HORIZONT_ON | COMPASS_ON);
 
 			Stabilization.resset_z();
 			Stabilization.resset_xy_integrator();
@@ -778,7 +777,7 @@ bool AutopilotClass::off_throttle(const bool force, const string msg){//////////
 		cout << "force motors_off " << msg << ", alt: " << (int)MS5611.altitude() << ", time " << (int)Mpu.timed << endl;
 		Balance.set_off_th_();
 		Telemetry.addMessage(msg);
-		control_bits = 0;
+		control_bits = DEFAULT_STATE;
 		return true;
 	}
 	else{
@@ -948,31 +947,35 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 	}
 
 	if (bits & GIMBAL_PLUS)
-		gimBalPitchADD(5);
+		gimBalPitchADD(1);
 	if (bits & GIMBAL_MINUS)
-		gimBalPitchADD(-5);
-
+		gimBalPitchADD(-1);
 	if (control_bits&CONTROL_FALLING)
 		return false;
 
-	if (bits & GO2HOME)
+	if (control_bits&MOTORS_ON) {
+		if (bits & GO2HOME)
 		going2HomeStartStop(false);
 
-	if (bits & PROGRAM)
-		start_stop_program(true);
+		if (bits & PROGRAM)
+			start_stop_program(true);
 
-	if (bits & Z_STAB)
-		holdAltitudeStartStop();
+		if (bits & Z_STAB)
+			holdAltitudeStartStop();
 
-	if (bits & XY_STAB)
-		holdLocationStartStop();
+		if (bits & XY_STAB)
+			holdLocationStartStop();
 
 
-	if (bits & COMPASS_ON)
-		compass_tr();
+		if (bits & COMPASS_ON)
+			compass_tr();
 
-	if (bits & HORIZONT_ON)
-		horizont_tr();
+		if (bits & HORIZONT_ON)
+			horizont_tr();
+	}
+	else 
+		control_bits ^= bits & (COMPASS_ON | HORIZONT_ON | XY_STAB | Z_STAB);
+	
 	//-----------------------------------------------
 	if (bits & (MPU_ACC_CALIBR | MPU_GYRO_CALIBR)) {
 		if (Mpu.timed > 25) {
@@ -999,8 +1002,6 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 	{
 		reboot();
 	}
-
-
 
 	return true;
 }

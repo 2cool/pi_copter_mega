@@ -12,6 +12,9 @@ enum {
 	GIMBAL_MINUS = 0x4000, REBOOT = 0x8000, M_ON_AND_GO2HOME = 10000, M_ON_AND_PROG_START = 20000
 };
 
+
+#define DEFAULT_STATE (Z_STAB|XY_STAB)
+
 struct Memory {
 
 	bool internet_run;

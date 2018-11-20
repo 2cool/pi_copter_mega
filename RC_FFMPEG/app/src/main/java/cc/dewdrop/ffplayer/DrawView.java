@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -22,12 +21,13 @@ public class DrawView extends View {
     final static int  viewMain=0;
     final static int  viewMenu=1;
 
+    static public Camera_pitch_cntr cam_p_c;
     static public Paint black;
     static public float sm[];
     BatteryMonitor batMon;
-    Joystick j_left,j_right;
+    static Joystick j_left,j_right;
     static public Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,menu;
-    static public Img_button control_type,showMap,showSettings;
+    static public Img_button control_type,showMap,showSettings,hold_alt,smart_ctrl,extra_buttons;
     static public Img_button[]on_off=new Img_button[2];
     static public float maxAngle=35;
     Monitor monitor;
@@ -35,7 +35,7 @@ public class DrawView extends View {
 
     static public Img_button exitMenu,exitProg,reboot,shutdown,comp_calibr,comp_m_calibr,gps_on_off;
     static public Img_button  fpv,vrc,photo;
-    Drawable connectedImg,disconnectedImg;
+
     static Paint green_c = new Paint();
 
     static public boolean is_on_screen_the_menu(){
@@ -69,6 +69,43 @@ public class DrawView extends View {
         int y0=(int)(y*(size+border));
         return new Rect((int)(x0+border),(int)(y0+border),(int)(x0+border+size),(int)(y0+border+size));
     }
+
+
+
+
+    static long updateTime=0;
+    //static private int old_control_bits=0;
+    public static void setButtons(){
+        if (System.currentTimeMillis()>updateTime) {
+            updateTime=System.currentTimeMillis()+100;
+
+
+            cam_p_c.gimbal_pitch_add(0);//update
+
+            on_off[0].enabled(Commander.link);
+            on_off[1].enabled(Commander.link);
+            if (on_off[0].is_pressed()==on_off[1].is_pressed()) {
+                on_off[0].set(MainActivity.motorsOnF());
+                on_off[1].set(MainActivity.motorsOnF());
+            }
+
+            smart_ctrl.set(MainActivity.smartCntrF());
+            hold_alt.set(MainActivity.altHoldF());
+            j_left.set_return_back_Y(MainActivity.altHoldF());
+
+            //  b_toHome.setChecked((control_bits & GO2HOME) != 0);
+
+
+            //   cb_horizont.setChecked((control_bits & HORIZONT_ON)!=0);
+            //  cb_compass.setChecked((control_bits & COMPASS_ON)!=0);
+            //  b_prog.setChecked((control_bits & PROGRAM)!=0);
+
+
+        }
+    }
+
+
+
 
 
     void menu_DrawView(final Context context){
@@ -127,6 +164,8 @@ public class DrawView extends View {
 
 
         setRectX(13);
+        cam_p_c=new Camera_pitch_cntr(new Rect((int)(sm[0]/2-sm[0]/7),(int)(sm[2]/2.4),(int)(sm[0]/2+sm[0]/7),(int)(sm[1])));
+
 
 
 
@@ -146,15 +185,6 @@ public class DrawView extends View {
 
         final int bs=(int)(sm[2]/3);
         final int bs2= (int)(0.5*bs);
-
-
-
-        connectedImg=context.getResources().getDrawable(R.drawable.wifi_on);
-        connectedImg.setBounds(getRect(1,0));
-
-        disconnectedImg=context.getResources().getDrawable(R.drawable.wifi_off);
-        disconnectedImg.setBounds(getRect(1,0));
-
 
         pitch_onoff=new Img_button(getRect(nX-2,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.x_on),
@@ -176,26 +206,26 @@ public class DrawView extends View {
 
 
 
-        control_type=new Img_button(getRect(2,0),
+        control_type=new Img_button(getRect(1,0),
                 context.getResources().getDrawable(R.drawable.touch),
                 context.getResources().getDrawable(R.drawable.gyro),true);
 
 
-        compass_onoff=new Img_button(getRect(3,0),
+        compass_onoff=new Img_button(getRect(2,0),
                 context.getResources().getDrawable(R.drawable.compass_on),
                 context.getResources().getDrawable(R.drawable.compass_off),true);
 
-        fpv =new Img_button(getRect(4,0),
+        fpv =new Img_button(getRect(3,0),
                 context.getResources().getDrawable(R.drawable.fpv_off),
                 context.getResources().getDrawable(R.drawable.fpv),true);
-        vrc =new Img_button(getRect(5,0),
+        vrc =new Img_button(getRect(4,0),
                 context.getResources().getDrawable(R.drawable.vrc_off),
                 context.getResources().getDrawable(R.drawable.vrc_on),true);
-        photo =new Img_button(getRect(6,0),
+        photo =new Img_button(getRect(5,0),
                 context.getResources().getDrawable(R.drawable.photo),
                 context.getResources().getDrawable(R.drawable.photo),false);
 
-        menu=new Img_button(getRect(7,0),
+        menu=new Img_button(getRect(nX-4,0),
                 context.getResources().getDrawable(R.drawable.menu),
                 context.getResources().getDrawable(R.drawable.menu),false);
 
@@ -204,10 +234,27 @@ public class DrawView extends View {
         on_off[0]=new Img_button(getRect(0,0),
                 context.getResources().getDrawable(R.drawable.green),
                 context.getResources().getDrawable(R.drawable.red),true);
+        //on_off[0].enabled(false);
 
         on_off[1]=new Img_button(getRect(nX-1,0),
                 context.getResources().getDrawable(R.drawable.green),
                 context.getResources().getDrawable(R.drawable.red),true);
+        //on_off[0].enabled(false);
+
+        hold_alt=new Img_button(getRect(nX-3,0),
+                context.getResources().getDrawable(R.drawable.alt_hold_offt),
+                context.getResources().getDrawable(R.drawable.alt_hold_on),true);
+        hold_alt.set(true);
+
+        smart_ctrl=new Img_button(getRect(nX-2,0),
+                context.getResources().getDrawable(R.drawable.smart_off),
+                context.getResources().getDrawable(R.drawable.smart_on),true);
+        smart_ctrl.set(true);
+        extra_buttons=new Img_button(getRect(nX/2,0),
+                context.getResources().getDrawable(R.drawable.circle),
+                context.getResources().getDrawable(R.drawable.extra_buttons),true);
+        extra_buttons.set(true);
+
 
 
     }
@@ -230,93 +277,105 @@ public class DrawView extends View {
 
     }
 
-    boolean power_on[]={false,false,false};
-
-    long power_time[]={0,0};
-    int old_telemetry_counter=0;
-    void testPowerButtons(){
-        final int timeout = 100;
-        for (int i=0; i<=1; i++)
-            if (power_time[i]==0 && on_off[i].thumbON() && on_off[i].pressed()!=power_on[i]){
-                power_time[i]=System.currentTimeMillis();
-                power_on[i]^=true;
-            }
-        if (power_on[0]==power_on[1] && power_on[0]!=power_on[2] && power_time[0]>0 && power_time[1]>0 && Math.abs(power_time[0]-power_time[1])<timeout){
-            power_on[2]^=true;
-            MainActivity.command_bits_^=MainActivity.MOTORS_ON;
-            power_time[0]=power_time[1]=0;
-            old_telemetry_counter=Telemetry.telemetry_couter;
 
 
-        }else{
-            for (int i=0; i<=1; i++)
-                if (power_time[i]>0 && System.currentTimeMillis()-power_time[i]>timeout){
-                    power_time[i]=0;
-                    power_on[i]=power_on[2];
-                    on_off[i].set(power_on[i]);
-                }
-        }
-        if (power_time[0]==0 && power_time[1]==0 && Telemetry.telemetry_couter-old_telemetry_counter>1){
-            boolean f=((MainActivity.control_bits&MainActivity.MOTORS_ON)>0);
-            // power_time[2]=0;
-            on_off[0].set(f);
-            on_off[1].set(f);
+
+    private void fpv_start_stop(){
+        if (fpv.is_pressed()) {
+            MainActivity.startVideo();
+            String myIP=Net.getIpAddress();
+            Commander.fpv_addr=(byte)Integer.parseInt(myIP.substring(myIP.lastIndexOf('.')+1));
+            Commander.fpv_port=5544;
+            Commander.fpv_zoom=1;
+            Commander.fpv=true;
+        }else {
+            MainActivity.stopVideo();
+            Commander.fpv_zoom=0;
+            Commander.fpv=true;
         }
     }
+    private void fpv_photo_video(final MotionEvent event){
+        vrc.onTouchEvent(event);
+        if (vrcf != vrc.is_pressed()) {
+            vrcf = vrc.is_pressed();
+            MainActivity.stopVideo();
+            Commander.fpv_code = (short) ((vrcf) ? 513 : 514);
+            Commander.fpv = true;
+
+
+            Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                    MainActivity.startVideo();
+                }
+            };
+            thread.start();
+        }
+        photo.onTouchEvent(event);
+        if (photo.getStat() == 3) {
+            Commander.fpv_code = 769;
+            Commander.fpv = true;
+        }
+    }
+
     static boolean vrcf=false;
     static public boolean thumbed = false;
     boolean main_onTouchEvent(final MotionEvent event){
+
+
+
+        extra_buttons.onTouchEvent(event);
+
+        if (extra_buttons.is_pressed()){
+
+        }
         menu.onTouchEvent(event);
-
-
-
         if (menu.getStat()==3)
             screen=viewMenu;
 
-
-
-
-        if (fpv.pressed()) {
-            vrc.onTouchEvent(event);
-            if (vrcf != vrc.pressed()) {
-                vrcf = vrc.pressed();
-                MainActivity.stopVideo();
-                Commander.fpv_code = (short) ((vrcf) ? 513 : 514);
-                Commander.fpv = true;
-
-
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt();
-                        }
-                        MainActivity.startVideo();
-                    }
-                };
-                thread.start();
-
-
-
-
-
+        smart_ctrl.onTouchEvent(event);
+        if (smart_ctrl.getStat()==3 ){
+            if (smart_ctrl.is_pressed()) {
+                hold_alt.set(true);
+                if (MainActivity.altHoldF()==false)
+                    MainActivity.altHold();
             }
-
-            photo.onTouchEvent(event);
-            if (photo.getStat() == 3) {
-                Commander.fpv_code = 769;
-                Commander.fpv = true;
-            }
+            MainActivity.smartCtrl();
         }
+
+        hold_alt.onTouchEvent(event);
+        if (hold_alt.getStat()==3)
+            MainActivity.altHold();
+
+
+
+
+
+        if (fpv.is_pressed())
+            fpv_photo_video(event);
+
         yaw_onoff.onTouchEvent(event);
         desc_onoff.onTouchEvent(event);
         pitch_onoff.onTouchEvent(event);
         roll_onoff.onTouchEvent(event);
         control_type.onTouchEvent(event);
+
         on_off[0].onTouchEvent(event);
         on_off[1].onTouchEvent(event);
+
+        int stat1=0,stat2=0;
+        if ( on_off[0].is_pressed()==on_off[1].is_pressed() && MainActivity.motorsOnF()!=on_off[0].is_pressed() &&
+                ((stat1=on_off[0].getStat())==3 || (stat2=on_off[1].getStat())==3)) {//[0].pressed()!=MainActivity.motorsOnF())
+            MainActivity.start_stop();
+            Log.d("PWR","PWR+"+Integer.toString(stat1)+" "+Integer.toString(stat2));
+        }
+
+
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
         compass_onoff.onTouchEvent(event);
@@ -325,31 +384,19 @@ public class DrawView extends View {
         //  Log.d("BUTTON","YES");
         // событие
 
-        j_left.set_block_X(yaw_onoff.pressed());
-        j_left.set_block_Y(desc_onoff.pressed());
+        j_left.set_block_X(yaw_onoff.is_pressed());
+        j_left.set_block_Y(desc_onoff.is_pressed());
         //
-        if (control_type.pressed()==false) {
-            j_right.set_block_X(pitch_onoff.pressed());
-            j_right.set_block_Y(roll_onoff.pressed());
+        if (control_type.is_pressed()==false) {
+            j_right.set_block_X(pitch_onoff.is_pressed());
+            j_right.set_block_Y(roll_onoff.is_pressed());
         }
 
-        if (fpv.getStat()==3) {
-            if (fpv.pressed()) {
-                MainActivity.startVideo();
-                String myIP=Net.getIpAddress();
-                Commander.fpv_addr=(byte)Integer.parseInt(myIP.substring(myIP.lastIndexOf('.')+1));
-                Commander.fpv_port=5544;
-                Commander.fpv_zoom=1;
-                Commander.fpv=true;
-            }else {
-                MainActivity.stopVideo();
-                Commander.fpv_zoom=0;
-                Commander.fpv=true;
-            }
-        }
-
+        if (fpv.getStat()==3)
+            fpv_start_stop();
 
         mScaleGestureDetector.onTouchEvent(event);
+        cam_p_c.onTouchEvent(event);
 
 
         // invalidate();
@@ -418,11 +465,14 @@ public class DrawView extends View {
     float pitch,roll,yaw,speed,hight;
 
     void main_onDraw(final Canvas c){
-        testPowerButtons();
 
-        ((Commander.link)?connectedImg:disconnectedImg).draw(c);
+        extra_buttons.paint(c);
+        if (extra_buttons.is_pressed()){
 
-        if (control_type.pressed()) {
+        }
+
+
+        if (control_type.is_pressed()) {
             j_right.setJosticY((float) (MainActivity.pitch / maxAngle));
             j_right.setJosticX((float) (MainActivity.roll  / maxAngle));
         }
@@ -461,11 +511,16 @@ public class DrawView extends View {
         on_off[1].paint(c);
         batMon.paint(c);
         fpv.paint(c);
+        smart_ctrl.paint(c);
+        hold_alt.paint(c);
 
-        if (fpv.pressed()) {
+        if (fpv.is_pressed()) {
             vrc.paint(c);
             photo.paint(c);
         }
+
+
+        cam_p_c.paint(c);
 
     }
     void menu_onDraw(final Canvas c){
@@ -487,7 +542,7 @@ public class DrawView extends View {
         super.onDraw(c);
         //
 
-        if (fpv.pressed()==false)
+        if (fpv.is_pressed()==false)
             c.drawRect(0,0,sm[0],sm[1],black);
 
         switch(screen) {

@@ -6,20 +6,22 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.MotionEvent;
 
 public class Img_button {
     private Drawable imageOn,imageOff;
 
-    private boolean press;
+    private boolean pressed;
     private boolean thumb_on;
     private boolean toggle;
     private int status;
+    private boolean enabled=true;
+    private long last_time=0;
 
+    public boolean is_pressed(){
 
-    public boolean pressed(){
-
-        return press;
+        return pressed;
     }
     public int getStat(){
         int stat=status;
@@ -31,13 +33,30 @@ public class Img_button {
         return thumb_on;
     }
     public void set(boolean b){
-        press=b;
+        status=0;
+        thumb_on=false;
+        pressed=b;
     }
     Rect r;
     private int id;
+    public void enabled(boolean b){
+        enabled=b;
+        if (b==false) {
+            status=0;
+            pressed=false;
+            thumb_on=false;
+            imageOn.setAlpha(60);
+            imageOff.setAlpha(60);
+        }else{
+            imageOn.setAlpha( 255);
+            imageOff.setAlpha(255);
+        }
+    }
     public Img_button(Rect r_, Drawable imgOff_, Drawable imgOn_, boolean toggle_){
-        imageOn=imgOn_;
-        imageOff=imgOff_;
+
+        imageOn= imgOn_.mutate().getConstantState().newDrawable();
+        imageOff= imgOff_.mutate().getConstantState().newDrawable();
+
         r=r_;
         imageOn.setBounds(r);
         imageOff.setBounds(r);
@@ -47,14 +66,17 @@ public class Img_button {
             imageOn.getBounds().bottom-=2;
             imageOn.getBounds().right-=2;
 
+
         }
         toggle=toggle_;
-        press=thumb_on=false;
+        pressed=thumb_on=false;
         id=-1;
 
     }
 
     public boolean onTouchEvent(MotionEvent event) {
+        if (enabled==false || System.currentTimeMillis()-last_time<300)
+            return true;
         boolean ret=false;
         // событие
         int actionMask = event.getActionMasked();
@@ -73,11 +95,11 @@ public class Img_button {
 
                 if  (id<0){
                     if ( gx>=r.left && gx<=r.right && gy>=r.top && gy<=r.bottom) {
-                        press^=true;
                         thumb_on=true;
                         status=1;
                         id= event.getPointerId(pointerIndex);
                         ret=true;
+                        Log.d("IMBNT","down");
                     }
 
 
@@ -90,12 +112,16 @@ public class Img_button {
 
                 if (id==event.getPointerId(pointerIndex)) {
                     if (gx >= r.left && gx <= r.right && gy >= r.top && gy <= r.bottom) {
-                        press ^= (toggle)?false:true;//pressDown & true;
+                        last_time=System.currentTimeMillis();
+                        if (toggle)
+                            pressed^=true;
                         thumb_on=false;
                         id=-1;
                         status=3;
                         ret=true;
-                    }
+                        Log.d("BUTTON","up");
+                    }else
+                        status=0;
 
                 }
                 break;
@@ -103,7 +129,6 @@ public class Img_button {
 
                 if (id==event.getPointerId(pointerIndex)) {
                     if (!(gx >= r.left && gx <= r.right && gy >= r.top && gy <= r.bottom)) {
-                        press ^= (toggle)?false:true;//pressDown & true;
                         thumb_on=false;
                         id=-1;
                         status=2;
@@ -120,7 +145,7 @@ public class Img_button {
     public void paint(Canvas c) {
 
 
-        (press?imageOn:imageOff).draw(c);
+        (pressed?imageOn:imageOff).draw(c);
 
 
     }

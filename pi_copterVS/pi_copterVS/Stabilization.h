@@ -79,7 +79,7 @@ public:
 	long get_sX_mul_100(){return (long)(sX * 100); 	}
 	long get_sY_mul_100(){ return (long)(sY * 100); }
 	void init_XY(const float sx, const float sy);
-	void init_Z();
+	
 	float XY_KF_SPEED, XY_KF_DIST;
 	
 	

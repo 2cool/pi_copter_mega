@@ -227,19 +227,7 @@ void StabilizationClass::XY(float &pitch, float&roll,bool onlyUpdate){
 
 float old_altitude = 0;
 
-
-
-
-void StabilizationClass::init_Z(){
-	sZ = MS5611.altitude();
-	//speedZ = speedz;
-	//Stabilization.resset_z();
-
-}
-
 //int tttcnt = 0;
-
-
 
 float StabilizationClass::Zgps() {
 

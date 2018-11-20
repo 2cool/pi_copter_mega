@@ -51,6 +51,9 @@ public class MainActivity extends Activity  implements SensorEventListener {
     static public int control_bits=0;
     static public int command_bits_=0;
     private static boolean secure_flug=false;
+
+
+
     static boolean progF(){return (PROGRAM&control_bits)!=0;}
     static boolean toHomeF(){return (GO2HOME&control_bits)!=0;}
     static boolean motorsOnF(){return (MOTORS_ON&control_bits)!=0;}
@@ -71,6 +74,32 @@ public class MainActivity extends Activity  implements SensorEventListener {
 
 
 
+
+    public static void smartCtrl(){command_bits_|=XY_STAB; }
+    public static void Prog(){command_bits_|=PROGRAM; }
+    public static void toHome() {command_bits_|=GO2HOME;}
+    public static void altHold(){command_bits_|=Z_STAB;}
+
+
+
+
+
+
+
+    public static void camera_gimb_plus(){
+        command_bits_|=GIMBAL_PLUS;
+    }
+    public static void camera_gimb_minus(){
+        command_bits_|=GIMBAL_MINUS;
+    }
+
+
+
+    public static void start_stop(){
+        command_bits_|=MOTORS_ON;
+        Commander.heading=(float)heading_t;
+        Log.d("PWR","PWR");
+    }
 
 
      void exit(){
@@ -178,7 +207,7 @@ public static void verifyPermissions(Activity activity){
 }
 
     void openSettings(){
-        DrawView.turn2MainScreen();
+      //  DrawView.turn2MainScreen();
         Intent myIntent = new Intent(this, Settings.class);
         this.startActivity(myIntent);
     }
@@ -240,7 +269,7 @@ public static void verifyPermissions(Activity activity){
             mScaleFactor *= scaleGestureDetector.getScaleFactor();
             mScaleFactor = Math.max(1f, Math.min(mScaleFactor, 4));
            // Log.d("SCALE",Float.toString((mScaleFactor-1)*33.667f+1));
-            if (DrawView.fpv.pressed()){
+            if (DrawView.fpv.is_pressed()){
                 byte zoom=(byte)((mScaleFactor-1)*33.667f+1);
                 if (zoom!=Commander.fpv_zoom){
                     Commander.fpv_zoom=zoom;
@@ -308,7 +337,7 @@ public static void verifyPermissions(Activity activity){
                     }
                     if (MainActivity.drawView != null ){//&& update) {
                         update=false;
-                        MainActivity.drawView.postInvalidate();
+
                         if (DrawView.showMap.getStat()==3)
                             openMap();
                         if (DrawView.showSettings.getStat()==3)
@@ -320,11 +349,15 @@ public static void verifyPermissions(Activity activity){
                         if (DrawView.shutdown.getStat()==3)
                             command_bits_|=SHUTDOWN;
                         if (DrawView.gps_on_off.getStat()==3){
-                            if (DrawView.gps_on_off.pressed())
+                            if (DrawView.gps_on_off.is_pressed())
                                 startService(new Intent(MainActivity.this, GPSservice.class));
                             else
                                 stopService(new Intent(MainActivity.this, GPSservice.class));
                         }
+                        DrawView.setButtons();
+
+                        MainActivity.drawView.postInvalidate();
+
                     }
                 }
             }
@@ -405,7 +438,7 @@ public static void verifyPermissions(Activity activity){
 
             //az=midZ.get(event.values[2]*k/10f);
 
-            update=DrawView.control_type.pressed();
+            update=DrawView.control_type.is_pressed();
 
         }
 
