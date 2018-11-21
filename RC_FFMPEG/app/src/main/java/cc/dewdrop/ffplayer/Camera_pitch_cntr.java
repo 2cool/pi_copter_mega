@@ -22,10 +22,16 @@ public class Camera_pitch_cntr {
         gray_opaq.setStyle(Paint.Style.STROKE);
         gray_opaq.setStrokeWidth(1);
     }
+
+
+   // Commander.fpv_zoom
     final int pixel2angle=11;
     private int buf2send=0;
     public float gimbal_pitch_add(float dy){
-        int d_ang=(int)(dy/pixel2angle);
+        final double zoom=Math.max(0,Math.min(255,Commander.fpv_zoom));
+        final double _pixel2angle=pixel2angle/((zoom/28.3)+1);
+
+        final int d_ang=(int)(dy/_pixel2angle);
         buf2send+=d_ang;
 
         if (buf2send>0){
@@ -35,7 +41,7 @@ public class Camera_pitch_cntr {
             MainActivity.camera_gimb_plus();
             buf2send++;
         }
-        return pixel2angle*d_ang;
+        return (float)_pixel2angle*d_ang;
     }
 
 

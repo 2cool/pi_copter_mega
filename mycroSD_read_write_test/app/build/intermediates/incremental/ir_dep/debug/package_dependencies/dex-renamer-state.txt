@@ -1,4 +1,0 @@
-#Fri Nov 09 22:37:23 EET 2018
-base.0=C\:\\Users\\Igor\\pi_copter_mega\\mycroSD_read_write_test\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\10
-path.0=classes.dex
-renamed.0=classes.dex

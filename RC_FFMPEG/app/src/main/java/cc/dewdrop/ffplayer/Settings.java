@@ -14,13 +14,20 @@ import android.widget.TextView;
 public class Settings extends AppCompatActivity implements AdapterView.OnItemSelectedListener,SeekBar.OnSeekBarChangeListener{
 
     String _null="";
+
+
+    final int seek_bar_default_progress=50;
+    final double seek_bar_default_change=0.2;
+    /*
+    "name,max,progress in percent,change in percent" or only "name"
+     */
     String a[][]={
             {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE","powerK"},
             {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","MAX_SPEED_P","MAX_SPEED_M","CF_SPEED","CF_DIST","FILTR",_null},
             {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","max_speed","KF_SPEED","KF_DIST","FILTR",_null,_null},
             {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z"},
             {"DRAG_K","_0007","tiltPower_CF",_null,_null,_null,_null,_null,_null,_null},
-            {"m power on",_null,_null,_null,_null,_null,_null,_null,_null,_null},
+            {"m power on,1,0,100",_null,_null,_null,_null,_null,_null,_null,_null,_null},
             {"vedeoAdr","ppp_inet","telegram",_null,_null,_null,_null,_null,_null,_null}
 
     };
@@ -110,13 +117,23 @@ public class Settings extends AppCompatActivity implements AdapterView.OnItemSel
         Log.i("UPS", "UPDATE");
         int i=0;
         for (; i<10; i++) {
-            seek_bar[i].setProgress(50);
-            textV[i+10].setText(a[menu_n][i]);
+
+            String f[]=a[menu_n][i].split(",");
+            textV[i+10].setText(f[0]);
             if (Telemetry.settings[i] != Commander.NO_DATA) {
                 textV[i].setText(Float.toString(Telemetry.settings[i]));
                 textV[i+10].setEnabled(true);
                 textV[i].setEnabled(true);
                 seek_bar[i].setEnabled(true);
+                if (f.length>=3) {
+                    double max=Float.parseFloat(f[1]);
+                    double progress=max*0.01*Float.parseFloat(f[2]);
+                    seek_bar[i].setMax((int)max);
+                    seek_bar[i].setProgress((int)progress);
+                }else{
+                    seek_bar[i].setMax(seek_bar_default_progress*2);
+                    seek_bar[i].setProgress(seek_bar_default_progress);
+                }
             }
             else {
                 textV[i].setText("");
@@ -189,6 +206,7 @@ public class Settings extends AppCompatActivity implements AdapterView.OnItemSel
             textV[i++]=findViewById(R.id.tv8);
             textV[i++]=findViewById(R.id.tv9);
 
+            update();
            // download_settings(menu_n,true);
 
         }catch (Exception e){
@@ -227,10 +245,19 @@ public class Settings extends AppCompatActivity implements AdapterView.OnItemSel
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+
+        double dk=seek_bar_default_progress;
+        double maxChange=seek_bar_default_change;
         int i=seekBar.getId()-seek_bar[0].getId();
+        String sf[]=a[menu_n][i].split(",");
+        if (sf.length>=4) {
+           dk= 0.5*Float.parseFloat(sf[1]);
+            maxChange=0.01*Float.parseFloat(sf[3]);
+        }
 
         double f=Telemetry.settings[i];
-        double k=0.2*(50-progress)/50.0;
+        double k=maxChange*(dk-progress)/dk;
         f-=f*k;
         textV[i].setText(Float.toString((float)(f)));
     }

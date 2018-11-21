@@ -15,7 +15,7 @@ public class DrawView extends View {
 
 
 
-
+    static public double wrap_180(double x) {return (x < -180 ? x+360 : (x > 180 ? x - 360: x));}
     public static ScaleGestureDetector mScaleGestureDetector;
 
     final static int  viewMain=0;
@@ -338,6 +338,9 @@ public class DrawView extends View {
         if (menu.getStat()==3)
             screen=viewMenu;
 
+
+
+        control_type.onTouchEvent(event);
         smart_ctrl.onTouchEvent(event);
         if (smart_ctrl.getStat()==3 ){
             if (smart_ctrl.is_pressed()) {
@@ -359,39 +362,39 @@ public class DrawView extends View {
         if (fpv.is_pressed())
             fpv_photo_video(event);
 
-        yaw_onoff.onTouchEvent(event);
+
+
+
         desc_onoff.onTouchEvent(event);
+        if (desc_onoff.getStat()==3)
+            j_left.set_block_Y(desc_onoff.is_pressed());
+        yaw_onoff.onTouchEvent(event);
+        if (yaw_onoff.getStat()==3)
+            j_left.set_block_X(yaw_onoff.is_pressed());
         pitch_onoff.onTouchEvent(event);
+        if (pitch_onoff.getStat()==3)
+            j_right.set_block_X(pitch_onoff.is_pressed());
         roll_onoff.onTouchEvent(event);
-        control_type.onTouchEvent(event);
+        if (roll_onoff.getStat()==3)
+            j_right.set_block_Y(roll_onoff.is_pressed());
+
 
         on_off[0].onTouchEvent(event);
         on_off[1].onTouchEvent(event);
 
-        int stat1=0,stat2=0;
-        if ( on_off[0].is_pressed()==on_off[1].is_pressed() && MainActivity.motorsOnF()!=on_off[0].is_pressed() &&
-                ((stat1=on_off[0].getStat())==3 || (stat2=on_off[1].getStat())==3)) {//[0].pressed()!=MainActivity.motorsOnF())
-            MainActivity.start_stop();
-            Log.d("PWR","PWR+"+Integer.toString(stat1)+" "+Integer.toString(stat2));
-        }
 
+        if ( on_off[0].is_pressed()==on_off[1].is_pressed() && MainActivity.motorsOnF()!=on_off[0].is_pressed() &&
+                ((on_off[0].getStat())==3 || (on_off[1].getStat())==3)) {
+            MainActivity.start_stop();
+            //Log.d("PWR","PWR+"+Integer.toString(stat1)+" "+Integer.toString(stat2));
+        }
 
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
+
         compass_onoff.onTouchEvent(event);
+
         fpv.onTouchEvent(event);
-        //  if (bt.pressed())
-        //  Log.d("BUTTON","YES");
-        // событие
-
-        j_left.set_block_X(yaw_onoff.is_pressed());
-        j_left.set_block_Y(desc_onoff.is_pressed());
-        //
-        if (control_type.is_pressed()==false) {
-            j_right.set_block_X(pitch_onoff.is_pressed());
-            j_right.set_block_Y(roll_onoff.is_pressed());
-        }
-
         if (fpv.getStat()==3)
             fpv_start_stop();
 
@@ -458,45 +461,57 @@ public class DrawView extends View {
         monitor.setSpeed(Telemetry.speed);
         monitor.setRoll(-Telemetry.roll);
         monitor.setPitch(Telemetry.pitch);
-        monitor.setYaw(Telemetry.heading);
+        monitor.setYaw(yaw);//Telemetry.heading);
         monitor.setHeight(Telemetry._alt);
     }
     //-------------------------------------------------------------------------------------------
+
+
+
+
     float pitch,roll,yaw,speed,hight;
 
+
+
+    double old_yaw=0;
+    double ang_speed=0;
+    double ma_pitch=0,ma_roll=0;
     void main_onDraw(final Canvas c){
 
+
+        j_left.set_return_back_Y(hold_alt.is_pressed());
+
         extra_buttons.paint(c);
-        if (extra_buttons.is_pressed()){
-
-        }
 
 
+        final double da=wrap_180(MainActivity.heading_t-old_yaw);
+        ang_speed += (2.7777*da/MainActivity.updateTimeMsec - ang_speed)*0.1;
+        old_yaw=MainActivity.heading_t;
+        ma_pitch+=(MainActivity.pitch / maxAngle - ma_pitch)*0.1;
+        ma_roll+=(MainActivity.roll  / maxAngle - ma_roll)*0.1;
         if (control_type.is_pressed()) {
-            j_right.setJosticY((float) (MainActivity.pitch / maxAngle));
-            j_right.setJosticX((float) (MainActivity.roll  / maxAngle));
+            j_right.setJosticY((float) (ma_pitch));
+            j_right.setJosticX((float) (ma_roll));
+            //упроавление джостиком для YAW прсото для визуалицации процесса и не на что не влияет.
+            j_left.setJosticX((float) ang_speed);
+            yaw = (float) MainActivity.heading_t;//!!!
+        }else{
+            yaw+=j_left.getX()*0.360*MainActivity.updateTimeMsec; //1 оборот в сек.
+            while (yaw>360) yaw-=360;
+            while (yaw<-360)yaw+=360;
         }
         batMon.setVoltage(0.25f*Telemetry.batVolt);
 
 
         Commander.throttle=0.5f+(j_left.getY())/2;
-        yaw+=j_left.getX()*0.360*MainActivity.updateTimeMsec;
-        while (yaw>360) yaw-=360;
-        while (yaw<-360)yaw+=360;
-        Commander.roll=j_right.getX()*maxAngle;
-        Commander.pitch=-j_right.getY()*maxAngle;
-        Commander.heading=yaw;
 
-       // Log.d("COMM","Yaw="+Float.toString(yaw)+". Roll="+Float.toString(Commander.roll));
-        // pitch+=(j_right.getY()*maxAngle-pitch)*0.03f;
-        // speed=-pitch;
 
-        // roll+=(j_right.getX()*maxAngle-roll)*0.03f;
-        //  yaw+=j_left.getX()*3;
-        //  hight-=j_left.getY()*0.1;
+        Commander.roll  =  j_right.getX()*maxAngle;
+        Commander.pitch = -j_right.getY()*maxAngle;
+        if (!yaw_onoff.is_pressed())
+            Commander.heading=(float)wrap_180(yaw);
 
         setMonitor();
-
         monitor.paint(c);
         yaw_onoff.paint(c);
         desc_onoff.paint(c);

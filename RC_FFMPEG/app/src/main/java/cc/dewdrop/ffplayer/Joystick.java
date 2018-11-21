@@ -15,27 +15,14 @@ public class Joystick {
     private float trackX,trackY,old_posX,old_posY,shiftX,shiftY;
     private float jx,jy;
     private int index;
-
     public float getX(){return jx;}
     public float getY(){return -jy;}
     public void setLabel(String s){label=s;}
     public float setJosticX(float x){
-        jx=x;
-        if (jx>1)
-            jx=1;
-        else if (jx<-1)
-            jx=-1;
-
-        return jx;
+        return jx=(block_X)?0: Math.min(1,Math.max(-1,x));
     }
     public float setJosticY(float y){
-        jy=y;
-        if (jy>1)
-            jy=1;
-        else if (jy<-1)
-            jy=-1;
-
-        return jy;
+        return jy=(block_Y)?0: Math.min(1,Math.max(-1,y));
     }
 
     private boolean setX(float xp){
@@ -50,7 +37,7 @@ public class Joystick {
     private boolean setY(float yp){
         float t_jy=(yp-y-size*0.5f)/(size*0.5f);
         if (t_jy<=1 && t_jy>=-1){
-            jy=t_jy;
+            jy= t_jy;
             return true;
         }else
             return false;
