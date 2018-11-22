@@ -5,10 +5,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+
+import cc.dewdrop.ffplayer.myTools.BatteryMonitor;
+import cc.dewdrop.ffplayer.myTools.Camera_pitch_cntr;
+import cc.dewdrop.ffplayer.myTools.Img_button;
+import cc.dewdrop.ffplayer.myTools.Joystick;
+import cc.dewdrop.ffplayer.myTools.Monitor;
+import cc.dewdrop.ffplayer.myTools.Square_Cells;
 
 public class DrawView extends View {
 
@@ -45,30 +51,7 @@ public class DrawView extends View {
         screen=viewMain;
     }
 
-    /*
-    |1 2 3 4 ....... -4 -3 -2 -1|
-     if need middle pos then 0
-
-
-     */
-   // static float RectSize=3.8f;
-    static float RectBorder=0.3f;
-    static float RectSize;
-    static int nX,nY;
-    static double size;
-    static double border;
-    static public void setRectX(int x){
-        RectSize=sm[0]/x;
-        nX=x;
-        nY=(int)(sm[1]/RectSize);
-        border=RectSize*RectBorder;
-        size=(sm[0]-(border+1)*nX)/nX;
-    }
-    static public Rect getRect(double x, double y){
-        int x0=(int)(x*(size+border));
-        int y0=(int)(y*(size+border));
-        return new Rect((int)(x0+border),(int)(y0+border),(int)(x0+border+size),(int)(y0+border+size));
-    }
+    Square_Cells sc;
 
 
 
@@ -80,7 +63,7 @@ public class DrawView extends View {
             updateTime=System.currentTimeMillis()+100;
 
 
-            cam_p_c.gimbal_pitch_add(0);//update
+            cam_p_c.gimbal_pitch_add(0,Commander.fpv_zoom);//update
 
             on_off[0].enabled(Commander.link);
             on_off[1].enabled(Commander.link);
@@ -111,45 +94,40 @@ public class DrawView extends View {
     void menu_DrawView(final Context context){
 
 
-
-
-        setRectX(9);
-
-        exitMenu =new Img_button(getRect(0,0),
+        sc=new Square_Cells(9,0,0.3f,sm);
+        int nX=sc.getMaxX();
+        int nY=sc.getMaxY();
+        exitMenu =new Img_button(sc.getRect(0,0),
                 context.getResources().getDrawable(R.drawable.left),
                 context.getResources().getDrawable(R.drawable.left),false);
 
-
-
-
-
-        exitProg=new Img_button(getRect(0,1),
+        exitProg=new Img_button(sc.getRect(0,1),
                 context.getResources().getDrawable(R.drawable.exit),
                 context.getResources().getDrawable(R.drawable.exit),false);
 
-        reboot=new Img_button(getRect(nX-1,1),
+        reboot=new Img_button(sc.getRect(nX-1,1),
                 context.getResources().getDrawable(R.drawable.reboot),
                 context.getResources().getDrawable(R.drawable.reboot),false);
 
-        shutdown=new Img_button(getRect(nX-1,0),
+        shutdown=new Img_button(sc.getRect(nX-1,0),
                 context.getResources().getDrawable(R.drawable.shutdown),
                 context.getResources().getDrawable(R.drawable.shutdown),false);
-        comp_calibr=new Img_button(getRect(nX/2,0),
+        comp_calibr=new Img_button(sc.getRect(nX/2,0),
                 context.getResources().getDrawable(R.drawable.compass_on),
                 context.getResources().getDrawable(R.drawable.compass_on),true);
-        comp_m_calibr=new Img_button(getRect(nX/2,1),
+        comp_m_calibr=new Img_button(sc.getRect(nX/2,1),
                 context.getResources().getDrawable(R.drawable.comp_m_c),
                 context.getResources().getDrawable(R.drawable.comp_m_c),true);
-        gps_on_off=new Img_button(getRect(nX/2,2),
+        gps_on_off=new Img_button(sc.getRect(nX/2,2),
                 context.getResources().getDrawable(R.drawable.gps_off),
                 context.getResources().getDrawable(R.drawable.gps),true);
 
 
 
-        showMap =new Img_button(getRect(nX/2,3),
+        showMap =new Img_button(sc.getRect(nX/2,3),
                 context.getResources().getDrawable(R.drawable.route),
                 context.getResources().getDrawable(R.drawable.route),false);
-        showSettings=new Img_button(getRect(1,0),
+        showSettings=new Img_button(sc.getRect(1,0),
                 context.getResources().getDrawable(R.drawable.settings),
                 context.getResources().getDrawable(R.drawable.settings),false);
 
@@ -163,7 +141,9 @@ public class DrawView extends View {
         final float monSize=bR/2.5f;
 
 
-        setRectX(13);
+        sc=new Square_Cells(13,0,0.3f,sm);
+        int nX=sc.getMaxX();
+        int nY=sc.getMaxY();
         cam_p_c=new Camera_pitch_cntr(new Rect((int)(sm[0]/2-sm[0]/7),(int)(sm[2]/2.4),(int)(sm[0]/2+sm[0]/7),(int)(sm[1])));
 
 
@@ -186,71 +166,71 @@ public class DrawView extends View {
         final int bs=(int)(sm[2]/3);
         final int bs2= (int)(0.5*bs);
 
-        pitch_onoff=new Img_button(getRect(nX-2,jbuttonsY),
+        pitch_onoff=new Img_button(sc.getRect(nX-2,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.x_on),
                 context.getResources().getDrawable(R.drawable.x_off),true);
 
-        roll_onoff=new Img_button(getRect(nX-1,jbuttonsY),
+        roll_onoff=new Img_button(sc.getRect(nX-1,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.y_on),
                 context.getResources().getDrawable(R.drawable.y_off),true);
 
 
 
-        yaw_onoff=new Img_button(getRect(1,jbuttonsY),
+        yaw_onoff=new Img_button(sc.getRect(1,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.x_on),
                 context.getResources().getDrawable(R.drawable.x_off),true);
 
-        desc_onoff=new Img_button(getRect(0,jbuttonsY),
+        desc_onoff=new Img_button(sc.getRect(0,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.y_on),
                 context.getResources().getDrawable(R.drawable.y_off),true);
 
 
 
-        control_type=new Img_button(getRect(1,0),
+        control_type=new Img_button(sc.getRect(1,0),
                 context.getResources().getDrawable(R.drawable.touch),
                 context.getResources().getDrawable(R.drawable.gyro),true);
 
 
-        compass_onoff=new Img_button(getRect(2,0),
+        compass_onoff=new Img_button(sc.getRect(2,0),
                 context.getResources().getDrawable(R.drawable.compass_on),
                 context.getResources().getDrawable(R.drawable.compass_off),true);
 
-        fpv =new Img_button(getRect(3,0),
+        fpv =new Img_button(sc.getRect(3,0),
                 context.getResources().getDrawable(R.drawable.fpv_off),
                 context.getResources().getDrawable(R.drawable.fpv),true);
-        vrc =new Img_button(getRect(4,0),
+        vrc =new Img_button(sc.getRect(4,0),
                 context.getResources().getDrawable(R.drawable.vrc_off),
                 context.getResources().getDrawable(R.drawable.vrc_on),true);
-        photo =new Img_button(getRect(5,0),
+        photo =new Img_button(sc.getRect(5,0),
                 context.getResources().getDrawable(R.drawable.photo),
                 context.getResources().getDrawable(R.drawable.photo),false);
 
-        menu=new Img_button(getRect(nX-4,0),
+        menu=new Img_button(sc.getRect(nX-4,0),
                 context.getResources().getDrawable(R.drawable.menu),
                 context.getResources().getDrawable(R.drawable.menu),false);
 
 
 
-        on_off[0]=new Img_button(getRect(0,0),
+        on_off[0]=new Img_button(sc.getRect(0,0),
                 context.getResources().getDrawable(R.drawable.green),
                 context.getResources().getDrawable(R.drawable.red),true);
         //on_off[0].enabled(false);
 
-        on_off[1]=new Img_button(getRect(nX-1,0),
+        on_off[1]=new Img_button(sc.getRect(nX-1,0),
                 context.getResources().getDrawable(R.drawable.green),
                 context.getResources().getDrawable(R.drawable.red),true);
         //on_off[0].enabled(false);
 
-        hold_alt=new Img_button(getRect(nX-3,0),
+        hold_alt=new Img_button(sc.getRect(nX-3,0),
                 context.getResources().getDrawable(R.drawable.alt_hold_offt),
                 context.getResources().getDrawable(R.drawable.alt_hold_on),true);
         hold_alt.set(true);
 
-        smart_ctrl=new Img_button(getRect(nX-2,0),
+        smart_ctrl=new Img_button(sc.getRect(nX-2,0),
                 context.getResources().getDrawable(R.drawable.smart_off),
                 context.getResources().getDrawable(R.drawable.smart_on),true);
         smart_ctrl.set(true);
-        extra_buttons=new Img_button(getRect(nX/2,0),
+        extra_buttons=new Img_button(sc.getRect(nX/2,0),
                 context.getResources().getDrawable(R.drawable.circle),
                 context.getResources().getDrawable(R.drawable.extra_buttons),true);
         extra_buttons.set(true);
@@ -399,7 +379,7 @@ public class DrawView extends View {
             fpv_start_stop();
 
         mScaleGestureDetector.onTouchEvent(event);
-        cam_p_c.onTouchEvent(event);
+        cam_p_c.onTouchEvent(event,Commander.fpv_zoom);
 
 
         // invalidate();

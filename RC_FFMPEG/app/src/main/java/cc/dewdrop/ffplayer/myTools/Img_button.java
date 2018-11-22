@@ -1,4 +1,4 @@
-package cc.dewdrop.ffplayer;
+package cc.dewdrop.ffplayer.myTools;
 
 import android.graphics.Canvas;
 import android.graphics.Color;

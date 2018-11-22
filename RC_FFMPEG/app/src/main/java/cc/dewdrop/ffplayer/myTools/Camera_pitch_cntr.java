@@ -1,10 +1,12 @@
-package cc.dewdrop.ffplayer;
+package cc.dewdrop.ffplayer.myTools;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.MotionEvent;
+
+import cc.dewdrop.ffplayer.MainActivity;
 
 public class Camera_pitch_cntr {
     private int camera_pitch_index=-1;
@@ -27,8 +29,8 @@ public class Camera_pitch_cntr {
    // Commander.fpv_zoom
     final int pixel2angle=11;
     private int buf2send=0;
-    public float gimbal_pitch_add(float dy){
-        final double zoom=Math.max(0,Math.min(255,Commander.fpv_zoom));
+    public float gimbal_pitch_add(float dy,float fpv_zoom){
+        final double zoom=Math.max(0,Math.min(255,fpv_zoom));
         final double _pixel2angle=pixel2angle/((zoom/28.3)+1);
 
         final int d_ang=(int)(dy/_pixel2angle);
@@ -49,7 +51,7 @@ public class Camera_pitch_cntr {
         c.drawRect(camera_jesture_control,gray_opaq);
     }
 
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event, float fpv_zoom) {
         int actionMask = event.getActionMasked();
         int index = event.getActionIndex();
         final float gx = event.getX(index);
@@ -74,7 +76,7 @@ public class Camera_pitch_cntr {
             case MotionEvent.ACTION_MOVE: // движение
                 if (camera_pitch_index>=0){
 
-                    old_y+=gimbal_pitch_add(gy-old_y);
+                    old_y+=gimbal_pitch_add(gy-old_y, fpv_zoom);
 
                 }
                 break;

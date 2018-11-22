@@ -22,6 +22,9 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 
+import cc.dewdrop.ffplayer.myTools.Img_button;
+import cc.dewdrop.ffplayer.myTools.Square_Cells;
+
 public class DrawMap extends View {
 
     public static ScaleGestureDetector mScaleGestureDetector;
@@ -45,79 +48,40 @@ public class DrawMap extends View {
 
 
 
-    static float RectSize=4f;
-    static float RectBorder=0.3f;
-    static public Rect getRect(double x, double y){
-        int addX=0;
-        int addY=0;
-        double size=sm[2]/RectSize;
-        double border=size*RectBorder;
-        double maxX=Math.floor(sm[0]/(border+size));
-        double maxY=Math.floor(sm[1]/(border+size));
-        double borderX=(sm[0]-maxX*size)/(maxX+1);
-        double borderY=(sm[1]-maxY*size)/(maxY+1);
-        if (x<0)
-            x=maxX+x;
-        else
-        if (x>0)
-            x--;
-        else {
-            x = Math.floor(maxX / 2 - 1);
-            if (maxX/2==Math.ceil(maxX/2)) {
-                addX=(int)(size/2+borderX);
-            }else{
-                x++;
-            }
-        }
-        if (y<0)
-            y=maxY+y;
-        else
-        if (y>0)
-            y--;
-        else
-        {
-            y = Math.floor(maxY / 2 - 1);
-            if (maxY/2==Math.ceil(maxY/2)) {
-                addY=(int)(size/2+borderY);
-            }else{
-                y++;
-            }
-        }
-
-        int x0=addX+(int)(x*(size+borderX)+borderX);
-        int y0=addY+(int)(y*(size+borderY)+borderY);
-        return new Rect(x0,y0,(int)(x0+size),(int)(y0+size));
-    }
 
 
 
-
-
+    int textX,textY;
 
     public DrawMap(Context context) {
         super(context);
 
        sm=Map.screenMetrics;
-        ib_zoom_out=new Img_button(getRect(1,1),
+       Square_Cells sc=new Square_Cells(0,10,0.3f,sm); //scree rotated
+        int nX=sc.getMaxX();
+        int nY=sc.getMaxY();
+        textX=sc.getRectSize();
+        ib_zoom_out=new Img_button(sc.getRect(0,3),
                 context.getResources().getDrawable(R.drawable.minus),
                 context.getResources().getDrawable(R.drawable.minus),false);
 
-        ib_zoom_in=new Img_button(getRect(1,3),
+        ib_zoom_in=new Img_button(sc.getRect(0,4),
                 context.getResources().getDrawable(R.drawable.plus),
                 context.getResources().getDrawable(R.drawable.plus),false);
-        ib_menu=new Img_button(getRect(1,4),
+        ib_menu=new Img_button(sc.getRect(nX-1,1),
                 context.getResources().getDrawable(R.drawable.menu),
                 context.getResources().getDrawable(R.drawable.menu),false);
-        ib_add=new Img_button(getRect(1,5),
+
+        ib_add=new Img_button(sc.getRect(nX-1,3),
                 context.getResources().getDrawable(R.drawable.add_mark),
                 context.getResources().getDrawable(R.drawable.add_mark),false);
-        ib_edit=new Img_button(getRect(1,6),
+        ib_edit=new Img_button(sc.getRect(nX-1,4),
                 context.getResources().getDrawable(R.drawable.edit),
                 context.getResources().getDrawable(R.drawable.edit),false);
-        ib_upload=new Img_button(getRect(1,7),
+        ib_upload=new Img_button(sc.getRect(nX-1,2),
                 context.getResources().getDrawable(R.drawable.upload),
                 context.getResources().getDrawable(R.drawable.upload),false);
-        ib_del=new Img_button(getRect(1,8),
+        ib_del=new Img_button(sc.getRect(nX-1,6),
                 context.getResources().getDrawable(R.drawable.delite),
                 context.getResources().getDrawable(R.drawable.delite),false);
     }
@@ -686,13 +650,13 @@ public class DrawMap extends View {
 
         black.setTextSize(20);
         int yind=50;
-        c.drawText("copter alt. "+MapEdit.getNum((MainActivity.motorsOnF())?Telemetry.relAlt:0,2)+" m.",100,yind,black);
-        c.drawText("lastDot alt. "+MapEdit.getNum(lastAlt1,2)+" m.",100,yind+=20,black);
+        c.drawText("copter alt. "+MapEdit.getNum((MainActivity.motorsOnF())?Telemetry.relAlt:0,2)+" m.",textX,yind,black);
+        c.drawText("lastDot alt. "+MapEdit.getNum(lastAlt1,2)+" m.",textX,yind+=20,black);
 
-        c.drawText("stepLen. "+MapEdit.getNum(lastDist1,2)+" m.",100,yind+=20,black);
-        c.drawText("fullLen. "+MapEdit.getNum(fullDist1,2)+" m.",100,yind+=20,black);
-        c.drawText("Time. "+MapEdit.getNum(fullTime,2)+" s.",100,yind+=20,black);
-        c.drawText("dots. "+Integer.toString(Programmer.size()),100,yind+=20,black);
+        c.drawText("stepLen. "+MapEdit.getNum(lastDist1,2)+" m.",textX,yind+=20,black);
+        c.drawText("fullLen. "+MapEdit.getNum(fullDist1,2)+" m.",textX,yind+=20,black);
+        c.drawText("Time. "+MapEdit.getNum(fullTime,2)+" s.",textX,yind+=20,black);
+        c.drawText("dots. "+Integer.toString(Programmer.size()),textX,yind+=20,black);
         //drawMap(c);
 
 
