@@ -513,7 +513,7 @@ bool MpuClass::loop(){
 	//r_pitch = RAD2GRAD*pitch;
 	//r_roll = RAD2GRAD*roll;
 
-	delay(4);
+	delay(1);
 	gyro_calibratioan = true;
 
 	log_emu();

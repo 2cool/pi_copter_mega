@@ -13,9 +13,10 @@ public class Commander {
     static  final int MPU6050_DLPF_BW_10     =     0x05;
     static final int MPU6050_DLPF_BW_5      =     0x06;
 
-
+    private static int counter=0;
+    public static int get_coutner(){return counter;}
     static public boolean settings=false;
-    static public float heading=0,yaw=0,roll=0,pitch=0,ax=0,ay=0, throttle =0.5f,c_heading=0,headingOffset=0;
+    static public float heading=0,yaw=0,roll=0,pitch=0,ax=0,ay=0, throttle =0.5f,headingOffset=0;
     static public float gx=0,gy=0,gz=0;
     //static public float k0 =1, k1 =1, k4 =1, k3 =1, k5 =1,k6=1,k7=1,k8=1,k9=1,k10=1;
     static public float []sets=new float[10];
@@ -33,7 +34,7 @@ public class Commander {
         settings=false;
         heading=ax=ay=roll=pitch=yaw=0;
         throttle =0.5f;
-        c_heading=headingOffset=0;
+        headingOffset=0;
         for (int i=0; i<10;i++)
             sets[i]=NO_DATA;
         n=0;
@@ -164,7 +165,7 @@ public class Commander {
         //   buf[0]=(byte)MainActivity.command_bits_;
         //  buf[1]=buf[2]=buf[3]=0;
 
-
+        counter++;
         int mask=get32to8bMask(MainActivity.command_bits_);
 
         load_32int2buf(buf,i,MainActivity.command_bits_);
@@ -190,7 +191,7 @@ public class Commander {
 
         final double RANGK=10;
 
-        t=(int)((heading-c_heading)*RANGK);
+        t=(int)(heading*RANGK);
         load_16int2buf(buf, i, t);
         mask^=get16to8bMask(t);
         i+=2;
@@ -200,6 +201,7 @@ public class Commander {
         i+=2;
 
         float tax,tay;
+        /*
         if ((MainActivity.smartCntrF())) {
             tax = ax;
             tay = ay;
@@ -208,10 +210,25 @@ public class Commander {
             tax=(float)(ax*Math.cos(da)-ay*Math.sin(da));
             tay=(float)(ax*Math.sin(da)+ay*Math.cos(da));
         }
+*/
+
+        //tay=(float)(roll*GRAD2RAD);
+        //tax=(float)(pitch*GRAD2RAD);
+
+        ax=pitch;
+        ay=roll;
+
+        if ((MainActivity.smartCntrF())) {
+            tax = ax;
+            tay = ay;
+        }else{
+            double da=GRAD2RAD*(Telemetry.heading-heading);
+            tax=(float)(ax*Math.cos(da)-ay*Math.sin(da));
+            tay=(float)(ax*Math.sin(da)+ay*Math.cos(da));
+        }
 
 
-        tay=(float)(roll*GRAD2RAD);
-        tax=(float)(pitch*GRAD2RAD);
+
 
 
         t = (int) (tax*RAD2GRAD * RANGK);

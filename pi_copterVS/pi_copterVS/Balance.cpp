@@ -302,7 +302,7 @@ void BalanceClass::reset() {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #define MAX_ANGLE_SPEED 360
-#define MAX_YAW_SPEED 60
+#define MAX_YAW_SPEED 180
 //#define MAX_POWER_K_IF_MAX_ANGLE_30 1.12
 
 
@@ -441,13 +441,14 @@ bool BalanceClass::loop()
 				f_[Hmc.motor_index] = 0.5;
 			}
 			else {
+#ifndef FALSE_WIRE
 				if (Mpu.timed - Autopilot.time_at_startd < 5 || Autopilot.time_at_startd - Autopilot.old_time_at_startd > 8) {
 					f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.3;//
 					//if (Mpu.vibration > 3)
 						//Autopilot.off_throttle(true, "VBR");
 
 				}
-
+#endif
 				if (throttle < MIN_THROTTLE_) {
 					reset();
 				}

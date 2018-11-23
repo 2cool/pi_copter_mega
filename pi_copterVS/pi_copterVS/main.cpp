@@ -349,7 +349,7 @@ cout << PROG_VERSION << endl;
 	}
 
 	init_millis_micros();
-	if (millis() > 3000)
+	if (millis() > 31000)
 		return 0;
 
 	shmPTR->in_fly = (shmPTR->control_bits&MOTORS_ON);

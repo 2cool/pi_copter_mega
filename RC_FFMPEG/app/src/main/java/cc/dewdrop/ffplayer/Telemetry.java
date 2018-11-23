@@ -3,6 +3,8 @@ package cc.dewdrop.ffplayer;
 import android.util.Log;
 
 public class Telemetry {
+    private static int  telemetry_couter=0;
+    public static int get_counter(){return telemetry_couter;}
     static public int batVolt;
     static public boolean maxTelemetry=false;
     static private boolean connected=false;
@@ -508,7 +510,7 @@ public class Telemetry {
 
 
 
-    static public int telemetry_couter=0;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     static public void bufferReader_(byte buf[],int buf_len){
         //   Log.d("BUFREAD","bufRead");

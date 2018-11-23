@@ -56,7 +56,7 @@ void GPSClass::loop(){
 
 
 
-	//gpsttime = millis()/100;
+	gpsttime = millis()/100;
 	
 	if (loc.mseconds != gpsttime)
 		loc.mseconds = gpsttime;
@@ -64,7 +64,7 @@ void GPSClass::loop(){
 		return;
 	shmPTR->accuracy_hor_pos_=loc.accuracy_hor_pos_ = 0;
 	shmPTR->accuracy_ver_pos_=loc.accuracy_ver_pos_ = 1;
-	shmPTR->gps_altitude=loc.altitude = Emu.get_alt();
+	shmPTR->gps_altitude_=loc.altitude = Emu.get_alt();
 
 
 

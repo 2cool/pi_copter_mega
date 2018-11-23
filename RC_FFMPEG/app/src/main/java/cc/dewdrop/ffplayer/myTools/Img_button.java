@@ -13,7 +13,6 @@ public class Img_button {
     private Drawable imageOn,imageOff;
 
     private boolean pressed;
-    private boolean thumb_on;
     private boolean toggle;
     private int status;
     private boolean enabled=true;
@@ -29,12 +28,8 @@ public class Img_button {
             status=0;
         return stat;
     }
-    public boolean thumbON(){
-        return thumb_on;
-    }
     public void set(boolean b){
         status=0;
-        thumb_on=false;
         pressed=b;
     }
     Rect r;
@@ -43,8 +38,6 @@ public class Img_button {
         enabled=b;
         if (b==false) {
             status=0;
-            pressed=false;
-            thumb_on=false;
             imageOn.setAlpha(60);
             imageOff.setAlpha(60);
         }else{
@@ -69,7 +62,7 @@ public class Img_button {
 
         }
         toggle=toggle_;
-        pressed=thumb_on=false;
+        pressed=false;
         id=-1;
 
     }
@@ -95,7 +88,6 @@ public class Img_button {
 
                 if  (id<0){
                     if ( gx>=r.left && gx<=r.right && gy>=r.top && gy<=r.bottom) {
-                        thumb_on=true;
                         status=1;
                         id= event.getPointerId(pointerIndex);
                         ret=true;
@@ -115,7 +107,6 @@ public class Img_button {
                         last_time=System.currentTimeMillis();
                         if (toggle)
                             pressed^=true;
-                        thumb_on=false;
                         id=-1;
                         status=3;
                         ret=true;
@@ -129,7 +120,6 @@ public class Img_button {
 
                 if (id==event.getPointerId(pointerIndex)) {
                     if (!(gx >= r.left && gx <= r.right && gy >= r.top && gy <= r.bottom)) {
-                        thumb_on=false;
                         id=-1;
                         status=2;
                         ret=true;

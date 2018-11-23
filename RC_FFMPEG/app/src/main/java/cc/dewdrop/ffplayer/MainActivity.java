@@ -6,15 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -24,18 +20,13 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
-
-import cc.dewdrop.ffplayer.utils.FFUtils;
 
 import cc.dewdrop.ffplayer.widget.FFVideoView;
 
@@ -52,8 +43,8 @@ public class MainActivity extends Activity  implements SensorEventListener {
     static public int command_bits_=0;
     private static boolean secure_flug=false;
 
-
-
+    static boolean compassOnF(){return (HORIZONT_ON&control_bits)!=0;}
+    static boolean horizontOnF(){return (HORIZONT_ON&control_bits)!=0;}
     static boolean progF(){return (PROGRAM&control_bits)!=0;}
     static boolean toHomeF(){return (GO2HOME&control_bits)!=0;}
     static boolean motorsOnF(){return (MOTORS_ON&control_bits)!=0;}
@@ -79,7 +70,8 @@ public class MainActivity extends Activity  implements SensorEventListener {
     public static void Prog(){command_bits_|=PROGRAM; }
     public static void toHome() {command_bits_|=GO2HOME;}
     public static void altHold(){command_bits_|=Z_STAB;}
-
+    public static void horizonOn(){command_bits_|=HORIZONT_ON;}
+    public static void compassOn(){command_bits_|=COMPASS_ON;}
 
 
 
@@ -252,10 +244,10 @@ public static void verifyPermissions(Activity activity){
         }
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (DrawView.is_on_screen_the_menu()) {
+           // if (DrawView.is_on_screen_the_menu()) {
                 DrawView.turn2MainScreen();
                 return true;
-            }
+          //  }
         }
 
 
@@ -354,7 +346,7 @@ public static void verifyPermissions(Activity activity){
                             else
                                 stopService(new Intent(MainActivity.this, GPSservice.class));
                         }
-                        DrawView.setButtons();
+
 
                         MainActivity.drawView.postInvalidate();
 
@@ -438,7 +430,7 @@ public static void verifyPermissions(Activity activity){
 
             //az=midZ.get(event.values[2]*k/10f);
 
-            update=DrawView.control_type.is_pressed();
+            update=DrawView.control_type_acc.is_pressed();
 
         }
 

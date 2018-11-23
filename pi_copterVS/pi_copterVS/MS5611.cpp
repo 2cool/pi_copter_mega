@@ -114,7 +114,7 @@ uint8_t MS5611Class::loop(){
 		const float new_altitude = Emu.get_alt();
 
 	speed = (new_altitude - altitude_) / dt;
-	shmPTR->altitude = altitude_ = new_altitude;
+	shmPTR->altitude_ = altitude_ = new_altitude;
 	shmPTR->pressure = pressure = get_pressure(altitude_);
 
 

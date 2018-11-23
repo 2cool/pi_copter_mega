@@ -32,9 +32,10 @@ public class DrawView extends View {
     static public float sm[];
     BatteryMonitor batMon;
     static Joystick j_left,j_right;
-    static public Img_button yaw_onoff,desc_onoff, pitch_onoff,roll_onoff,compass_onoff,menu;
-    static public Img_button control_type,showMap,showSettings,hold_alt,smart_ctrl,extra_buttons;
-    static public Img_button[]on_off=new Img_button[2];
+    static public Img_button yaw_off, desc_off, pitch_off, roll_off, head_less,menu;
+    static public Img_button pitch_roll_off,go_to_home;
+    static public Img_button control_type_acc,showMap,showSettings,hold_alt,smart_ctrl,extra_buttons;
+    static public Img_button[]motors_on=new Img_button[2];
     static public float maxAngle=35;
     Monitor monitor;
     static private int screen=viewMain;
@@ -54,35 +55,29 @@ public class DrawView extends View {
     Square_Cells sc;
 
 
+    private static int old_commander_counter=-1;
+    private static int old_tel_counter=-1;
+    private  void updateControls(){
+        if (old_tel_counter<Telemetry.get_counter() && old_commander_counter<Commander.get_coutner()) {
+            old_tel_counter=Telemetry.get_counter();
+            old_commander_counter=Commander.get_coutner();
 
-
-    static long updateTime=0;
-    //static private int old_control_bits=0;
-    public static void setButtons(){
-        if (System.currentTimeMillis()>updateTime) {
-            updateTime=System.currentTimeMillis()+100;
-
-
+            motors_on[0].enabled(Commander.link);
+            motors_on[1].enabled(Commander.link);
             cam_p_c.gimbal_pitch_add(0,Commander.fpv_zoom);//update
-
-            on_off[0].enabled(Commander.link);
-            on_off[1].enabled(Commander.link);
-            if (on_off[0].is_pressed()==on_off[1].is_pressed()) {
-                on_off[0].set(MainActivity.motorsOnF());
-                on_off[1].set(MainActivity.motorsOnF());
+            if (motors_on[0].is_pressed()==motors_on[1].is_pressed()) {
+                motors_on[0].set(MainActivity.motorsOnF());
+                motors_on[1].set(MainActivity.motorsOnF());
             }
+            go_to_home.set(MainActivity.toHomeF());
+            if (!MainActivity.horizontOnF()) //always is on it this prog
+                MainActivity.horizonOn();
+            if (!MainActivity.compassOnF())
+                MainActivity.compassOn();
 
             smart_ctrl.set(MainActivity.smartCntrF());
             hold_alt.set(MainActivity.altHoldF());
             j_left.set_return_back_Y(MainActivity.altHoldF());
-
-            //  b_toHome.setChecked((control_bits & GO2HOME) != 0);
-
-
-            //   cb_horizont.setChecked((control_bits & HORIZONT_ON)!=0);
-            //  cb_compass.setChecked((control_bits & COMPASS_ON)!=0);
-            //  b_prog.setChecked((control_bits & PROGRAM)!=0);
-
 
         }
     }
@@ -97,6 +92,7 @@ public class DrawView extends View {
         sc=new Square_Cells(9,0,0.3f,sm);
         int nX=sc.getMaxX();
         int nY=sc.getMaxY();
+
         exitMenu =new Img_button(sc.getRect(0,0),
                 context.getResources().getDrawable(R.drawable.left),
                 context.getResources().getDrawable(R.drawable.left),false);
@@ -133,6 +129,10 @@ public class DrawView extends View {
 
     }
     void main_DrawView(final Context context){
+
+
+
+
         float bR=sm[2]*1.2f;
         float thumb=sm[1]/sm[3];
         float k=0.1f;
@@ -166,74 +166,83 @@ public class DrawView extends View {
         final int bs=(int)(sm[2]/3);
         final int bs2= (int)(0.5*bs);
 
-        pitch_onoff=new Img_button(sc.getRect(nX-2,jbuttonsY),
+        pitch_off =new Img_button(sc.getRect(nX-2,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.x_on),
                 context.getResources().getDrawable(R.drawable.x_off),true);
 
-        roll_onoff=new Img_button(sc.getRect(nX-1,jbuttonsY),
+        pitch_roll_off =new Img_button(sc.getRect(nX-1,jbuttonsY),
+                context.getResources().getDrawable(R.drawable.rotate_on),
+                context.getResources().getDrawable(R.drawable.rotate_off),true);
+
+
+        roll_off =new Img_button(sc.getRect(nX-1,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.y_on),
                 context.getResources().getDrawable(R.drawable.y_off),true);
 
 
 
-        yaw_onoff=new Img_button(sc.getRect(1,jbuttonsY),
+        yaw_off =new Img_button(sc.getRect(1,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.x_on),
                 context.getResources().getDrawable(R.drawable.x_off),true);
 
-        desc_onoff=new Img_button(sc.getRect(0,jbuttonsY),
+        desc_off =new Img_button(sc.getRect(0,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.y_on),
                 context.getResources().getDrawable(R.drawable.y_off),true);
 
 
 
-        control_type=new Img_button(sc.getRect(1,0),
+        control_type_acc =new Img_button(sc.getRect(nX-2,0),
                 context.getResources().getDrawable(R.drawable.touch),
                 context.getResources().getDrawable(R.drawable.gyro),true);
 
 
-        compass_onoff=new Img_button(sc.getRect(2,0),
-                context.getResources().getDrawable(R.drawable.compass_on),
-                context.getResources().getDrawable(R.drawable.compass_off),true);
+        head_less =new Img_button(sc.getRect(1,0),
+                context.getResources().getDrawable(R.drawable.touch),
+                context.getResources().getDrawable(R.drawable.compass_on),true);
+        
 
-        fpv =new Img_button(sc.getRect(3,0),
+        fpv =new Img_button(sc.getRect(4,0),
                 context.getResources().getDrawable(R.drawable.fpv_off),
                 context.getResources().getDrawable(R.drawable.fpv),true);
-        vrc =new Img_button(sc.getRect(4,0),
+        vrc =new Img_button(sc.getRect(5,0),
                 context.getResources().getDrawable(R.drawable.vrc_off),
                 context.getResources().getDrawable(R.drawable.vrc_on),true);
-        photo =new Img_button(sc.getRect(5,0),
+        photo =new Img_button(sc.getRect(6,0),
                 context.getResources().getDrawable(R.drawable.photo),
                 context.getResources().getDrawable(R.drawable.photo),false);
 
-        menu=new Img_button(sc.getRect(nX-4,0),
+        menu=new Img_button(sc.getRect(7,0),
                 context.getResources().getDrawable(R.drawable.menu),
                 context.getResources().getDrawable(R.drawable.menu),false);
 
 
 
-        on_off[0]=new Img_button(sc.getRect(0,0),
+        motors_on[0]=new Img_button(sc.getRect(0,0),
                 context.getResources().getDrawable(R.drawable.green),
                 context.getResources().getDrawable(R.drawable.red),true);
         //on_off[0].enabled(false);
 
-        on_off[1]=new Img_button(sc.getRect(nX-1,0),
+        motors_on[1]=new Img_button(sc.getRect(nX-1,0),
                 context.getResources().getDrawable(R.drawable.green),
                 context.getResources().getDrawable(R.drawable.red),true);
         //on_off[0].enabled(false);
 
-        hold_alt=new Img_button(sc.getRect(nX-3,0),
+        hold_alt=new Img_button(sc.getRect(2,0),
                 context.getResources().getDrawable(R.drawable.alt_hold_offt),
                 context.getResources().getDrawable(R.drawable.alt_hold_on),true);
         hold_alt.set(true);
 
-        smart_ctrl=new Img_button(sc.getRect(nX-2,0),
+        smart_ctrl=new Img_button(sc.getRect(nX-3,0),
                 context.getResources().getDrawable(R.drawable.smart_off),
                 context.getResources().getDrawable(R.drawable.smart_on),true);
         smart_ctrl.set(true);
-        extra_buttons=new Img_button(sc.getRect(nX/2,0),
+        extra_buttons=new Img_button(sc.getRect(8,0),
                 context.getResources().getDrawable(R.drawable.circle),
                 context.getResources().getDrawable(R.drawable.extra_buttons),true);
-        extra_buttons.set(true);
+       // extra_buttons.set(true);
+        go_to_home =new Img_button(sc.getRect(9,0),
+                context.getResources().getDrawable(R.drawable.go2home_off),
+                context.getResources().getDrawable(R.drawable.go2home),false);
 
 
 
@@ -305,86 +314,98 @@ public class DrawView extends View {
 
     static boolean vrcf=false;
     static public boolean thumbed = false;
+
+
+    void yaw_controls(final MotionEvent event){
+        head_less.onTouchEvent(event);
+        yaw_off.onTouchEvent(event);
+        if (head_less.getStat()==3){
+            yaw_off.set(head_less.is_pressed());
+            j_left.set_block_X(yaw_off.is_pressed());
+        }
+        if (yaw_off.getStat()==3){
+            j_left.set_block_X(yaw_off.is_pressed());
+        }
+    }
+    void pitch_roll_controls(final MotionEvent event){
+        control_type_acc.onTouchEvent(event);
+        if (control_type_acc.getStat()==3){
+            if (control_type_acc.is_pressed()){
+                pitch_roll_off.set(true);
+                j_right.set_block_X(true);
+                j_right.set_block_Y(true);
+            }else{
+                pitch_off.set(false);
+                roll_off.set(false);
+                j_right.set_block_X(false);
+                j_right.set_block_Y(false);
+            }
+        }
+        if (control_type_acc.is_pressed()){
+            pitch_roll_off.onTouchEvent(event);
+            if (pitch_roll_off.getStat()==3){
+                j_right.set_block_X(pitch_roll_off.is_pressed());
+                j_right.set_block_Y(pitch_roll_off.is_pressed());
+            }
+        }else{
+            pitch_off.onTouchEvent(event);
+            if (pitch_off.getStat()==3)
+                j_right.set_block_X(pitch_off.is_pressed());
+            roll_off.onTouchEvent(event);
+            if (roll_off.getStat()==3)
+                j_right.set_block_Y(roll_off.is_pressed());
+        }
+    }
+    void motors_control(final MotionEvent event){
+        motors_on[0].onTouchEvent(event);
+        motors_on[1].onTouchEvent(event);
+        if ( motors_on[0].is_pressed()==motors_on[1].is_pressed() && MainActivity.motorsOnF()!=motors_on[0].is_pressed() &&
+                ((motors_on[0].getStat())==3 || (motors_on[1].getStat())==3)) {
+            MainActivity.start_stop();
+            //Log.d("PWR","PWR+"+Integer.toString(stat1)+" "+Integer.toString(stat2));
+        }
+    }
     boolean main_onTouchEvent(final MotionEvent event){
 
-
-
         extra_buttons.onTouchEvent(event);
-
-        if (extra_buttons.is_pressed()){
-
-        }
         menu.onTouchEvent(event);
         if (menu.getStat()==3)
             screen=viewMenu;
 
+        fpv.onTouchEvent(event);
+        if (fpv.getStat()==3)
+            fpv_start_stop();
+        if (fpv.is_pressed())
+            fpv_photo_video(event);
 
+        motors_control(event);
 
-        control_type.onTouchEvent(event);
+        mScaleGestureDetector.onTouchEvent(event);
+        cam_p_c.onTouchEvent(event,Commander.fpv_zoom);
+
+        yaw_controls(event);
+        pitch_roll_controls(event);
+
         smart_ctrl.onTouchEvent(event);
-        if (smart_ctrl.getStat()==3 ){
-            if (smart_ctrl.is_pressed()) {
-                hold_alt.set(true);
-                if (MainActivity.altHoldF()==false)
-                    MainActivity.altHold();
-            }
+        if (smart_ctrl.getStat()==3)
             MainActivity.smartCtrl();
-        }
 
         hold_alt.onTouchEvent(event);
         if (hold_alt.getStat()==3)
             MainActivity.altHold();
 
-
-
-
-
-        if (fpv.is_pressed())
-            fpv_photo_video(event);
-
-
-
-
-        desc_onoff.onTouchEvent(event);
-        if (desc_onoff.getStat()==3)
-            j_left.set_block_Y(desc_onoff.is_pressed());
-        yaw_onoff.onTouchEvent(event);
-        if (yaw_onoff.getStat()==3)
-            j_left.set_block_X(yaw_onoff.is_pressed());
-        pitch_onoff.onTouchEvent(event);
-        if (pitch_onoff.getStat()==3)
-            j_right.set_block_X(pitch_onoff.is_pressed());
-        roll_onoff.onTouchEvent(event);
-        if (roll_onoff.getStat()==3)
-            j_right.set_block_Y(roll_onoff.is_pressed());
-
-
-        on_off[0].onTouchEvent(event);
-        on_off[1].onTouchEvent(event);
-
-
-        if ( on_off[0].is_pressed()==on_off[1].is_pressed() && MainActivity.motorsOnF()!=on_off[0].is_pressed() &&
-                ((on_off[0].getStat())==3 || (on_off[1].getStat())==3)) {
-            MainActivity.start_stop();
-            //Log.d("PWR","PWR+"+Integer.toString(stat1)+" "+Integer.toString(stat2));
-        }
+        desc_off.onTouchEvent(event);
+        if (desc_off.getStat()==3)
+            j_left.set_block_Y(desc_off.is_pressed());
+        go_to_home.onTouchEvent(event);
+        if (go_to_home.getStat()==3)
+            MainActivity.toHome();
 
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
 
-        compass_onoff.onTouchEvent(event);
-
-        fpv.onTouchEvent(event);
-        if (fpv.getStat()==3)
-            fpv_start_stop();
-
-        mScaleGestureDetector.onTouchEvent(event);
-        cam_p_c.onTouchEvent(event,Commander.fpv_zoom);
-
-
         // invalidate();
         return true;
-
     }
 
 
@@ -441,7 +462,7 @@ public class DrawView extends View {
         monitor.setSpeed(Telemetry.speed);
         monitor.setRoll(-Telemetry.roll);
         monitor.setPitch(Telemetry.pitch);
-        monitor.setYaw(yaw);//Telemetry.heading);
+        monitor.setYaw(Telemetry.heading);
         monitor.setHeight(Telemetry._alt);
     }
     //-------------------------------------------------------------------------------------------
@@ -449,7 +470,7 @@ public class DrawView extends View {
 
 
 
-    float pitch,roll,yaw,speed,hight;
+
 
 
 
@@ -458,62 +479,75 @@ public class DrawView extends View {
     double ma_pitch=0,ma_roll=0;
     void main_onDraw(final Canvas c){
 
-
-        j_left.set_return_back_Y(hold_alt.is_pressed());
+        updateControls();
 
         extra_buttons.paint(c);
-
-
+        final double max_speed=1/0.360;
         final double da=wrap_180(MainActivity.heading_t-old_yaw);
-        ang_speed += (2.7777*da/MainActivity.updateTimeMsec - ang_speed)*0.1;
+        ang_speed += (max_speed*da/MainActivity.updateTimeMsec - ang_speed)*0.1;
         old_yaw=MainActivity.heading_t;
         ma_pitch+=(MainActivity.pitch / maxAngle - ma_pitch)*0.1;
         ma_roll+=(MainActivity.roll  / maxAngle - ma_roll)*0.1;
-        if (control_type.is_pressed()) {
+        if (control_type_acc.is_pressed()) {
             j_right.setJosticY((float) (ma_pitch));
             j_right.setJosticX((float) (ma_roll));
-            //упроавление джостиком для YAW прсото для визуалицации процесса и не на что не влияет.
-            j_left.setJosticX((float) ang_speed);
-            yaw = (float) MainActivity.heading_t;//!!!
-        }else{
-            yaw+=j_left.getX()*0.360*MainActivity.updateTimeMsec; //1 оборот в сек.
-            while (yaw>360) yaw-=360;
-            while (yaw<-360)yaw+=360;
         }
-        batMon.setVoltage(0.25f*Telemetry.batVolt);
+        Commander.roll=j_right.getX()*maxAngle;
+        Commander.pitch=j_right.getY()*maxAngle;
+        if (head_less.is_pressed()){
+            if (!yaw_off.is_pressed()) {
+                Commander.heading = (float) MainActivity.heading_t;
+                j_left.setJosticX((float) ang_speed);
+            }
+        }else{
+            Commander.heading=(float)wrap_180(Telemetry.heading);//*MainActivity.updateTimeMsec);
+            Commander.headingOffset=+j_left.getX()*90;
+        }
 
+
+
+
+        batMon.setVoltage(0.25f*Telemetry.batVolt);
 
         Commander.throttle=0.5f+(j_left.getY())/2;
 
+        double roll=j_right.getX() * maxAngle;
+        double pitch=j_right.getY() * maxAngle;
+        Commander.roll = (float)roll;
+        Commander.pitch = (float)pitch;
 
-        Commander.roll  =  j_right.getX()*maxAngle;
-        Commander.pitch = -j_right.getY()*maxAngle;
-        if (!yaw_onoff.is_pressed())
-            Commander.heading=(float)wrap_180(yaw);
+
+
 
         setMonitor();
         monitor.paint(c);
-        yaw_onoff.paint(c);
-        desc_onoff.paint(c);
-        pitch_onoff.paint(c);
-        roll_onoff.paint(c);
-        compass_onoff.paint(c);
+
+        yaw_off.paint(c);
+        desc_off.paint(c);
+
+        if (control_type_acc.is_pressed())
+            pitch_roll_off.paint(c);
+        else {
+            pitch_off.paint(c);
+            roll_off.paint(c);
+        }
+
+        head_less.paint(c);
         menu.paint(c);
-        control_type.paint(c);
+        control_type_acc.paint(c);
         j_left.paint(c);
         j_right.paint(c);
-        on_off[0].paint(c);
-        on_off[1].paint(c);
+        motors_on[0].paint(c);
+        motors_on[1].paint(c);
         batMon.paint(c);
         fpv.paint(c);
         smart_ctrl.paint(c);
         hold_alt.paint(c);
-
+        go_to_home.paint(c);
         if (fpv.is_pressed()) {
             vrc.paint(c);
             photo.paint(c);
         }
-
 
         cam_p_c.paint(c);
 
