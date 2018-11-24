@@ -112,7 +112,7 @@ public class Monitor {
         white.getTextBounds(text,0,text.length(),r);
         //draw speed
         c.drawText(text,xpos-bm.getWidth()/2.7f-(r.right-r.left),ypos+(r.bottom-r.top)/2,white);
-        text=Integer.toString((int)speed)+" km/h";
+        text=Integer.toString((int)speed)+" m/c";
         c.drawText(text,xpos+bm.getWidth()/3,ypos+(r.bottom-r.top)/2,white);
         //draw pointer of yaw
         c.drawLine(xpos, ypos-size1,xpos,ypos-size1*1.25f,white);

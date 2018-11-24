@@ -11,6 +11,7 @@ import android.view.View;
 
 import cc.dewdrop.ffplayer.myTools.BatteryMonitor;
 import cc.dewdrop.ffplayer.myTools.Camera_pitch_cntr;
+import cc.dewdrop.ffplayer.myTools.FlightTextInfo;
 import cc.dewdrop.ffplayer.myTools.Img_button;
 import cc.dewdrop.ffplayer.myTools.Joystick;
 import cc.dewdrop.ffplayer.myTools.Monitor;
@@ -39,7 +40,7 @@ public class DrawView extends View {
     static public float maxAngle=35;
     Monitor monitor;
     static private int screen=viewMain;
-
+    FlightTextInfo ftx;
     static public Img_button exitMenu,exitProg,reboot,shutdown,comp_calibr,comp_m_calibr,gps_on_off;
     static public Img_button  fpv,vrc,photo;
 
@@ -57,7 +58,25 @@ public class DrawView extends View {
 
     private static int old_commander_counter=-1;
     private static int old_tel_counter=-1;
+
+
+
+
+    String constStrLen(final String in, final int len){
+        if (in.length()>len)
+            return in.substring(0,len);
+        else if (in.length()<len)
+            return len+"0000000000".substring(0,len-in.length());
+        return in;
+    }
     private  void updateControls(){
+
+
+        String lat=Double.toString(Telemetry.lat);
+
+        ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8);
+        ftx.p[ftx._2HM]="2h:"+Integer.toString((int)Telemetry.dist)+" H:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"  V:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
+        ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),3);
         if (old_tel_counter<Telemetry.get_counter() && old_commander_counter<Commander.get_coutner()) {
             old_tel_counter=Telemetry.get_counter();
             old_commander_counter=Commander.get_coutner();
@@ -148,6 +167,16 @@ public class DrawView extends View {
 
 
 
+        ftx=new FlightTextInfo(new Rect((int)(sm[0]/2-sm[0]/7),(int)(sm[2]/2.4),(int)(sm[0]/2+sm[0]/7),(int)(sm[1])),
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                0xffffff);
 
         monitor =new Monitor((int)(sm[0]/2),(int)(sm[1]-monSize/2),(int)(monSize),
                 BitmapFactory.decodeResource(getResources(), R.drawable.angle),
@@ -322,6 +351,7 @@ public class DrawView extends View {
         if (head_less.getStat()==3){
             yaw_off.set(head_less.is_pressed());
             j_left.set_block_X(yaw_off.is_pressed());
+            Commander.headingOffset=0;
         }
         if (yaw_off.getStat()==3){
             j_left.set_block_X(yaw_off.is_pressed());
@@ -500,8 +530,8 @@ public class DrawView extends View {
                 j_left.setJosticX((float) ang_speed);
             }
         }else{
-            Commander.heading=(float)wrap_180(Telemetry.heading);//*MainActivity.updateTimeMsec);
-            Commander.headingOffset=+j_left.getX()*90;
+            Commander.heading=(float)Telemetry.heading;
+            Commander.headingOffset=j_left.getX()*90;
         }
 
 
@@ -550,6 +580,7 @@ public class DrawView extends View {
         }
 
         cam_p_c.paint(c);
+        ftx.paint(c);
 
     }
     void menu_onDraw(final Canvas c){

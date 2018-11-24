@@ -12,7 +12,7 @@
 #include "WProgram.h"
 
 
-#define OFF_MOTOR_IF_LOST_CONNECTION  
+//#define OFF_MOTOR_IF_LOST_CONNECTION  
 #define OFF_TIMELAG
 //-----------------------------------------------
 #define MPU_MAGIC
