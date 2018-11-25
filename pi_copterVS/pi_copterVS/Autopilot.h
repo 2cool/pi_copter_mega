@@ -90,6 +90,8 @@ class AutopilotClass
 	 bool control_fallingState(){ return control_bits & CONTROL_FALLING; }
 	 bool compass_onState(){ return control_bits&COMPASS_ON; }
 	 bool horizont_onState(){ return control_bits&HORIZONT_ON; }
+	 bool program_is_loaded() { return control_bits & PROGRAM_LOADED; }
+	 void program_is_loaded(bool set);
 	 bool set_control_bits(uint32_t bits);
 	 void compass_tr();
 	 void horizont_tr();

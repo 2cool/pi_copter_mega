@@ -22,7 +22,7 @@ enum { LAT_LON = 1, DIRECTION = 2, ALTITUDE = 4,  CAMERA_ANGLE = 8, TIMER = 16,S
 #define MAX_VA 1
 
 void ProgClass::init(){
-
+	Autopilot.program_is_loaded(false);
 	intersactionFlag = false;
 	speed_X = speed_Y = speed_Z = 0;
 	steps_count = 0;
@@ -30,6 +30,7 @@ void ProgClass::init(){
 	prog_steps_count_must_be = 0;
 	prog_data_index = 0;
 	prog_data_size = 0;
+
 }
 
 
@@ -154,7 +155,7 @@ else
 
 
 bool ProgClass::start(){
-	if (program_is_OK()){
+	if (Autopilot.program_is_loaded()){
 		step_index = 0;
 		prog_data_index = 0;
 		time4step2done = 0;
@@ -554,6 +555,10 @@ bool ProgClass::add(byte*buf)
 	prog_data_size = pi;
 	steps_count++;
 	cout << steps_count << ". dot added! " << prog_data_size << "\t"<<Mpu.timed << endl;
+	//Autopilot.program_is_loaded(prog_steps_count_must_be == steps_count);
+	if (prog_steps_count_must_be == steps_count) {
+		Autopilot.program_is_loaded(program_is_OK());
+	}
 	return true;
 }
 

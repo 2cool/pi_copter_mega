@@ -119,6 +119,7 @@ void start_video() {
 
 
 
+
 void AutopilotClass::init(){/////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if (init_shmPTR())
@@ -896,12 +897,17 @@ void AutopilotClass::gimBalPitchADD(const float add) {
 			gimbalPitch += add;
 
 }
-
+void AutopilotClass::program_is_loaded(bool set) {
+	if (set) 
+		control_bits |= PROGRAM_LOADED;
+	else
+		control_bits &= -1 ^ PROGRAM_LOADED;
+}
 bool AutopilotClass::start_stop_program(const bool stopHere){
 	if (motors_is_on()) {
 		if (progState()) {
 			control_bits ^= PROGRAM;
-
+			
 			Prog.clear();
 			Stabilization.setDefaultMaxSpeeds();
 			if (stopHere) {

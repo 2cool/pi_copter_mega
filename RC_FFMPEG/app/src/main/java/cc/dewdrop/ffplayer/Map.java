@@ -25,6 +25,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -340,4 +341,31 @@ public class Map extends Activity {
         }
         return super.onContextItemSelected(item);
     }
+
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            //Log.i("KEY","DOWN "+Integer.toString(keyCode));
+            DrawMap.addZoom(1);
+            return true;
+        }
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            //Log.i("KEY","DOWN "+Integer.toString(keyCode));
+            DrawMap.addZoom(-1);
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+            DrawView.turn2MainScreen();
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+
+
+
+
 }

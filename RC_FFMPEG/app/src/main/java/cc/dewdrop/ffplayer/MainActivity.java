@@ -31,18 +31,21 @@ import java.util.Enumeration;
 import cc.dewdrop.ffplayer.widget.FFVideoView;
 
 public class MainActivity extends Activity  implements SensorEventListener {
+    final static double RAD2GRAD = 57.29578;
     Activity this_act;
    static private FFVideoView mVideoView;
    public static boolean update=true;
     public static int updateTimeMsec=50;
-    public static double pitch,roll,heading_t;
+    public static double pitch=0,roll=0,yaw=0;
     private static boolean runMainUpdate=true;
     public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, COMPASS_ON=64,HORIZONT_ON=128;
-    public final static int MPU_ACC_CALIBR=0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR=0x400, COMPASS_MOTOR_CALIBR=0x800, SHUTDOWN=0x1000, GIMBAL_PLUS=0x2000,GIMBAL_MINUS=0x4000,REBOOT=0x8000,SEC_MASK=0xFF000000;
+    public final static int MPU_ACC_CALIBR=0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR=0x400,
+            COMPASS_MOTOR_CALIBR=0x800, SHUTDOWN=0x1000, GIMBAL_PLUS=0x2000,GIMBAL_MINUS=0x4000,
+            REBOOT=0x8000,PROGRAM_LOADED= 0x10000,SEC_MASK=0xFF000000;
     static public int control_bits=0;
     static public int command_bits_=0;
     private static boolean secure_flug=false;
-
+    static boolean prog_is_loaded(){return (PROGRAM_LOADED&control_bits)!=0;}
     static boolean compassOnF(){return (HORIZONT_ON&control_bits)!=0;}
     static boolean horizontOnF(){return (HORIZONT_ON&control_bits)!=0;}
     static boolean progF(){return (PROGRAM&control_bits)!=0;}
@@ -52,11 +55,9 @@ public class MainActivity extends Activity  implements SensorEventListener {
     static boolean altHoldF(){return (Z_STAB&control_bits)!=0;}
 
     //private static boolean game_speed=false;
-    private SensorManager mSensorManager;
-    private Sensor accelerometer;
-    private Sensor gyroscop;
-    private Sensor magnetic_field;
-    static protected boolean sensorUpdateSpeedFastest=false;
+    public static boolean gyroscopeWork=false, magnetometerWork =false;
+
+    static protected boolean sensorUpdateSpeedFastest=true;
     Net net=null;
 
     public static float [] screenMetrics;
@@ -89,7 +90,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
 
     public static void start_stop(){
         command_bits_|=MOTORS_ON;
-        Commander.heading=(float)heading_t;
+        Commander.heading=(float)yaw;
         Log.d("PWR","PWR");
     }
 
@@ -233,24 +234,17 @@ public static void verifyPermissions(Activity activity){
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            //Log.i("KEY","DOWN "+Integer.toString(keyCode));
-            command_bits_|=GIMBAL_MINUS;
+            openMap();
             return true;
-        }else
+        }
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            //Log.i("KEY","DOWN "+Integer.toString(keyCode));
-            command_bits_|=GIMBAL_PLUS;
+            openSettings();
             return true;
         }
-
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-           // if (DrawView.is_on_screen_the_menu()) {
-                DrawView.turn2MainScreen();
-                return true;
-          //  }
+            DrawView.turn2MainScreen();
+            return true;
         }
-
-
         return super.onKeyDown(keyCode, event);
     }
 
@@ -279,21 +273,32 @@ public static void verifyPermissions(Activity activity){
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         verifyPermissions(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        magnetic_field=mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-        gyroscop=mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
+
+      //  PackageManager packageManager = getPackageManager();
+      //  gyroscopeWork = packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+     //   magnetometerWork = packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);;
+
+
+
+
+        SensorManager mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor magnetic_field=mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        Sensor gyroscope=mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+
 
         int speed=(sensorUpdateSpeedFastest)?SensorManager.SENSOR_DELAY_FASTEST:SensorManager.SENSOR_DELAY_NORMAL;
         mSensorManager.registerListener(this, accelerometer,speed );
         mSensorManager.registerListener(this, magnetic_field, speed);
-        mSensorManager.registerListener(this, gyroscop, speed);
+        mSensorManager.registerListener(this, gyroscope, speed);
         rl1 =findViewById(R.id.rl1);
         mVideoView = findViewById(R.id.videoView);
         screenMetrics=get_screen_size_in_pixels();
@@ -375,72 +380,44 @@ public static void verifyPermissions(Activity activity){
     }
 
 
-    private double now=0,old_time=0,dt_update=0,old_time_acc=0;
+    private double dt=1,old_time=0;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        double k=Math.min(1,DrawView.maxAngle/35);
-        if (event.sensor.getType()==Sensor.TYPE_GYROSCOPE){
+        final int type=event.sensor.getType();
 
-            double dt=0.001*(now-old_time);
-            old_time=now;
-            pitch-=event.values[1]*dt;
-            roll+=event.values[0]*dt;
-            // Commander.yaw-=event.values[2]*dt;
-
-            // Log.i("MATHr","roll="+(int)(Commander.roll*56.3)+", pitch="+(int)(Commander.pitch*57.3)+", yaw="+(int)(Commander.yaw*57.3));
-
-            dt_update+=dt;
-            if (dt_update>0.05) {
-                dt_update=0;
-                new Thread() {
-                    @Override
-                    public void run() {
-                        if (MainActivity.drawView != null)
-                            MainActivity.drawView.postInvalidate();
-                    }
-                }.start();
+        if (type==Sensor.TYPE_GYROSCOPE){
+            gyroscopeWork=true;
+            long now=System.currentTimeMillis();
+            if (old_time==0) {
+                old_time = now;
+                return;
             }
+            dt=0.001*(now-old_time);
+            old_time=now;
+            pitch-=0.5*RAD2GRAD*event.values[1]*dt;
+            roll+=0.5*RAD2GRAD*event.values[0]*dt;
+            yaw+=0.5*RAD2GRAD*event.values[2]*dt;
+            // Commander.yaw-=event.values[2]*dt;
+             //Log.i("MATHr","roll="+(roll)+", pitch="+(pitch));
         }
+        else
+        if (type==Sensor.TYPE_ACCELEROMETER){
 
-        if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
-
-
-            double aRoll = k*Math.atan2(event.values[1], event.values[2])/ Math.PI * 180 ;
-            double aPitch = k*Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2]))/ Math.PI * 180 ;
-
-            //   double dt=0.001*(now-old_time_acc);
-            old_time_acc=now;
-            double F=1;//Math.min(1,dt*0.3);
-            pitch+=(aPitch-pitch)*F;
-            roll+=(aRoll-roll)*F;
-
-
-
-
-
-            //  Log.i("MATH","aroll="+(int)(aRoll*56.3)+", apitch="+(int)(aPitch*57.3));
-
-
-            //  k=(float)(zoomN/0.69813170079773183076947630739545);
-            //  Commander.ax+=((event.values[0]*k/9.8)-Commander.ax)*0.1;
-            //   Commander.ay+=((event.values[1]*k/9.8)-Commander.ay)*0.1;
-
-            //Log.d("SENhD", "Andr "+Double.toString(event.values[0]));
-
-            //az=midZ.get(event.values[2]*k/10f);
-
-            update=DrawView.control_type_acc.is_pressed();
-
+            double aRoll = Math.atan2(event.values[1], event.values[2]) * RAD2GRAD ;
+            double aPitch = Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2])) * RAD2GRAD ;
+            double f=gyroscopeWork?1:Math.max(0.01,Math.min(0.1,dt));
+            pitch += (aPitch - pitch) * f;
+            roll += (aRoll - roll) * f;
+            //update=DrawView.control_type_acc.is_pressed();
         }
-
-        if (event.sensor.getType()==Sensor.TYPE_ORIENTATION){
-            heading_t = ((double)event.values[0]+90);
-
-            if (heading_t>180)
-                heading_t-=360;
+        else
+        if (type==Sensor.TYPE_ORIENTATION){
+            magnetometerWork=true;
+            double f=gyroscopeWork?1:0.1;
+            yaw += (DrawView.wrap_180((double)event.values[0]+90) - yaw )*f;
             //  Commander.heading=(float)heading_t;
-            //Log.d("SENhD", "Andr "+Double.toString(heading));
+           // Log.d("SENhD", Double.toString(yaw));
         }
 
     }

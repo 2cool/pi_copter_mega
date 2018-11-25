@@ -33,17 +33,29 @@ public class FlightTextInfo {
         f[CAM_ANG]=cam_ang;
         f[VSPEED]=vSpeed;
         txt=new Paint();//txt_color);
-        txt.setColor(Color.WHITE);
-        txt.setTextSize(15);
+        txt.setColor(txt_color);
+
+        final int fsx=(int)(0.7*(r.right-r.left));
+        final int fsy=(int)(0.7*(r.bottom-r.top));
+        final String str="0000000  000000000";
+        Rect b=new Rect();
+        for (int s=15; s<300;s++) {
+            txt.setTextSize(s);
+            txt.getTextBounds(str,0,str.length(),b);
+            if (fsx<=(b.right-b.left) || fsy<=(b.bottom-b.top)*FIELDS*1.5) {
+                break;
+            }
+        }
 
 
     }
     public void paint(Canvas c){
-        int x=r.left;
-        int y=r.top;
+
         Rect b=new Rect();
         txt.getTextBounds("Text",0,4,b);
-        int h=(int)(1.5*b.bottom-b.top);
+        int h=(int)(1.5*(b.bottom-b.top));
+        int x=r.left;
+        int y=r.top+h;
         for (int i=0; i<FIELDS;i++ ){
             if (f[i]){
                 c.drawText(p[i],x,y,txt);

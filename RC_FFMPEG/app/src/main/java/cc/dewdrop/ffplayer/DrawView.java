@@ -42,7 +42,7 @@ public class DrawView extends View {
     static private int screen=viewMain;
     FlightTextInfo ftx;
     static public Img_button exitMenu,exitProg,reboot,shutdown,comp_calibr,comp_m_calibr,gps_on_off;
-    static public Img_button  fpv,vrc,photo;
+    static public Img_button  fpv,vrc,photo,do_prog;
 
     static Paint green_c = new Paint();
 
@@ -71,9 +71,10 @@ public class DrawView extends View {
     }
     private  void updateControls(){
 
+        motors_on[0].enabled(Commander.link);
+        motors_on[1].enabled(Commander.link);
 
-        String lat=Double.toString(Telemetry.lat);
-
+        do_prog.enabled(MainActivity.prog_is_loaded());
         ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8);
         ftx.p[ftx._2HM]="2h:"+Integer.toString((int)Telemetry.dist)+" H:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"  V:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
         ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),3);
@@ -81,8 +82,7 @@ public class DrawView extends View {
             old_tel_counter=Telemetry.get_counter();
             old_commander_counter=Commander.get_coutner();
 
-            motors_on[0].enabled(Commander.link);
-            motors_on[1].enabled(Commander.link);
+
             cam_p_c.gimbal_pitch_add(0,Commander.fpv_zoom);//update
             if (motors_on[0].is_pressed()==motors_on[1].is_pressed()) {
                 motors_on[0].set(MainActivity.motorsOnF());
@@ -97,7 +97,7 @@ public class DrawView extends View {
             smart_ctrl.set(MainActivity.smartCntrF());
             hold_alt.set(MainActivity.altHoldF());
             j_left.set_return_back_Y(MainActivity.altHoldF());
-
+            do_prog.set(MainActivity.progF());
         }
     }
 
@@ -176,7 +176,7 @@ public class DrawView extends View {
                 true,
                 true,
                 true,
-                0xffffff);
+                0x99ffffff);
 
         monitor =new Monitor((int)(sm[0]/2),(int)(sm[1]-monSize/2),(int)(monSize),
                 BitmapFactory.decodeResource(getResources(), R.drawable.angle),
@@ -193,7 +193,7 @@ public class DrawView extends View {
 
 
         final int bs=(int)(sm[2]/3);
-        final int bs2= (int)(0.5*bs);
+
 
         pitch_off =new Img_button(sc.getRect(nX-2,jbuttonsY),
                 context.getResources().getDrawable(R.drawable.x_on),
@@ -228,6 +228,7 @@ public class DrawView extends View {
         head_less =new Img_button(sc.getRect(1,0),
                 context.getResources().getDrawable(R.drawable.touch),
                 context.getResources().getDrawable(R.drawable.compass_on),true);
+        head_less.enabled(MainActivity.magnetometerWork);
         
 
         fpv =new Img_button(sc.getRect(4,0),
@@ -272,6 +273,11 @@ public class DrawView extends View {
         go_to_home =new Img_button(sc.getRect(9,0),
                 context.getResources().getDrawable(R.drawable.go2home_off),
                 context.getResources().getDrawable(R.drawable.go2home),false);
+
+        do_prog =new Img_button(sc.getRect(3,0),
+                context.getResources().getDrawable(R.drawable.route),
+                context.getResources().getDrawable(R.drawable.prog),true);
+        do_prog.enabled(false);
 
 
 
@@ -433,6 +439,10 @@ public class DrawView extends View {
 
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
+        do_prog.onTouchEvent(event);
+        if (do_prog.getStat()==3){
+            MainActivity.Prog();
+        }
 
         // invalidate();
         return true;
@@ -513,11 +523,11 @@ public class DrawView extends View {
 
         extra_buttons.paint(c);
         final double max_speed=1/0.360;
-        final double da=wrap_180(MainActivity.heading_t-old_yaw);
-        ang_speed += (max_speed*da/MainActivity.updateTimeMsec - ang_speed)*0.1;
-        old_yaw=MainActivity.heading_t;
-        ma_pitch+=(MainActivity.pitch / maxAngle - ma_pitch)*0.1;
-        ma_roll+=(MainActivity.roll  / maxAngle - ma_roll)*0.1;
+        final double da=wrap_180(MainActivity.yaw-old_yaw);
+        ang_speed += (max_speed*da/MainActivity.updateTimeMsec - ang_speed)*1;
+        old_yaw=MainActivity.yaw;
+        ma_pitch+=(MainActivity.pitch / maxAngle - ma_pitch)*1;
+        ma_roll+=(MainActivity.roll  / maxAngle - ma_roll)*1;
         if (control_type_acc.is_pressed()) {
             j_right.setJosticY((float) (ma_pitch));
             j_right.setJosticX((float) (ma_roll));
@@ -526,7 +536,7 @@ public class DrawView extends View {
         Commander.pitch=j_right.getY()*maxAngle;
         if (head_less.is_pressed()){
             if (!yaw_off.is_pressed()) {
-                Commander.heading = (float) MainActivity.heading_t;
+                Commander.heading = (float) MainActivity.yaw;
                 j_left.setJosticX((float) ang_speed);
             }
         }else{
@@ -578,7 +588,7 @@ public class DrawView extends View {
             vrc.paint(c);
             photo.paint(c);
         }
-
+        do_prog.paint(c);
         cam_p_c.paint(c);
         ftx.paint(c);
 
