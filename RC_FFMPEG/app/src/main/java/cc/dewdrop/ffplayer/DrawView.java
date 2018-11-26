@@ -66,7 +66,7 @@ public class DrawView extends View {
         if (in.length()>len)
             return in.substring(0,len);
         else if (in.length()<len)
-            return len+"0000000000".substring(0,len-in.length());
+            return in+"0000000000".substring(0,len-in.length());
         return in;
     }
     private  void updateControls(){
@@ -78,6 +78,10 @@ public class DrawView extends View {
         ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8);
         ftx.p[ftx._2HM]="2h:"+Integer.toString((int)Telemetry.dist)+" H:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"  V:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
         ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),3);
+        ftx.p[ftx.VIBR]=constStrLen(Double.toString(Telemetry.vibration/1000),5);
+        ftx.p[ftx.BAT]=constStrLen(Telemetry.batery,3);
+        ftx.p[ftx.CAM_ANG]=Integer.toString(Telemetry.gimbalPitch);
+
         if (old_tel_counter<Telemetry.get_counter() && old_commander_counter<Commander.get_coutner()) {
             old_tel_counter=Telemetry.get_counter();
             old_commander_counter=Commander.get_coutner();
@@ -176,7 +180,7 @@ public class DrawView extends View {
                 true,
                 true,
                 true,
-                0x99ffffff);
+                0x70ffffff);
 
         monitor =new Monitor((int)(sm[0]/2),(int)(sm[1]-monSize/2),(int)(monSize),
                 BitmapFactory.decodeResource(getResources(), R.drawable.angle),
@@ -416,8 +420,9 @@ public class DrawView extends View {
 
         motors_control(event);
 
-        mScaleGestureDetector.onTouchEvent(event);
-        cam_p_c.onTouchEvent(event,Commander.fpv_zoom);
+
+        if (cam_p_c.onTouchEvent(event,Commander.fpv_zoom))
+            mScaleGestureDetector.onTouchEvent(event);
 
         yaw_controls(event);
         pitch_roll_controls(event);
@@ -590,7 +595,8 @@ public class DrawView extends View {
         }
         do_prog.paint(c);
         cam_p_c.paint(c);
-        ftx.paint(c);
+        if (extra_buttons.is_pressed())
+            ftx.paint(c);
 
     }
     void menu_onDraw(final Canvas c){

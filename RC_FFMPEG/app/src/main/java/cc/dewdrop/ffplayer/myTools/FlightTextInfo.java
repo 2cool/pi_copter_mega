@@ -8,6 +8,8 @@ import android.graphics.Rect;
 public class FlightTextInfo {
 
     public static final int LOC=0,_2HM=1,THR=2,POW=3,VIBR=4,BAT=5,CAM_ANG=6,VSPEED=7;
+    final private String name[]={"","2HM: ","THR: ","PWR: ","VBR: ","BAT: ","CAM: ","VSP: "};
+    final private String unt[]={""," m",""," w",""," v"," ang"," m/s"};
     Rect r;
     final int FIELDS=8;
     public boolean f[]=new boolean[FIELDS];
@@ -58,7 +60,7 @@ public class FlightTextInfo {
         int y=r.top+h;
         for (int i=0; i<FIELDS;i++ ){
             if (f[i]){
-                c.drawText(p[i],x,y,txt);
+                c.drawText(name[i]+p[i]+unt[i],x,y,txt);
                 y+=h;
             }
         }

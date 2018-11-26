@@ -58,13 +58,13 @@ public class Camera_pitch_cntr {
         int index = event.getActionIndex();
         final float gx = event.getX(index);
         final float gy = event.getY(index);
+        boolean ret=gx>=camera_jesture_control.left && gx<=camera_jesture_control.right &&
+                gy>=camera_jesture_control.top && gy<=camera_jesture_control.bottom;
         switch (actionMask) {
             case MotionEvent.ACTION_DOWN: // первое касание
             case MotionEvent.ACTION_POINTER_DOWN: // последующие касания
             {
-                if (camera_pitch_index==-1 &&
-                        gx>=camera_jesture_control.left && gx<=camera_jesture_control.right &&
-                        gy>=camera_jesture_control.top && gy<=camera_jesture_control.bottom){
+                if (camera_pitch_index==-1 && ret){
                     camera_pitch_index=index;
                     old_y=gy;
                 }
@@ -84,6 +84,6 @@ public class Camera_pitch_cntr {
                 break;
         }
 
-        return true;
+        return ret;
     }
 }

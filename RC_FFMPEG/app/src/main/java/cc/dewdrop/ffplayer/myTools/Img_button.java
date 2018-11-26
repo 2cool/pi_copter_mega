@@ -134,7 +134,7 @@ public class Img_button {
     }
 
     public void paint(Canvas c) {
-        if (time>0 && status>0 && status<3 && System.currentTimeMillis()-time>500){
+        if (time>0 && System.currentTimeMillis()-time>500){
             time=0;
             status=0;
             id=-1;
