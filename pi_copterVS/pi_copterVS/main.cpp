@@ -279,11 +279,19 @@ int inet_start_cnt = 0, wifi_start_cnt = 0;
 bool start_wifi = false, start_inet = false, start_loger = false, start_telegram = false;;
 void watch_dog() {
 	delay(3000);
-	while (shmPTR->run_main) {
+	while (shmPTR->run_main) { 
 		
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;
 		uint8_t internet_cnt = shmPTR->internet_cnt;
+		uint8_t fpv_cnt = shmPTR->fpv_cnt;
 		delay(2000);
+		
+
+		system("/root/projects/fpv &");
+		if (fpv_cnt == shmPTR->fpv_cnt  && Mpu.timed>15) {
+			system("pkill fpv");
+			system("/root/projects/fpv &");
+		}
 		if (start_wifi)
 			if (wifi_cnt == shmPTR->wifi_cnt  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
 				last_wifi_reloaded = Mpu.timed;

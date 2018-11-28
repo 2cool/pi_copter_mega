@@ -304,10 +304,11 @@ const static string dhclient = "dhclient wlx7cdd901e13d5";
 
 int main()
 {
+	
 	stop_ffmpeg_stream();
 	init_shmPTR();
 	//wlx7cdd901e13d5
-
+	shmPTR->fpv_run = true;
 	string ret = exec("ping -c 1 192.168.42.1");
 	if (ret.find("1 received") == string::npos) {
 		system(connect2camera.c_str());
@@ -319,29 +320,23 @@ int main()
 	
 	int old_main_cnt = shmPTR->main_cnt;
 	
-	while (true) {
-		while (shmPTR->fpv_zoom == 0) {
+	while (shmPTR->fpv_run) {
+		while (shmPTR->fpv_zoom == 0 && shmPTR->fpv_run) {
 			delay(200);
+			shmPTR.fpv_cnt++;
 			if (shmPTR->main_cnt == old_main_cnt) 
 				return 0;
 			old_main_cnt = shmPTR->main_cnt;
 		}
 		
 		int zoom = shmPTR->fpv_zoom;
-
-
-
 		open_socket();
-
 		camera_video_stream();
-		
-
-		
-
 		start_ffmpeg_stream();
-
 		set_zoom(zoom - 1);
-		while (shmPTR->fpv_zoom > 0) {
+		while (shmPTR->fpv_zoom > 0 && shmPTR->fpv_run) {
+			delay(200);
+			shmPTR.fpv_cnt++;
 			if (zoom != shmPTR->fpv_zoom) {
 				zoom = shmPTR->fpv_zoom;
 				set_zoom(zoom-1);
@@ -350,7 +345,6 @@ int main()
 				send_msg(shmPTR->fpv_code);
 				shmPTR->fpv_code = 0;
 			}
-			delay(200);
 			if (shmPTR->main_cnt == old_main_cnt) {
 				stop_ffmpeg_stream();
 				return 0;
