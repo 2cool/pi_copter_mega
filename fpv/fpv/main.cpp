@@ -323,7 +323,7 @@ int main()
 	while (shmPTR->fpv_run) {
 		while (shmPTR->fpv_zoom == 0 && shmPTR->fpv_run) {
 			delay(200);
-			shmPTR.fpv_cnt++;
+			shmPTR->fpv_cnt++;
 			if (shmPTR->main_cnt == old_main_cnt) 
 				return 0;
 			old_main_cnt = shmPTR->main_cnt;
@@ -336,7 +336,7 @@ int main()
 		set_zoom(zoom - 1);
 		while (shmPTR->fpv_zoom > 0 && shmPTR->fpv_run) {
 			delay(200);
-			shmPTR.fpv_cnt++;
+			shmPTR->fpv_cnt++;
 			if (zoom != shmPTR->fpv_zoom) {
 				zoom = shmPTR->fpv_zoom;
 				set_zoom(zoom-1);

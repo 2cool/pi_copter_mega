@@ -190,7 +190,7 @@ public class Commander {
         i+=2;
 
         final double RANGK=10;
-
+       // Log.d("HEADING",Double.toString(heading));
         t=(int)(heading*RANGK);
         load_16int2buf(buf, i, t);
         mask^=get16to8bMask(t);
@@ -223,6 +223,7 @@ public class Commander {
             tay = ay;
         }else{
             double da=GRAD2RAD*(Telemetry.heading-heading);
+            //Log.d("HEADING",Double.toString(da));
             tax=(float)(ax*Math.cos(da)-ay*Math.sin(da));
             tay=(float)(ax*Math.sin(da)+ay*Math.cos(da));
         }
@@ -231,11 +232,11 @@ public class Commander {
 
 
 
-        t = (int) (tax*RAD2GRAD * RANGK);
+        t = (int) (tax* RANGK);
         load_16int2buf(buf, i, t);
         mask^=get16to8bMask(t);
         i+=2;
-        t = (int) (tay*RAD2GRAD * RANGK);
+        t = (int) (tay* RANGK);
         load_16int2buf(buf, i, t);
         mask^=get16to8bMask(t);
         i+=2;

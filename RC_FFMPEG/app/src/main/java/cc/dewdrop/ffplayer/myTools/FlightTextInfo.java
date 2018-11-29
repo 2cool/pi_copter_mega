@@ -7,13 +7,13 @@ import android.graphics.Rect;
 
 public class FlightTextInfo {
 
-    public static final int LOC=0,_2HM=1,THR=2,POW=3,VIBR=4,BAT=5,CAM_ANG=6,VSPEED=7;
-    final private String name[]={"","2HM: ","THR: ","PWR: ","VBR: ","BAT: ","CAM: ","VSP: "};
-    final private String unt[]={""," m",""," w",""," v"," ang"," m/s"};
+    public static final int LOC=0,_2HM=1,THR=2,POW=3,VIBR=4,BAT=5,CAM_ANG=6,CAM_ZOOM=7,VSPEED=8;
+    final private String name[]={"","2HM: ","THR: ","PWR: ","VBR: ","BAT: ","CAM: ","ZOOM: ","VSP: "};
+    final private String unt[]={""," m",""," w",""," v"," ang",""," m/s"};
     Rect r;
-    final int FIELDS=8;
+    final int FIELDS=9;
     public boolean f[]=new boolean[FIELDS];
-    public String p[]={"","","","","","","",""};
+    public String p[]={"","","","","","","","",""};
     Paint txt;
     public FlightTextInfo(Rect r,
                           boolean loc,
@@ -23,6 +23,7 @@ public class FlightTextInfo {
                           boolean vibr,
                           boolean bat,
                           boolean cam_ang,
+                          boolean cam_zoom,
                           boolean vSpeed,
                           int txt_color){
         this.r=r;
@@ -33,6 +34,7 @@ public class FlightTextInfo {
         f[VIBR]=vibr;
         f[BAT]=bat;
         f[CAM_ANG]=cam_ang;
+        f[CAM_ZOOM]=cam_zoom;
         f[VSPEED]=vSpeed;
         txt=new Paint();//txt_color);
         txt.setColor(txt_color);

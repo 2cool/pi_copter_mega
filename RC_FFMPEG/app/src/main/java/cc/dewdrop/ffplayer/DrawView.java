@@ -27,7 +27,8 @@ public class DrawView extends View {
 
     final static int  viewMain=0;
     final static int  viewMenu=1;
-
+    public static Rect za_cntrl;
+    static private Paint gray_opaq;
     static public Camera_pitch_cntr cam_p_c;
     static public Paint black;
     static public float sm[];
@@ -81,6 +82,7 @@ public class DrawView extends View {
         ftx.p[ftx.VIBR]=constStrLen(Double.toString(Telemetry.vibration/1000),5);
         ftx.p[ftx.BAT]=constStrLen(Telemetry.batery,3);
         ftx.p[ftx.CAM_ANG]=Integer.toString(Telemetry.gimbalPitch);
+        ftx.p[ftx.CAM_ZOOM]=Integer.toString(Commander.fpv_zoom+1);
 
         if (old_tel_counter<Telemetry.get_counter() && old_commander_counter<Commander.get_coutner()) {
             old_tel_counter=Telemetry.get_counter();
@@ -167,11 +169,20 @@ public class DrawView extends View {
         sc=new Square_Cells(13,0,0.3f,sm);
         int nX=sc.getMaxX();
         int nY=sc.getMaxY();
-        cam_p_c=new Camera_pitch_cntr(new Rect((int)(sm[0]/2-sm[0]/7),(int)(sm[2]/2.4),(int)(sm[0]/2+sm[0]/7),(int)(sm[1])));
+
+        za_cntrl=new Rect((int)(sm[0]/2-sm[0]/7),(int)(sm[2]/2.4),(int)(sm[0]/2+sm[0]/7),(int)(sm[1]));
+        gray_opaq =new Paint();
+        gray_opaq.setColor(Color.GRAY);
+        //gray_opaq.setAlpha(30);
+        gray_opaq.setStyle(Paint.Style.STROKE);
+        gray_opaq.setStrokeWidth(1);
+        cam_p_c=new Camera_pitch_cntr();
 
 
 
-        ftx=new FlightTextInfo(new Rect((int)(sm[0]/2-sm[0]/7),(int)(sm[2]/2.4),(int)(sm[0]/2+sm[0]/7),(int)(sm[1])),
+        ftx=new FlightTextInfo(
+                za_cntrl,
+                true,
                 true,
                 true,
                 true,
@@ -405,6 +416,21 @@ public class DrawView extends View {
             //Log.d("PWR","PWR+"+Integer.toString(stat1)+" "+Integer.toString(stat2));
         }
     }
+
+    int test4sqere(final MotionEvent event,final Rect za_cntrl){
+        //int actionMask = event.getActionMasked();
+        int inSqcnt=0;
+        for (int i=0; i<event.getPointerCount(); i++) {
+            int index = event.findPointerIndex(event.getPointerId(i));
+            // int index = event.getActionIndex();
+            final float gx = event.getX(index);
+            final float gy = event.getY(index);
+            inSqcnt += (gx >= za_cntrl.left && gx <= za_cntrl.right &&
+                    gy >= za_cntrl.top && gy <= za_cntrl.bottom)?1:0;
+        }
+        return inSqcnt;
+    }
+
     boolean main_onTouchEvent(final MotionEvent event){
 
         extra_buttons.onTouchEvent(event);
@@ -420,9 +446,13 @@ public class DrawView extends View {
 
         motors_control(event);
 
-
-        if (cam_p_c.onTouchEvent(event,Commander.fpv_zoom))
+        int isc=test4sqere(event,za_cntrl);
+        if (isc==2)
             mScaleGestureDetector.onTouchEvent(event);
+        else
+        if (isc==1)
+              cam_p_c.onTouchEvent(event, Commander.fpv_zoom);
+
 
         yaw_controls(event);
         pitch_roll_controls(event);
@@ -522,6 +552,7 @@ public class DrawView extends View {
     double old_yaw=0;
     double ang_speed=0;
     double ma_pitch=0,ma_roll=0;
+    double need_heading;
     void main_onDraw(final Canvas c){
 
         updateControls();
@@ -545,8 +576,11 @@ public class DrawView extends View {
                 j_left.setJosticX((float) ang_speed);
             }
         }else{
-            Commander.heading=(float)Telemetry.heading;
-            Commander.headingOffset=j_left.getX()*90;
+            if (j_left.getX()!=0) {
+                need_heading = Telemetry.heading;
+                Commander.heading=(float)Telemetry.heading;
+            }
+            Commander.headingOffset=(float)wrap_180(j_left.getX()*90-Telemetry.heading+need_heading);
         }
 
 
@@ -594,7 +628,11 @@ public class DrawView extends View {
             photo.paint(c);
         }
         do_prog.paint(c);
-        cam_p_c.paint(c);
+
+
+
+        c.drawRect(za_cntrl,gray_opaq);
+
         if (extra_buttons.is_pressed())
             ftx.paint(c);
 

@@ -252,11 +252,14 @@ public static void verifyPermissions(Activity activity){
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector scaleGestureDetector){
-            mScaleFactor *= scaleGestureDetector.getScaleFactor();
+            final double scd=(scaleGestureDetector.getScaleFactor()-1)/(1+((float)Commander.fpv_zoom/25.6));;
+         //   Log.d("SCALE",Double.toString(m1)+" : "+Double.toString(scd));
+            mScaleFactor *= (scd+1);
             mScaleFactor = Math.max(1f, Math.min(mScaleFactor, 4));
            // Log.d("SCALE",Float.toString((mScaleFactor-1)*33.667f+1));
             if (DrawView.fpv.is_pressed()){
-                byte zoom=(byte)((mScaleFactor-1)*33.667f+1);
+
+                byte zoom=(byte)((mScaleFactor-1)*84.6f+1);
                 if (zoom!=Commander.fpv_zoom){
                     Commander.fpv_zoom=zoom;
                     Commander.fpv=true;

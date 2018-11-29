@@ -279,6 +279,9 @@ int inet_start_cnt = 0, wifi_start_cnt = 0;
 bool start_wifi = false, start_inet = false, start_loger = false, start_telegram = false;;
 void watch_dog() {
 	delay(3000);
+
+	cout << "fpv started\n";
+	system("/root/projects/fpv_ &");
 	while (shmPTR->run_main) { 
 		
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;
@@ -287,10 +290,13 @@ void watch_dog() {
 		delay(2000);
 		
 
-		system("/root/projects/fpv &");
 		if (fpv_cnt == shmPTR->fpv_cnt  && Mpu.timed>15) {
-			system("pkill fpv");
-			system("/root/projects/fpv &");
+			cout << "fpv killed\n";
+			system("pkill fpv_");
+			delay(1000);
+			cout << "fpv started\n";
+			system("/root/projects/fpv_ &");
+
 		}
 		if (start_wifi)
 			if (wifi_cnt == shmPTR->wifi_cnt  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
@@ -300,9 +306,7 @@ void watch_dog() {
 				delay(1000);
 				cout << "--------------wifi started:\t" << Mpu.timed << endl;;
 				string t = "/root/projects/wifi_p ";
-				//if (stdout_file_ext.length()) {
-			//		t += stdout_file_ext + "wifi_"+to_string(wifi_start_cnt++);
-				//}
+
 				t += " &";
 				int ret=system(t.c_str());
 
@@ -312,6 +316,7 @@ void watch_dog() {
 
 				cout << "--------------ppp starting" << "\t"<<Mpu.timed << endl;
 				system("pkill ppp_p");
+				delay(1000);
 				string t = "/root/projects/ppp_p ";
 				if (start_loger)
 					t += "y";
