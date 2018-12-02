@@ -802,17 +802,6 @@ void watch_d() {
 std::ofstream out;
 std::streambuf *coutbuf;// старый буфер
 
-void deleteAllSMS() {
-	for (int i = 1; i <= 20; i++) {
-		string com = "gammu deletesms 0 " + to_string(i);;
-
-		string ret=exec(com);
-		cout << ret << endl;
-		if (ret.length() > 0 && ret.find("Entry is empty") != string::npos)
-			break;
-	}
-}
-
 int main(int argc, char *argv[])//lat,lon,.......
 {
 	printf("<start loger y> <start telegram y> <cout to file>\n");
@@ -856,9 +845,8 @@ int main(int argc, char *argv[])//lat,lon,.......
 	system("poff -a");
 	sleep(3);
 	system("gammu getallsms");
-	deleteAllSMS();
+	system("gammu deleteallsms 1");
 
-	
 	shmPTR->inet_ok = false;
 	shmPTR->internet_run = false;
 	shmPTR->loger_run = false;

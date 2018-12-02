@@ -114,42 +114,43 @@ public class Settings extends AppCompatActivity implements AdapterView.OnItemSel
     }
 
     void update(){
-        Log.i("UPS", "UPDATE");
-        int i=0;
-        for (; i<10; i++) {
+       try {
+           Log.i("UPS", "UPDATE");
+           int i = 0;
+           for (; i < 10; i++) {
 
-            String f[]=a[menu_n][i].split(",");
-            textV[i+10].setText(f[0]);
-            if (Telemetry.settings[i] != Commander.NO_DATA) {
-                textV[i].setText(Float.toString(Telemetry.settings[i]));
-                textV[i+10].setEnabled(true);
-                textV[i].setEnabled(true);
-                seek_bar[i].setEnabled(true);
-                if (f.length>=3) {
-                    double max=Float.parseFloat(f[1]);
-                    double progress=max*0.01*Float.parseFloat(f[2]);
-                    seek_bar[i].setMax((int)max);
-                    seek_bar[i].setProgress((int)progress);
-                }else{
-                    seek_bar[i].setMax(seek_bar_default_progress*2);
-                    seek_bar[i].setProgress(seek_bar_default_progress);
-                }
-            }
-            else {
-                textV[i].setText("");
-                textV[i+10].setEnabled(false);
-                textV[i].setEnabled(false);
-                seek_bar[i].setEnabled(false);
-            }
-        }
+               String f[] = a[menu_n][i].split(",");
+               textV[i + 10].setText(f[0]);
+               if (Telemetry.settings[i] != Commander.NO_DATA) {
+                   textV[i].setText(Float.toString(Telemetry.settings[i]));
+                   textV[i + 10].setEnabled(true);
+                   textV[i].setEnabled(true);
+                   seek_bar[i].setEnabled(true);
+                   if (f.length >= 3) {
+                       double max = Float.parseFloat(f[1]);
+                       double progress = max * 0.01 * Float.parseFloat(f[2]);
+                       seek_bar[i].setMax((int) max);
+                       seek_bar[i].setProgress((int) progress);
+                   } else {
+                       seek_bar[i].setMax(seek_bar_default_progress * 2);
+                       seek_bar[i].setProgress(seek_bar_default_progress);
+                   }
+               } else {
+                   textV[i].setText("");
+                   textV[i + 10].setEnabled(false);
+                   textV[i].setEnabled(false);
+                   seek_bar[i].setEnabled(false);
+               }
+           }
 
 //------------------------------------------
 
 
-
-
-
-        set.setEnabled(true);
+           set.setEnabled(true);
+       } catch (Exception ex) {
+           Thread.currentThread().interrupt();
+           Log.i("UPS", "UPDATE ERROR  EXCEPTION");
+       }
     }
 
 

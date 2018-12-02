@@ -287,7 +287,7 @@ void watch_dog() {
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;
 		uint8_t internet_cnt = shmPTR->internet_cnt;
 		uint8_t fpv_cnt = shmPTR->fpv_cnt;
-		delay(2000);
+		delay(6000);
 		
 
 		if (fpv_cnt == shmPTR->fpv_cnt  && Mpu.timed>15) {

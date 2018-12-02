@@ -608,7 +608,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 
 	mpu_timed = 0.000001*(double)micros();
 	static uint cnt2l = 0;
-	if (dt > 0.02) {
+	if (dt > 0.03) {
 		if (cnt2l++) {
 			cout << mpu_false << endl;
 			

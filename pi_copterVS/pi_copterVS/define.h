@@ -13,12 +13,12 @@
 
 
 //#define OFF_MOTOR_IF_LOST_CONNECTION  
-#define OFF_TIMELAG
+//#define OFF_TIMELAG
 //-----------------------------------------------
 #define MPU_MAGIC
-#define FALSE_WIRE
+//#define FALSE_WIRE
 
-#define  DO_SOUND 0 
+#define  DO_SOUND 1
 //#define YAW_OFF
 //#define XY_SAFE_AREA 200
 //#define Z_SAFE_AREA 40
@@ -59,6 +59,8 @@
 #define MAX_DIST_ERROR_TO_FALL 200.0f
 #define e_TOO_STRONG_WIND "TSW"
 #endif
+
+
 
 #define NO_GPS_DATA 10
 

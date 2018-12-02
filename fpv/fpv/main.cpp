@@ -309,13 +309,7 @@ int main()
 	init_shmPTR();
 	//wlx7cdd901e13d5
 	shmPTR->fpv_run = true;
-	string ret = exec("ping -c 1 192.168.42.1");
-	if (ret.find("1 received") == string::npos) {
-		system(connect2camera.c_str());
-		sleep(5);
-		system(dhclient.c_str());
-		sleep(5);
-	}
+	
 
 	
 	int old_main_cnt = shmPTR->main_cnt;
@@ -328,7 +322,14 @@ int main()
 				return 0;
 			old_main_cnt = shmPTR->main_cnt;
 		}
-		
+
+		string ret = exec("ping -c 1 192.168.42.1");
+		if (ret.find("1 received") == string::npos) {
+			system(connect2camera.c_str());
+			sleep(5);
+			system(dhclient.c_str());
+			sleep(5);
+		}
 		int zoom = shmPTR->fpv_zoom;
 		open_socket();
 		camera_video_stream();

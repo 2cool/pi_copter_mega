@@ -190,7 +190,7 @@ public class DrawMap extends View {
         Point d=new Point(center.x&255,center.y&255);
 
         dragImgM(center);
-
+try{//неиследованная ошибка вискакивает.
         for (int my=0,y=center.y; y<=center.y+r.height+256; y+=256,my++){
             int sy=(my<<8)-d.y;
             for (int mx=0,x=center.x; x<=center.x+r.width+256; x+=256,mx++){
@@ -204,6 +204,11 @@ public class DrawMap extends View {
                     c.drawBitmap(img, sx, sy, paint);
             }
         }
+
+    } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
         oldType=type;
 
 
@@ -625,7 +630,7 @@ public class DrawMap extends View {
     public void onDraw(Canvas c) {
 
         updater();
-        //  Log.i("MAP","onDraw");
+        //  Log.i("MAP","onDraw") ;
 
         drawMap(c);
       //  bZoom_out.draw(c);
