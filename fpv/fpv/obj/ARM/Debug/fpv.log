@@ -4,8 +4,8 @@
   Starting remote build
   Compiling sources:
   main.cpp
-C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(212,1): warning : no return statement in function returning non-void [-Wreturn-type]
-C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(212,1): warning :  }
-C:\Users\Igor\pi_copter_mega\fpv\fpv\main.cpp(212,1): warning :  ^
+C:\Users\2coolz\pi_copter_mega\fpv\fpv\main.cpp(212,1): warning : no return statement in function returning non-void [-Wreturn-type]
+C:\Users\2coolz\pi_copter_mega\fpv\fpv\main.cpp(212,1): warning :  }
+C:\Users\2coolz\pi_copter_mega\fpv\fpv\main.cpp(212,1): warning :  ^
   Linking objects
-  fpv.vcxproj -> C:\Users\Igor\pi_copter_mega\fpv\fpv\bin\ARM\Debug\fpv.out
+  fpv.vcxproj -> C:\Users\2coolz\pi_copter_mega\fpv\fpv\bin\ARM\Debug\fpv.out

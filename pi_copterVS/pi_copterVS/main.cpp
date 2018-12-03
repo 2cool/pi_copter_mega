@@ -279,33 +279,36 @@ int inet_start_cnt = 0, wifi_start_cnt = 0;
 bool start_wifi = false, start_inet = false, start_loger = false, start_telegram = false;;
 void watch_dog() {
 	delay(3000);
-
-	cout << "fpv started\n";
-	system("/root/projects/fpv_ &");
+	shmPTR->fpv_run = true;
+	cout << "fpv started\n";	system("nice -n -20 /root/projects/fpv_ &");
 	while (shmPTR->run_main) { 
 		
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;
 		uint8_t internet_cnt = shmPTR->internet_cnt;
 		uint8_t fpv_cnt = shmPTR->fpv_cnt;
 		delay(6000);
-		
+	/*	if (fpv_cnt == shmPTR->fpv_cnt  && Mpu.timed>15) {
 
-		if (fpv_cnt == shmPTR->fpv_cnt  && Mpu.timed>15) {
 			cout << "fpv killed\n";
-			system("pkill fpv_");
+			shmPTR->fpv_run = false;
+			system("nice -n -20 pkill fpv_");
 			delay(1000);
+			shmPTR->fpv_run = true;
 			cout << "fpv started\n";
-			system("/root/projects/fpv_ &");
+			system("nice -n -20 /root/projects/fpv_ &");
 
-		}
+		}*/
+		
 		if (start_wifi)
-			if (wifi_cnt == shmPTR->wifi_cnt  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
+			if (wifi_cnt == shmPTR->wifi_cnt){//  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
 				last_wifi_reloaded = Mpu.timed;
 				cout << "--------------wifi killed:\t"<<Mpu.timed<<endl;
-				system("pkill wifi_p");
+				shmPTR->wifi_run = false;
+				system("nice -n -20 pkill wifi_p");
 				delay(1000);
+				shmPTR->wifi_run = true;
 				cout << "--------------wifi started:\t" << Mpu.timed << endl;;
-				string t = "/root/projects/wifi_p ";
+				string t = "nice -n -20 /root/projects/wifi_p ";
 
 				t += " &";
 				int ret=system(t.c_str());
@@ -313,11 +316,13 @@ void watch_dog() {
 			}
 		if (start_inet)
 			if (internet_cnt == shmPTR->internet_cnt) {
-
 				cout << "--------------ppp starting" << "\t"<<Mpu.timed << endl;
-				system("pkill ppp_p");
+				shmPTR->internet_run = false;
+				
+				system("nice -n -20 pkill ppp_p");
 				delay(1000);
-				string t = "/root/projects/ppp_p ";
+				shmPTR->internet_run = true;
+				string t = "nice -n -20 /root/projects/ppp_p ";
 				if (start_loger)
 					t += "y";
 				else
@@ -370,7 +375,6 @@ cout << PROG_VERSION << endl;
 	shmPTR->run_main = true;
 	shmPTR->inet_ok = false;
 	shmPTR->fpv_zoom = 0;
-	//shmPTR->internet_run = false;
 	thread tl(watch_dog);
 	tl.detach();
 
@@ -449,10 +453,11 @@ cout << PROG_VERSION << endl;
 					std::cout.rdbuf(out.rdbuf()); //и теперь все будет в файл!
 				}
 				Log.writeTelemetry = (argv[4][0] == 'y' || argv[4][0] == 'Y');
-				start_wifi = (argv[5][0] == 'y' || argv[5][0] == 'Y');
+				shmPTR->wifi_run = start_wifi = (argv[5][0] == 'y' || argv[5][0] == 'Y');
 				start_inet = (argv[6][0] == 'y' || argv[6][0] == 'Y');
 				start_inet |= start_loger=(argv[7][0] == 'y' || argv[7][0] == 'Y');
 				start_inet |= start_telegram=(argv[8][0] == 'y' || argv[8][0] == 'Y');
+				shmPTR->internet_run = start_inet;
 			}
 
 		}
@@ -522,6 +527,11 @@ cout << PROG_VERSION << endl;
 	//WiFi.stopServer();
 	Settings.write();
 	Log.close();
+
+	shmPTR->internet_run = false;
+	shmPTR->wifi_run = false;
+	shmPTR->fpv_run = false;
+
 	sleep(3);
 
 	if (shmPTR->run_main==false)

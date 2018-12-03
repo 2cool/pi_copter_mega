@@ -17,7 +17,7 @@ enum {
 
 struct Memory {
 
-	bool internet_run,fpv_run;
+	bool internet_run,fpv_run,wifi_run;
 	bool in_fly;
 	uint8_t main_cnt, internet_cnt, wifi_cnt,fpv_cnt;
 

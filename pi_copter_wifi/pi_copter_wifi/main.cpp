@@ -218,12 +218,12 @@ void server() {
 		//  printf("too long %i\n", dt);
 
 
-		while (shmPTR->wifibuffer_data_len_4_read != 0)
+		while (flag==0 && shmPTR->wifibuffer_data_len_4_read != 0)
 			usleep(20000);
 				
 		int len = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
 		if (len <= 0) {
-			cout << "ra\n";
+			//cout << "ra\n";
 			len = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
 		}
 		shmPTR->wifibuffer_data_len_4_read = len;
@@ -245,7 +245,7 @@ void server() {
 			continue;
 		}
 		
-		while (shmPTR->wifibuffer_data_len_4_write == 0)
+		while (flag==0 && shmPTR->wifibuffer_data_len_4_write == 0)
 			usleep(20000);
 
 		
@@ -282,20 +282,27 @@ void watch_d() {
 
 	uint old_main_cnt = shmPTR->main_cnt - 1;
 	while (true) {
-		shmPTR->wifi_cnt++;
-		if (shmPTR->main_cnt == old_main_cnt) {
-			if (++errors >= 3) {
-				flag = 1;
-				cout << "main dont update cnt! EXIT\n";
-				flag = 1;
-				return;
+		if (shmPTR->wifi_run) {
+			shmPTR->wifi_cnt++;
+			if (shmPTR->main_cnt == old_main_cnt) {
+				if (++errors >= 3) {
+					flag = 1;
+					cout << "main dont update cnt! EXIT\n";
+					flag = 1;
+					return;
+				}
 			}
+			else {
+				errors = 0;
+				old_main_cnt = shmPTR->main_cnt;
+			}
+			delay(100);
 		}
 		else {
-			errors = 0;
-			old_main_cnt = shmPTR->main_cnt;
+			flag = 1;
+			cout << "wifi: recived EXIT command\n";
+			break;
 		}
-		delay(100);
 	}
 
 }

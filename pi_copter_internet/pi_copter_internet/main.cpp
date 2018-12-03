@@ -787,14 +787,20 @@ void ppp_loop() {
 void watch_d() {
 	uint old_main_cnt= shmPTR->main_cnt-1;
 	while (true) {
-		shmPTR->internet_cnt++;
-		if (shmPTR->main_cnt == old_main_cnt) {
-			flag=1;
-			cout << "main dont update cnt! EXIT\n";
-			return;
+		if (shmPTR->internet_run) {
+			shmPTR->internet_cnt++;
+			if (shmPTR->main_cnt == old_main_cnt) {
+				flag = 1;
+				cout << "main dont update cnt! EXIT\n";
+				return;
+			}
+			old_main_cnt = shmPTR->main_cnt;
+			delay(100);
 		}
-		old_main_cnt = shmPTR->main_cnt;
-		delay(100);
+		else {
+			flag = 1;
+			cout << "inet: recived EXIT command\n";
+		}
 	}
 }
 

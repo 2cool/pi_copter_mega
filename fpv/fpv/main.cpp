@@ -299,21 +299,16 @@ sudo dhclient wlx7cdd901e13d5
 
 */
 
-const static string connect2camera = "wpa_supplicant -B -iwlx7cdd901e13d5 -c /etc/wpa_supplicant.conf -Dwext";
-const static string dhclient = "dhclient wlx7cdd901e13d5";
+const static string connect2camera = "wpa_supplicant -B -iwlx7cdd901e13d5 -c /etc/camera.conf -Dwext && dhclient wlx7cdd901e13d5";
+
 
 int main()
 {
 	
-	stop_ffmpeg_stream();
+	//stop_ffmpeg_stream();
 	init_shmPTR();
 	//wlx7cdd901e13d5
-	shmPTR->fpv_run = true;
-	
-
-	
 	int old_main_cnt = shmPTR->main_cnt;
-	
 	while (shmPTR->fpv_run) {
 		while (shmPTR->fpv_zoom == 0 && shmPTR->fpv_run) {
 			delay(200);
@@ -323,14 +318,13 @@ int main()
 			old_main_cnt = shmPTR->main_cnt;
 		}
 
-		string ret = exec("ping -c 1 192.168.42.1");
-		if (ret.find("1 received") == string::npos) {
+		string ret = exec("nice -n -20 ifconfig wlx7cdd901e13d5");
+		if (ret.find("192.168.42.") == string::npos) {
 			system(connect2camera.c_str());
-			sleep(5);
-			system(dhclient.c_str());
-			sleep(5);
+			sleep(4);
 		}
 		int zoom = shmPTR->fpv_zoom;
+		
 		open_socket();
 		camera_video_stream();
 		start_ffmpeg_stream();
@@ -357,7 +351,7 @@ int main()
 		stop_ffmpeg_stream();
 		shutdown(sock, SHUT_RDWR);
 	}
-
+	cout << "FPV EXIT\n";
   
     return 0;
 }
