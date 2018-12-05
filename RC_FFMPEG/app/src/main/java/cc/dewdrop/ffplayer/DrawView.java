@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -33,7 +34,7 @@ public class DrawView extends View {
     static public Paint black;
     static public float sm[];
     BatteryMonitor batMon;
-    static Joystick j_left,j_right;
+    private static Joystick j_left,j_right;
     static public Img_button yaw_off, desc_off, pitch_off, roll_off, head_less,menu;
     static public Img_button pitch_roll_off,go_to_home;
     static public Img_button control_type_acc,showMap,showSettings,hold_alt,smart_ctrl,extra_buttons;
@@ -56,9 +57,9 @@ public class DrawView extends View {
 
     Square_Cells sc;
 
+    static float heading=0;
 
-    private static int old_commander_counter=-1;
-    private static int old_tel_counter=-1;
+    private static int old_tel_counter=0;
 
 
 
@@ -70,6 +71,8 @@ public class DrawView extends View {
             return in+"0000000000".substring(0,len-in.length());
         return in;
     }
+
+
     private  void updateControls(){
 
         motors_on[0].enabled(Commander.link);
@@ -78,16 +81,14 @@ public class DrawView extends View {
         do_prog.enabled(MainActivity.prog_is_loaded());
         ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8);
         ftx.p[ftx._2HM]="2h:"+Integer.toString((int)Telemetry.dist)+" H:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"  V:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
-        ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),3);
+        ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),4);
         ftx.p[ftx.VIBR]=constStrLen(Double.toString(Telemetry.vibration/1000),5);
         ftx.p[ftx.BAT]=constStrLen(Telemetry.batery,3);
         ftx.p[ftx.CAM_ANG]=Integer.toString(Telemetry.gimbalPitch);
         ftx.p[ftx.CAM_ZOOM]=Integer.toString(Commander.fpv_zoom+1);
 
-        if (old_tel_counter<Telemetry.get_counter() && old_commander_counter<Commander.get_coutner()) {
+        if (old_tel_counter < Telemetry.get_counter()) {
             old_tel_counter=Telemetry.get_counter();
-            old_commander_counter=Commander.get_coutner();
-
 
             cam_p_c.gimbal_pitch_add(0,Commander.fpv_zoom);//update
             if (motors_on[0].is_pressed()==motors_on[1].is_pressed()) {
@@ -102,7 +103,9 @@ public class DrawView extends View {
 
             smart_ctrl.set(MainActivity.smartCntrF());
             hold_alt.set(MainActivity.altHoldF());
-            j_left.set_return_back_Y(MainActivity.altHoldF());
+
+            if ((MainActivity.command_bits_& MainActivity.Z_STAB) == 0)
+                j_left.set_return_back_Y(MainActivity.altHoldF());
             do_prog.set(MainActivity.progF());
         }
     }
@@ -459,11 +462,22 @@ public class DrawView extends View {
 
         smart_ctrl.onTouchEvent(event);
         if (smart_ctrl.getStat()==3)
-            MainActivity.smartCtrl();
+            if (MainActivity.toHomeF()==false && MainActivity.progF()==false)
+                MainActivity.smartCtrl();
 
         hold_alt.onTouchEvent(event);
-        if (hold_alt.getStat()==3)
-            MainActivity.altHold();
+        if (hold_alt.getStat()==3) {
+            if (MainActivity.toHomeF()==false && MainActivity.progF()==false) {
+                MainActivity.altHold();
+                j_left.set_return_back_Y(hold_alt.is_pressed());
+                desc_off.set(false);
+                j_left.set_block_Y(false);
+                if (hold_alt.is_pressed() == false)
+                    j_left.setJosticY((float) (2.0 * (0.5 - Telemetry.corectThrottle())));
+                else
+                    j_left.setJosticY(0);
+            }
+        }
 
         desc_off.onTouchEvent(event);
         if (desc_off.getStat()==3)
@@ -517,6 +531,7 @@ public class DrawView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean ret = true;
+        old_tel_counter=Telemetry.get_counter()+1000;
         switch(screen) {
             case viewMain:
                 ret = main_onTouchEvent(event);
@@ -525,6 +540,7 @@ public class DrawView extends View {
                 ret = menu_onTouchEvent(event);
                 break;
         }
+        old_tel_counter=Telemetry.get_counter()+3;
         MainActivity.update=true;
         return ret;
     }
@@ -550,17 +566,16 @@ public class DrawView extends View {
 
 
     double old_yaw=0;
-    double ang_speed=0;
     double ma_pitch=0,ma_roll=0;
-    double need_heading;
     void main_onDraw(final Canvas c){
 
         updateControls();
 
+        if (MainActivity.motorsOnF()==false)
+            heading=(float)Telemetry.heading;
+
         extra_buttons.paint(c);
-        final double max_speed=1/0.360;
-        final double da=wrap_180(MainActivity.yaw-old_yaw);
-        ang_speed += (max_speed*da/MainActivity.updateTimeMsec - ang_speed)*1;
+
         old_yaw=MainActivity.yaw;
         ma_pitch+=(MainActivity.pitch / maxAngle - ma_pitch)*1;
         ma_roll+=(MainActivity.roll  / maxAngle - ma_roll)*1;
@@ -570,17 +585,22 @@ public class DrawView extends View {
         }
         Commander.roll=j_right.getX()*maxAngle;
         Commander.pitch=j_right.getY()*maxAngle;
-        if (head_less.is_pressed()){
-            if (!yaw_off.is_pressed()) {
-                Commander.heading = (float) MainActivity.yaw;
-                j_left.setJosticX((float) ang_speed);
+
+        if (yaw_off.is_pressed()){
+            Commander.heading=heading;
+            Commander.headingOffset=0;
+        }else {
+            if (head_less.is_pressed()) {
+                Commander.heading = heading = (float) MainActivity.yaw;
+                Commander.headingOffset = 0;
+                j_left.setJosticX(0);
+            } else {
+                if (j_left.getX()!=0)
+                    Commander.heading = (float) Telemetry.heading;
+                Commander.headingOffset =  j_left.getX()*90;
+                  Log.d("HEAD",Double.toString(Telemetry.heading)+" "+Double.toString(Commander.headingOffset));
             }
-        }else{
-            if (j_left.getX()!=0) {
-                need_heading = Telemetry.heading;
-                Commander.heading=(float)Telemetry.heading;
-            }
-            Commander.headingOffset=(float)wrap_180(j_left.getX()*90-Telemetry.heading+need_heading);
+            heading=Commander.heading;
         }
 
 
@@ -589,6 +609,7 @@ public class DrawView extends View {
         batMon.setVoltage(0.25f*Telemetry.batVolt);
 
         Commander.throttle=0.5f+(j_left.getY())/2;
+      //  Log.d("JLEFT",Double.toString(j_left.getY()));
 
         double roll=j_right.getX() * maxAngle;
         double pitch=j_right.getY() * maxAngle;

@@ -91,7 +91,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
     public static void start_stop(){
         command_bits_|=MOTORS_ON;
         Commander.heading=(float)yaw;
-        Log.d("PWR","PWR");
+       // Log.d("PWR","PWR");
     }
 
 

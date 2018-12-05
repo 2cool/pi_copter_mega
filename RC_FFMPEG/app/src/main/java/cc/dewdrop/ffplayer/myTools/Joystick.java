@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 public class Joystick {
+    private float def_jx,def_jy;
     private Paint white;
     private boolean return_backX,return_backY, block_X, block_Y;
     private float x,y,size;
@@ -132,11 +133,11 @@ public class Joystick {
                 break;
         }
         if (block_X){
-            jx=0;
+            jx=def_jx;
 
         }
         if (block_Y){
-            jy=0;
+            jy=def_jy;
 
         }
 
@@ -161,8 +162,14 @@ public class Joystick {
                 end();
         }
     }
-    public void set_block_X(boolean b){block_X=b;}
-    public void set_block_Y(boolean b){block_Y=b;}
+    public void set_block_X(boolean b){
+        block_X=b;
+        def_jx=jx;
+    }
+    public void set_block_Y(boolean b){
+        block_Y=b;
+        def_jy=jy;
+    }
     public Joystick(
             float _x,
             float _y,

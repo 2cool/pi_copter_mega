@@ -190,7 +190,7 @@ public class Commander {
         i+=2;
 
         final double RANGK=10;
-       // Log.d("HEADING",Double.toString(heading));
+       // Log.d("HEADING",Double.toString(heading)+" "+Double.toString(headingOffset));
         t=(int)(heading*RANGK);
         load_16int2buf(buf, i, t);
         mask^=get16to8bMask(t);
