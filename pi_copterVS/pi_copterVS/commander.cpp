@@ -370,6 +370,7 @@ bool CommanderClass::input(){
 			cout << "COMMANDER ERROR\n";
 		}
 		shmPTR->wifibuffer_data_len_4_read = 0;
+		//cout << "Pitch=" << pitch << "; Roll=" << roll << "; Yaw=" << yaw<<endl;
 		return true;
 	}
 	else

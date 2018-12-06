@@ -1,8 +1,9 @@
 package cc.dewdrop.ffplayer;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,7 +12,7 @@ import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class Settings extends AppCompatActivity implements AdapterView.OnItemSelectedListener,SeekBar.OnSeekBarChangeListener{
+public class Settings extends Activity implements AdapterView.OnItemSelectedListener,SeekBar.OnSeekBarChangeListener{
 
     String _null="";
 
@@ -39,7 +40,16 @@ public class Settings extends AppCompatActivity implements AdapterView.OnItemSel
     protected static int menu_n=0;
 
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
 
 
     protected void download_settings(int num, boolean upload_anyway){

@@ -3,6 +3,6 @@
   Validating architecture
   Starting remote build
   Compiling sources:
-  mpu_umulator.cpp
+  commander.cpp
   Linking objects
   pi_copterVS.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

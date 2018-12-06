@@ -17,7 +17,7 @@ public class Monitor {
     private float xpos,ypos;
     private Bitmap bm,cmps;
     public void setPitch(double a){
-        pitch=-a;
+        pitch=a;
     }
     public void setRoll(double a){
         roll=-a;

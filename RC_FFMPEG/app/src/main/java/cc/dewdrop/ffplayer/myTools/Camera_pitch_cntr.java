@@ -26,8 +26,8 @@ public class Camera_pitch_cntr {
     private int buf2send=0;
     public float gimbal_pitch_add(float dy,float fpv_zoom){
         final int pixel2angle=11;
-        final double zoom=Math.max(1,Math.min(256,fpv_zoom))-1;
-        final double _pixel2angle=pixel2angle*((zoom/28.3)+1);
+        final double zoom=Math.max(1,Math.min(101,fpv_zoom))-1;
+        final double _pixel2angle=pixel2angle*((zoom/10)+1);
       //  Log.d("ZOOMZ",Double.toString(_pixel2angle));
         final int d_ang=(int)(dy/_pixel2angle);
         buf2send+=d_ang;
@@ -43,7 +43,9 @@ public class Camera_pitch_cntr {
     }
 
 
-
+    public void reset(){
+        camera_pitch_index=-1;
+    }
     public void onTouchEvent(MotionEvent event, float fpv_zoom) {
         int actionMask = event.getActionMasked();
         int index = event.getActionIndex();

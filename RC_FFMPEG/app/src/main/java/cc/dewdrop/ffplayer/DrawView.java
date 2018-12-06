@@ -77,7 +77,7 @@ public class DrawView extends View {
 
         motors_on[0].enabled(Commander.link);
         motors_on[1].enabled(Commander.link);
-
+        fpv.enabled(Commander.link);
         do_prog.enabled(MainActivity.prog_is_loaded());
         ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8);
         ftx.p[ftx._2HM]="2h:"+Integer.toString((int)Telemetry.dist)+" H:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"  V:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
@@ -85,7 +85,7 @@ public class DrawView extends View {
         ftx.p[ftx.VIBR]=constStrLen(Double.toString(Telemetry.vibration/1000),5);
         ftx.p[ftx.BAT]=constStrLen(Telemetry.batery,3);
         ftx.p[ftx.CAM_ANG]=Integer.toString(Telemetry.gimbalPitch);
-        ftx.p[ftx.CAM_ZOOM]=Integer.toString(Commander.fpv_zoom+1);
+        ftx.p[ftx.CAM_ZOOM]=Integer.toString(Commander.fpv_zoom-1);
 
         if (old_tel_counter < Telemetry.get_counter()) {
             old_tel_counter=Telemetry.get_counter();
@@ -252,6 +252,7 @@ public class DrawView extends View {
         fpv =new Img_button(sc.getRect(4,0),
                 context.getResources().getDrawable(R.drawable.fpv_off),
                 context.getResources().getDrawable(R.drawable.fpv),true);
+
         vrc =new Img_button(sc.getRect(5,0),
                 context.getResources().getDrawable(R.drawable.vrc_off),
                 context.getResources().getDrawable(R.drawable.vrc_on),true);
@@ -450,9 +451,10 @@ public class DrawView extends View {
         motors_control(event);
 
         int isc=test4sqere(event,za_cntrl);
-        if (isc==2)
+        if (isc>1) {
+            cam_p_c.reset();
             mScaleGestureDetector.onTouchEvent(event);
-        else
+        }else
         if (isc==1)
               cam_p_c.onTouchEvent(event, Commander.fpv_zoom);
 
@@ -583,8 +585,6 @@ public class DrawView extends View {
             j_right.setJosticY((float) (ma_pitch));
             j_right.setJosticX((float) (ma_roll));
         }
-        Commander.roll=j_right.getX()*maxAngle;
-        Commander.pitch=j_right.getY()*maxAngle;
 
         if (yaw_off.is_pressed()){
             Commander.heading=heading;
@@ -598,7 +598,7 @@ public class DrawView extends View {
                 if (j_left.getX()!=0)
                     Commander.heading = (float) Telemetry.heading;
                 Commander.headingOffset =  j_left.getX()*90;
-                  Log.d("HEAD",Double.toString(Telemetry.heading)+" "+Double.toString(Commander.headingOffset));
+                  //Log.d("HEAD",Double.toString(Telemetry.heading)+" "+Double.toString(Commander.headingOffset));
             }
             heading=Commander.heading;
         }
@@ -611,10 +611,8 @@ public class DrawView extends View {
         Commander.throttle=0.5f+(j_left.getY())/2;
       //  Log.d("JLEFT",Double.toString(j_left.getY()));
 
-        double roll=j_right.getX() * maxAngle;
-        double pitch=j_right.getY() * maxAngle;
-        Commander.roll = (float)roll;
-        Commander.pitch = (float)pitch;
+        Commander.roll = j_right.getX() * maxAngle;
+        Commander.pitch = -j_right.getY() * maxAngle;;
 
 
 
