@@ -135,6 +135,7 @@
 #define e_CALIBRATING		"CLB"
 #define e_BARROMETR_FAULT   "BFT"
 #define e_BARROMETR_FAULT_COPTER_AT_HOME "BCH"
+#define e_PROG_INDEX_ERROR "PIE"
 #define i_OFF_MOTORS     "MD0"
 #define i_CONTROL_FALL   "CNF"
 #define i_MAX_THR        "MXT"

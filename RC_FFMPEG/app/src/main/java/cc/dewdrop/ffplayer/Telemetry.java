@@ -106,6 +106,7 @@ public class Telemetry {
             //	i=msg.lastIndexOf(",",i);
         }else {
             messages = msg;
+            Log.d("ERRMSG",msg);
         }
         //
 

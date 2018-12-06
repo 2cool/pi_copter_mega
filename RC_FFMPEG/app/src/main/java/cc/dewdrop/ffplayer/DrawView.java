@@ -72,7 +72,7 @@ public class DrawView extends View {
         return in;
     }
 
-
+    private static long message_time=0;
     private  void updateControls(){
 
         motors_on[0].enabled(Commander.link);
@@ -87,6 +87,14 @@ public class DrawView extends View {
         ftx.p[ftx.CAM_ANG]=Integer.toString(Telemetry.gimbalPitch);
         ftx.p[ftx.CAM_ZOOM]=Integer.toString(Commander.fpv_zoom-1);
 
+        if (Telemetry.messages!=null) {
+            message_time=System.currentTimeMillis();
+            ftx.p[ftx.MESGE] = Telemetry.messages;
+            Telemetry.messages = null;
+        }else if (message_time>0 && System.currentTimeMillis()-message_time>5000){
+            ftx.p[ftx.MESGE]="";
+            message_time=0;
+        }
         if (old_tel_counter < Telemetry.get_counter()) {
             old_tel_counter=Telemetry.get_counter();
 
@@ -195,7 +203,7 @@ public class DrawView extends View {
                 true,
                 true,
                 0x70ffffff);
-
+        ftx.setPaint(ftx.MESGE,0xff00ff00);
         monitor =new Monitor((int)(sm[0]/2),(int)(sm[1]-monSize/2),(int)(monSize),
                 BitmapFactory.decodeResource(getResources(), R.drawable.angle),
                 BitmapFactory.decodeResource(getResources(), R.drawable.cmps));
@@ -652,7 +660,7 @@ public class DrawView extends View {
 
         c.drawRect(za_cntrl,gray_opaq);
 
-        if (extra_buttons.is_pressed())
+        if (extra_buttons.is_pressed() || message_time>0)
             ftx.paint(c);
 
     }

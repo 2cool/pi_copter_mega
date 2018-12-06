@@ -480,7 +480,7 @@ bool ProgClass::add(byte*buf)
 	
 	if (steps_count != buf[i++]){
 		clear();
-		cout << "PROG INDEX ERROR\n";
+		Telemetry.addMessage(e_PROG_INDEX_ERROR);
 		return false;
 	}
 	if (i + 17 > PROG_MEMORY_SIZE){
