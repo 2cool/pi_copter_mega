@@ -40,7 +40,7 @@
       <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
+            <state relative-caret-position="918">
               <caret line="84" column="23" selection-start-line="84" selection-start-column="23" selection-end-line="84" selection-end-column="23" />
               <folding>
                 <element signature="e#3179#3180#0" expanded="true" />
@@ -50,11 +50,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DrawView.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DrawView.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="662" column="56" selection-start-line="662" selection-start-column="56" selection-end-line="662" selection-end-column="56" />
+            <state relative-caret-position="338">
+              <caret line="67" column="16" selection-start-line="66" selection-start-column="4" selection-end-line="72" selection-end-column="5" />
               <folding>
                 <element signature="e#1959#1960#0" expanded="true" />
                 <element signature="e#1990#1991#0" expanded="true" />
@@ -63,15 +63,24 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="Monitor.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Monitor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1845">
+              <caret line="121" column="28" selection-start-line="121" selection-start-column="28" selection-end-line="121" selection-end-column="28" />
+              <folding>
+                <element signature="e#678#679#0" expanded="true" />
+                <element signature="e#701#702#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="FlightTextInfo.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/FlightTextInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1139">
+            <state relative-caret-position="1105">
               <caret line="70" column="15" selection-start-line="70" selection-start-column="15" selection-end-line="70" selection-end-column="15" />
-              <folding>
-                <element signature="e#706#707#0" expanded="true" />
-                <element signature="e#729#730#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -79,7 +88,7 @@
       <file leaf-file-name="Joystick.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Joystick.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
+            <state relative-caret-position="102">
               <caret line="11" column="13" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="17" />
             </state>
           </provider>
@@ -89,9 +98,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>upload_settings</find>
-      <find>Map</find>
-      <find>invalidate</find>
       <find>try</find>
       <find>need_heading</find>
       <find>Commander.t</find>
@@ -119,6 +125,9 @@
       <find>KEYCODE_VOLUME_DOWN</find>
       <find>Commander.pitch</find>
       <find>ftx</find>
+      <find>monitor</find>
+      <find>hight</find>
+      <find>speed</find>
     </findStrings>
   </component>
   <component name="GradleLocalSettings">
@@ -2425,11 +2434,11 @@
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Camera_pitch_cntr.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Monitor.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Settings.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/FlightTextInfo.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Monitor.java" />
       </list>
     </option>
   </component>
@@ -2444,7 +2453,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
@@ -2471,10 +2479,16 @@
               <item name="ffplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
               <item name="myTools" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
+              <item name="app" type="feadf853:AndroidModuleNode" />
+              <item name="cpp" type="9a30073f:AndroidJniFolderNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -2627,8 +2641,8 @@
       <window_info id="Captures" order="2" weight="0.25" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Build" order="7" visible="true" weight="0.32851636" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info anchor="bottom" id="Build" order="7" weight="0.32851636" />
       <window_info anchor="right" id="Gradle" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Device File Explorer" order="3" side_tool="true" />
@@ -2661,6 +2675,17 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11254">
+          <caret line="662" column="56" selection-start-line="662" selection-start-column="56" selection-end-line="662" selection-end-column="56" />
+          <folding>
+            <element signature="e#1959#1960#0" expanded="true" />
+            <element signature="e#1990#1991#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1428">
@@ -2989,19 +3014,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
+        <state relative-caret-position="918">
           <caret line="84" column="23" selection-start-line="84" selection-start-column="23" selection-end-line="84" selection-end-column="23" />
           <folding>
             <element signature="e#3179#3180#0" expanded="true" />
             <element signature="e#3222#3223#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Monitor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="19" column="13" selection-start-line="19" selection-start-column="8" selection-end-line="19" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -3021,29 +3039,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Joystick.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
+        <state relative-caret-position="102">
           <caret line="11" column="13" selection-start-line="11" selection-start-column="12" selection-end-line="11" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/FlightTextInfo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1139">
+        <state relative-caret-position="1105">
           <caret line="70" column="15" selection-start-line="70" selection-start-column="15" selection-end-line="70" selection-end-column="15" />
-          <folding>
-            <element signature="e#706#707#0" expanded="true" />
-            <element signature="e#729#730#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="662" column="56" selection-start-line="662" selection-start-column="56" selection-end-line="662" selection-end-column="56" />
+        <state relative-caret-position="338">
+          <caret line="67" column="16" selection-start-line="66" selection-start-column="4" selection-end-line="72" selection-end-column="5" />
           <folding>
             <element signature="e#1959#1960#0" expanded="true" />
             <element signature="e#1990#1991#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Monitor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1845">
+          <caret line="121" column="28" selection-start-line="121" selection-start-column="28" selection-end-line="121" selection-end-column="28" />
+          <folding>
+            <element signature="e#678#679#0" expanded="true" />
+            <element signature="e#701#702#0" expanded="true" />
           </folding>
         </state>
       </provider>

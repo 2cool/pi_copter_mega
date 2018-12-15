@@ -12,7 +12,8 @@ import static java.lang.Math.cos;
 
 public class Monitor {
     Paint white;
-    private double hight,speed;
+
+    private float hight,speed;
     private double pitch, roll, yaw;
     private float xpos,ypos;
     private Bitmap bm,cmps;
@@ -22,8 +23,13 @@ public class Monitor {
     public void setRoll(double a){
         roll=-a;
     }
-    public void setHeight(double h){hight=h;}
-    public void setSpeed(double s){speed=s;}
+    public void setHeight(double h){
+        hight = (float) Math.round(h * 100) / 100;
+
+    }
+    public void setSpeed(double s){
+        speed=(float) Math.round(s * 100) / 100;
+    }
     public void setYaw(double a){
         while(a<0)
             a+=360;
@@ -34,6 +40,7 @@ public class Monitor {
     private float scale;
     private float size;
     Paint gray;
+
     public Monitor(int x, int y, int size_, Bitmap bm_, Bitmap _cmps_){
 
         hight=0;
@@ -107,12 +114,12 @@ public class Monitor {
         float y0=-(float)Math.cos(roll/180*Math.PI)*size1;
         c.drawLine(xpos+x0,ypos+y0,xpos+x0*1.2f,ypos+y0*1.2f,white);
         //draw height
-        String text=Integer.toString((int)hight)+ " m";
+        String text=Float.toString(hight)+ " m";
         Rect r=new Rect();
         white.getTextBounds(text,0,text.length(),r);
         //draw speed
         c.drawText(text,xpos-bm.getWidth()/2.7f-(r.right-r.left),ypos+(r.bottom-r.top)/2,white);
-        text=Integer.toString((int)speed)+" m/c";
+        text=Float.toString(speed)+" m/c";
         c.drawText(text,xpos+bm.getWidth()/3,ypos+(r.bottom-r.top)/2,white);
         //draw pointer of yaw
         c.drawLine(xpos, ypos-size1,xpos,ypos-size1*1.25f,white);

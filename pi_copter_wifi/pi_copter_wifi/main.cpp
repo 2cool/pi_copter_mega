@@ -232,11 +232,13 @@ void server() {
 			if (shmPTR->connected == 0)
 				shmPTR->client_addr = cli_addr.sin_addr.s_addr;
 			shmPTR->connected++;
+			if (shmPTR->connected == 1)
+				cout << "ONLINE\n";
 		}
 		else {
 			if (shmPTR->connected) {
 
-				cout << "ERROR reading from socket\n";
+				cout << "OFFLINE\n";//ERROR reading from socket\n";
 				
 			}
 			if (wite_connection())

@@ -15,8 +15,39 @@ Alter min_speed or max_speed variable.
 
 service cpufrequtils restart
 
+/////////////////////////////////////////////////////////////////////////////////////
+
+#! /bin/sh
+# /etc/init.d/pi_copter
+#
+
+# Some things that run always
+touch /var/lock/pi_copter
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+	echo "Starting pi_copter "
+	start-stop-daemon -Sbvx /home/start-stop-daemon -Sbvx /home/igor/projects/pi_copterVS/pi_copter $
+	;;
+  stop)
+	echo "Stopping pi_copter"
+
+		start-stop-daemon -Kvx /home/igor/projects/pi_copterVS/pi_copter
+	;;
+  *)
+	echo "Usage: /etc/init.d/blah {start|stop}"
+	exit 1
+	;;
+esac
+
+exit 0
 
 
+Once you've saved your file into the correct location make sure that it's executable by running "chmod 755 /etc/init.d/blah".
+
+Igor Toocool, [27.06.17 00:15]
+root@skx:~# update-rc.d pi_copter defaults
 
 
 
