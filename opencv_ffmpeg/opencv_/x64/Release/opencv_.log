@@ -1,0 +1,9 @@
+﻿  main.cpp
+d:\users\2cool\documents\visual studio 2017\projects\_opencv\opencv_20181209_\opencv____\opencv_\main.cpp(4): warning C4010: single-line comment contains line-continuation character
+d:\users\2cool\documents\visual studio 2017\projects\_opencv\opencv_20181209_\opencv____\opencv_\main.cpp(5): warning C4010: single-line comment contains line-continuation character
+  Generating code
+  4 of 194 functions ( 2.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  opencv_.vcxproj -> D:\Users\2cool\Documents\Visual Studio 2017\Projects\_opencv\opencv_20181209_\opencv____\x64\Release\opencv_.exe
