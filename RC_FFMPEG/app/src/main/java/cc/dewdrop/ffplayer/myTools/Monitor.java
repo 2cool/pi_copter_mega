@@ -7,12 +7,16 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
+
+import cc.dewdrop.ffplayer.DrawView;
+import cc.dewdrop.ffplayer.MainActivity;
 
 import static java.lang.Math.cos;
 
 public class Monitor {
-    Paint white;
-
+    Paint white,green;
+    private float compsL;
     private float hight,speed;
     private double pitch, roll, yaw;
     private float xpos,ypos;
@@ -41,7 +45,7 @@ public class Monitor {
     private float size;
     Paint gray;
 
-    public Monitor(int x, int y, int size_, Bitmap bm_, Bitmap _cmps_){
+    public Monitor(int x, int y, int size, Bitmap bm, Bitmap cmps){
 
         hight=0;
         yaw=0;
@@ -49,19 +53,24 @@ public class Monitor {
         gray=new Paint();
         gray.setColor(Color.BLACK);
         gray.setAlpha(35);
-        size=size_;
+        this.size=size;
         // float sm[]=MainActivity.screenMetrics;
-        scale=(float)size / bm_.getWidth();
+        scale=(float)size / bm.getWidth();
         xpos=x;
         ypos=y;
         pitch=roll=0;
-        bm=bm_;
-        cmps=_cmps_;
+        this.bm=bm;
+        this.cmps=cmps;
         white = new Paint();
         white.setColor(Color.WHITE);
         white.setStrokeWidth(2);
-        white.setTextSize(size_/6);
+        white.setTextSize(size/6);
         //   white.setAlpha(255);
+
+        green=new Paint();
+        green.setColor(Color.GREEN);
+        green.setStrokeWidth(3);
+        compsL= (float)cmps.getWidth()*9.0f/25.0f;
     }
 
 
@@ -128,7 +137,6 @@ public class Monitor {
         //draw yaw
         matrix.reset();
         matrix.postScale(scale,scale);
-        float compsL= (float)cmps.getWidth()*9.0f/25.0f;
         Bitmap compsN=Bitmap.createBitmap(
                 cmps,
                 (int)(16.0/360/25*yaw*cmps.getWidth()),
@@ -138,10 +146,16 @@ public class Monitor {
                 matrix,
                 true);
         c.drawBitmap(compsN,xpos-compsL*scale*0.5f,ypos-size1*1.5f,white);
-
-
-
-
+        //phone direction
+        green.setAlpha((DrawView.head_less.is_pressed())?255:100);
+        final float dy=(float) Math.max(-90,Math.min(90,DrawView.wrap_180(MainActivity.yaw-DrawView.wrap_180(yaw))));
+        Log.d("MONIT",Float.toString(dy)+" "+Double.toString(MainActivity.yaw)+ " "+Double.toString(yaw));
+        final float w=-(scale*compsL);
+        float d_yaw=w*dy/180;
+        d_yaw+=w*0.5;
+        final float x=xpos-compsL*scale*0.5f-d_yaw;
+        final float y=ypos-size1*1.5f+cmps.getHeight()*0.5f;
+        c.drawLine(x,y,x,y+cmps.getHeight()*0.5f,green);
     }
 
 

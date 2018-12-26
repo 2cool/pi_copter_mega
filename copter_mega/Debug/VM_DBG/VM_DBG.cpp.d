@@ -1,6 +1,6 @@
-C:\Users\2coolz\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\VM_DBG\VM_DBG.cpp.o: \
- C:\Program\ Files\ (x86)\Microsoft\ Visual\ Studio\2017\Community\Common7\IDE\Extensions\pd4xo3tv.r1p\Micro\ Platforms\default\debuggers\VM_DBG\VM_DBG.cpp \
- C:\Program\ Files\ (x86)\Microsoft\ Visual\ Studio\2017\Community\Common7\IDE\Extensions\pd4xo3tv.r1p\Micro\ Platforms\default\debuggers\VM_DBG\VM_DBG.h \
+C:\Users\Igor\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\VM_DBG\VM_DBG.cpp.o: \
+ c:\program\ files\ (x86)\microsoft\ visual\ studio\2017\community\common7\ide\extensions\rklz3tds.z1r\Micro\ Platforms\default\debuggers\VM_DBG\VM_DBG.cpp \
+ c:\program\ files\ (x86)\microsoft\ visual\ studio\2017\community\common7\ide\extensions\rklz3tds.z1r\Micro\ Platforms\default\debuggers\VM_DBG\VM_DBG.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \

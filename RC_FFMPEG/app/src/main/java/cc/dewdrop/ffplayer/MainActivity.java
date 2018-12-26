@@ -420,7 +420,12 @@ public static void verifyPermissions(Activity activity){
         if (type==Sensor.TYPE_ORIENTATION){
             magnetometerWork=true;
             double f=gyroscopeWork?1:0.1;
-            yaw += (DrawView.wrap_180((double)event.values[0]+90) - yaw )*f;
+            double t_yaw=(DrawView.wrap_180((double)event.values[0]+90));
+            if (t_yaw>90 && yaw<-90)
+                yaw+=360;
+            else if (t_yaw<-90 && yaw>90)
+                yaw-=360;
+            yaw += (t_yaw - yaw )*f;
             //  Commander.heading=(float)heading_t;
            // Log.d("SENhD", Double.toString(yaw));
         }

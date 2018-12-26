@@ -61,7 +61,7 @@ volatile bool ring=false,ring_to_send=false;
 volatile bool gps_status = false;
 volatile uint8_t pi_copter_color[8][3]={ {0,1,0},{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 } };
 
-
+volatile bool shutdown = false;
 
 enum {eNO_CON,eRING};
 volatile uint8_t col[][3] = { { 1,0,0 },{255,0,0} };
@@ -223,13 +223,15 @@ void receiveEvent(int countToRead) {
 		uint8_t len = inBuf[0] >> 3;
 		uint16_t temp = *((uint16_t*)&inBuf[1]);
 		if (len == 0) {
-			OCR0 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
-			temp = *((uint16_t*)&inBuf[3]);
-			OCR1 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
-			temp = *((uint16_t*)&inBuf[5]);
-			OCR2 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
-			temp = *((uint16_t*)&inBuf[7]);
-			OCR3 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
+			if (!shutdown) {
+				OCR0 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
+				temp = *((uint16_t*)&inBuf[3]);
+				OCR1 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
+				temp = *((uint16_t*)&inBuf[5]);
+				OCR2 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
+				temp = *((uint16_t*)&inBuf[7]);
+				OCR3 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
+			}
 		}
 		else {
 			OCR_GP = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
@@ -374,6 +376,7 @@ void setup()
 	//Serial.begin(9600);
 	//while (!Serial);
 	//SIM800.begin(9600);
+	Serial.println("HI");
 	gps_setup();
 	pinMode(BUZZER, OUTPUT);
 	pinMode(RING, INPUT);
@@ -408,7 +411,7 @@ float i[5] = { 0,0,0,0,0 };
 #define MI2 PIN_A6
 #define MI3 PIN_A4
 #define BAT PIN_A1
-
+int minar = 3000;
 void loop()
 {
 	if (cnt_reset>0 && cnt_reset < millis()) {
@@ -418,10 +421,24 @@ void loop()
 
 	const float CF = 0.01;
 
-	fb[0] += ((float)(analogRead(MI0)) - fb[0])*CF;
-	fb[1] += ((float)(analogRead(MI1)) - fb[1])*CF;
-	fb[2] += ((float)(analogRead(MI2)) - fb[2])*CF;
-	fb[3] += ((float)(analogRead(MI3)) - fb[3])*CF;
+	int ar = analogRead(MI0);
+	/*if (minar > ar) {
+		minar = ar;
+		Serial.println(ar);
+	}*/
+	shutdown |= (ar < 485);
+	fb[0] += ((float)(ar) - fb[0])*CF;
+	ar = analogRead(MI1);
+	shutdown |= (ar < 476);
+	fb[1] += ((float)(ar) - fb[1])*CF;
+	ar = analogRead(MI2);
+	shutdown |= (ar < 362);
+	fb[2] += ((float)(ar) - fb[2])*CF;
+	ar = analogRead(MI3);
+	shutdown |= (ar < 436);
+	fb[3] += ((float)(analogRead(ar)) - fb[3])*CF;
+	if (shutdown)
+		stop_motors();
 	fb[4] += ((float)(analogRead(BAT)) - fb[4])*CF;
 
 

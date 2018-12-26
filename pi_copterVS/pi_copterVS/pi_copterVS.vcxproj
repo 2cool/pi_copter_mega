@@ -63,6 +63,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <MultiProcNumber>4</MultiProcNumber>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <MultiProcNumber>4</MultiProcNumber>
+  </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="AP_PID.cpp" />
     <ClCompile Include="Autopilot.cpp" />

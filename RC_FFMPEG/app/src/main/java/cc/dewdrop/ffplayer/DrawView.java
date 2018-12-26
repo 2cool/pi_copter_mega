@@ -211,7 +211,7 @@ public class DrawView extends View {
         batMon=new BatteryMonitor((float)((sm[0]-monSize)/2),(int)(sm[1]-monSize*1.7),monSize);
 
         final int  jbuttonsY=(int)(nY-bR/(sm[1]/nY))-1;
-        j_left=new Joystick(bR*k,sm[1]-bR*(1+k),bR,true,false,false,false,green_c);
+        j_left=new Joystick(bR*k,sm[1]-bR*(1+k),bR,true,true,false,false,green_c);
         j_right=new Joystick(sm[0]-bR*(1+k),sm[1]-bR*(1+k),bR,true,true,false,false,green_c);
         j_right.setLabel(Integer.toString((int)maxAngle));
 
