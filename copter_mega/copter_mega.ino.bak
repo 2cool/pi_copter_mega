@@ -376,7 +376,7 @@ void setup()
 	//Serial.begin(9600);
 	//while (!Serial);
 	//SIM800.begin(9600);
-	//Serial.println("HI");
+	Serial.println("HI");
 	gps_setup();
 	pinMode(BUZZER, OUTPUT);
 	pinMode(RING, INPUT);

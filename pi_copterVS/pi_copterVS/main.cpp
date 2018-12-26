@@ -132,49 +132,6 @@ int zzz = 1;
 
 
 
-void video_stream1() {
-#ifdef SKSKSKSKSKSK
-	while (true) {
-		//ffmpeg - rtsp_transport udp - i "rtsp://192.168.42.1:554/live" - c copy - f h264 udp ://android_phone_address:5544
-		delay(6000);
-		if (Commander.vedeo_stream_client_addr == 0)
-			continue;
-
-#define uchar unsigned char
-		int iadr = shmPTR->client_addr;
-		if (iadr == 0)
-			return;
-		string adr = to_string((uchar)(iadr & 255)) + "." + to_string((uchar)(255 & (iadr >> 8))) + "." + to_string((uchar)(255 & (iadr >> 16))) + "." + to_string((uchar)(iadr >> 24));
-
-		
-
-		int last_dot = adr.find_last_of(".");
-		adr = adr.substr(0, last_dot + 1) += std::to_string(Commander.vedeo_stream_client_addr);
-		//printf("%s\n", adr.c_str());
-		string ret = exec("ping -c 1 " + adr);
-		if (ret.find("1 received") != string::npos) {
-			ret = exec("ping -c 1 192.168.42.1");
-			if (ret.find("1 received") != string::npos) {
-				//printf( "try stream to %s\n", adr.c_str());
-				cout << "try stream to " << adr << endl;
-				
-				string s = "ffmpeg -rtsp_transport udp -i \"rtsp://192.168.42.1:554/live\" -c copy -f h264 udp://" + adr + ":554 > /dev/null 2>&1";
-				system(s.c_str());
-				cout<< "stream stoped\n";
-			}
-		}
-
-		/*
-		ffmpeg -rtsp_transport udp -i "rtsp://192.168.42.1:554/live" -c copy -f h264 udp://192.168.0.104:554
-
-		*/
-
-		//printf( "%s\n", ret.c_str());
-			
-	}
-#endif
-}
-
 
 int setup(int cnt) {////--------------------------------------------- SETUP ------------------------------
 	Log.init(cnt);
@@ -295,7 +252,7 @@ void pipe_handler(int sig) {
 
 int printHelp() {
 	cout << "<-help> for this help\n";
-	cout << " <fly at start at hight in sm > <lower hight in sm> <f=write stdout to file > <log com and tel y> <start wifi> <start sms> <start log> <start telegram>\n";
+	cout << " <fly at start at hight in sm > <lower hight in sm> <f=write stdout to file > <log com and tel y> <start wifi> <start sms> <start gps_inet_loger> <start telegram>\n";
 	cout << "example to write in log file : pi_copter 300 100 f n y y y y\n";
 	cout << "example to write in stdout   : pi_copter 300 100 s n y y y y\n";
 	return -1;
