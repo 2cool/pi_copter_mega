@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -25,7 +24,7 @@ public class DrawView extends View {
 
     static public double wrap_180(double x) {return (x < -180 ? x+360 : (x > 180 ? x - 360: x));}
     public static ScaleGestureDetector mScaleGestureDetector;
-
+    final float max_manual_thr_index = 10;
     final static int  viewMain=0;
     final static int  viewMenu=1;
     public static Rect za_cntrl;
@@ -483,7 +482,7 @@ public class DrawView extends View {
                 desc_off.set(false);
                 j_left.set_block_Y(false);
                 if (hold_alt.is_pressed() == false)
-                    j_left.setJosticY((float) (2.0 * (0.5 - Telemetry.corectThrottle())));
+                    j_left.setJosticY((float) (max_manual_thr_index * (0.5 - Telemetry.corectThrottle())));
                 else
                     j_left.setJosticY(0);
             }
@@ -616,7 +615,9 @@ public class DrawView extends View {
 
         batMon.setVoltage(0.25f*Telemetry.batVolt);
 
-        Commander.throttle=0.5f+(j_left.getY())/2;
+        if (hold_alt.is_pressed())
+            Commander.throttle=0.5f+(j_left.getY())/((hold_alt.is_pressed())?2: max_manual_thr_index);
+
       //  Log.d("JLEFT",Double.toString(j_left.getY()));
 
         Commander.roll = j_right.getX() * maxAngle;

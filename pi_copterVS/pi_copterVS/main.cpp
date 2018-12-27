@@ -330,9 +330,6 @@ void watch_dog() {
 std::ofstream out;
 std::streambuf *coutbuf;// старый буфер
 
-
-
-
 int main(int argc, char *argv[]) {
 
 cout << PROG_VERSION << endl;
