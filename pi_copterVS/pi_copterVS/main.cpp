@@ -51,7 +51,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 
 */
-
+ 
 #define PROG_VERSION "ver 3.180718\n"
 
 

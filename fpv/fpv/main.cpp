@@ -98,7 +98,7 @@ int init_shmPTR() {
 		ShmKEY = ftok(SHMKEY, 'x');
 		ShmID = shmget(ShmKEY, sizeof(struct Memory), 0666);
 		if (ShmID < 0) {
-			cout << "*** shmget error (wifi) ***\n";
+			cout << "*** shmget error (fpv) ***\n";
 			return 1;
 		}
 		shmPTR = (struct Memory *) shmat(ShmID, NULL, 0);
@@ -118,7 +118,7 @@ void handler(int sig) { // can be called asynchronously
 	flag = 1; // set flag
 }
 void pipe_handler(int sig) {
-	cout << "wifi pipe error\n";
+	cout << "fpv pipe error\n";
 }
 
 

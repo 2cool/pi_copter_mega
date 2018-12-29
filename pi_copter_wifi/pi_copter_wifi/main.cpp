@@ -290,7 +290,6 @@ void watch_d() {
 				if (++errors >= 3) {
 					flag = 1;
 					cout << "main dont update cnt! EXIT\n";
-					flag = 1;
 					return;
 				}
 			}
@@ -303,7 +302,7 @@ void watch_d() {
 		else {
 			flag = 1;
 			cout << "wifi: recived EXIT command\n";
-			break;
+			return;
 		}
 	}
 

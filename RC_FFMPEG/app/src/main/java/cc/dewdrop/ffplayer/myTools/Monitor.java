@@ -149,7 +149,7 @@ public class Monitor {
         //phone direction
         green.setAlpha((DrawView.head_less.is_pressed())?255:100);
         final float dy=(float) Math.max(-90,Math.min(90,DrawView.wrap_180(MainActivity.yaw-DrawView.wrap_180(yaw))));
-        Log.d("MONIT",Float.toString(dy)+" "+Double.toString(MainActivity.yaw)+ " "+Double.toString(yaw));
+        //Log.d("MONIT",Float.toString(dy)+" "+Double.toString(MainActivity.yaw)+ " "+Double.toString(yaw));
         final float w=-(scale*compsL);
         float d_yaw=w*dy/180;
         d_yaw+=w*0.5;

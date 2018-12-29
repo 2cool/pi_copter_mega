@@ -180,7 +180,7 @@ public class Commander {
             else
                 throttle = 0.5f;
         }
-        Log.d("COMM",Float.toString(throttle));
+      //  Log.d ("COMM",Float.toString(throttle));
         MainActivity.command_bits_=0;
 
         i+=4;

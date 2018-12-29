@@ -55,7 +55,6 @@ using namespace std;
 
 
 
-
 //#define FORTEST
 
 #ifdef FORTEST
@@ -169,7 +168,7 @@ string sms_phone_number;
 string sms_mes;
 
 static const std::string head = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/";
-static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_id=241349746&text=";
+static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_idbot = telegram.Bot(token='bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww')&text=";
 
 volatile int _sms_n;
 
@@ -800,6 +799,7 @@ void watch_d() {
 		else {
 			flag = 1;
 			cout << "inet: recived EXIT command\n";
+			return;
 		}
 	}
 }
