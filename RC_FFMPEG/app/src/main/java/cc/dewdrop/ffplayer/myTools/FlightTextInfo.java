@@ -44,9 +44,6 @@ public class FlightTextInfo {
 
         Paint txt=new Paint();
         txt.setColor(txt_color);
-
-
-
         final int fsx=(int)(0.7*(r.right-r.left));
         final int fsy=(int)(0.7*(r.bottom-r.top));
         final String str="0000000  000000000";
@@ -58,9 +55,13 @@ public class FlightTextInfo {
                 break;
             }
         }
-
+        Paint txt2=new Paint(txt);
+        txt2.setColor(Color.GREEN);
         for (int i=0; i<FIELDS; i++) {
-            paint[i]=new Paint(txt);
+            if (i==1)
+                paint[i] = new Paint(txt2);
+            else
+                paint[i]=new Paint(txt);
            // paint[i].setColor(txt_color);
         }
 

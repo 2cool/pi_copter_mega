@@ -79,7 +79,7 @@ public class DrawView extends View {
         fpv.enabled(Commander.link);
         do_prog.enabled(MainActivity.prog_is_loaded());
         ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8);
-        ftx.p[ftx._2HM]="2h:"+Integer.toString((int)Telemetry.dist)+" H:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"  V:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
+        ftx.p[ftx._2HM]="2h: "+Integer.toString((int)Telemetry.dist)+"  h:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"v:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
         ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),4);
         ftx.p[ftx.VIBR]=constStrLen(Double.toString(Telemetry.vibration/1000),5);
         ftx.p[ftx.BAT]=constStrLen(Telemetry.batery,3);
@@ -103,10 +103,13 @@ public class DrawView extends View {
                 motors_on[1].set(MainActivity.motorsOnF());
             }
             go_to_home.set(MainActivity.toHomeF());
-            if (!MainActivity.horizontOnF()) //always is on it this prog
-                MainActivity.horizonOn();
-            if (!MainActivity.compassOnF())
-                MainActivity.compassOn();
+
+            if (!(MainActivity.progF() || MainActivity.toHomeF()) ) {
+                if (!MainActivity.horizontOnF()) //always is on it this prog
+                    MainActivity.horizonOn();
+                if (!MainActivity.compassOnF())
+                    MainActivity.compassOn();
+            }
 
             smart_ctrl.set(MainActivity.smartCntrF());
             hold_alt.set(MainActivity.altHoldF());

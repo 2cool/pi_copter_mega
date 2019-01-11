@@ -881,7 +881,7 @@ if (ctrl_flag == MANUAL){//---------------manual
 	*/
 
 void AutopilotClass::compass_tr() {
-	if (!progState())
+	if (!progState() && !go2homeState())
 		control_bits ^= COMPASS_ON;
 }
 

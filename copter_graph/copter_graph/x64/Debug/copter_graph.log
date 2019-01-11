@@ -1,18 +1,1 @@
-﻿  stdafx.cpp
-  Balance.cpp
-  copter_graph.cpp
-  hmc.cpp
-  GPS_Loger.cpp
-  graph.cpp
-  Kalman.cpp
-  KK.cpp
-  Mpu.cpp
-  myButton.cpp
-  MYfILTER.cpp
-  MyMath.cpp
-  Pressure.cpp
-  Stab.cpp
-  TButton.cpp
-  Telemetry.cpp
-  Generating Code...
-  copter_graph.vcxproj -> C:\Users\2coolz\pi_copter_mega\copter_graph\x64\Debug\copter_graph.exe
+﻿  copter_graph.vcxproj -> C:\Users\Igor\pi_copter_mega\copter_graph\x64\Debug\copter_graph.exe
