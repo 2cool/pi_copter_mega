@@ -16,9 +16,9 @@
 #else
 	 start_seconds = t.tv_sec;
 #endif
-	 cout << "start_seccons=" << start_seconds << endl;
+	
  }
-
+ __time_t get_start_sec() { return start_seconds; }
 uint32_t millis_g() {
 	timespec t;
 	clock_gettime(CLOCK_REALTIME, &t);

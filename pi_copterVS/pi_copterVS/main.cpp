@@ -52,7 +52,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 */
  
-#define PROG_VERSION "ver 3.180718\n"
+#define PROG_VERSION "ver 3.190110\n"
 
 
 #define SIM800_F
@@ -331,13 +331,8 @@ std::ofstream out;
 std::streambuf *coutbuf;// старый буфер
 
 int main(int argc, char *argv[]) {
-
-cout << PROG_VERSION << endl;
-
-
 	if (init_shmPTR())
 		return 0;
-
 	{
 		uint8_t temp = shmPTR->main_cnt;
 
@@ -345,6 +340,12 @@ cout << PROG_VERSION << endl;
 		if (temp != shmPTR->main_cnt) {
 			cout << "clone\n";
 			return 0;
+		}
+	}
+	{
+		const int i = string(argv[0]).find("/root/projects/pi_copter");
+		if (i > 0) {
+			sleep(6);
 		}
 	}
 
@@ -419,17 +420,12 @@ cout << PROG_VERSION << endl;
 					cout << "no counter file";
 					return 0;
 				}
-
 				set = fopen(LOG_COUNTER_NAME, "w+");
 				fprintf(set, "%i\n", counter + 1);
 				fclose(set);
 				if (argv[3][0] == 'f' || argv[3][0] == 'F') {
-
-
 					stdout_file_ext = "/home/igor/logs/log_out" + to_string(counter);
 					fname = stdout_file_ext+".txt";
-
-
 					out = std::ofstream(fname.c_str()); //откроем файл для вывод
 					coutbuf = std::cout.rdbuf(); //запомним старый буфер
 					std::cout.rdbuf(out.rdbuf()); //и теперь все будет в файл!
@@ -446,8 +442,11 @@ cout << PROG_VERSION << endl;
 		else
 			return printHelp();
 
+
+		//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		cout << PROG_VERSION << endl;
-		cout << "picopter par: " << argv[1] << " " << argv[2] << " " << argv[3] << " " << argv[4] << endl;
+		cout << "start_seccons=" << get_start_sec() << endl;
+		cout << argv[0] << "\n"<< argv[1] << " " << argv[2] << " " << argv[3] << " " << argv[4] << " " << argv[5] << " " << argv[6] << " " << argv[7]<< " "<< argv[8] <<endl;
 	
 	if (signal(SIGINT, handler) == SIG_ERR) {
 		return EXIT_FAILURE;
