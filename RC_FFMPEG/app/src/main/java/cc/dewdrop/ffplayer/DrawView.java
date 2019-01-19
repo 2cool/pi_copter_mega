@@ -85,6 +85,7 @@ public class DrawView extends View {
         ftx.p[ftx.BAT]=constStrLen(Telemetry.batery,3);
         ftx.p[ftx.CAM_ANG]=Integer.toString(Telemetry.gimbalPitch);
         ftx.p[ftx.CAM_ZOOM]=Integer.toString(Commander.fpv_zoom-1);
+        ftx.p[ftx.CUR]=Integer.toString(Telemetry.current)+","+Integer.toString((int)(Telemetry.battery_consumption / 3600));
 
         if (Telemetry.messages!=null) {
             message_time=System.currentTimeMillis();

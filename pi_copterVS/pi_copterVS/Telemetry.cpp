@@ -261,7 +261,7 @@ void TelemetryClass::testBatteryVoltage(){
 	//const double time_nowd = Mpu.timed;
 	double dt = Mpu.timed - old_timed;
 	old_timed = Mpu.timed;
-	float current = m_current[0] + m_current[1] + m_current[2] + m_current[3]+0.2;
+	float current = m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.2;
 	//if (current < 2)?????????????? проверить с батареей
 	//	current = 0.6;
 	f_current += (current - f_current)*0.003;
@@ -367,7 +367,8 @@ void TelemetryClass::update_buf() {
 
 
 	//----
-	loadBUF16(i, full_power*10);
+	loadBUF16(i, consumed_charge);
+	loadBUF16(i, f_current *1000);
 	loadBUF16(i, Mpu.vibration * 1000);
 
 	buf[i++] = (int8_t)Autopilot.getGimbalPitch();

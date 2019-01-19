@@ -196,7 +196,7 @@ static boolean onDrawAtwork=false;
 				//}
 				c.drawText((Double.toString(Telemetry.realThrottle)+"00").substring(0,4) + " Throt", wY, textI += textHeight, (Telemetry.realThrottle == 0) ? black : red);
 
-                c.drawText((Double.toString(Math.abs((double)Telemetry.power/1000))+"00").substring(0,4) + " Power", wY, textI += textHeight, (Telemetry.realThrottle == 0) ? black : red);
+                c.drawText(Integer.toString((int)Telemetry.current) + " Current", wY, textI += textHeight, (Telemetry.realThrottle == 0) ? black : red);
 				textI += 4;
 				c.drawText((Double.toString((double)Telemetry.vibration/1000)+"00").substring(0,4) + " Vibr", wY, textI += textHeight, (Telemetry.realThrottle == 0) ? black : red);
 				textI += 4;

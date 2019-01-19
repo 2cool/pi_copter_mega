@@ -7,9 +7,9 @@ import android.graphics.Rect;
 
 public class FlightTextInfo {
 
-    public static final int LOC=0,_2HM=1,THR=2,POW=3,VIBR=4,BAT=5,CAM_ANG=6,CAM_ZOOM=7,VSPEED=8,MESGE=9;
-    final private String name[]={"","2HM: ","THR: ","PWR: ","VBR: ","BAT: ","CAM: ","ZOOM: ","VSP: ",""};
-    final private String unt[]={""," m",""," w",""," v"," ang",""," m/s",""};
+    public static final int LOC=0,_2HM=1,THR=2,CUR=3,VIBR=4,BAT=5,CAM_ANG=6,CAM_ZOOM=7,VSPEED=8,MESGE=9;
+    final private String name[]={"","2HM: ","THR: ","CUR: ","VBR: ","BAT: ","CAM: ","ZOOM: ","VSP: ",""};
+    final private String unt[]={""," m",""," mA",""," v"," ang",""," m/s",""};
 
     Rect r;
     final int FIELDS=10;
@@ -23,7 +23,7 @@ public class FlightTextInfo {
                           boolean loc,
                           boolean _2hom,
                           boolean thr,
-                          boolean power,
+                          boolean current,
                           boolean vibr,
                           boolean bat,
                           boolean cam_ang,
@@ -34,7 +34,7 @@ public class FlightTextInfo {
         f[LOC]=loc;
         f[_2HM]=_2hom;
         f[THR]=thr;
-        f[POW]=power;
+        f[CUR]=current;
         f[VIBR]=vibr;
         f[BAT]=bat;
         f[CAM_ANG]=cam_ang;

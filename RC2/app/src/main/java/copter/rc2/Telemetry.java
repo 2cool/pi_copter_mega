@@ -27,7 +27,7 @@ public class Telemetry {
 	static private double oldlat,oldlon;
 	static public double dist=0,speed=0,v_speed=0,alt_time=0 ,speed_time=0,alt_speed;
 	static public String messages=null;
-	static public double heading=0,	power=0,vibration=0;
+	static public double heading=0,	battery_consumption=0,current,vibration=0;
 //	static public String message="message";
 	static float motorsTh[];
 
@@ -624,7 +624,9 @@ static void startlogThread(){
 		F_MIN_VOLT=batVolt<=MIN_VOLT;
 
 		batery=Integer.toString(batVolt/4);
-		power=load_int16(buf,i);
+		battery_consumption=load_int16(buf,i);
+		i+=2;
+		current=load_int16(buf,i);
 		i+=2;
 		vibration=load_int16(buf,i);
 		i+=2;
