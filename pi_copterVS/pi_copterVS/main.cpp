@@ -343,9 +343,9 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	{
-		const int i = string(argv[0]).find("/root/projects/pi_copter");
-		if (i > 0) {
-			sleep(6);
+		const int i = string(argv[0]).find("/root/projects/pi_copterVS");
+		if (i == -1) {
+			sleep(10);
 		}
 	}
 

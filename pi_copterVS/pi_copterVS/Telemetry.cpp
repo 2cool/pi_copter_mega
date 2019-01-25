@@ -264,7 +264,7 @@ void TelemetryClass::testBatteryVoltage(){
 	float current = m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.2;
 	//if (current < 2)?????????????? проверить с батареей
 	//	current = 0.6;
-	f_current += (current - f_current)*0.003;
+	f_current += (current - f_current)*0.03;
 	
 	consumed_charge += current *dt;
 

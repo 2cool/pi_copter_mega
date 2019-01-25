@@ -9,7 +9,7 @@ public class FlightTextInfo {
 
     public static final int LOC=0,_2HM=1,THR=2,CUR=3,VIBR=4,BAT=5,CAM_ANG=6,CAM_ZOOM=7,VSPEED=8,MESGE=9;
     final private String name[]={"","2HM: ","THR: ","CUR: ","VBR: ","BAT: ","CAM: ","ZOOM: ","VSP: ",""};
-    final private String unt[]={""," m",""," mA",""," v"," ang",""," m/s",""};
+    final private String unt[]={""," m",""," mAh",""," v"," ang",""," m/s",""};
 
     Rect r;
     final int FIELDS=10;

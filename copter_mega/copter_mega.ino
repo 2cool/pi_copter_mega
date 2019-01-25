@@ -57,7 +57,7 @@ volatile bool ring=false,ring_to_send=false;
 
 
 
-
+volatile uint32_t power_on_time_start;
 volatile bool gps_status = false;
 volatile uint8_t pi_copter_color[8][3]={ {0,1,0},{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 } };
 
@@ -224,13 +224,24 @@ void receiveEvent(int countToRead) {
 		uint16_t temp = *((uint16_t*)&inBuf[1]);
 		if (len == 0) {
 			if (!shutdown) {
+
 				OCR0 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
+				bool pow_on = temp > pwm_OFF_THROTTLE;
 				temp = *((uint16_t*)&inBuf[3]);
+				pow_on |= temp > pwm_OFF_THROTTLE;
 				OCR1 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
 				temp = *((uint16_t*)&inBuf[5]);
+				pow_on |= temp > pwm_OFF_THROTTLE;
 				OCR2 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
 				temp = *((uint16_t*)&inBuf[7]);
+				pow_on |= temp > pwm_OFF_THROTTLE;
 				OCR3 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
+				if (pow_on){
+					if (power_on_time_start == 0) 
+						power_on_time_start = millis();
+				}
+				else 
+					power_on_time_start = 0;
 			}
 		}
 		else {
@@ -365,7 +376,7 @@ void requestEvent() {
 //#define ESC_CALIBR
 void setup()
 {
-
+	power_on_time_start = 0;
 #ifdef ESC_CALIBR
 	on(48000, pwm_MAX_THROTTLE);
 	delay(3000);
@@ -426,6 +437,7 @@ void loop()
 		minar = ar;
 		Serial.println(ar);
 	}*/
+	
 	shutdown |= (ar < 485);
 	fb[0] += ((float)(ar) - fb[0])*CF;
 	ar = analogRead(MI1);
@@ -437,8 +449,12 @@ void loop()
 	ar = analogRead(MI3);
 	shutdown |= (ar < 436);
 	fb[3] += ((float)(analogRead(ar)) - fb[3])*CF;
-	if (shutdown)
+
+	if (shutdown && power_on_time_start > 0 && millis() - power_on_time_start > 3000)
 		stop_motors();
+	else
+		shutdown = false;
+
 	fb[4] += ((float)(analogRead(BAT)) - fb[4])*CF;
 
 
