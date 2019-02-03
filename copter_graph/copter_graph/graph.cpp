@@ -419,8 +419,8 @@ int Graph::decode_Log() {
 
 		sensors_data[n].sd[PRESSURE] = flags[FILTER]?sZ:press.altitude;// -fly_at_altitude;
 		sensors_data[n].sd[PRESSURE_SPEED] = flags[FILTER]?speedZ:press.speed;// -fly_at_altitude;
-
-
+		sensors_data[n].sd[STAB_Z] =  mpu.est_alt;
+		sensors_data[n].sd[SPEED_Z] = mpu.est_speedZ;
 
 		static double tacc_bar = 0;
 		tacc_bar += (press.acc - tacc_bar)*0.01;
@@ -435,9 +435,9 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[BAT_F] = tel.m_current[4];
 
 
-		sensors_data[n].sd[STAB_SPEED_Z] = stab.speedZ;
-		sensors_data[n].sd[F_Z] = stab.fZ;
-		sensors_data[n].sd[STAB_Z] = stab.sZ;
+		//sensors_data[n].sd[STAB_SPEED_Z] = stab.speedZ;
+		//sensors_data[n].sd[F_Z] = stab.fZ;
+		//sensors_data[n].sd[STAB_Z] = stab.sZ;
 
 		(*(uint32_t*)&sensors_data[n].sd[CONTROL_BITS]) = control_bits;
 
@@ -1167,7 +1167,7 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 
 	draw(g, rect, 5, -5, STAB_SPEED_Z);
 	draw(g, rect, 2, -2, F_Z);
-	draw(g, rect, 23, 0,  STAB_Z);
+	draw(g, rect, press.max_alt, press.min_alt,  STAB_Z);
 
 	draw(g, rect, 1, 0, F0);
 	draw(g, rect, 1, 0, F1);
@@ -1185,8 +1185,8 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 
 
 
-
-
+	draw(g, rect, 3, -3, SPEED_Z);
+	draw(g, rect, press.max_alt, press.min_alt, STAB_Z);
 	draw(g, rect, press.max_alt,  press.min_alt,PRESSURE);
 	//draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
 	draw(g, rect, 5, -5, PRESSURE_SPEED);

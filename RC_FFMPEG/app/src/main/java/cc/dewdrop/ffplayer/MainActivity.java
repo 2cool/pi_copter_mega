@@ -411,10 +411,11 @@ public static void verifyPermissions(Activity activity){
 
             double aRoll = Math.atan2(event.values[1], event.values[2]) * RAD2GRAD ;
             double aPitch = Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2])) * RAD2GRAD ;
-            double f=gyroscopeWork?1:Math.max(0.01,Math.min(0.1,dt));
+            double f=gyroscopeWork?Math.max(0.003,Math.min(0.03,dt*0.5)):0.03;
             pitch += (aPitch - pitch) * f;
             roll += (aRoll - roll) * f;
             //update=DrawView.control_type_acc.is_pressed();
+            Log.i("GYRO","gyro_work "+Double.toString(f));
         }
         else
         if (type==Sensor.TYPE_ORIENTATION){

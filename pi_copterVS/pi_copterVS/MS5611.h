@@ -58,7 +58,7 @@ protected:
 	float gps_barometr_alt_dif;
 	void log_sens();
 	 uint64_t ct;
-	 float altitude_error;
+	 
 
 	  void phase0();
 	  void phase1();
@@ -72,8 +72,7 @@ public:
 	bool compensation;
 	double acc;
 
-	float altitude();
-
+	float Altitude();
 	uint8_t ms5611_count;
 	int init();
 	uint8_t loop();
@@ -81,7 +80,7 @@ public:
 	double pressure , powerK;
 
 
-	void copterStarted();
+	
 
 	int8_t i_readTemperature;
 	

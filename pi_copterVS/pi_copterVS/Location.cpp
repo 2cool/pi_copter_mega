@@ -151,6 +151,9 @@ void LocationClass::proceed(SEND_I2C *d) {
 	shmPTR->lat_ = lat_ = d->lat;
 	shmPTR->lon_ = lon_ = d->lon;
 
+	if (lat_home == 0 && lon_home == 0 && accuracy_hor_pos_ < MIN_ACUR_HOR_POS_2_START)
+		setHomeLoc();
+
 	updateXY();
 
 

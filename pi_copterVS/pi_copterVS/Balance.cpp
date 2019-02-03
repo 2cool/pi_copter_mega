@@ -309,22 +309,14 @@ void BalanceClass::reset() {
 
 bool BalanceClass::loop()
 {
-	static double hmc_last_timed = 0;
+	
 	//double c_timed = Mpu.timed;
 	if (!Mpu.loop()) {
 		MS5611.loop();
-		if (Mpu.timed - hmc_last_timed > 0.01) {
-			hmc_last_timed = Mpu.timed;
-			Hmc.loop();
-		}
 		GPS.loop();
 		return false;
 	}
 	else {
-
-
-		
-
 		if (Autopilot.motors_is_on()) { 
 
 			float pK = powerK();
@@ -456,11 +448,11 @@ bool BalanceClass::loop()
 			}
 
 		}
-		else
+		else {
 			reset();
-			
+		}
 		log();
-//#define MOTORS_OFF
+#define MOTORS_OFF
 #ifdef MOTORS_OFF
 		mega_i2c.throttle(0, 0, 0, 0);  //670 micros
 #else

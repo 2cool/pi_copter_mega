@@ -87,6 +87,7 @@ public:
 	float max_stab_z_P,max_stab_z_M,max_speed_xy;
 	float last_accZ;
 	float Z(bool onlyUpdate=false);
+	//float Z_2(bool onlyUpdate = false);
 	float Zgps();
 	void XY(float &xF, float&yF, bool onlyUpdate = false);
 	void horizont(const uint8_t i, const float dt, const float accX, const float accY, const float F);

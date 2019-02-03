@@ -123,7 +123,7 @@ void GPSClass::loop(){
 SEND_I2C g_data;
 
 void GPSClass::loop(){
-	double ttt = micros();
+//	double ttt = micros();
 static uint cnt2l = 0;
 static double last_gps_time1d = 0;
 	if (Mpu.timed - last_gps_time1d >= 0.05) {

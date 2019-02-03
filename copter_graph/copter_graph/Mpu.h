@@ -102,6 +102,8 @@ public:
 
 
 	float  gyroPitch, gyroYaw, gyroRoll;
+	float est_alt, est_speedZ;
+	float estX, estY, est_speedX, est_speedY;
 
 };
 extern Mpu mpu;

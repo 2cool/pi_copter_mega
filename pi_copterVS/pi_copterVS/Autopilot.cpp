@@ -165,7 +165,7 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 }
 
 float AutopilotClass::corectedAltitude4tel() {
-	return MS5611.altitude();
+	return Mpu.Est_alt();
 	//return ((control_bits & Z_STAB) == 0) ? MS5611.altitude() : Stabilization.getAltitude();
 }
 
@@ -207,7 +207,7 @@ void AutopilotClass::add_2_need_altitude(float speed, const float dt){
 	else {
 		if (set_alt) {
 			set_alt = false;
-			flyAtAltitude = tflyAtAltitude= MS5611.altitude();
+			flyAtAltitude = tflyAtAltitude= Mpu.Est_alt();
 
 		}
 	}
@@ -445,7 +445,7 @@ bool AutopilotClass::holdAltitudeStartStop(){
 	bool h = (control_bits & Z_STAB)==0;
 	if (h){
 		Stabilization.resset_z();
-		return holdAltitude(MS5611.altitude());
+		return holdAltitude(Mpu.Est_alt());
 	}
 	else{
 		control_bits ^= Z_STAB;
@@ -470,7 +470,7 @@ bool AutopilotClass::go2HomeProc(const float dt){
 #ifdef FALL_IF_STRONG_WIND
 		dist2home_at_begin2 = GPS.loc.dist2home_2;
 #endif
-		if (MS5611.altitude() < 3)
+		if (Mpu.Est_alt() < 3)
 			holdAltitude(3);
 		go2homeIndex=HOWER;
 		break;
@@ -488,7 +488,7 @@ bool AutopilotClass::go2HomeProc(const float dt){
 		const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
 		if (fabs(GPS.loc.x2home) <= accuracy && fabs(GPS.loc.y2home) <= accuracy){
 			f_go2homeTimer = 6; //min time for stab
-			go2homeIndex = (MS5611.altitude() <= (FAST_DESENDING_TO_HIGH)) ? SLOW_DESENDING : START_FAST_DESENDING;
+			go2homeIndex = (Mpu.Est_alt() <= (FAST_DESENDING_TO_HIGH)) ? SLOW_DESENDING : START_FAST_DESENDING;
 			GPS.loc.setNeedLoc2HomeLoc();
 			break;
 		}	
@@ -498,7 +498,7 @@ bool AutopilotClass::go2HomeProc(const float dt){
 		break;
 	}
 	case TEST_ALT1:{
-		if (fabs(MS5611.altitude() - flyAtAltitude) <= (ACCURACY_Z)){
+		if (fabs(Mpu.Est_alt() - flyAtAltitude) <= (ACCURACY_Z)){
 			go2homeIndex = GO2HOME_LOC;
 		}
 		break;
@@ -530,7 +530,7 @@ bool AutopilotClass::go2HomeProc(const float dt){
 
 
 	case TEST_ALT2:{//спуск до FAST_DESENDING_TO_HIGH метров
-		if (fabs(MS5611.altitude() - flyAtAltitude) < (ACCURACY_Z)){
+		if (fabs(Mpu.Est_alt() - flyAtAltitude) < (ACCURACY_Z)){
 			go2homeIndex = SLOW_DESENDING;
 		}
 			   
@@ -543,8 +543,8 @@ bool AutopilotClass::go2HomeProc(const float dt){
 			return false;
 		}
 		//плавній спуск
-		if (MS5611.altitude()>lowest_height){
-			float k = MS5611.altitude()*0.05f;
+		if (Mpu.Est_alt() >lowest_height){
+			float k = Mpu.Est_alt()*0.05f;
 			if (k < 0.1f)
 				k = 0.1f;
 			flyAtAltitude -= (dt*k);
@@ -570,7 +570,7 @@ bool AutopilotClass::going2HomeON(const bool hower){
 
 	howeAt2HOME = hower;//зависнуть на месте или нет
 
-	bool res = holdAltitude(MS5611.altitude());
+	bool res = holdAltitude(Mpu.Est_alt());
 	res &= holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 	if (res){
 		control_bits |= GO2HOME;
@@ -688,8 +688,9 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 
 			GPS.loc.setHomeLoc();
 
-			MS5611.copterStarted();
-			tflyAtAltitude = flyAtAltitude = MS5611.altitude();
+			Mpu.setAlt2Zero();
+
+			tflyAtAltitude = flyAtAltitude = Mpu.Est_alt();
 			
 			Mpu.max_g_cnt = 0;
 
@@ -775,7 +776,7 @@ bool AutopilotClass::off_throttle(const bool force, const string msg){//////////
 	{
 
 
-		cout << "force motors_off " << msg << ", alt: " << (int)MS5611.altitude() << ", time " << (int)Mpu.timed << endl;
+		cout << "force motors_off " << msg << ", alt: " << (int)Mpu.Est_alt() << ", time " << (int)Mpu.timed << endl;
 		Balance.set_off_th_();
 		Telemetry.addMessage(msg);
 		control_bits = DEFAULT_STATE;
@@ -911,7 +912,7 @@ bool AutopilotClass::start_stop_program(const bool stopHere){
 			Prog.clear();
 			Stabilization.setDefaultMaxSpeeds();
 			if (stopHere) {
-				float alt = MS5611.altitude();
+				float alt = Mpu.Est_alt();
 				if (alt < 10)
 					alt = 10;
 				holdAltitude(alt);
@@ -923,7 +924,7 @@ bool AutopilotClass::start_stop_program(const bool stopHere){
 			if (Prog.start()) {
 				if (go2homeState())
 					going2HomeStartStop(false);
-				bool res = holdAltitude(MS5611.altitude());
+				bool res = holdAltitude(Mpu.Est_alt());
 				res &= holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 				if (res) {
 					control_bits |= PROGRAM;

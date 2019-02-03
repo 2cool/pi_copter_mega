@@ -232,7 +232,18 @@ float old_altitude = 0;
 float StabilizationClass::Zgps() {
 
 }
+
+
+
+
+
+
+
 float StabilizationClass::Z(bool onlyUpdate){////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+											 
+	//Z_2();
+											 
 	//єти параметри ми вичеслили в mpu
 	float alt = MS5611.altitude();
 	sZ += Mpu.dt*(speedZ + Mpu.accZ*Mpu.dt*0.5f);
@@ -243,9 +254,9 @@ float StabilizationClass::Z(bool onlyUpdate){///////////////////////////////////
 
 	
 
-	//Debug.load(0, Autopilot.fly_at_altitude()-sZ, Autopilot.fly_at_altitude()-alt);
+	//Debug.load(0, alt, sZ, EstAlt);
 	//Debug.load(1, speedZ, MS5611.speed);
-	//Debug.dump();
+	//Debug.dump(true);
 
 
 	if (onlyUpdate) {

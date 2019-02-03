@@ -91,6 +91,8 @@ class MpuClass
 	float yaw_off;
 	float f_pitch, f_roll;
 	float pitch, roll;
+	float est_alt_, est_speedZ,est_alt;
+	float estX, estY, est_speedX, est_speedY;
 
 	void meansensors();
 	void calibrationF(int16_t ar[]);
@@ -99,7 +101,14 @@ class MpuClass
 	float yaw,yaw_offset;
 	void test_vibration( float x,  float y,  float z);
 	float DRAG_K,_0007;
+private:
+	float altitude_at_zero;
+	void gyro_calibr();
+	void Est_Alt();
+	void Est_XY();
  public:
+	 float Est_alt() { return est_alt; }
+	 void setAlt2Zero();
 	 float vibration;
 	 double acc_callibr_timed;
 	 float hower_thr, min_thr, fall_thr;

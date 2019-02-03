@@ -93,6 +93,7 @@ class HmcClass
 
 
  public:
+	 float fmz, fmx, fmy;
 	 void start_motor_compas_calibr();
 	 double startTimed;
 	 int motor_index;
@@ -103,7 +104,7 @@ class HmcClass
 	 void set(const float buf[]);
 	// int16_t mx, my, mz;
 	 bool motors_power_on;
-	 float heading;
+
 	void init();
 	void loop();
 	bool ok;

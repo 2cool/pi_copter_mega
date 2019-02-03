@@ -39,23 +39,25 @@
  * the clock source to use the X Gyro for reference, which is slightly better than
  * the default internal clock source.
  */
-int MPU6050::initialize() {
+int MPU6050::initialize(uint8_t gyroRange, uint8_t accelRange, uint8_t dlpfmode) {
 	devAddr = MPU6050_DEFAULT_ADDRESS;
 	setI2CMasterModeEnabled(false);
 	setI2CBypassEnabled(true);
-    setClockSource(MPU6050_CLOCK_PLL_XGYRO);
-    setFullScaleGyroRange(MPU6050_GYRO_FS_1000);
-    setFullScaleAccelRange(MPU6050_ACCEL_FS_2);
-    setSleepEnabled(false); // thanks to Jack Elston for pointing this one out!
-    if (testConnection())
-    {
+	setClockSource(MPU6050_CLOCK_PLL_XGYRO);
+	setFullScaleGyroRange(gyroRange);// MPU6050_GYRO_FS_1000);
+	setFullScaleAccelRange(accelRange);// MPU6050_ACCEL_FS_2);
+	setSleepEnabled(false); // thanks to Jack Elston for pointing this one out!
+	if (testConnection())
+	{
 		printf("MPU6050 connection successful\n");
-	}else{
+	}
+	else {
 		printf("MPU6050 connection failed\n");
 		return -1;
 	}
 	//setDLPFMode(MPU6050_DLPF_BW_188);
-	setDLPFMode(MPU6050_DLPF_BW_98);
+	//setDLPFMode(MPU6050_DLPF_BW_98);
+	setDLPFMode(dlpfmode);// MPU6050_DLPF_BW_256);
 	return 0;
 }
 

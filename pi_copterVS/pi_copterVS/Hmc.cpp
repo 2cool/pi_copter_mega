@@ -200,7 +200,7 @@ void HmcClass::loop(){
 	//double ttt = micros();
 	//бельіе ноги
 	int16_t mx,my,mz;
-	float fmz, fmx, fmy;
+	
 	readBytes(devAddr, HMC5883L_RA_DATAX_H, 6, buffer); 
 	if (mode == HMC5883L_MODE_SINGLE) writeByte(devAddr, HMC5883L_RA_MODE, HMC5883L_MODE_SINGLE << (HMC5883L_MODEREG_BIT - HMC5883L_MODEREG_LENGTH + 1));
 	mx = (((int16_t)buffer[0]) << 8) | buffer[1];
@@ -251,11 +251,12 @@ void HmcClass::loop(){
 	}
 	
 	// Tilt compensation
-	float Xh = fmx * Mpu.cosPitch - fmz * Mpu.sinPitch;
-	float Yh = fmx * Mpu.sinRoll * Mpu.sinPitch + fmy * Mpu.cosRoll - fmz * Mpu.sinRoll * Mpu.cosPitch;
+	//float Xh = fmx * Mpu.cosPitch - fmz * Mpu.sinPitch;
+	//float Yh = fmx * Mpu.sinRoll * Mpu.sinPitch + fmy * Mpu.cosRoll - fmz * Mpu.sinRoll * Mpu.cosPitch;
 	
-	heading = (float)atan2(Yh, Xh);
-	log();
+	//heading = (float)atan2(Yh, Xh);
+	//log();
+	log_sens();
 
 	
 

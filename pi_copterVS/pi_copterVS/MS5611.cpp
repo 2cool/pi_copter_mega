@@ -47,21 +47,13 @@ int MS5611Class::writeReg(char bar_zero) {
 	}
 }
 
-
-float MS5611Class::altitude() {
-	return altitude_ - altitude_error;
+float MS5611Class::Altitude() {
+	return altitude_;
 }
 #ifndef WORK_WITH_WIFI
 int cntssdde = 0;
 #endif
 float fspeed = 0;
-void MS5611Class::copterStarted(){
-//	if (altitude_error == ALT_NOT_SET){
-		altitude_error = altitude_;
-//	}
-}
-
-
 
 #define MAX_D_PRESSURE 300.0
 

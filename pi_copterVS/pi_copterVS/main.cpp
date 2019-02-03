@@ -6,6 +6,11 @@
 //также напомню что надо перекомпилить ардуину єту и инет
 
 /*
+удаллить 
+/lib/modules/3.4.113-sun8i/kernel/drivers/misc/bmp085.ko
+
+
+
 
 Виставить максимальние показатели
 Some boards allow to adjust CPU speed.
@@ -52,7 +57,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 */
  
-#define PROG_VERSION "ver 3.190110\n"
+#define PROG_VERSION "ver 3.190201\n"
 
 
 #define SIM800_F

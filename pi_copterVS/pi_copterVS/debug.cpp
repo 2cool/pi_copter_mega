@@ -4,7 +4,7 @@
 
 #include "debug.h"
 	 uint64_t d_old_t = 0;
-	 int d_delay = 300;
+	 int d_delay = 50;
 	 double d_dt = (double)d_delay *0.001;
 	 // int cnt = 0;
 	 uint32_t old_time = 0;

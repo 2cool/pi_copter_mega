@@ -203,27 +203,7 @@ Pendulum p1(1.01, 0, 0,0);
 void Mpu::parser(byte buf[], int j, int len, bool filter) {
 
 
-
-
-
-
-
-
-
-
-	//while (true) {
-	
-		
-
-	//}
-
-
-
-
-
-
-
-
+	len += j;
 
 	static double old_time = 0;
 	
@@ -280,24 +260,26 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	gyroYaw = *(float*)&buf[j]; j += 4;
 
 	//p1.loop(0);
-	p0.loop(pitch);
+	//p0.loop(pitch);
 	
 
-	roll = pitch;
-	pitch = p0.possition*10;
+	//roll = pitch;
+	//pitch = p0.possition*10;
 
 #define ACC_CF 0.007
 
 
 
-	accX += ((*(float*)&buf[j] - accX)*(filter ? ACC_CF : 1));
-	j += 4;
-	accY += ((*(float*)&buf[j] - accY)*(filter ? ACC_CF :1));
-	j += 4;
-	accZnF = *(float*)&buf[j];
-	j += 4;
-	accZ += ((accZnF -accZ)*(filter? ACC_CF :1));
+	if (j <= len) { accX += ((*(float*)&buf[j] - accX)*(filter ? ACC_CF : 1)); j += 4; }
+	if (j <= len) { accY += ((*(float*)&buf[j] - accY)*(filter ? ACC_CF : 1)); j += 4; }
+	if (j <= len) { accZnF = *(float*)&buf[j];	j += 4; }
+	 accZ += ((accZnF - accZ)*(filter ? ACC_CF : 1));
 	//accZ = *(float*)&buf[j];
+
+	if (j <= len) { 
+		est_alt = *(float*)&buf[j]; j += 4; }
+	if (j <= len) { 
+		est_speedZ = *(float*)&buf[j]; j += 4; }
 
 
 	

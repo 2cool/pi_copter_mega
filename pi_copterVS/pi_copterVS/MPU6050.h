@@ -391,7 +391,7 @@ class MPU6050 {
        // MPU6050(uint8_t address);
         //~MPU6050();
 
-        int initialize();
+		int initialize(uint8_t gyroRange, uint8_t accelRange, uint8_t dlpfmode);
         bool testConnection();
 
         // AUX_VDDIO register
