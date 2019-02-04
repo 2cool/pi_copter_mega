@@ -38,7 +38,7 @@ class MpuClass
 	 void do_magic4Z();
 	 void calc_corrected_ang();
 	 void log_emu();
-	 void log_sens();
+	 void log();
 
 	 int ms_open();
 	 // MPU control/status vars
@@ -49,10 +49,9 @@ class MpuClass
 
 	 int16_t a[3];              // [x, y, z]            accel vector
 	 int16_t g[3];              // [x, y, z]            gyro vector
-	 int32_t _q[4];
 	 int32_t t;
 	 int16_t c[3];
-
+	 float mpu_dt;
 
 	 int r;
 	 int initialized = 0;

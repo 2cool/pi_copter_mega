@@ -149,16 +149,13 @@ void MpuClass::do_magic() {
 
 //-----------------------------------------------------
 
-void MpuClass::log_sens() {
+void MpuClass::log() {
 	if (Log.writeTelemetry) {
 		Log.block_start(LOG::MPU_SENS);
 
-		Log.loaduint64t(oldmpuTimed*1000);//new
+		Log.loaduint64t(timed *1000);//new
 		Log.loadMem((uint8_t*)g, 6, false);
 		Log.loadMem((uint8_t*)a, 6, false);
-		Log.loadMem((uint8_t*)_q, 16, false);
-
-
 
 		Log.loadFloat(f_pitch * RAD2GRAD);
 		Log.loadFloat(f_roll * RAD2GRAD);
@@ -173,9 +170,12 @@ void MpuClass::log_sens() {
 		Log.loadFloat(accZ);
 
 		Log.loadFloat(est_alt);
-		//Log.loadFloat(sZ);
 		Log.loadFloat(est_speedZ);
-		//Log.loadFloat(speedZ);
+		Log.loadFloat(estX);
+		Log.loadFloat(est_speedX);
+		Log.loadFloat(estY);
+		Log.loadFloat(est_speedY);
+
 		Log.block_end();
 	}
 }
@@ -203,6 +203,8 @@ void MpuClass::log_emu() {
 }
 //-----------------------------------------------------
 int MpuClass::ms_open() {
+
+	/*
 	dmpReady = 1;
 	initialized = 0;
 	for (int i = 0; i<DIM; i++) {
@@ -287,6 +289,7 @@ int MpuClass::ms_open() {
 	cout << "Done.\n";
 
 	initialized = 1;
+	*/
 	return 0;
 }
 //-----------------------------------------------------
@@ -628,19 +631,12 @@ void MpuClass::gyro_calibr() {
 	}
 }
 double gravity = 1;
-static int mpu_false = 0;
+
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
-	//написать тайм менеджер
 	bool ret = true;
-
-	
 	timed = 0.000001*(double)micros();
-
-	float mpu_dt = timed - mpu_time_;
-	
+	mpu_dt = timed - mpu_time_;
 	if (mpu_dt < 0.005) {
-		
-
 		usleep(long(1000000.0*(0.005 - mpu_dt)));
 		timed = 0.000001*(double)micros();
 	}
@@ -650,23 +646,32 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 
 	mpu_time_ = timed;
 	double old_tied = timed;
-	accelgyro.getMotion6(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2]);
 
-	dt = (timed - oldmpuTimed);
-	if (ret=(dt >= 0.01)) {
+
+
+
+
+	double _dt = (timed - oldmpuTimed);
+	if (ret=(_dt >= 0.01)) {
 		Hmc.loop();
 		oldmpuTimed = timed;
+		dt = constrain(_dt, 0.01, 0.03);
+		rdt = 1.0 / dt;
+
+		static uint cnt2l = 0;
+		if (dt > 0.03) {
+			if (cnt2l++) {
+				cout << "MPU DT too long " << endl;// << dt << ":" << dt << ":" << timed << endl;
+				cout << endl << ms5611_timed - old_tied << " " << hmc_timed - old_tied << " " << gps_timed - old_tied <<
+					" " << telem_timed - old_tied << " " << com_timed - old_tied << " " << autopilot_timed - old_tied << " " << mpu_timed - old_tied << endl;
+				mega_i2c.beep_code(B_MPU_TOO_LONG);
+			}
+		}
 	}
-	dt = constrain(dt, 0.01, 0.03);
+	accelgyro.getMotion6(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2]);
 	gyroPitch =  n006 * (float)g[1] - agpitch;
 	gyroRoll =  n006 * (float)g[0] - agroll;
 	gyroYaw =  n006 * (float)g[2] - agyaw;
-
-
-
-	
-
-
 	float ax = n122 * 2 * (float)a[0];
 	float ay = n122 * 2 * (float)a[1];
 	float az = n122 * 2 * (float)a[2];
@@ -677,37 +682,9 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 		//cout << cntttttsss++ << " gravity error\n";
 	}
 
-
 	AHRS.MadgwickAHRSupdate(q, GRAD2RAD * gyroRoll, GRAD2RAD * gyroPitch, GRAD2RAD * gyroYaw, ax, ay, az,  Hmc.fmx, Hmc.fmy, Hmc.fmz, mpu_dt);
 	//AHRS.MadgwickAHRSupdate(q, GRAD2RAD * gyroRoll, GRAD2RAD * gyroPitch, GRAD2RAD * gyroYaw, 0, 0, 10, Hmc.fmx, Hmc.fmy, -Hmc.fmz, mpu_dt);
-	
 	gyro_calibr();
-
-	if (!ret)
-		return false;
-
-	//mpu_timed = 0.000001*(double)micros();
-	static uint cnt2l = 0;
-	if (dt > 0.03) {
-		if (cnt2l++) {
-			cout << mpu_false << endl;
-			
-			cout << "MPU DT too long " << endl;// << dt << ":" << dt << ":" << timed << endl;
-
-			cout << endl << ms5611_timed- old_tied << " " << hmc_timed - old_tied << " " << gps_timed - old_tied <<
-				" " << telem_timed - old_tied << " " << com_timed - old_tied <<" "<< autopilot_timed - old_tied <<" "<< mpu_timed - old_tied << endl;
-
-
-			mega_i2c.beep_code(B_MPU_TOO_LONG);
-		}
-
-	}
-mpu_false = 0;
-
-
-	oldmpuTimed = timed;
-	
-	rdt =  1.0 / dt;
 
 	toEulerianAngle(q, roll, pitch, yaw);
 
@@ -716,7 +693,7 @@ mpu_false = 0;
 	pitch = -pitch;
 	yaw = -yaw;
 
-
+	/*
 	if (abs(roll) >90*GRAD2RAD) {
 		yaw = -Autopilot.get_yaw();
 		roll = (roll > 0) ? 180*GRAD2RAD-roll : -180*GRAD2RAD-roll;
@@ -736,28 +713,19 @@ mpu_false = 0;
 		else
 			roll = ((roll > 0) ? M_PI : -M_PI) - roll;
 	}
-	
+	*/
 
 	//Debug.load(0, pitch*RAD2GRAD, roll*RAD2GRAD, yaw*RAD2GRAD);
-
-
 	//Debug.load(0, gyroPitch, gyroRoll, gyroYaw);
 	//Debug.dump(true);
 	sin_cos(yaw, sinYaw, cosYaw);
 	sin_cos(pitch, sinPitch, cosPitch);
 	sin_cos(roll, sinRoll, cosRoll);
 
-
 	tiltPower += (constrain(cosPitch*cosRoll, 0.5f, 1) - tiltPower)*tiltPower_CF;
-
-	static float low_accZ = 0;
-
+	
 	accZ = az*cosPitch + sinPitch*ax;
 	accZ = 9.8f*(accZ*cosRoll + sinRoll*ay - 1);
-	/////////////////////////////////////////////////
-	low_accZ += (accZ - low_accZ)*0.001;
-	accZ -= low_accZ+MS5611.acc;
-	/////////////////////////////////////////////////
 
 	accX = 9.8f*(ax*cosPitch - az*sinPitch);
 	accY = 9.8f*(-ay*cosRoll + az*sinRoll);
@@ -766,18 +734,12 @@ mpu_false = 0;
 
 	Est_Alt();
 	Est_XY();
-	//est_alt = 5;
-	
-	//Debug.load(0, 0, est_alt, sZ);
 
-	Debug.dump(true);
-
-	
 	shmPTR->pitch = pitch *= RAD2GRAD;
 	shmPTR->roll = roll *= RAD2GRAD;
 	shmPTR->yaw = yaw*=RAD2GRAD;
-	log_sens();
-	return true;
+	log();
+	return ret;
 }
 
 
@@ -805,7 +767,7 @@ float Z_CF_DIST = 0.03;//CF filter
 float Z_CF_SPEED = 0.01;//CF filter //при 0.005 На ошибку в ACC на 0.1 ошибка в исоте на метр.
 float AltError = 0, AltErrorI=0;
 void MpuClass::Est_Alt() {
-	Debug.load(0, 0, accX, accY);
+	//Debug.load(0, 0, accX, accY);
 	float alt = MS5611.Altitude();
 	if (timed<5) {
 		est_alt_ = alt;
@@ -817,9 +779,9 @@ void MpuClass::Est_Alt() {
 	AltErrorI = constrain(AltErrorI, -10000.0f, 10000.0f);
 	float acc = accZ + AltErrorI * 0.0001;
 	
-	est_alt_ += dt*(est_speedZ + acc*dt*0.5f);
+	est_alt_ += mpu_dt*(est_speedZ + acc*mpu_dt*0.5f);
 	est_alt_ += (alt - est_alt_)*Z_CF_DIST;
-	est_speedZ += acc*dt;
+	est_speedZ += acc*mpu_dt;
 	est_speedZ += (MS5611.speed - est_speedZ)*Z_CF_SPEED;
 
 	est_alt = est_alt_ - altitude_at_zero;
@@ -827,27 +789,48 @@ void MpuClass::Est_Alt() {
 }
 
 
-float XY_KF_DIST = 0.1f;
-float XY_KF_SPEED = 0.1f;
-float XY_FILTER = 0.06;
+//float XY_KF_DIST = 0.1f;
+//float XY_KF_SPEED = 0.1f;
+
+float XY_KF_DIST = 0.01f;
+float XY_KF_SPEED = 0.01f;
+
+
+
+float est_XError = 0, est_XErrorI = 0;
+float est_YError = 0, est_YErrorI = 0;
+#define ACC_Cr 10000.0f
 void MpuClass::Est_XY() {
-	const float ax = (-cosYaw*accX + sinYaw*accY);
-	const float ay = (-cosYaw*accY - sinYaw*accX);
+	//accX = 0.9;
+	//accY = 0.5;
+	est_XError = GPS.loc.dX - estX;
+	est_YError = GPS.loc.dY - estY;
+	float e_ex = (-cosYaw * est_XError - sinYaw * est_YError);
+	float e_ey = (-cosYaw * est_YError + sinYaw * est_XError);
+	est_XErrorI += e_ex;
+	est_XErrorI = constrain(est_XErrorI, -ACC_Cr, ACC_Cr);
+	est_YErrorI += e_ey;
+	est_YErrorI = constrain(est_YErrorI, -ACC_Cr, ACC_Cr);
+
+	float c_accX = accX + est_XErrorI / ACC_Cr;
+	float c_accY = accY + est_YErrorI / ACC_Cr;
+	
+	const float ax = (-cosYaw*c_accX + sinYaw*c_accY);
 	//#endif
+	const float ay = (-cosYaw*c_accY - sinYaw*c_accX);
 		//--------------------------------------------------------prediction
-	estX += dt*(est_speedX + ax * dt*0.5f);
-	est_speedX += (ax*dt);
-	estY += dt*(est_speedY + ay * dt*0.5f);
-	est_speedY += (ay*dt);
+	estX += mpu_dt*(est_speedX + ax * mpu_dt*0.5f);
+	est_speedX += (ax*mpu_dt);
+	estY += mpu_dt*(est_speedY + ay * mpu_dt*0.5f);
+	est_speedY += (ay*mpu_dt);
 	// -------------------------------------------------------corection
-
-
-
 	estX += (GPS.loc.dX - estX)*XY_KF_DIST;
 	est_speedX += (GPS.loc.speedX - est_speedX)*XY_KF_SPEED;
 	//--------------------------------------------------------
 	estY += (GPS.loc.dY - estY)*XY_KF_DIST;
 	est_speedY += (GPS.loc.speedY - est_speedY)*XY_KF_SPEED;
+	
+	//Debug.load(0, (int)(estX*100), (int)(estY*100), yaw * RAD2GRAD);
 }
 
 

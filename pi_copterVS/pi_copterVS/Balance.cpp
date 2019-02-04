@@ -154,7 +154,7 @@ void BalanceClass::init()
 	Mpu.init();
 	Hmc.init();
 	Hmc.loop();
-	Mpu.initYaw(Hmc.heading*RAD2GRAD);
+//	Mpu.initYaw(Hmc.heading*RAD2GRAD);
 	mid_powerK = 1;
 	power_K = 0.1;  //Єто теперь не повер к.
 #ifdef DEBUG_MODE

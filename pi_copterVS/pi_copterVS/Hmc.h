@@ -85,7 +85,7 @@ class HmcClass
  protected:
 	 void log_sens();
 	 void log_base();
-	 void log();
+
 	 void motTest(const float, const float, const float);
 	 int16_t c_base[3];
 	 
@@ -111,7 +111,7 @@ class HmcClass
 	bool calibration(const bool newc=false);
 
 
-	float get_headingGrad(){ return heading*RAD2GRAD; }
+//	float get_headingGrad(){ return heading*RAD2GRAD; }
 
 
 

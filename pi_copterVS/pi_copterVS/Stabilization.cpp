@@ -245,7 +245,7 @@ float StabilizationClass::Z(bool onlyUpdate){///////////////////////////////////
 	//Z_2();
 											 
 	//єти параметри ми вичеслили в mpu
-	float alt = MS5611.altitude();
+	float alt = Mpu.Est_alt();
 	sZ += Mpu.dt*(speedZ + Mpu.accZ*Mpu.dt*0.5f);
 	sZ += (alt - sZ)*Z_CF_DIST;
 

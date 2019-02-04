@@ -70,7 +70,6 @@ protected:
 public:
 	bool fault();
 	bool compensation;
-	double acc;
 
 	float Altitude();
 	uint8_t ms5611_count;

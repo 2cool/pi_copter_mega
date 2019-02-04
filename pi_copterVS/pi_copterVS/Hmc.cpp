@@ -36,7 +36,7 @@ void HmcClass::init()
 
 	c_base[X] = c_base[Y] = c_base[Z] = 0;
 	dx = dy = dz = 0;
-	heading = 0;
+	//heading = 0;
 	ok = true;
 	calibrated = true;
 #ifndef FALSE_WIRE
@@ -67,13 +67,7 @@ void HmcClass::set(const float buf[]){
 }
 //---------------------------------------------------------
 
-void HmcClass::log() {
-	if (Log.writeTelemetry) {
-		Log.block_start(LOG::HMC);
-		Log.loadFloat(heading * RAD2GRAD);
-		Log.block_end();
-	}
-}
+
 void HmcClass::log_base() {
 	if (Log.writeTelemetry) {
 		Log.block_start(LOG::HMC_BASE);

@@ -56,7 +56,7 @@ void ProgClass::loop(){
 	if (go_next == false) {
 		if (timer == 0) {
 			if (altFlag == false)
-				altFlag = (alt == old_alt) || (abs(MS5611.altitude() - Autopilot.fly_at_altitude()) <= (ACCURACY_Z));
+				altFlag = (alt == old_alt) || (abs(Mpu.Est_alt() - Autopilot.fly_at_altitude()) <= (ACCURACY_Z));
 
 			if (distFlag == false) {
 				if (lat == old_lat && lon == old_lon) {
@@ -100,7 +100,7 @@ bool ProgClass::program_is_OK(){
 		begin_timed = 0;
 		lat = GPS.loc.lat_;
 		lon = GPS.loc.lon_;
-		alt = MS5611.altitude();
+		alt = Mpu.Est_alt();
 		uint8_t step = 1;
 		float fullTime = 0;
 		while (load_next(false)){
@@ -162,7 +162,7 @@ bool ProgClass::start(){
 		begin_timed = 0;
 		lat = GPS.loc.lat_;
 		lon = GPS.loc.lon_;
-		alt = MS5611.altitude();
+		alt = Mpu.Est_alt();
 		go_next = distFlag = altFlag = true;
 		return true;
 	}
