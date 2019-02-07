@@ -54,7 +54,6 @@ void StabilizationClass::init(){
 	Z_FILTER = 0.2;//filter
 
 	//----------------------------------------------------------------------------
-	
 	mc_pitch=mc_roll=mc_z=0;
 	//cout << "stab init\n";
 
@@ -87,6 +86,7 @@ void StabilizationClass::setDefaultMaxSpeeds(){//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	max_stab_z_P = MAX_VER_SPEED_PLUS;
 	max_stab_z_M = MAX_VER_SPEED_MINUS;
 }
+
 /*
 void StabilizationClass::init_XY(const float sx,  const float sy){
 	sX = sx;
@@ -99,57 +99,87 @@ void StabilizationClass::init_XY(const float sx,  const float sy){
 int cnnnnn = 0;
 
 #define MAX_A 1
+
 /*
 void StabilizationClass::set_XY_2_GPS_XY() {
 	sX = GPS.loc.dX;
 	sY = GPS.loc.dY;
 }
 */
+
+
+
+
+
+void StabilizationClass::setNeedPos(float x, float y) {
+	needXR=needXV = x;
+	needYR=needYV = y;
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //float old_gps_bearing = 0, cos_bear = 1,  sin_bear = 0;
-void StabilizationClass::XY(float &pitch, float&roll,bool onlyUpdate){
+void StabilizationClass::XY(float &pitch, float&roll){
+	/*
+//#ifdef FALSE_WIRE
+//	const float ax = -Mpu.accX;
+//	const float ay = -Mpu.accY;
+//#else
+	//const float ax = (-Mpu.cosYaw*Mpu.accX + Mpu.sinYaw*Mpu.accY);
+	//const float ay = (-Mpu.cosYaw*Mpu.accY - Mpu.sinYaw*Mpu.accX);
+//#endif
+	//--------------------------------------------------------prediction
+	sX += Mpu.dt*(speedX + ax*Mpu.dt*0.5f);
+	speedX += (ax*Mpu.dt);
+	sY += Mpu.dt*(speedY + ay*Mpu.dt*0.5f);
+	speedY += (ay*Mpu.dt);
+	// -------------------------------------------------------corection
 
 
+
+	sX += (GPS.loc.dX - sX)*XY_KF_DIST;
+	speedX += (GPS.loc.speedX - speedX)*XY_KF_SPEED;
+	//--------------------------------------------------------
+	sY += (GPS.loc.dY - sY)*XY_KF_DIST;
+	speedY += (GPS.loc.speedY - speedY)*XY_KF_SPEED;
+
+	*/
 
 	
 
-	if (onlyUpdate) {
+		Mpu.set_cos_sin_dir();
 
 
-
-		mc_pitch = mc_roll = 0;
-		return;
-	}
-	else {
-
-
-		float stabX, stabY;
+		float need_speedX, need_speedY;
 		if (Autopilot.progState() && Prog.intersactionFlag) {
-			stabX = Prog.stabX;
-			stabY = Prog.stabY;
+			need_speedX = Prog.need_speedX;
+			need_speedY = Prog.need_speedY;
 		}
 		else {
-			const float dist = (float)sqrt(Mpu.Est_X()*Mpu.Est_X() + Mpu.Est_Y() * Mpu.Est_Y());
+
+			float sX = Mpu.get_Est_X()-needXV;
+			float sY = Mpu.get_Est_Y()-needYV;
+
+
+
+			const float dist = (float)sqrt(sX*sX + sY * sY);
 			const float max_speed = min(getSpeed_XY(dist), max_speed_xy);
-			stabX = abs((GPS.loc.cosDirection)*max_speed);
-			if (Mpu.Est_X() < 0)
-				stabX *= -1.0f;
-			stabY = abs((GPS.loc.sinDirection)*max_speed);
-			if (Mpu.Est_Y() < 0)
-				stabY *= -1.0f;
+			need_speedX = abs((Mpu.cosDirection)*max_speed);
+			if (sX < 0)
+				need_speedX *= -1.0f;
+			need_speedY = abs((Mpu.sinDirection)*max_speed);
+			if (sY < 0)
+				need_speedY *= -1.0f;
 		}
 
 		float glob_pitch, glob_roll;
 
-		float need_acx = constrain((stabX + Mpu.Est_SpeedX()), -7, 7);
-		float need_acy = constrain((stabY + Mpu.Est_SpeedY()), -7, 7);
+		float need_acx = constrain((need_speedX + Mpu.get_Est_SpeedX()), -5, 5);
+		float need_acy = constrain((need_speedY + Mpu.get_Est_SpeedY()), -5, 5);
 
-		mc_pitch += ((need_acx + Mpu.e_accX) - mc_pitch)*XY_FILTER;
-		mc_roll += ((need_acy + Mpu.e_accY) - mc_roll)*XY_FILTER;;
-
-
-		glob_pitch = -pids[ACCX_SPEED].get_pid(mc_pitch, Mpu.dt);
-		glob_roll = pids[ACCY_SPEED].get_pid(mc_roll, Mpu.dt);
+		glob_pitch = -pids[ACCX_SPEED].get_pid(need_acx + Mpu.w_accX, Mpu.dt);
+		glob_roll = pids[ACCY_SPEED].get_pid(need_acy + Mpu.w_accY, Mpu.dt);
 
 
 		//----------------------------------------------------------------преобр. в относительную систему координат
@@ -163,34 +193,16 @@ void StabilizationClass::XY(float &pitch, float&roll,bool onlyUpdate){
 
 		if (Log.writeTelemetry) {
 			Log.block_start(LOG::XYSTAB);
-			Log.loadFloat(stabX);
-			Log.loadFloat(stabY);
+
+			Log.loadFloat(need_speedX);
+			Log.loadFloat(need_speedY);
 			Log.loadFloat(pitch);
 			Log.loadFloat(roll);
 
 			Log.block_end();
 		}
 
-		/*
-		if ((cnnnnn & 3) == 0)	{
-			Debug.load(0, (sX )*0.1, (sY)*0.1);
-			//Debug.load(1, speedX, speedY);
-			Debug.dump();
 
-
-		}
-		cnnnnn++;
-		*/
-
-
-
-
-
-
-
-
-
-	}
 
 	
 }
@@ -200,43 +212,39 @@ float old_altitude = 0;
 
 //int tttcnt = 0;
 
-float StabilizationClass::Zgps() {
 
-}
-
-
-
-
-
-
-float mc_z = 0;
 float StabilizationClass::Z(){////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 
-	float stab = getSpeed_Z(Autopilot.fly_at_altitude() - Mpu.Est_alt);
-	stab = constrain(stab, max_stab_z_M, max_stab_z_P);
 
-	mc_z += (stab - Mpu.e_speedZ - mc_z)*Z_FILTER;
-	float fZ = HOVER_THROTHLE + pids[ACCZ_SPEED].get_pid(mc_z, Mpu.dt)*Balance.powerK();
+	
 
-	if (Log.writeTelemetry) {
-		Log.block_start(LOG::ZSTAB);
-		Log.loadFloat(stab);
-		Log.loadFloat(fZ);
-		Log.block_end();
-	}
-	return fZ;
+		float need_speedZ = getSpeed_Z(Autopilot.fly_at_altitude() - Mpu.get_Est_Alt());
+		need_speedZ = constrain(need_speedZ, max_stab_z_M, max_stab_z_P);
+
+		
+		float fZ = HOVER_THROTHLE + pids[ACCZ_SPEED].get_pid(need_speedZ - Mpu.accZ, Mpu.dt)*Balance.powerK();
+
+		if (Log.writeTelemetry) {
+			Log.block_start(LOG::ZSTAB);
+
+			Log.loadFloat(need_speedZ);
+			Log.loadFloat(fZ);
+			Log.block_end();
+		}
+		return fZ;
 	
 	
 }
 
 void StabilizationClass::resset_z(){
-	//sZ = speedZ = 0;
+	sZ = speedZ = 0;
 	pids[ACCZ_SPEED].reset_I();
 	pids[ACCZ_SPEED].set_integrator(max(HOVER_THROTHLE,Autopilot.get_throttle()) - HOVER_THROTHLE);
 	
 }
 void StabilizationClass::resset_xy_integrator(){
-	//sX = sY = speedX = speedY = 0;
+	sX = sY = speedX = speedY = 0;
 	pids[ACCX_SPEED].reset_I();
 	pids[ACCY_SPEED].reset_I();
 }

@@ -42,7 +42,7 @@ class ProgClass
 	 float max_stab_z_P, max_stab_z_M;
  public:
 	 bool intersactionFlag;
-	 float stabX, stabY;
+	 float need_speedX, need_speedY;
 	bool getIntersection(float &distX, float &distY);
 	float altitude, direction, cam_pitch;
 	 void init();

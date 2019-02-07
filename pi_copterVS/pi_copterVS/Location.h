@@ -19,41 +19,28 @@ class LocationClass
 
 public:
 
-	double cosDirection, sinDirection;
-	float dir_angle_GRAD;
+	//double cosDirection, sinDirection;
+//	float dir_angle_GRAD;
 	double dt, rdt;
 	double add_lat_need, add_lon_need;
-	long lat_, lon_,lat_zero, lon_zero;
-	//double  lat_home, lon_home;
-	double  _x_home, _y_home, _x_needR, _y_needR, _x_needV,_y_needV;
-	double  x, y,z;
-
-#define x_home (x-_x_home)
-#define y_home (y-_y_home)
-#define x_needR (x-_x_needR)
-#define y_needR (y-_y_needR)
-#define x_needV (x-_x_needV)
-#define y_needV (y-_y_needV)
-
-
-	double altitude,alt_zero;
+	long lat_, lon_, lat_zero, lon_zero;
+	double altitude, alt_zero;
 	uint8_t accuracy_ver_pos_,accuracy_hor_pos_;
 	unsigned long mseconds;
-	//void setSpeedZero(){ lat_needV_ = lat_needR_; lon_needV_ = lon_needR_; }
+//	void setSpeedZero(){ lat_needV_ = lat_needR_; lon_needV_ = lon_needR_; }
 	int init();
-	void setNeedLoc2HomeLoc();
+	//void setNeedLoc2HomeLoc();
 	
-	void setNeedLoc(const long lat, const long lon);
+	//void setNeedLoc(const long lat, const long lon);
 	void setHomeLoc();
-	
-	void add2NeedLoc(const double speedX, const double speedY, const double dt);
+	//void add2NeedLoc(const double speedX, const double speedY, const double dt);
 
 
 	void updateXY();
 	//void bearing_dist(double &bearing, double & distance);
 	
-	double x2home, y2home, dX, dY, speedX, speedY,speedZ,startAlt,old_alt;
-	double dist2home_2;
+	double dX, dY, speedX, speedY,speedZ,startAlt,old_alt;
+	double dist2zero_2, x_from_zero_2_home, y_from_zero_2_home;
 	//---------------
 	double last_gps_data_timed;
 	double last_gps_accurasy_okd;
@@ -73,7 +60,7 @@ public:
 		return x *r_kd_lat; 
 	}
 
-	double from_lon2Y(const double lon){
+	double form_lon2Y(const double lon){
 		return lon*kd_lon_;
 	}
 	double from_Y2Lon(const double y){
@@ -82,13 +69,13 @@ public:
 
 private:
 	double set_cos_sin_dir();
-	void xy(bool update_XY);
+	void xy();
 	//double lat_needV_, lon_needV_, lat_needR_, lon_needR_;
 	double old_iTOWd;
 	double mspeedx, mspeedy;
 
-	void setZeroLoc();
-	double oldDist;
+
+	double oldDist_2;
 	void update();
 	double kd_lon_, kd_lat_;
 	double r_kd_lon, r_kd_lat;

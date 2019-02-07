@@ -58,12 +58,12 @@ float MpuClass::get_roll() { return roll; }
 
 //-----------------------------------------------------------
 
-
-void MpuClass::setAlt2Zero() {
-
+void MpuClass::set_XYZ_to_Zero() {
+	XatZero = estX;
+	YatZero = estY;
 	altitude_at_zero = est_alt_;
-
 }
+
 
 //-----------------------------------------------------
 
@@ -87,11 +87,11 @@ void MpuClass::log() {
 		Log.loadFloat(accY);
 		Log.loadFloat(accZ);
 
-		Log.loadFloat(est_alt);
+		Log.loadFloat(get_Est_Alt());
 		Log.loadFloat(est_speedZ);
-		Log.loadFloat(estX);
+		Log.loadFloat(get_Est_X());
 		Log.loadFloat(est_speedX);
-		Log.loadFloat(estY);
+		Log.loadFloat(get_Est_Y());
 		Log.loadFloat(est_speedY);
 
 		Log.block_end();
@@ -124,7 +124,7 @@ void MpuClass::log_emu() {
 void MpuClass::init()
 {
 
-	altitude_at_zero = 0;
+	altitude_at_zero = XatZero = YatZero = 0;
 	hower_thr = HOVER_THROTHLE;
 	min_thr = MIN_THROTTLE_;
 	fall_thr = FALLING_THROTTLE;
@@ -560,8 +560,8 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 
 	test_vibration(accX, accY, accZ);
 
-	Est_Alt();
-	Est_XY();
+	test_Est_Alt();
+	test_Est_XY();
 
 	shmPTR->pitch = pitch *= RAD2GRAD;
 	shmPTR->roll = roll *= RAD2GRAD;
@@ -594,9 +594,9 @@ void MpuClass::new_calibration(const bool onlyGyro){
 float Z_CF_DIST = 0.03;//CF filter
 float Z_CF_SPEED = 0.01;//CF filter //при 0.005 На ошибку в ACC на 0.1 ошибка в исоте на метр.
 float AltError = 0, AltErrorI=0;
-void MpuClass::Est_Alt() {
+void MpuClass::test_Est_Alt() {
 	//Debug.load(0, 0, accX, accY);
-	float alt = MS5611.Altitude();
+	float alt = MS5611.alt();
 	if (timed<8) {
 		est_alt_ = alt;
 		est_speedZ = 0;
@@ -608,11 +608,13 @@ void MpuClass::Est_Alt() {
 	float acc = accZ + AltErrorI * 0.0001;
 	
 	est_alt_ += mpu_dt*(est_speedZ + acc*mpu_dt*0.5f);
-	est_alt_ += (alt - est_alt_)*Z_CF_DIST;
 	est_speedZ += acc*mpu_dt;
-	est_speedZ += (MS5611.speed - est_speedZ)*Z_CF_SPEED;
 
-	est_alt = est_alt_ - altitude_at_zero;
+
+	//est_alt_ += (alt - est_alt_)*Z_CF_DIST;
+	//est_speedZ += (MS5611.speed - est_speedZ)*Z_CF_SPEED;
+
+	
 	
 }
 
@@ -628,7 +630,7 @@ float XY_KF_SPEED = 0.01f;
 float est_XError = 0, est_XErrorI = 0;
 float est_YError = 0, est_YErrorI = 0;
 #define ACC_Cr 10000.0f
-void MpuClass::Est_XY() {
+void MpuClass::test_Est_XY() {
 	//accX = 0.9;
 	//accY = 0.5;
 	if (GPS.loc.dX == 0 && GPS.loc.dY == 0) {
@@ -638,7 +640,7 @@ void MpuClass::Est_XY() {
 	}
 	est_XError = GPS.loc.dX - estX;
 	est_YError = GPS.loc.dY - estY;
-	float e_ex = (-cosYaw * est_XError - sinYaw * est_YError);
+	float e_ex = (-cosYaw * est_XError - sinYaw * est_YError); //relative to copter xy
 	float e_ey = (-cosYaw * est_YError + sinYaw * est_XError);
 	est_XErrorI += e_ex;
 	est_XErrorI = constrain(est_XErrorI, -ACC_Cr, ACC_Cr);
@@ -648,25 +650,35 @@ void MpuClass::Est_XY() {
 	float c_accX = accX + est_XErrorI / ACC_Cr;
 	float c_accY = accY + est_YErrorI / ACC_Cr;
 	
-	const float ax = (-cosYaw*c_accX + sinYaw*c_accY);
+	w_accX = (-cosYaw*c_accX + sinYaw*c_accY); //relative to world
 	//#endif
-	const float ay = (-cosYaw*c_accY - sinYaw*c_accX);
+	w_accY = (-cosYaw*c_accY - sinYaw*c_accX);
 		//--------------------------------------------------------prediction
-	estX += mpu_dt*(est_speedX + ax * mpu_dt*0.5f);
-	est_speedX += (ax*mpu_dt);
-	estY += mpu_dt*(est_speedY + ay * mpu_dt*0.5f);
-	est_speedY += (ay*mpu_dt);
+	estX += mpu_dt*(est_speedX + w_accX * mpu_dt*0.5f);
+	est_speedX += (w_accX*mpu_dt);
+	estY += mpu_dt*(est_speedY + w_accY * mpu_dt*0.5f);
+	est_speedY += (w_accY*mpu_dt);
 	// -------------------------------------------------------corection
-	estX += (GPS.loc.dX - estX)*XY_KF_DIST;
-	est_speedX += (GPS.loc.speedX - est_speedX)*XY_KF_SPEED;
+	//estX += (GPS.loc.dX - estX)*XY_KF_DIST;
+	//est_speedX += (GPS.loc.speedX - est_speedX)*XY_KF_SPEED;
 	//--------------------------------------------------------
-	estY += (GPS.loc.dY - estY)*XY_KF_DIST;
-	est_speedY += (GPS.loc.speedY - est_speedY)*XY_KF_SPEED;
+	//estY += (GPS.loc.dY - estY)*XY_KF_DIST;
+	//est_speedY += (GPS.loc.speedY - est_speedY)*XY_KF_SPEED;
 	
 	//Debug.load(0, (int)(estX*100), (int)(estY*100), yaw * RAD2GRAD);
 }
 
 
+void MpuClass::set_cos_sin_dir() {
+
+		double angle = atan2(est_speedY, est_speedX);
+
+		dir_angle_GRAD = angle*RAD2GRAD;
+		//ErrorLog.println(angle*RAD2GRAD);
+		cosDirection = abs(cos(angle));
+		sinDirection = abs(sin(angle));
+
+}
 
 
 

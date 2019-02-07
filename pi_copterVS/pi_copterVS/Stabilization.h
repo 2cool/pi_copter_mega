@@ -33,10 +33,13 @@ private:
 #define STAB_PIDS 3
 	AP_PID pids[STAB_PIDS];
 	float max_z_integrator;
-		
-	//unsigned long gps_sec;
+	//float  sX, sY, speedX, speedY;
 	
+	//unsigned long gps_sec;
+	//float speedZ, sZ;
 	float Z_CF_SPEED,Z_CF_DIST;
+
+	float needXR, needYR, needXV, needYV;
 
 	void set_acc_xy_speed_kp(const float f){ pids[ACCX_SPEED].kP(f);	pids[ACCY_SPEED].kP(f); }
 	void set_acc_xy_speed_kI(const float f){ pids[ACCX_SPEED].kI(f);	pids[ACCY_SPEED].kI(f); }
@@ -45,6 +48,9 @@ private:
 	
 	
 public:
+
+
+	void setNeedPos(float x, float y);
 	//void set_XY_2_GPS_XY();
 	void  resset_z();
 	void  resset_xy_integrator();
@@ -66,10 +72,10 @@ public:
 
 
 
-	//float getSpeedX(){ return speedX; }
-	//float getSpeedY(){ return speedY; }
-	//float getDistX(){ return sX; }
-	//float getDistY(){ return sY; }
+	float getSpeedX(){ return speedX; }
+	float getSpeedY(){ return speedY; }
+	float getDistX(){ return sX; }
+	float getDistY(){ return sY; }
 	void setDefaultMaxSpeeds();
 	
 	//float get_accZ_stabKP_Rep(){ return accZ_stabKP_Rep; }
@@ -86,9 +92,8 @@ public:
 	float max_stab_z_P,max_stab_z_M,max_speed_xy;
 	float last_accZ;
 	float Z();
-	//float Z_2(bool onlyUpdate = false);
 	float Zgps();
-	void XY(float &xF, float&yF, bool onlyUpdate = false);
+	void XY(float &xF, float&yF);
 	void horizont(const uint8_t i, const float dt, const float accX, const float accY, const float F);
 
 	void init();

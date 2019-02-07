@@ -47,7 +47,7 @@ int MS5611Class::writeReg(char bar_zero) {
 	}
 }
 
-float MS5611Class::Altitude() {
+float MS5611Class::alt() {
 	return altitude_;
 }
 #ifndef WORK_WITH_WIFI

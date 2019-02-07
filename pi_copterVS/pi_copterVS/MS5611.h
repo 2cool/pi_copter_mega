@@ -71,7 +71,7 @@ public:
 	bool fault();
 	bool compensation;
 
-	float Altitude();
+	float alt();
 	uint8_t ms5611_count;
 	int init();
 	uint8_t loop();

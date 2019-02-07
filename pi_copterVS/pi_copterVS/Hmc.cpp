@@ -255,7 +255,7 @@ void HmcClass::loop(){
 	
 
 
-	Mpu.hmc_timed = 0.000001*(double)micros();
+	Mpu.hmc_timed = Mpu.timed;
 }
 
 #endif

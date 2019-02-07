@@ -166,7 +166,7 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 
 float AutopilotClass::corectedAltitude4tel() {
 	return Mpu.Est_alt();
-	//return ((control_bits & Z_STAB) == 0) ? MS5611.altitude() : Stabilization.getAltitude();
+	//return ((control_bits & Z_STAB) == 0) ? Mpu.get_Est_Alt() : Stabilization.getAltitude();
 }
 
 
@@ -606,8 +606,8 @@ bool AutopilotClass::holdLocation(const long lat, const long lon){
 	aPitch = aRoll = 0;
 	//if (holdAltitude()){
 
-		
-		GPS.loc.setNeedLoc(lat,lon);
+	
+		//GPS.loc.setNeedLoc(lat,lon);
 		cout << "Hower at: " << GPS.loc.lat_ << " " << GPS.loc.lon_ << "\t"<<Mpu.timed << endl;;
 
 		//Stabilization.init_XY(0, 0);
@@ -687,10 +687,8 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			cout << "OK" << "\t"<<Mpu.timed<<endl;
 
 			GPS.loc.setHomeLoc();
-
-			Mpu.setAlt2Zero();
-
-			tflyAtAltitude = flyAtAltitude = Mpu.Est_alt();
+			Mpu.set_XYZ_to_Zero();  // все берем из мпу. при  старте x y z = 0;
+			//tflyAtAltitude = flyAtAltitude = 0;// Mpu.get_Est_Alt();
 			
 			Mpu.max_g_cnt = 0;
 
@@ -786,7 +784,7 @@ bool AutopilotClass::off_throttle(const bool force, const string msg){//////////
 	//	if (control_bits_ & (255 ^ (COMPASS_ON | HORIZONT_ON)))
 	//		return true;
 
-		//if (MS5611.altitude()  < 2){
+		//if (Mpu.get_Est_Alt()  < 2){
 		//	motors_do_on(false,msg);
 		//}
 		//else{

@@ -56,7 +56,7 @@ void ProgClass::loop(){
 	if (go_next == false) {
 		if (timer == 0) {
 			if (altFlag == false)
-				altFlag = (alt == old_alt) || (abs(Mpu.Est_alt() - Autopilot.fly_at_altitude()) <= (ACCURACY_Z));
+				altFlag = (alt == old_alt) || (abs(Mpu.get_Est_Alt() - Autopilot.fly_at_altitude()) <= (ACCURACY_Z));
 
 			if (distFlag == false) {
 				if (lat == old_lat && lon == old_lon) {
@@ -85,7 +85,7 @@ void ProgClass::loop(){
 			//}
 		}
 	}
-	intersactionFlag = Prog.getIntersection(stabX, stabY);
+	intersactionFlag = Prog.getIntersection(need_speedX, need_speedY);
 }
 
 
@@ -100,14 +100,14 @@ bool ProgClass::program_is_OK(){
 		begin_timed = 0;
 		lat = GPS.loc.lat_;
 		lon = GPS.loc.lon_;
-		alt = Mpu.Est_alt();
+		alt = Mpu.get_Est_Alt();
 		uint8_t step = 1;
 		float fullTime = 0;
 		while (load_next(false)){
 			
 			if (lat != old_lat && lon != old_lon){
 				const float dx = GPS.loc.from_lat2X((float)(lat - old_lat));
-				const float dy = GPS.loc.from_lon2Y((float)(lon - old_lon));
+				const float dy = GPS.loc.form_lon2Y((float)(lon - old_lon));
 				float time = (float)(sqrt(dx*dx + dy*dy) / max_speed_xy);
 				const float dAlt = alt - old_alt;
 				time += dAlt / ((dAlt >= 0) ? max_stab_z_P : max_stab_z_M);
@@ -130,7 +130,7 @@ bool ProgClass::program_is_OK(){
 
 
 		const float x2 = GPS.loc.from_lat2X((float)(lat - GPS.loc.lat_));
-		const float y2 = GPS.loc.from_lon2Y((float)(lon - GPS.loc.lon_));
+		const float y2 = GPS.loc.form_lon2Y((float)(lon - GPS.loc.lon_));
 
 		const float dist = (float)sqrt(x2*x2 + y2*y2);
 
@@ -162,7 +162,7 @@ bool ProgClass::start(){
 		begin_timed = 0;
 		lat = GPS.loc.lat_;
 		lon = GPS.loc.lon_;
-		alt = Mpu.Est_alt();
+		alt = Mpu.get_Est_Alt();
 		go_next = distFlag = altFlag = true;
 		return true;
 	}
@@ -237,8 +237,8 @@ bool ProgClass::getIntersection(float &x, float &y){
 
 	const float x2 = GPS.loc.from_lat2X((float)(lat - GPS.loc.lat_));
 	const float x1 = GPS.loc.from_lat2X((float)(old_lat - GPS.loc.lat_));
-	const float y2 = GPS.loc.from_lon2Y((float)(lon - GPS.loc.lon_));
-	const float y1 = GPS.loc.from_lon2Y((float)(old_lon - GPS.loc.lon_));
+	const float y2 = GPS.loc.form_lon2Y((float)(lon - GPS.loc.lon_));
+	const float y1 = GPS.loc.form_lon2Y((float)(old_lon - GPS.loc.lon_));
 	const float dx = x2 - x1;
 	const float dy = y2 - y1;
 	const float l2 = dx*dx + dy*dy;
@@ -409,7 +409,7 @@ bool ProgClass::load_next(bool loadf){
 
 		if (loadf) {
 			GPS.loc.setNeedLoc(lat, lon);
-			//Stabilization.set_XY_2_GPS_XY();
+			Stabilization.set_XY_2_GPS_XY();
 		}
 		//printf("lat %i, lon %i\n", lat, lon);
 		//Out.println(lat); Out.println(lon);  Out.println(advance_dist);
@@ -455,7 +455,7 @@ bool ProgClass::load_next(bool loadf){
 
 	old_dt = 0;
 
-	stabX = stabY = 0;
+	need_speedX = need_speedY = 0;
 	return true;
 
 }

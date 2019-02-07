@@ -90,31 +90,32 @@ class MpuClass
 	float est_alt_, est_speedZ,est_alt;
 	float estX, estY, est_speedX, est_speedY;
 
-	void meansensors();
-	void calibrationF(int16_t ar[]);
-	void calibrationF0(int16_t ar[]);
-	void calibrationPrint(int16_t ar[],const bool onlyGyro);
+
 	float yaw,yaw_offset;
 	void test_vibration( float x,  float y,  float z);
 	float DRAG_K,_0007;
 private:
-	float altitude_at_zero;
+	float altitude_at_zero,XatZero,YatZero;
 	void gyro_calibr();
-	void Est_Alt();
-	void Est_XY();
+	void test_Est_Alt();
+	void test_Est_XY();
  public:
-	 float Est_X() { return estX; }
-	 float Est_Y() { return estY; }
-	 float Est_SpeedX() { return est_speedX; }
-	 float Est_SpeedY() { return est_speedY; }
-	 float Est_alt() { return est_alt; }
-	 void setAlt2Zero();
+	 void set_cos_sin_dir();
+	 double dir_angle_GRAD, cosDirection, sinDirection;
+	 float get_Est_X() { return estX-XatZero; }
+	 float get_Est_Y() { return estY-YatZero; }
+	 float get_Est_SpeedX() { return est_speedX; }
+	 float get_Est_SpeedY() { return est_speedY; }
+	 float get_Est_SpeedZ() { return est_speedZ; }
+	 float get_Est_Alt() { return est_alt-altitude_at_zero; }
+	 void set_XYZ_to_Zero();
+
 	 float vibration;
 	 double acc_callibr_timed;
 	 float hower_thr, min_thr, fall_thr;
 	 float e_accZ, e_speedZ, w_accZ;
 	 double timed,mpu_timed, gps_timed, hmc_timed, autopilot_timed, balance_timed, ms5611_timed,telem_timed,com_timed;
-	float e_accX, e_accY;
+
 	 float cor_c_pitch, cor_c_roll;
 	 double oldmpuTimed;
 
@@ -133,6 +134,7 @@ private:
 	 float get_roll();
 	 bool mpu_calibrated,gyro_calibratioan;
 	float accZ,accY,accX,tiltPower,cosPitch,cosRoll,sinPitch,sinRoll;
+	float w_accX, w_accY;
 	float tiltPower_CF;
 	
 	 float  gyroPitch, gyroYaw, gyroRoll;
