@@ -34,13 +34,10 @@ class MpuClass
 {
 	friend class HmcClass;
  protected:
-	 void do_magic();
-	 void do_magic4Z();
-	 void calc_corrected_ang();
+
 	 void log_emu();
 	 void log();
 
-	 int ms_open();
 	 // MPU control/status vars
 	 uint8_t devStatus;      // return status after each device operation
 							 //(0 = success, !0 = error)
@@ -106,6 +103,10 @@ private:
 	void Est_Alt();
 	void Est_XY();
  public:
+	 float Est_X() { return estX; }
+	 float Est_Y() { return estY; }
+	 float Est_SpeedX() { return est_speedX; }
+	 float Est_SpeedY() { return est_speedY; }
 	 float Est_alt() { return est_alt; }
 	 void setAlt2Zero();
 	 float vibration;

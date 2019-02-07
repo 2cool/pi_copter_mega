@@ -232,9 +232,9 @@ void AutopilotClass::smart_commander(const float dt){
 		}
 		GPS.loc.add2NeedLoc(speedX, speedY, dt);
 	}
-	else{
-		GPS.loc.setSpeedZero();
-	}
+	//else{
+	//	GPS.loc.setSpeedZero();
+	//}
 }
 
 static double last_beep_timed = 0;
@@ -266,7 +266,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 #ifdef LOST_BEEP
 	
-	if ( GPS.loc.lat_home!=0 && GPS.loc.lon_home!=0  && Mpu.timed - last_time_data_recivedd>3 && Mpu.timed - last_beep_timed > 3) {
+	if ( GPS.loc.lat_zero!=0 && GPS.loc.lon_zero!=0  && Mpu.timed - last_time_data_recivedd>3 && Mpu.timed - last_beep_timed > 3) {
 		last_beep_timed = Mpu.timed;
 		mega_i2c.beep_code(B_CONNECTION_LOST);
 	}
@@ -610,7 +610,7 @@ bool AutopilotClass::holdLocation(const long lat, const long lon){
 		GPS.loc.setNeedLoc(lat,lon);
 		cout << "Hower at: " << GPS.loc.lat_ << " " << GPS.loc.lon_ << "\t"<<Mpu.timed << endl;;
 
-		Stabilization.init_XY(0, 0);
+		//Stabilization.init_XY(0, 0);
 
 
 		control_bits |= XY_STAB;

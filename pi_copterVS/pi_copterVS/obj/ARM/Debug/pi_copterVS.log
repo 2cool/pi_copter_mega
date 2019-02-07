@@ -3,6 +3,30 @@
   Validating architecture
   Starting remote build
   Compiling sources:
-  MS5611.cpp
-  Linking objects
-  pi_copterVS.vcxproj -> C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out
+  Stabilization.cpp
+  mpu.cpp
+  Balance.cpp
+  Prog.cpp
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp(226,37): error : ‘class StabilizationClass’ has no member named ‘getDistX’
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp(226,37): error :   const float dist_x = Stabilization.getDistX();
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp(226,37): error :                                      ^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp(227,37): error : ‘class StabilizationClass’ has no member named ‘getDistY’
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp(227,37): error :   const float dist_y = Stabilization.getDistY();
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp(227,37): error :                                      ^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.cpp(215,60): error : invalid use of member function (did you forget the ‘()’ ?)
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.cpp(215,60): error :   float stab = getSpeed_Z(Autopilot.fly_at_altitude() - Mpu.Est_alt);
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.cpp(215,60): error :                                                             ^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp(328,40): error : no matching function for call to ‘StabilizationClass::Z(bool)’
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp(328,40): error :      true_throttle=Stabilization.Z(false);
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp(328,40): error :                                         ^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h(88,8): message : candidate: float StabilizationClass::Z()
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h(88,8): message :   float Z();
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h(88,8): message :         ^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h(88,8): message : candidate expects 0 arguments, 1 provided
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp(344,25): error : no matching function for call to ‘StabilizationClass::Z(bool)’
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp(344,25): error :      Stabilization.Z(true);
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp(344,25): error :                          ^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h(88,8): message : candidate: float StabilizationClass::Z()
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h(88,8): message :   float Z();
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h(88,8): message :         ^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h(88,8): message : candidate expects 0 arguments, 1 provided

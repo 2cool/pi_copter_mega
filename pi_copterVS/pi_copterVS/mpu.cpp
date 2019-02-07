@@ -65,88 +65,6 @@ void MpuClass::setAlt2Zero() {
 
 }
 
-void MpuClass::do_magic4Z() {
-static float aK = 19.6;
-static float thr = 0.5;
-	if (Balance.get_true_throttle() < 0.3) {
-		e_accZ = e_speedZ = w_accZ =  0;
-		thr = HOVER_THROTHLE;
-		hower_thr = HOVER_THROTHLE;
-		min_thr = MIN_THROTTLE_;
-		fall_thr = FALLING_THROTTLE;
-	}
-	else {
-		//Telemetry.get_full_power();
-		e_accZ = 0;
-		/*
-		
-		thr += (Balance.get_true_throttle() - thr)*0.2;
-		e_accZ = thr*aK - 9.8 - e_speedZ*abs(e_speedZ)*0.232;
-	//	e_accZ += (accZ - e_accZ)*0.01;//?
-		e_speedZ += e_accZ*dt;
-		e_speedZ += (MS5611.speed - e_speedZ)*0.01;
-		if (Autopilot.z_stabState() && Commander.getThrottle() == HOVER_THROTHLE) {
-			aK += (e_accZ + 9.8 / thr - aK)*0.002;
-			aK = constrain(aK, 16, 25);
-			hower_thr = 9.8 / aK;
-			min_thr = hower_thr*0.8;
-			fall_thr = hower_thr*0.9;
-		//	cout << "%f\n", aK);
-		}
-		*/
-	}
-}
-
-//float DRAG_K =0.022;
-void MpuClass::do_magic() {
-	if (Autopilot.motors_is_on() == false) {
-		e_accX = e_accY = e_speedX = e_speedY = w_accX = w_accY = m7_accX=m7_accY=0;
-		f_pitch = pitch;
-		f_roll = roll;
-		return;
-	}
-	//---calc acceleration on angels------
-	
-
-#define WIND_SPEED_X sqrt(abs(w_accX / DRAG_K))*((w_accX>=0)?1:-1)
-#define WIND_SPEED_Y sqrt(abs(w_accY / DRAG_K))*((w_accY>=0)?1:-1)
-
-//	float windX = e_speedX + WIND_SPEED_X;
-//	float windY = e_speedY + WIND_SPEED_Y;
-
-	const float _p = sinPitch / cosPitch;
-	const float _r = sinRoll / cosRoll;
-
-	const float GP = G + e_accZ;
-
-	e_accX = -GP*(-cosYaw*_p - sinYaw*_r) - e_speedX*abs(e_speedX)*DRAG_K-w_accX;
-	e_accX = constrain(e_accX, -MAX_ACC, MAX_ACC);
-	e_accY = GP*(-cosYaw*_r + sinYaw*_p) - e_speedY*abs(e_speedY)*DRAG_K-w_accY;
-	e_accY = constrain(e_accY, -MAX_ACC, MAX_ACC);
-	w_accX += (e_accX - GPS.loc.accX - w_accX)*0.01;
-	w_accY += (e_accY - GPS.loc.accY - w_accY)*0.01;
-
-	e_speedX += e_accX*dt;
-	e_speedX += (GPS.loc.speedX - e_speedX)*0.1;
-
-	e_speedY += e_accY*dt;
-	e_speedY += (GPS.loc.speedY - e_speedY)*0.1;
-
-	//-----calc real angels------
-	m7_accX += ((cosYaw*e_accX + sinYaw*e_accY) - m7_accX)*_0007;// 0.007;
-	m7_accX = constrain(m7_accX, -MAX_ACC / 2, MAX_ACC / 2);
-	m7_accY += ((cosYaw*e_accY - sinYaw*e_accX) - m7_accY)*_0007;// 0.007;
-	m7_accY = constrain(m7_accY, -MAX_ACC / 2, MAX_ACC / 2);
-
-	f_pitch = pitch;
-	f_roll = roll;
-
-	pitch = atan2((sinPitch + m7_accX*cosPitch / G), cosPitch);// +abs(gaccX*sinPitch));
-	roll = atan2((sinRoll - m7_accY*cosRoll / G), cosRoll);// +abs(gaccY*sinRoll));
-
-
-}
-
 //-----------------------------------------------------
 
 void MpuClass::log() {
@@ -202,96 +120,6 @@ void MpuClass::log_emu() {
 
 }
 //-----------------------------------------------------
-int MpuClass::ms_open() {
-
-	/*
-	dmpReady = 1;
-	initialized = 0;
-	for (int i = 0; i<DIM; i++) {
-		lastval[i] = 10;
-	}
-
-	// initialize device
-	cout << "Initializing MPU...\n";
-	if (mpu_init(NULL) != 0) {
-		cout << "MPU init failed!\n";
-		return -1;
-	}
-	cout << "Setting MPU sensors...\n";
-	if (mpu_set_sensors(INV_XYZ_GYRO | INV_XYZ_ACCEL) != 0) {
-		cout << "Failed to set sensors!\n";
-		return -1;
-	}
-	cout << "Setting GYRO sensitivity...\n";
-	if (mpu_set_gyro_fsr(2000) != 0) {
-		cout << "Failed to set gyro sensitivity!\n";
-		return -1;
-	}
-	cout << "Setting ACCEL sensitivity...\n";
-	if (mpu_set_accel_fsr(8) != 0) {
-		cout << "Failed to set accel sensitivity!\n";
-		return -1;
-	}
-	// verify connection
-	cout << "Powering up MPU...\n";
-	mpu_get_power_state(&devStatus);
-	if (devStatus)
-		cout << "MPU6050 connection successful\n";
-	else
-		cout << "MPU6050 connection failed " << devStatus << "\n";
-
-
-	//fifo config
-	cout << "Setting MPU fifo...\n";
-	if (mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL) != 0) {
-		cout << "Failed to initialize MPU fifo!\n";
-		return -1;
-	}
-
-	// load and configure the DMP
-	cout << "Loading DMP firmware...\n";
-	if (dmp_load_motion_driver_firmware() != 0) {
-		cout << "Failed to enable DMP!\n";
-		return -1;
-	}
-
-	cout << "Activating DMP...\n";
-	if (mpu_set_dmp_state(1) != 0) {
-		cout << "Failed to enable DMP!\n";
-		return -1;
-	}
-
-	//dmp_set_orientation()
-	//if (dmp_enable_feature(DMP_FEATURE_LP_QUAT|DMP_FEATURE_SEND_RAW_GYRO)!=0) {
-	cout << "Configuring DMP...\n";
-	if (dmp_enable_feature(DMP_FEATURE_6X_LP_QUAT | DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO | DMP_FEATURE_GYRO_CAL) != 0) {
-		cout << "Failed to enable DMP features!\n";
-		return -1;
-	}
-
-
-	cout << "Setting DMP fifo rate...\n";
-	if (dmp_set_fifo_rate(rate) != 0) {
-		cout << "Failed to set dmp fifo rate!\n";
-		return -1;
-	}
-	cout << "Resetting fifo queue...\n";
-	if (mpu_reset_fifo() != 0) {
-		cout << "Failed to reset fifo!\n";
-		return -1;
-	}
-
-	cout << "Checking... ";
-	do {
-		delay_ms(1000 / rate);  //dmp will habve 4 (5-1) packets based on the fifo_rate
-		r = dmp_read_fifo(g, a, _q, &sensors, &fifoCount);
-	} while (r != 0 || fifoCount<5); //packtets!!!
-	cout << "Done.\n";
-
-	initialized = 1;
-	*/
-	return 0;
-}
 //-----------------------------------------------------
 void MpuClass::init()
 {
@@ -769,7 +597,7 @@ float AltError = 0, AltErrorI=0;
 void MpuClass::Est_Alt() {
 	//Debug.load(0, 0, accX, accY);
 	float alt = MS5611.Altitude();
-	if (timed<5) {
+	if (timed<8) {
 		est_alt_ = alt;
 		est_speedZ = 0;
 		return;
@@ -803,6 +631,11 @@ float est_YError = 0, est_YErrorI = 0;
 void MpuClass::Est_XY() {
 	//accX = 0.9;
 	//accY = 0.5;
+	if (GPS.loc.dX == 0 && GPS.loc.dY == 0) {
+		est_XError = est_XErrorI = est_YError = est_YErrorI = 0;
+		estX = estY = est_speedX = est_speedY = 0;
+		return;
+	}
 	est_XError = GPS.loc.dX - estX;
 	est_YError = GPS.loc.dY - estY;
 	float e_ex = (-cosYaw * est_XError - sinYaw * est_YError);

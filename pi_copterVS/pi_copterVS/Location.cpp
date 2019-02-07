@@ -33,46 +33,34 @@
 
 int fd_loc;
 
-void LocationClass::xy(bool update_speed){
+void LocationClass::xy(bool update_XY){
 
 	
 	
 	//------------------------------------------------------------
-	
-	
-	if (lon_home == 0){
-		return;
-	}
 
-	if (update_speed) {
 
-		double t = form_lon2Y((double)(lon_home - lon_));
-		double tspeedY = (t - y2home) *rdt;
-		y2home = t;
-		accY = (tspeedY - speedY)*rdt;
-		accY = constrain(accY, -MAX_ACC, MAX_ACC);
-		shmPTR->speedY=speedY = constrain(tspeedY,-25,25);
-		
 	
-		t = from_lat2X((double)(lat_home - lat_));
-		double tspeedX = (t - x2home) * rdt;
-		x2home = t;
-		accX = (tspeedX - speedX)*rdt;
-		accX = constrain(accX, -MAX_ACC, MAX_ACC);
-		shmPTR->speedX=speedX=constrain(tspeedX,-25,25);
+	if (update_XY) {
+		double t = from_lon2Y((double)(lon_zero - lon_));
+		double tspeedY = (t - y) *rdt;
+		y = t;
+		shmPTR->speedY = speedY = constrain(tspeedY, -25, 25);
+		t = from_lat2X((double)(lat_zero - lat_));
+		double tspeedX = (t - x) * rdt;
+		x = t;
+		shmPTR->speedX = speedX = constrain(tspeedX, -25, 25);
 		//update z
+		z = altitude - alt_zero;
 		float tsz = (altitude - old_alt)*rdt;
 		old_alt = altitude;
-		accZ = (tsz - speedZ)*rdt;
-		shmPTR->speedZ=speedZ = tsz;
-		//accZ = (accZ, -2, 6);
-
-
-		//
+		shmPTR->speedZ = speedZ = tsz;
 	}
-	dY = form_lon2Y((double)(lon_needV_ - (double)lon_)) + (speedY*0.5);
-	dX = from_lat2X((double)(lat_needV_ - (double)lat_)) + (speedX*0.5f);
-	
+
+	dY = y_needV + speedY * dt*0.5;
+	dX = x_needV + speedX * dt*0.5;
+	//dY = from_lon2Y((double)(lon_needV_ - (double)lon_)) + (speedY*0.5);
+	//dX = from_lat2X((double)(lat_needV_ - (double)lat_)) + (speedX*0.5f);
 	set_cos_sin_dir();
 
 
@@ -133,7 +121,7 @@ void LocationClass::updateXY(){
 }
 
 
-//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////----------------------------------------------------------------------------------
 void LocationClass::proceed(SEND_I2C *d) {
 	last_gps_data_timed = Mpu.timed;
 	shmPTR->accuracy_hor_pos_ =  accuracy_hor_pos_ = (accuracy_hor_pos_ > 99)?99: d->hAcc;
@@ -151,8 +139,13 @@ void LocationClass::proceed(SEND_I2C *d) {
 	shmPTR->lat_ = lat_ = d->lat;
 	shmPTR->lon_ = lon_ = d->lon;
 
-	if (lat_home == 0 && lon_home == 0 && accuracy_hor_pos_ < MIN_ACUR_HOR_POS_2_START)
-		setHomeLoc();
+	if (lat_zero == 0 && lon_zero == 0) {
+		if (accuracy_hor_pos_ < MIN_ACUR_HOR_POS_2_START) {
+			setZeroLoc();
+		}
+	}
+	else
+		return;
 
 	updateXY();
 
@@ -170,13 +163,18 @@ void LocationClass::add2NeedLoc(const double speedX, const double speedY, const 
 	//double t = (add_lat_need+= from_X2Lat(speedX*dt));
 	//add_lat_need -= t;
 
+	_x_needR = x-speedX * dt;
+	_x_needV = _x_needR - Stabilization.getDist_XY(speedX);
 
-	lat_needR_ -= from_X2Lat(speedX*dt);
-	lat_needV_ = lat_needR_ - from_X2Lat(Stabilization.getDist_XY(speedX));
+	_y_needR = y-speedY * dt;
+	_y_needV = _y_needR - Stabilization.getDist_XY(speedY);
+
+	//lat_needR_ -= from_X2Lat(speedX*dt);
+//	lat_needV_ = lat_needR_ - from_X2Lat(Stabilization.getDist_XY(speedX));
 	//t = (add_lon_need += from_Y2Lon(speedY*dt));
 	//add_lon_need -= t;
-	lon_needR_ -= from_Y2Lon(speedY*dt);
-	lon_needV_ = lon_needR_ - from_Y2Lon(Stabilization.getDist_XY(speedY));
+//	lon_needR_ -= from_Y2Lon(speedY*dt);
+//	lon_needV_ = lon_needR_ - from_Y2Lon(Stabilization.getDist_XY(speedY));
 }
 
 
@@ -202,7 +200,8 @@ int LocationClass::init(){
 	//kd_lat = 0;// -0.001112000712;
 
 	x2home = y2home = speedX = speedY = 0;
-	lon_home = lat_home = 0;
+	lat_zero = lon_zero = 0;
+
 	accuracy_hor_pos_ = 99;
 	accuracy_ver_pos_ = 99;
 	altitude = 0;
@@ -216,22 +215,30 @@ int LocationClass::init(){
 	
 	cout << "loc init\n";
 }
-
+void LocationClass::setZeroLoc() {
+	lat_zero = lat_;
+	lon_zero = lon_;
+	alt_zero = old_alt = altitude;
+}
 void LocationClass::setHomeLoc(){
-	shmPTR->lat_home =  lat_home = lat_;
-	shmPTR->lon_home = lon_home = lon_;
+	shmPTR->lat_home = lat_;
+	shmPTR->lon_home = lon_;
+	_x_home = _x_needR = _x_needV = x;
+	_y_home = _y_needR = _y_needV = y;
+
 	old_alt=startAlt = altitude;
 
 	//Debug.dump(lat_, lon_, 0, 0);
-	dX=dY=speedZ=speedX = speedY = x2home = y2home = accX=accY=accZ=0;
-	lat_needR_ = lat_needV_ = (double)lat_home;
-	lon_needR_ = lon_needV_ = (double)lon_home;
-
+	dX=dY=speedZ=speedX = speedY = x2home = y2home = 0;
+	//lat_needR_ = lat_needV_ = (double)lat_home;
+	//lon_needR_ = lon_needV_ = (double)lon_home;
 	//setNeedLoc2HomeLoc();
 }
 void LocationClass::setNeedLoc(long lat, long lon){
-	lat_needR_ = lat_needV_ = (double)lat;
-	lon_needR_ = lon_needV_ = (double)lon;
+//	lat_needR_ = lat_needV_ = (double)lat;
+//	lon_needR_ = lon_needV_ = (double)lon;
+	_x_needV = _x_needR = x;
+	_y_needV = _y_needR = y;
 	xy(false);
 	//set_cos_sin_dir();
 
@@ -239,8 +246,10 @@ void LocationClass::setNeedLoc(long lat, long lon){
 
 void LocationClass::setNeedLoc2HomeLoc(){
 	//setNeedLoc(lat_home, lon_home);
-	lat_needR_ = lat_needV_ = (double)lat_home;
-	lon_needR_ = lon_needV_ = (double)lon_home;
+	_x_needR = _x_needV = _x_home;
+	_y_needR = _y_needV = _y_home;
+	//lat_needR_ = lat_needV_ = (double)lat_home;
+	//lon_needR_ = lon_needV_ = (double)lon_home;
 	xy(false);
 
 
