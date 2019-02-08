@@ -163,9 +163,9 @@ int TelemetryClass::check_time_left_if_go_to_home(){
 	double last = max(0,  battery_charge-consumed_charge);
 	float max_fly_time = min(MAX_FLY_TIME,last/f_current);
 
-	const float dist2home = (float)sqrt(GPS.loc.dist2home_2);
+	const float dist2home = (float)sqrt(Mpu.dist2home_2());
 	const float time2home = dist2home * (1.0f / MAX_HOR_SPEED);
-	const float time2down = abs((Mpu.Est_alt())*(1.0f / MAX_VER_SPEED_MINUS));
+	const float time2down = abs((Mpu.get_Est_Alt())*(1.0f / MAX_VER_SPEED_MINUS));
 	const float time_left=(max_fly_time - time2home - time2down);
 
 
@@ -223,7 +223,7 @@ Max Continuous Power 220 Watts
 #define MOTORS_STALLED_I_MIN -1
 #define MOT_STALLED "msd"
 
-	if (Autopilot.motors_is_on() && Mpu.Est_alt() < 10 &&
+	if (Autopilot.motors_is_on() && Mpu.get_Est_Alt() < 10 &&
 		(
 			m_current[0]>MOTORS_STALLED_I_MAX || m_current[0]< MOTORS_STALLED_I_MIN ||
 			m_current[1]>MOTORS_STALLED_I_MAX || m_current[1]< MOTORS_STALLED_I_MIN ||

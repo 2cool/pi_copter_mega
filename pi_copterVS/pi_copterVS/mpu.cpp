@@ -138,7 +138,7 @@ void MpuClass::init()
 
 	f_pitch = f_roll = 0;
 
-	windFX = windFY = e_speedX = e_speedY = e_accX=e_accY=m7_accX=m7_accY=w_accX=w_accY=0;
+	w_accX=w_accY=0;
 	yaw_off = 0;
 	max_g_cnt = 0;
 	cosYaw = 1;
@@ -287,6 +287,8 @@ const float to_98g = 0.0005981445312f;
 float real_pitch = 0, real_roll = 0;
 
 //-----------------------------------------------------
+
+/*
 void MpuClass::calc_corrected_ang(){
 
 	double raccX = cosYaw*GPS.loc.accX + sinYaw*GPS.loc.accY;
@@ -298,7 +300,7 @@ void MpuClass::calc_corrected_ang(){
 
 
 }
-
+*/
 ///////////////////////////////////////////////////////////////////
 
 bool MpuClass::loop(){
@@ -310,9 +312,12 @@ bool MpuClass::loop(){
 	double ___dt = (float)(timed - oldmpuTimed);// *div;
 	if (___dt < 0.01)
 		return false;
-
+	Hmc.loop();
+	MS5611.loop();
+	GPS.loop();
 	dt = 0.01;
 	rdt = 1.0 / dt;
+	mpu_dt = dt;
 	oldmpuTimed = timed;
 	if (dt > 0.02)
 		dt = 0.01;
@@ -330,10 +335,7 @@ bool MpuClass::loop(){
 	accY = Emu.get_raccY();
 	accZ = Emu.get_accZ();
 
-
-
-
-	float head = Hmc.heading;
+	float head = Emu.get_heading();
 
 	float g_yaw = Emu.get_yaw();
 
@@ -351,8 +353,8 @@ bool MpuClass::loop(){
 	sinYaw = sin(yaw);
 
 
-	Est_Alt();
-	Est_XY();
+	test_Est_Alt();
+	test_Est_XY();
 
 	yaw *= RAD2GRAD;
 	pitch *= RAD2GRAD;
@@ -600,19 +602,44 @@ void MpuClass::test_Est_Alt() {
 	if (timed<8) {
 		est_alt_ = alt;
 		est_speedZ = 0;
+		AltErrorI = 0;
 		return;
 	}
-	AltError = alt - est_alt_;
-	AltErrorI += AltError;
-	AltErrorI = constrain(AltErrorI, -10000.0f, 10000.0f);
+	if (Autopilot.motors_onState())
+		Z_CF_DIST = Z_CF_DIST;
+
+	
 	float acc = accZ + AltErrorI * 0.0001;
 	
 	est_alt_ += mpu_dt*(est_speedZ + acc*mpu_dt*0.5f);
 	est_speedZ += acc*mpu_dt;
 
+	//est_speedZ += acc * mpu_dt;
+	//est_alt_ += est_speedZ * mpu_dt;
 
-	//est_alt_ += (alt - est_alt_)*Z_CF_DIST;
-	//est_speedZ += (MS5611.speed - est_speedZ)*Z_CF_SPEED;
+
+	est_alt_ += (alt - est_alt_)*Z_CF_DIST;
+	est_speedZ += (MS5611.speed - est_speedZ)*Z_CF_SPEED;
+
+
+
+	AltError = alt - est_alt_;
+	AltErrorI += AltError;
+	AltErrorI = constrain(AltErrorI, -10000.0f, 10000.0f);
+
+
+
+#ifdef FALSE_WIRE
+	if (alt <= 0) {
+		est_alt_ = 0;
+		est_speedZ = 0;
+	}
+
+#endif
+
+	//Debug.load(0, est_speedZ, est_alt_);
+	//Debug.dump();
+	
 
 	
 	
@@ -668,7 +695,7 @@ void MpuClass::test_Est_XY() {
 	//Debug.load(0, (int)(estX*100), (int)(estY*100), yaw * RAD2GRAD);
 }
 
-
+/*
 void MpuClass::set_cos_sin_dir() {
 
 		double angle = atan2(est_speedY, est_speedX);
@@ -679,7 +706,7 @@ void MpuClass::set_cos_sin_dir() {
 		sinDirection = abs(sin(angle));
 
 }
-
+*/
 
 
 

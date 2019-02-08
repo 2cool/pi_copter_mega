@@ -15,8 +15,8 @@
 //#define OFF_MOTOR_IF_LOST_CONNECTION  
 //#define OFF_TIMELAG
 //-----------------------------------------------
-#define MPU_MAGIC
-//#define FALSE_WIRE
+
+#define FALSE_WIRE
 
 #define  DO_SOUND 0
 //#define YAW_OFF

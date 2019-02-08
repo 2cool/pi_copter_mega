@@ -325,7 +325,7 @@ bool BalanceClass::loop()
 
 			maxAngle = _max_angle_;
 			if (Autopilot.z_stabState()) {
-				true_throttle=Stabilization.Z(false);
+				true_throttle=Stabilization.Z();
 				throttle = pK*true_throttle;
 				throttle = constrain(throttle, min_throttle, max_throttle);
 
@@ -341,7 +341,7 @@ bool BalanceClass::loop()
 			}
 			else {
 
-				Stabilization.Z(true);
+				//Stabilization.Z(true);
 				true_throttle = Autopilot.get_throttle();
 				throttle = true_throttle;
 				throttle /= Mpu.tiltPower;
@@ -351,10 +351,10 @@ bool BalanceClass::loop()
 			}
 
 			if (Autopilot.xy_stabState()) {
-				Stabilization.XY(c_pitch, c_roll,false);
+				Stabilization.XY(c_pitch, c_roll);
 			}
 			else {
-				Stabilization.XY(c_pitch, c_roll, true);
+				//Stabilization.XY(c_pitch, c_roll, true);
 				c_pitch = Autopilot.get_Pitch();
 				c_roll = Autopilot.get_Roll();
 			}

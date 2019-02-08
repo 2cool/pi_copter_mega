@@ -14,18 +14,28 @@
 
 #include "AP_PID.h"
 #include "define.h"
+#include "mpu.h"
 class StabilizationClass{
 
 
 #define ACCX_SPEED 0
 #define ACCY_SPEED 1
-#define ACCZ_SPEED 2
+#define ACCZ_PID 2
 
 private:
 	
+	void max_speed_limiter(float &x, float &y);
+	void dist2speed(float &x, float &y);
+	void speed2dist(float &x, float &y);
+
+	
+
+
 	float mc_z,Z_FILTER,XY_FILTER,mc_pitch,mc_roll;
 	float accXY_stabKP, accXY_stabKP_Rep;
-	float accZ_stabKP, accZ_stabKP_Rep;
+
+	float dalt2speedZ, dalt2speedZ_Rep;
+	float dspeedZ2accZ;
 
 	float accxy_stab(float dist, float maxA, float timeL);
 	float accxy_stab_rep(float speed, float maxA, float timeL);
@@ -48,19 +58,22 @@ private:
 	
 	
 public:
-
-
+	
+	void setNeedPos2Home();
+	void add2NeedPos(float speedX, float speedY, float dt);
 	void setNeedPos(float x, float y);
+	void setNeedLoc(long lat, long lon);
+
 	//void set_XY_2_GPS_XY();
 	void  resset_z();
 	void  resset_xy_integrator();
 	//float getAltitude() { return sZ; }
 	float getSpeed_Z(float dist){
-		return dist*accZ_stabKP;
+		return dist*dalt2speedZ;
 	}
 
 	float getDist_Z(float speed){
-		return speed*accZ_stabKP_Rep;
+		return speed*dalt2speedZ_Rep;
 	}
 
 	float getSpeed_XY(float dist){		
@@ -72,13 +85,10 @@ public:
 
 
 
-	float getSpeedX(){ return speedX; }
-	float getSpeedY(){ return speedY; }
-	float getDistX(){ return sX; }
-	float getDistY(){ return sY; }
+
 	void setDefaultMaxSpeeds();
 	
-	//float get_accZ_stabKP_Rep(){ return accZ_stabKP_Rep; }
+	//float get_dalt2speedZ_Rep(){ return dalt2speedZ_Rep; }
 //	float getDist2SpeedXYKP_Rep(){ return accXY_stabKP_Rep; }
 //	float getDist2SpeedXYKP(){ return accXY_stabKP; }
 	//long get_sX_mul_100(){return (long)(sX * 100); 	}

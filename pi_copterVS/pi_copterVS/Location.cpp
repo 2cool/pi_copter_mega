@@ -33,6 +33,15 @@
 
 int fd_loc;
 
+
+
+void LocationClass::fromLoc2Pos(long lat, long lon, float &x, float&y) {
+	y = (float)form_lon2Y((double)(lon_zero - lon));
+	x = (float)from_lat2X((double)(lat_zero - lat));
+}
+
+
+
 void LocationClass::xy(){
 
 

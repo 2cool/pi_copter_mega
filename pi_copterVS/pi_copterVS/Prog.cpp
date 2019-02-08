@@ -223,8 +223,8 @@ bool ProgClass::getIntersection(float &x, float &y){
 	}
 
 	float ks = 1;
-	const float dist_x = Stabilization.getDistX();
-	const float dist_y = Stabilization.getDistY();
+	const float dist_x = Mpu.get_Est_X();// Stabilization.getDistX();
+	const float dist_y = Mpu.get_Est_Y();// Stabilization.getDistY();
 	const float dist_ = (float)sqrt(dist_x*dist_x + dist_y*dist_y);
 
 	//speed Заменить на реальную. а то иначе...
@@ -408,8 +408,8 @@ bool ProgClass::load_next(bool loadf){
 		lb[3] = prog[wi++];
 
 		if (loadf) {
-			GPS.loc.setNeedLoc(lat, lon);
-			Stabilization.set_XY_2_GPS_XY();
+			Stabilization.setNeedLoc(lat, lon);
+			//Stabilization.set_XY_2_GPS_XY();
 		}
 		//printf("lat %i, lon %i\n", lat, lon);
 		//Out.println(lat); Out.println(lon);  Out.println(advance_dist);

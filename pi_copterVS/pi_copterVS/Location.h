@@ -67,6 +67,7 @@ public:
 		return y * r_kd_lon;
 	}
 
+	void fromLoc2Pos(long lat, long lon, float &x, float&y);
 private:
 	double set_cos_sin_dir();
 	void xy();

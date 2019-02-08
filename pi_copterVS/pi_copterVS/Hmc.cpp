@@ -176,7 +176,7 @@ static double comTimed = 0;
 	if (Mpu.timed - comTimed < 0.05)
 		return;
 	comTimed = Mpu.timed;
-	heading = Emu.get_heading();
+	//heading = Emu.get_heading();
 	
 //	headingGrad = 0;
 
@@ -185,7 +185,7 @@ static double comTimed = 0;
 	headingGrad = 0;
 #endif
 	calibrated = true;
-	log();
+	//log();
 }
 
 #else
