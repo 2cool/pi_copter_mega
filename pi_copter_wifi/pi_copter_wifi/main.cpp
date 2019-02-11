@@ -281,7 +281,7 @@ void server() {
 void watch_d() {
 
 	static int errors = 0;
-
+	shmPTR->wifi_run = true;
 	uint old_main_cnt = shmPTR->main_cnt - 1;
 	while (true) {
 		if (shmPTR->wifi_run) {

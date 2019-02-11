@@ -1,2 +1,2 @@
 #TargetFrameworkVersion=:PlatformToolSet=Remote_GCC_1_0:EnableManagedIncrementalBuild=:VCToolArchitecture=:WindowsTargetPlatformVersion=
-Debug|ARM|C:\Users\Igor\pi_copter_mega\pi_copterVS\|
+Release|x64|C:\Users\Igor\pi_copter_mega\pi_copterVS\|

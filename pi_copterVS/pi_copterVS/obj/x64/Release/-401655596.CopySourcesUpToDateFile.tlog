@@ -13,12 +13,12 @@ C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\I2Cdev.cpp|6367598338277332
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\inv_mpu.cpp|636759833828522707|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\inv_mpu_dmp_motion_driver.cpp|636759833828552689|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Location.cpp|636853148319220363|~/projects/pi_copterVS|
-C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp|636854891835315982|~/projects/pi_copterVS|
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp|636853209586035365|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\MadgwickAHRS.cpp|636845426025038970|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\main.cpp|636845765267041745|~/projects/pi_copterVS|
-C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.cpp|636854925634643174|~/projects/pi_copterVS|
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.cpp|636853148320599535|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\MPU6050.cpp|636845377240536946|~/projects/pi_copterVS|
-C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.cpp|636854925633663782|~/projects/pi_copterVS|
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.cpp|636853148320779403|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.cpp|636853148319400269|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp|636853148319740051|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.cpp|636759833828592669|~/projects/pi_copterVS|
@@ -50,7 +50,7 @@ C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Location.h|6368531483193102
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.h|636759833827773193|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\MadgwickAHRS.h|636845426024409366|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\MotionSensor.h|636759833827893115|~/projects/pi_copterVS|
-C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.h|636854925633963613|~/projects/pi_copterVS|
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.h|636853148320679456|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\MPU6050.h|636845377240217130|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.h|636759833828692625|~/projects/pi_copterVS|
 C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.h|636853148319480190|~/projects/pi_copterVS|

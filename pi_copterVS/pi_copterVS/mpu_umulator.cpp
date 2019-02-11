@@ -351,6 +351,9 @@ void EmuClass::update(float fm_[4], double dt) {
 
 
 	gyro[YAW] += (yaw_rot_force + wgyro[Z])*dt;
+
+	gyro[YAW] = 0;
+
 	gyro[PITCH] += (arm03_pitch_rotation + wgyro[Y])*dt;
 	gyro[ROLL] += (arm21_roll_rotation + wgyro[X])*dt;
 

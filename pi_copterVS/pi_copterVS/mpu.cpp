@@ -645,6 +645,19 @@ void MpuClass::test_Est_Alt() {
 	
 }
 
+void MpuClass::rotateCW(float &x, float &y) {
+	const float _x = (cosYaw * x - sinYaw * y); //relative to copter xy
+	const float _y = (cosYaw * y + sinYaw * x);
+	x = _x;
+	y = _y;
+}
+void MpuClass::rotateCCW(float &x, float &y) {
+	const float _x = (cosYaw * x + sinYaw * y);
+	const float _y = (cosYaw * y - sinYaw * x);
+	x = _x;
+	y = _y;
+}
+
 
 //float XY_KF_DIST = 0.1f;
 //float XY_KF_SPEED = 0.1f;

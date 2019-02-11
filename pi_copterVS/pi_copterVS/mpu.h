@@ -95,6 +95,8 @@ private:
 	void gyro_calibr();
 	void test_Est_Alt();
 	void test_Est_XY();
+	void rotateCW(float &x, float &y);
+	void rotateCCW(float &x, float &y);
  public:
 	 float dist2home_2() { return get_Est_X()*get_Est_X() + get_Est_Y()*get_Est_Y(); }
 	 float get_w_accX() { return w_accX; }

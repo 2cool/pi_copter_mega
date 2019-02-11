@@ -1,0 +1,43 @@
+﻿  Validating sources
+  Copying sources remotely to '192.168.10.188'
+  Validating architecture
+  Starting remote build
+  Compiling sources:
+  Log.cpp
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Filter.h(10,20): warning : conversion to ‘float’ alters ‘double’ constant value [-Wfloat-conversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Filter.h(10,20): warning :   float max_delta = 0.15;
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Filter.h(10,20): warning :                     ^~~~
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(119,14): warning : conversion to ‘float’ from ‘__gnu_cxx::__enable_if<true, double>::__type {aka double}’ may alter its value [-Wfloat-conversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(119,14): warning :    return sqrt(x*x + y*y + z*z);
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(119,14): warning :           ~~~~^~~~~~~~~~~~~~~~~
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(124,5): warning : conversion to ‘int16_t {aka short int}’ from ‘float’ may alter its value [-Wfloat-conversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(124,5): warning :    x /= m;
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(124,5): warning :    ~~^~~~
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(125,5): warning : conversion to ‘int16_t {aka short int}’ from ‘float’ may alter its value [-Wfloat-conversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(125,5): warning :    y /= m;
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(125,5): warning :    ~~^~~~
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(126,5): warning : conversion to ‘int16_t {aka short int}’ from ‘float’ may alter its value [-Wfloat-conversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(126,5): warning :    z /= m;
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(126,5): warning :    ~~^~~~
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(155,9): warning : conversion to ‘int16_t {aka short int}’ from ‘float’ may alter its value [-Wfloat-conversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(155,9): warning :    x = p.x;
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(155,9): warning :        ~~^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(156,9): warning : conversion to ‘int16_t {aka short int}’ from ‘float’ may alter its value [-Wfloat-conversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(156,9): warning :    y = p.y;
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(156,9): warning :        ~~^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(157,9): warning : conversion to ‘int16_t {aka short int}’ from ‘float’ may alter its value [-Wfloat-conversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(157,9): warning :    z = p.z;
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\helper_3dmath.h(157,9): warning :        ~~^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(179,12): warning : conversion to ‘int’ from ‘long unsigned int’ may alter its value [-Wconversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(179,12): warning :   log_index += sizeof(SEND_I2C);
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(179,12): warning :   ~~~~~~~~~~^~~~~~~~~~
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(194,15): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(194,15): warning :   loadByte(type);
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(194,15): warning :                ^
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(212,62): warning : conversion to ‘uint8_t {aka unsigned char}’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(212,62): warning :    log_buffer[log_bank][start_block] = log_index - start_block-1;
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp(212,62): warning :                                        ~~~~~~~~~~~~~~~~~~~~~~~^~
+  Linking objects
+C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\obj\x64\Debug\Log.o : error : In function `std::thread::thread<void (&)()>(void (&)())':
+/usr/include/c++/7/thread(122): error : undefined reference to `pthread_create'
+collect2 : error : ld returned 1 exit status
