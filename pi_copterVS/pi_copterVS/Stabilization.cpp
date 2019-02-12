@@ -144,10 +144,12 @@ void StabilizationClass::setNeedPos(float x, float y) {
 }
 
 
-
-void StabilizationClass::setNeedLoc(long lat, long lon, float &x, float &y) {
+void StabilizationClass::fromLoc2Pos(long lat, long lon, float &x, float &y) {
 	GPS.loc.fromLoc2Pos(lat, lon, x, y);
 	Mpu.getXYRelative2Zero(x, y);
+}
+void StabilizationClass::setNeedLoc(long lat, long lon, float &x, float &y) {
+	fromLoc2Pos(lat, lon, x, y);
 	setNeedPos(x, y);
 	
 }
@@ -176,20 +178,20 @@ float StabilizationClass::get_dist2goal(){
 //float old_gps_bearing = 0, cos_bear = 1,  sin_bear = 0;
 void StabilizationClass::XY(float &pitch, float&roll){
 
-
+		
 		float need_speedX, need_speedY;
 
-		//prog dont work
+
 		if (Autopilot.progState() && Prog.intersactionFlag) {
 			need_speedX = -Prog.need_speedX;
-			need_speedY = Prog.need_speedY;
+			need_speedY = -Prog.need_speedY;
 		}
 		else {
 			need_speedX = (Mpu.get_Est_X()-needXV);
 			need_speedY = (Mpu.get_Est_Y()-needYV);
-			dist2speed(need_speedX, need_speedY);
+			
 		}
-		
+		dist2speed(need_speedX, need_speedY);
 		float w_pitch, w_roll;
 
 		float need_acx = constrain((need_speedX + Mpu.get_Est_SpeedX()), -5, 5);

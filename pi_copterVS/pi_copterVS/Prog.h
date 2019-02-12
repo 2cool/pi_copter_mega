@@ -28,7 +28,7 @@ class ProgClass
 	 //float preX, preY;
 	// float advance_dist;
 	// int32_t old_lon, old_lat, lon, lat;
-	 float x, y, old_x, old_y;
+	 float next_x, next_y, old_x, old_y;
 
 	 uint8_t oldTimer;
 	 float old_alt,alt, oldDir, old_cam_angle;
