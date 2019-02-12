@@ -62,8 +62,8 @@ public:
 	void setNeedPos2Home();
 	void add2NeedPos(float speedX, float speedY, float dt);
 	void setNeedPos(float x, float y);
-	void setNeedLoc(long lat, long lon);
-
+	void setNeedLoc(long lat, long lon, float &x, float &y);
+	float get_dist2goal();
 	//void set_XY_2_GPS_XY();
 	void  resset_z();
 	void  resset_xy_integrator();

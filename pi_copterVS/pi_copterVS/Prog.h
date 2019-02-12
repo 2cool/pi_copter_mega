@@ -27,7 +27,9 @@ class ProgClass
 	 bool go_next, distFlag, altFlag;
 	 //float preX, preY;
 	// float advance_dist;
-	 int32_t old_lon, old_lat, lon, lat;
+	// int32_t old_lon, old_lat, lon, lat;
+	 float x, y, old_x, old_y;
+
 	 uint8_t oldTimer;
 	 float old_alt,alt, oldDir, old_cam_angle;
 	 uint16_t prog_data_size,prog_data_index;

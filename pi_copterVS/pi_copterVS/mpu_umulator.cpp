@@ -77,10 +77,8 @@ EmuClass::~EmuClass()
 void getWindForces(float wf[4][3]) {
 
 }
-double racc[3] = { 0,0,0 };
-double tracc[3] = { 0,0,0 };
 
-double f_ang[3] = { 0,0,0 };
+
 double wind_f[3][4];
 const double f_speed_k[3] = { 0.021,0.021,0.232 };  //12.5  grad pri 10/m/s
 
@@ -148,8 +146,8 @@ void get_wind(float w[][4]) {
 }
 
 
-float  EmuClass::get_pitch() { return (float)(f_ang[PITCH]); }
-float  EmuClass::get_roll() { return (float)(f_ang[ROLL]); }
+float  EmuClass::get_pitch() { return (float)(ang[PITCH]); }
+float  EmuClass::get_roll() { return (float)(ang[ROLL]); }
 float  EmuClass::get_yaw() { return (float)(ang[YAW]); }
 
 #define wrap_PI(x) (x < -M_PI ? x+2*M_PI : (x > M_PI ? x - 2*M_PI: x))
@@ -178,8 +176,8 @@ float  EmuClass::get_gyroRoll() { return (float)(gyro[ROLL]* RAD2GRAD); }
 float  EmuClass::get_accX() { return (float)(acc[X]); }
 float  EmuClass::get_accY() { return (float)(acc[Y]); }
 float  EmuClass::get_accZ() {return (float)((pos[Z]<0?0:acc[Z]));}
-float  EmuClass::get_raccX() { return (float)(racc[X]); }
-float  EmuClass::get_raccY() { return (float)(racc[Y]); }
+//f//loat  EmuClass::get_raccX() { return (float)(racc[X]); }
+//float  EmuClass::get_raccY() { return (float)(racc[Y]); }
 
 
 
@@ -248,37 +246,23 @@ void EmuClass::init(float wx, float wy, float wz,float y , float p , float r ) {
 
 
 
-int zkdkdkk = 3;
+float motors_pow[4] = { 0,0,0,0 };
+void EmuClass::update(const float fm_[4], double dt) {
+	
+	const double MCF = 0.5;
 
-void EmuClass::update(float fm_[4], double dt) {
-	if (Autopilot.motors_is_on() == false)
-		zkdkdkk = 8;
-
-
-
-
+	for (int i = 0; i < 4; i++)
+		motors_pow[i] += (fm_[i] - motors_pow[i])*MCF;
 
 
 
-	const double MCF = 0.2;
-	//fm_[0] = 0.6;
-	//fm_[1] = 0.5;
-	//fm_[2] = 0.6;
-	//fm_[3] = 0.5;
-
-	if (dt > 0.02)
-		dt = 0.02;
-
-	fm[0] += ((fm_[0] + fm_[1])*MOTOR_FORCE - fm[0])*MCF;
-	fm[1] += ((fm_[1] + fm_[3])*MOTOR_FORCE - fm[1])*MCF;
-	fm[2] += ((fm_[2] + fm_[0])*MOTOR_FORCE - fm[2])*MCF;
-	fm[3] += ((fm_[3] + fm_[2])*MOTOR_FORCE - fm[3])*MCF;
 
 
-	fmr[0] += (fm_[0] - fmr[0])*MCF;
-	fmr[1] += (fm_[1] - fmr[1])*MCF;
-	fmr[2] += (fm_[2] - fmr[2])*MCF;
-	fmr[3] += (fm_[3] - fmr[3])*MCF;
+	fm[0] = (fm_[0] + fm_[1])*MOTOR_FORCE;
+	fm[1] = (fm_[1] + fm_[3])*MOTOR_FORCE;
+	fm[2] = (fm_[2] + fm_[0])*MOTOR_FORCE;
+	fm[3] = (fm_[3] + fm_[2])*MOTOR_FORCE;
+
 
 
 
@@ -328,6 +312,11 @@ void EmuClass::update(float fm_[4], double dt) {
 
 	}
 
+	//wgyro[X] = wgyro[Y] = wgyro[Z] = 0;
+	//gyro_res[PITCH] = gyro_res[ROLL] = gyro_res[YAW] = 0;
+
+
+
 	gyro_res[YAW] = gyro[YAW] * abs(gyro[YAW])*f_gyro_k[Z];
 	gyro_res[ROLL] = gyro[ROLL] * abs(gyro[ROLL])*f_gyro_k[X];
 	gyro_res[PITCH] = gyro[PITCH] * abs(gyro[PITCH])*f_gyro_k[Y];
@@ -335,25 +324,15 @@ void EmuClass::update(float fm_[4], double dt) {
 
 
 	const double arm03_force = fmin(fm[0], fm[3]);
-	const double arm03_pitch_rotation = 15 * G*(fm[0] - fm[3]) - gyro_res[PITCH];
-	const double arm03_yaw_rot = (fmr[0] + fmr[3]);
+	const double arm03_pitch_rotation = 3*G * (fm[0] - fm[3]) -gyro_res[PITCH];
+	const double arm03_yaw_rot = (motors_pow[0] + motors_pow[3]);
 	const double arm21_force = fmin(fm[1], fm[2]);
-	const double arm21_roll_rotation = 15 * G*(fm[2] - fm[1]) - gyro_res[ROLL];
-	const double arm21_yaw_rot = (fmr[2] + fmr[1]);
+	const double arm21_roll_rotation = 3*G * (fm[2] - fm[1]) -gyro_res[ROLL];
+	const double arm21_yaw_rot = (motors_pow[2] + motors_pow[1]);
 	const double yaw_rot_force = 10 * (arm21_yaw_rot - arm03_yaw_rot) - gyro_res[YAW];
 	double force = G * (arm03_force + arm21_force);
 
-
-
-
-
-
-
-
 	gyro[YAW] += (yaw_rot_force + wgyro[Z])*dt;
-
-	gyro[YAW] = 0;
-
 	gyro[PITCH] += (arm03_pitch_rotation + wgyro[Y])*dt;
 	gyro[ROLL] += (arm21_roll_rotation + wgyro[X])*dt;
 
@@ -396,28 +375,6 @@ void EmuClass::update(float fm_[4], double dt) {
 	acc[X] += 1.0 - 2.0*((float)(rand()) / (float)RAND_MAX);
 	acc[Y] += 1.0 - 2.0*((float)(rand()) / (float)RAND_MAX);
 #endif
-	double cosPitch = (cos(ang[PITCH]));
-	double cosRoll = (cos(ang[ROLL]));
-
-
-
-	racc[X] = cosA * acc[X] + sinA * acc[Y];
-	racc[Y] = cosA * acc[Y] - sinA * acc[X];
-
-	double accZ = cosPitch * cosRoll*G + acc[Z] * cosPitch*cosRoll;
-
-
-	const double FCF = 0.007;
-	tracc[X] += (racc[X] - tracc[X])*FCF;
-	tracc[Y] += (racc[Y] - tracc[Y])*FCF;
-
-
-	double accX = sin(ang[PITCH])*G + tracc[X] * cosPitch;
-	double accY = sin(ang[ROLL])*G - tracc[Y] * cosRoll;
-
-	f_ang[PITCH] = atan2(accX, accZ);
-	f_ang[ROLL] = atan(accY / sqrt(accY * accY + accZ * accZ));
-
 
 	speed[X] += acc[X] * dt;
 	speed[Y] += acc[Y] * dt;
@@ -431,16 +388,16 @@ void EmuClass::update(float fm_[4], double dt) {
 	pos[Y] += speed[Y] * dt;
 	pos[Z] += speed[Z] * dt;
 
-	if (pos[Z] < -0.01) {
-		pos[Z] = pos[Y] = pos[X] = 0;
+	if (pos[Z] < -0.1) {
+		
+		pos[Z] = 0;
 		speed[X] = speed[Y] = speed[Z] = 0;
 		acc[X] = acc[Y] = acc[Z] = 0;// -G;
 		gyro[X] = gyro[Y] = gyro[Z] = 0;
-		ang[YAW] = 0;
 		ang[PITCH] = 0;
 		ang[ROLL] = 0;
-		//Autopilot.motors_do_on(false, "S_S");
-
+		//if (Autopilot.motors_is_on())
+	// 		Autopilot.motors_do_on(false, "S_S");
 	}
 
 	if (Log.writeTelemetry) {

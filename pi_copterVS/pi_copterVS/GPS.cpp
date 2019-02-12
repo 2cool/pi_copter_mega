@@ -97,6 +97,15 @@ void GPSClass::loop(){
 		lat = FALSE_LAT + (long)(loc.from_X2Lat(Emu.get_x()));
 		lon = FALSE_LON + (long)(loc.from_Y2Lon(Emu.get_y()));
 #endif
+
+		if (loc.lat_zero == 0 && loc.lon_zero == 0) {
+			loc.lat_zero = lat;
+			loc.lon_zero = lon;
+			//alt_zero = altitude;
+		}
+
+
+
 		shmPTR->lat_=loc.lat_ = lat;
 		shmPTR->lon_=loc.lon_ = lon;
 		loc.updateXY();

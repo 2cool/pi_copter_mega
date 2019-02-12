@@ -390,12 +390,7 @@ bool BalanceClass::loop()
 			//float pitch_gk = min(abs(pitch_stab_output*power_K), 1);
 			//float roll_gk = min(abs(roll_stab_output*power_K), 1);
 			//заменить на подавление частоти раскачивания.
-
-
-
 			// rate PIDS
-
-
 		//	уменьшить макс дельту думаю из за слишком большой происходит раскачивание
 		//		или по крайней мере динамическую дельту надо уменьшить.
 			const float max_delta = 0.3;// 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
@@ -451,34 +446,21 @@ bool BalanceClass::loop()
 		else {
 			reset();
 		}
-		log();
-#define MOTORS_OFF
+		
+//#define MOTORS_OFF
 #ifdef MOTORS_OFF
-		mega_i2c.throttle(0, 0, 0, 0);  //670 micros
-#else
-
-
+		//f_[0] = f_[1] = f_[2] = f_[3] = 0;
+#endif
+		//f_[0] = f_[1] = f_[2] = f_[3] = 0.51;
+		//f_[0] = f_[1] = 0.502;
 		//отключить двигатели при слабом токе
 		//if (propeller_lost[0] || propeller_lost[3]) 	f_[0]=f_[3] = 0;
-		
 		//if (propeller_lost[1] || propeller_lost[2]) 	f_[1] = f_[2] = 0;
-		
-
 	//	if (f_[0]>=0.4 || f_[1]>0.4 || f_[2]>0.4 || f_[3]>0.4)	f_[0] = f_[1] = f_[2] = f_[3] = 0.3;
 
-
-		mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);  //670 micros
-#endif
-
-
-#ifdef FALSE_WIRE
-		Emu.update(f_, Mpu.dt);
-#endif
-		
-//cout << "BAL " << micros() - tttBal << endl;
+		mega_i2c.throttle(f_);  //670 micros
+		log();
 	}
-
-
 	Mpu.balance_timed = 0.000001*(double)micros();
 	return true;
 }
@@ -488,10 +470,7 @@ bool BalanceClass::loop()
 void BalanceClass::set_off_th_() { 
 	f_[0] = f_[1] = f_[2] = f_[3] = 0; 
 	throttle = true_throttle = 0;
-#ifdef FALSE_WIRE
-	Emu.update(f_, Mpu.dt);
-#endif
-	mega_i2c.throttle(f_[0], f_[1], f_[2], f_[3]);
+	mega_i2c.throttle(f_);
 }
 
 

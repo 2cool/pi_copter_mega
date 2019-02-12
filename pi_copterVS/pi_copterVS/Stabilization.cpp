@@ -142,12 +142,14 @@ void StabilizationClass::setNeedPos(float x, float y) {
 	needXR=needXV = x;
 	needYR=needYV = y;
 }
-void StabilizationClass::setNeedLoc(long lat, long lon) {
-	float x, y;
+
+
+
+void StabilizationClass::setNeedLoc(long lat, long lon, float &x, float &y) {
 	GPS.loc.fromLoc2Pos(lat, lon, x, y);
 	Mpu.getXYRelative2Zero(x, y);
-	needXR = needXV = x;
-	needYR = needYV = y;
+	setNeedPos(x, y);
+	
 }
 
 
@@ -157,12 +159,17 @@ void StabilizationClass::add2NeedPos(float speedX, float speedY, float dt) {
 	float distX = speedX, distY = speedY;
 	speed2dist(distX, distY);
 
-	needXR -= speedX * dt;
-	needXV = needXR - distX;
+	needXR += speedX * dt;
+	needXV = needXR + distX;
 
-	needYR -= speedY * dt;
-	needYV = needYR - distY;
+	needYR += speedY * dt;
+	needYV = needYR + distY;
 
+}
+float StabilizationClass::get_dist2goal(){
+	float dx= Mpu.get_Est_X() - needXV;
+	float dy = Mpu.get_Est_Y() - needYV;
+	return sqrt(dx*dx + dy * dy);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,8 +178,10 @@ void StabilizationClass::XY(float &pitch, float&roll){
 
 
 		float need_speedX, need_speedY;
+
+		//prog dont work
 		if (Autopilot.progState() && Prog.intersactionFlag) {
-			need_speedX = Prog.need_speedX;
+			need_speedX = -Prog.need_speedX;
 			need_speedY = Prog.need_speedY;
 		}
 		else {
@@ -180,7 +189,7 @@ void StabilizationClass::XY(float &pitch, float&roll){
 			need_speedY = (Mpu.get_Est_Y()-needYV);
 			dist2speed(need_speedX, need_speedY);
 		}
-
+		
 		float w_pitch, w_roll;
 
 		float need_acx = constrain((need_speedX + Mpu.get_Est_SpeedX()), -5, 5);

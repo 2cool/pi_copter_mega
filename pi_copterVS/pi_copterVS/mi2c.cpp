@@ -178,15 +178,19 @@ uint16_t Megai2c::correct(const float n) {    //0-это
 
 }
 
-void Megai2c::throttle(const float n0, const float n1, const float n2, const float n3) {
+void Megai2c::throttle(const float n[]) {
+#ifdef FALSE_WIRE
+	Emu.update(n, Mpu.dt);
+#else
 	uint16_t pwm_out[5];
 	pwm_out[0] = 0;
-	pwm_out[1] = pwm_OFF_THROTTLE + n0*pwm_OFF_THROTTLE;
-	pwm_out[2] = pwm_OFF_THROTTLE + n1*pwm_OFF_THROTTLE;
-	pwm_out[3] = pwm_OFF_THROTTLE + n2*pwm_OFF_THROTTLE;
-	pwm_out[4] = pwm_OFF_THROTTLE + n3*pwm_OFF_THROTTLE;
+	pwm_out[1] = (uint16_t)(pwm_OFF_THROTTLE + n[0]*pwm_OFF_THROTTLE);
+	pwm_out[2] = (uint16_t)(pwm_OFF_THROTTLE + n[1]*pwm_OFF_THROTTLE);
+	pwm_out[3] = (uint16_t)(pwm_OFF_THROTTLE + n[2]*pwm_OFF_THROTTLE);
+	pwm_out[4] = (uint16_t)(pwm_OFF_THROTTLE + n[3]*pwm_OFF_THROTTLE);
 	char *chBuf = (char*)pwm_out;
 	write(fd, chBuf + 1, 9);
+#endif
 }
 
 void Megai2c::set_led_color(uint8_t n, uint8_t r, uint8_t g, uint8_t b) {

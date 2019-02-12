@@ -331,9 +331,10 @@ bool MpuClass::loop(){
 	gyroPitch = Emu.get_gyroPitch();
 	gyroRoll = Emu.get_gyroRoll();
 	gyroYaw = Emu.get_gyroYaw();
-	accX = Emu.get_raccX();
-	accY = Emu.get_raccY();
-	accZ = Emu.get_accZ();
+	
+
+
+	
 
 	float head = Emu.get_heading();
 
@@ -352,6 +353,13 @@ bool MpuClass::loop(){
 	cosYaw = cos(yaw);
 	sinYaw = sin(yaw);
 
+
+	float WaccX = Emu.get_accX();
+	float WaccY = Emu.get_accY();
+	accZ = Emu.get_accZ();
+
+	accX = (cosYaw * WaccX + sinYaw * WaccY); //relative to copter xy
+	accY = (cosYaw * WaccY - sinYaw * WaccX);
 
 	test_Est_Alt();
 	test_Est_XY();
@@ -699,11 +707,11 @@ void MpuClass::test_Est_XY() {
 	estY += mpu_dt*(est_speedY + w_accY * mpu_dt*0.5f);
 	est_speedY += (w_accY*mpu_dt);
 	// -------------------------------------------------------corection
-	//estX += (GPS.loc.dX - estX)*XY_KF_DIST;
-	//est_speedX += (GPS.loc.speedX - est_speedX)*XY_KF_SPEED;
+	estX += (GPS.loc.dX - estX)*XY_KF_DIST;
+	est_speedX += (GPS.loc.speedX - est_speedX)*XY_KF_SPEED;
 	//--------------------------------------------------------
-	//estY += (GPS.loc.dY - estY)*XY_KF_DIST;
-	//est_speedY += (GPS.loc.speedY - est_speedY)*XY_KF_SPEED;
+	estY += (GPS.loc.dY - estY)*XY_KF_DIST;
+	est_speedY += (GPS.loc.speedY - est_speedY)*XY_KF_SPEED;
 	
 	//Debug.load(0, (int)(estX*100), (int)(estY*100), yaw * RAD2GRAD);
 }

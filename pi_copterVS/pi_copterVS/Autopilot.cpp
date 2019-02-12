@@ -125,7 +125,7 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 	if (init_shmPTR())
 		return;
 #ifdef FALSE_WIRE
-	Emu.init(WIND_X, WIND_Y, WIND_Z);
+	Emu.init(0, 0, 0);// WIND_X, WIND_Y, WIND_Z);
 #endif
 	shmPTR->sim800_reset = false;
 	time_at_startd = old_time_at_startd = 0;
@@ -606,7 +606,7 @@ bool AutopilotClass::holdLocation(const long lat, const long lon){
 		cout << "Hower at: " << GPS.loc.lat_ << " " << GPS.loc.lon_ << "\t"<<Mpu.timed << endl;;
 
 		//Stabilization.init_XY(0, 0);
-
+		Stabilization.setNeedPos(Mpu.get_Est_X(), Mpu.get_Est_Y());
 
 		control_bits |= XY_STAB;
 		return true;
@@ -620,7 +620,7 @@ bool AutopilotClass::holdLocationStartStop(){///////////////////////////////////
 		return false;
 	bool h = (control_bits &XY_STAB)==0;
 	if (h){
-		Stabilization.resset_xy_integrator();
+		//Stabilization.resset_xy_integrator();
 		return holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 	}
 	else{
@@ -931,7 +931,7 @@ bool AutopilotClass::start_stop_program(const bool stopHere){
 	return false;
 	
 }
-
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 bool AutopilotClass::set_control_bits(uint32_t bits) {
 	if (bits==0)
 		return true;

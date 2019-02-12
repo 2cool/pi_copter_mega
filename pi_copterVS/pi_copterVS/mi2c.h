@@ -126,7 +126,7 @@ public:
 	 void beep_code(uint8_t);
 	 void sim800_reset();
 
-	 void throttle(const float n0, const float n1, const float n2, const float n3);
+	 void throttle(const float n[]);
 
 	 void getiiiiv(char *iiiiv);
 

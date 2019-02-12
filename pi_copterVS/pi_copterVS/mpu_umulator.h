@@ -28,7 +28,7 @@ private:
 
 
 	double fm[4] = { 0,0,0,0 };
-	double fmr[4] = { 0,0,0,0 };
+
 	double ang[3] = { 0,0,0 };
 	double gyro[3] = { 0,0,0 };
 	double pos[3] = { 0,0,0 };
@@ -53,17 +53,13 @@ public:
 	float get_accX();
 	float get_accZ();
 	float get_accY();
-	float get_raccX();
-
-	float get_raccY();
-
 
 	float get_alt();
 	float get_speedZ();
 	float get_x();
 	float get_y();
 
-	void update(float fm[4], double dt);
+	void update(const float fm[4], double dt);
 	void init(float wind[]);
 	EmuClass();
 	~EmuClass();
