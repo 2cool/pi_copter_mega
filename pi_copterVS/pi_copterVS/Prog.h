@@ -11,23 +11,12 @@
 #include "define.h"
 #include "GeoDot.h"
 
-/*
-
-lat,
-lon,
-speed,//positive - speed ; negative delay in seconds;
-direction
-
-*/
 
 class ProgClass
 {
 #define PROG_MEMORY_SIZE 20000
  protected:
 	 bool go_next, distFlag, altFlag;
-	 //float preX, preY;
-	// float advance_dist;
-	// int32_t old_lon, old_lat, lon, lat;
 	 float next_x, next_y, old_x, old_y;
 
 	 uint8_t oldTimer;

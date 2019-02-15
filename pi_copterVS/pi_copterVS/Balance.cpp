@@ -447,7 +447,7 @@ bool BalanceClass::loop()
 			reset();
 		}
 		
-//#define MOTORS_OFF
+#define MOTORS_OFF
 #ifdef MOTORS_OFF
 		//f_[0] = f_[1] = f_[2] = f_[3] = 0;
 #endif

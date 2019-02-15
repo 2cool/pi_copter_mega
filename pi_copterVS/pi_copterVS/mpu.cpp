@@ -603,21 +603,17 @@ void MpuClass::new_calibration(const bool onlyGyro){
 
 float Z_CF_DIST = 0.03;//CF filter
 float Z_CF_SPEED = 0.01;//CF filter //при 0.005 На ошибку в ACC на 0.1 ошибка в исоте на метр.
-float AltError = 0, AltErrorI=0;
+float AltErrorI=0;
 void MpuClass::test_Est_Alt() {
-	//Debug.load(0, 0, accX, accY);
+
 	float alt = MS5611.alt();
 	if (timed<8) {
 		est_alt_ = alt;
 		est_speedZ = 0;
-		AltErrorI = 0;
 		return;
 	}
-	if (Autopilot.motors_onState())
-		Z_CF_DIST = Z_CF_DIST;
-
 	
-	float acc = accZ + AltErrorI * 0.0001;
+	float acc = accZ + AltErrorI;
 	
 	est_alt_ += mpu_dt*(est_speedZ + acc*mpu_dt*0.5f);
 	est_speedZ += acc*mpu_dt;
@@ -625,15 +621,19 @@ void MpuClass::test_Est_Alt() {
 	//est_speedZ += acc * mpu_dt;
 	//est_alt_ += est_speedZ * mpu_dt;
 
-
 	est_alt_ += (alt - est_alt_)*Z_CF_DIST;
 	est_speedZ += (MS5611.speed - est_speedZ)*Z_CF_SPEED;
 
+	AltErrorI += (alt - est_alt_ - AltErrorI)*0.0001;
+	AltErrorI = constrain(AltErrorI, -1, 1);
 
 
-	AltError = alt - est_alt_;
-	AltErrorI += AltError;
-	AltErrorI = constrain(AltErrorI, -10000.0f, 10000.0f);
+	Debug.load(0, AltErrorI, alt - est_alt_,est_alt_);
+	Debug.dump(true);
+
+//	AltError = alt - est_alt_;
+//	AltErrorI += AltError;
+//	AltErrorI = constrain(AltErrorI, -10000.0f, 10000.0f);
 
 
 
@@ -690,18 +690,30 @@ void MpuClass::test_Est_XY() {
 	est_YError = GPS.loc.dY - estY;
 	float e_ex = (-cosYaw * est_XError - sinYaw * est_YError); //relative to copter xy
 	float e_ey = (-cosYaw * est_YError + sinYaw * est_XError);
+	
+	/*
+
 	est_XErrorI += e_ex;
 	est_XErrorI = constrain(est_XErrorI, -ACC_Cr, ACC_Cr);
 	est_YErrorI += e_ey;
 	est_YErrorI = constrain(est_YErrorI, -ACC_Cr, ACC_Cr);
-
 	float c_accX = accX + est_XErrorI / ACC_Cr;
 	float c_accY = accY + est_YErrorI / ACC_Cr;
+	*/
+	est_XErrorI += (e_ex - est_XErrorI)*0.0001;
+	//est_XErrorI = constrain(est_XErrorI, -1, 1);
+	float c_accX = accX + est_XErrorI;
+
+	est_YErrorI += (e_ey - est_YErrorI)*0.0001;
+	//est_YErrorI = constrain(est_YErrorI, -1, 1);
+	float c_accY = accY + est_YErrorI;
+
+
+
 	
 	w_accX = (-cosYaw*c_accX + sinYaw*c_accY); //relative to world
-	//#endif
 	w_accY = (-cosYaw*c_accY - sinYaw*c_accX);
-		//--------------------------------------------------------prediction
+	//--------------------------------------------------------estimate
 	estX += mpu_dt*(est_speedX + w_accX * mpu_dt*0.5f);
 	est_speedX += (w_accX*mpu_dt);
 	estY += mpu_dt*(est_speedY + w_accY * mpu_dt*0.5f);

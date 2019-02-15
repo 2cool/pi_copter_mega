@@ -63,9 +63,8 @@ void ProgClass::loop(){
 					distFlag = true;
 				}
 				else {
-					const float advance_dist = Stabilization.getDist_XY(max_speed_xy);//*1.1
+					const float advance_dist = Stabilization.getDist_XY(max_speed_xy);
 					const float acur = max(max(ACCURACY_XY, GPS.loc.accuracy_hor_pos_), advance_dist);
-					//distFlag = sqrt(GPS.loc.dX*GPS.loc.dX + GPS.loc.dY*GPS.loc.dY) <= acur;
 					distFlag = Stabilization.get_dist2goal() <= acur;
 				}
 			}
@@ -80,10 +79,8 @@ void ProgClass::loop(){
 	if (go_next){
 		go_next = distFlag = altFlag = false;
 		if (load_next(true) == false){
-			//if (Autopilot.lost_conection_time == 0){
-				cout << "PROG END" << "\t"<<Mpu.timed << endl;
-				Autopilot.start_stop_program(false);
-			//}
+			cout << "PROG END" << "\t"<<Mpu.timed << endl;
+			Autopilot.start_stop_program(false);
 		}
 	}
 	intersactionFlag = Prog.getIntersection(need_speedX, need_speedY);
@@ -99,8 +96,6 @@ bool ProgClass::program_is_OK(){
 		time4step2done = 0;
 		old_dt = 0;
 		begin_timed = 0;
-		//lat = GPS.loc.lat_;
-		//lon = GPS.loc.lon_;
 		next_x = Mpu.get_Est_X();
 		next_y = Mpu.get_Est_Y();
 		alt = Mpu.get_Est_Alt();
@@ -130,31 +125,20 @@ bool ProgClass::program_is_OK(){
 			old_alt = alt;
 
 		}
-
-
-		const float x2 = next_x - Mpu.get_Est_X();// GPS.loc.from_lat2X((float)(lat - GPS.loc.lat_));
-		const float y2 = next_y - Mpu.get_Est_Y();// GPS.loc.form_lon2Y((float)(lon - GPS.loc.lon_));
-
+		const float x2 = next_x - Mpu.get_Est_X();
+		const float y2 = next_y - Mpu.get_Est_Y();
 		const float dist = (float)sqrt(x2*x2 + y2*y2);
-
-
 		if (dist >= 20 || alt  >= 20){
 			cout << "end poitn to far from star!!!" << "\t"<<Mpu.timed << endl;;
 			return false;
 		}
-
 		cout << "time for flyghy: " << (int)fullTime << "\t"<<Mpu.timed << endl;
 		return true;
 	}
 else
 	return false;
 
-
 }
-
-
-
-
 
 bool ProgClass::start(){
 	if (Autopilot.program_is_loaded()){
@@ -163,8 +147,6 @@ bool ProgClass::start(){
 		time4step2done = 0;
 		old_dt = 0;
 		begin_timed = 0;
-		//lat = GPS.loc.lat_;
-		//lon = GPS.loc.lon_;
 		next_x = Mpu.get_Est_X();
 		next_y = Mpu.get_Est_Y();
 		alt = Mpu.get_Est_Alt();
@@ -179,47 +161,8 @@ bool ProgClass::start(){
 
 }
 
-
-
-float pDistance(float x, float y, float x1, float y1, float x2, float y2) {
-
-	float A = x - x1;
-	float B = y - y1;
-	float C = x2 - x1;
-	float D = y2 - y1;
-
-	float dot = A * C + B * D;
-	float len_sq = C * C + D * D;
-	float param = -1;
-	if (len_sq != 0) //in case of 0 length line
-		param = dot / len_sq;
-
-	float xx, yy;
-
-	if (param < 0) {
-		xx = x1;
-		yy = y1;
-	}
-	else if (param > 1) {
-		xx = x2;
-		yy = y2;
-	}
-	else {
-		xx = x1 + param * C;
-		yy = y1 + param * D;
-
-		cout << "x=" << xx << endl;
-		cout << "y=" << yy << endl;
-	}
-
-	float dx = x - xx;
-	float dy = y - yy;
-	return (float)sqrt(dx * dx + dy * dy);
-}
-
-
-
-float sgn(const float x){ return (x < 0) ? -1 : 1; }
+#define SGN(x) ((x<0)?-1:1)
+//float sgn(const float x){ return (x < 0) ? -1 : 1; }
 
 bool ProgClass::getIntersection(float &x, float &y){
 	if (next_x == old_x && next_y == old_y){
@@ -306,7 +249,7 @@ bool ProgClass::getIntersection(float &x, float &y){
 		return false;
 	discriminant = (float)sqrt(discriminant);
 	const float rdr2 = 1.0f/l2;
-	float temp = sgn(dy)*dx*discriminant;
+	float temp = SGN(dy)*dx*discriminant;
 	const float ix1 = (D*dy + temp)*rdr2;
 	const float ix2 = (D*dy - temp)*rdr2;
 	temp = abs(dy)*discriminant;
@@ -390,17 +333,8 @@ bool ProgClass::load_next(bool loadf){
 
 	if (prog[prog_data_index] & LAT_LON){
 		int32_t lat, lon;
-		byte*lb = (byte*)&lat;
-		lb[0] = prog[wi++];
-		lb[1] = prog[wi++];
-		lb[2] = prog[wi++];
-		lb[3] = prog[wi++];
-		lb = (byte*)&lon;
-		lb[0] = prog[wi++];
-		lb[1] = prog[wi++];
-		lb[2] = prog[wi++];
-		lb[3] = prog[wi++];
-
+		*((uint32_t*)&lat) = *((uint32_t*)&prog[wi]); wi += 4;
+		*((uint32_t*)&lon) = *((uint32_t*)&prog[wi]); wi += 4;
 		if (loadf) 
 			Stabilization.setNeedLoc(lat, lon, next_x, next_y);
 		else
@@ -422,7 +356,6 @@ bool ProgClass::load_next(bool loadf){
 		alt = ialt;
 		if (loadf)
 			Autopilot.set_new_altitude(alt);
-		//printf("Altitude %f\n", alt);
 	}
 
 
@@ -437,16 +370,9 @@ bool ProgClass::load_next(bool loadf){
 		wi++;//now not used
 	}
 
-	//==============================================================
-
 	prog_data_index = wi;
-
-	//==============================================================
-
 	begin_timed = Mpu.timed;
-
 	old_dt = 0;
-
 	need_speedX = need_speedY = 0;
 	return true;
 
@@ -457,17 +383,10 @@ bool ProgClass::load_next(bool loadf){
 
 bool ProgClass::add(byte*buf)
 {
-	
 	uint16_t pi = prog_data_size;
-
 	uint8_t i = 1;
-	
 	prog[pi++] = buf[0];
-
-
 	//printf("mask= %i\n",buf[0]);
-	
-
 	
 	if (steps_count != buf[i++]){
 		clear();
@@ -496,17 +415,9 @@ bool ProgClass::add(byte*buf)
 	}
 
 	if (buf[0] & LAT_LON){
-
-		prog[pi++] = buf[i++];
-		prog[pi++] = buf[i++];
-		prog[pi++] = buf[i++];
-		prog[pi++] = buf[i++];
-
-		prog[pi++] = buf[i++];
-		prog[pi++] = buf[i++];
-		prog[pi++] = buf[i++];
-		prog[pi++] = buf[i++];
-		//printf("lat lon\n");
+		*(uint64_t*)&prog[pi] = *(uint64_t*)&buf[i];
+		pi += 8;
+		i += 8;
 	}
 	
 
@@ -517,9 +428,9 @@ bool ProgClass::add(byte*buf)
 	
 
 	if (buf[0] & ALTITUDE){
-
-		prog[pi++] = buf[i++];
-		prog[pi++] = buf[i++];
+		*(uint64_t*)&prog[pi] = *(uint64_t*)&buf[i];
+		pi += 2;
+		i += 2;
 		//printf("alt %i\n", buf[i-2]|(buf[i-1]<<8));
 
 	}
@@ -535,14 +446,11 @@ bool ProgClass::add(byte*buf)
 	}
 
 	if (steps_count == 0){
-		byte*lb = (byte*)&prog_steps_count_must_be;
-		lb[0] = buf[i++];
-		lb[1] = buf[i++];
+		prog_steps_count_must_be = *(uint16_t*)&buf[i];
+		i+=2;
 		cout << "prog steps=" << prog_steps_count_must_be << "\t"<<Mpu.timed << endl;
 	}
 	
-	
-
 	prog_data_size = pi;
 	steps_count++;
 	cout << steps_count << ". dot added! " << prog_data_size << "\t"<<Mpu.timed << endl;
