@@ -628,8 +628,8 @@ void MpuClass::test_Est_Alt() {
 	AltErrorI = constrain(AltErrorI, -1, 1);
 
 
-	Debug.load(0, AltErrorI, alt - est_alt_,est_alt_);
-	Debug.dump(true);
+	//Debug.load(0, AltErrorI, alt - est_alt_,est_alt_);
+	//Debug.dump(true);
 
 //	AltError = alt - est_alt_;
 //	AltErrorI += AltError;

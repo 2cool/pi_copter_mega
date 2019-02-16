@@ -17,7 +17,7 @@
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
-
+//#include <EEPROM.h>
 #include "gps.h"
 
 
@@ -57,7 +57,9 @@ volatile bool ring=false,ring_to_send=false;
 
 
 
-volatile uint32_t power_on_time_start;
+unsigned  long owerload_time_start;
+volatile uint16_t overloadVal;
+volatile uint64_t overloadTime;
 volatile bool gps_status = false;
 volatile uint8_t pi_copter_color[8][3]={ {0,1,0},{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 } };
 
@@ -236,12 +238,7 @@ void receiveEvent(int countToRead) {
 				temp = *((uint16_t*)&inBuf[7]);
 				pow_on |= temp > pwm_OFF_THROTTLE;
 				OCR3 = constrain(temp, pwm_OFF_THROTTLE, pwm_MAX_THROTTLE);
-				if (pow_on){
-					if (power_on_time_start == 0) 
-						power_on_time_start = millis();
-				}
-				else 
-					power_on_time_start = 0;
+				
 			}
 		}
 		else {
@@ -266,13 +263,13 @@ void receiveEvent(int countToRead) {
 		//Serial.println(beep_code);
 		break;
 	}
-	//case 2: 
-//	{
-		//uint8_t len = countToRead-1;
-		//SIM800.write(&inBuf[1], len);
-		//Serial.println(2);
-//		break;
-//	}
+	case 2: 
+	{
+		overloadTime = *((uint16_t*)&inBuf[1]);
+		overloadVal = *((uint16_t*)&inBuf[3]);
+		shutdown = false;
+		break;
+	}
 	case 3: 
 	{   new_colors_i = inBuf[0] >> 3;
 		pi_copter_color[new_colors_i - 1][0] = *(uint8_t*)&inBuf[1];
@@ -374,9 +371,12 @@ void requestEvent() {
 
 
 //#define ESC_CALIBR
+
 void setup()
 {
-	power_on_time_start = 0;
+	owerload_time_start = 0;
+	overloadVal = 1000; //shutdown 
+	overloadTime = 1;
 #ifdef ESC_CALIBR
 	on(48000, pwm_MAX_THROTTLE);
 	delay(3000);
@@ -423,9 +423,14 @@ float i[5] = { 0,0,0,0,0 };
 #define MI3 PIN_A4
 #define BAT PIN_A1
 int minar = 3000;
+
+
+
+
+
 void loop()
 {
-	if (cnt_reset>0 && cnt_reset < millis()) {
+	if (cnt_reset > 0 && cnt_reset < millis()) {
 		cnt_reset = 0;
 		digitalWrite(SIM800_RESET, HIGH);
 	}
@@ -433,29 +438,35 @@ void loop()
 	const float CF = 0.01;
 
 	int ar = analogRead(MI0);
-	/*if (minar > ar) {
-		minar = ar;
-		Serial.println(ar);
-	}*/
-	
-	shutdown |= (ar < 485);
-	fb[0] += ((float)(ar) - fb[0])*CF;
+	bool overloadF = (ar < overloadVal);
+	fb[0] += ((float)(ar)-fb[0])*CF;
 	ar = analogRead(MI1);
-	shutdown |= (ar < 476);
-	fb[1] += ((float)(ar) - fb[1])*CF;
+	overloadF |= (ar < overloadVal);
+	fb[1] += ((float)(ar)-fb[1])*CF;
 	ar = analogRead(MI2);
-	shutdown |= (ar < 362);
-	fb[2] += ((float)(ar) - fb[2])*CF;
+	overloadF |= (ar < overloadVal);
+	fb[2] += ((float)(ar)-fb[2])*CF;
 	ar = analogRead(MI3);
-	shutdown |= (ar < 436);
+	overloadF |= (ar < overloadVal);
 	fb[3] += ((float)(analogRead(ar)) - fb[3])*CF;
 
-	if (shutdown && power_on_time_start > 0 && millis() - power_on_time_start > 3000)
-		stop_motors();
-	else
-		shutdown = false;
+	if (overloadF) {
+		const unsigned long t = millis();
+		if (owerload_time_start == 0) {
+			owerload_time_start = t;
+		}
+		else {
+			if (t - owerload_time_start > overloadTime) {
+				shutdown = true;
+				stop_motors();
+			}
+		}
+	}
+	if (owerload_time_start > 0 && millis() - owerload_time_start > (overloadTime+100))
+		owerload_time_start = 0;
 
-	fb[4] += ((float)(analogRead(BAT)) - fb[4])*CF;
+
+	fb[4] += ((float)(analogRead(BAT)) - fb[4])*CF;  //volt
 
 
 	if (gps.available()) {

@@ -1,6 +1,6 @@
-C:\Users\2coolz\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\gps.cpp.o: \
- C:\Users\2coolz\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\gps.cpp \
- C:\Users\2coolz\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\gps.h \
+C:\Users\Igor\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\gps.cpp.o: \
+ C:\Users\Igor\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\gps.cpp \
+ C:\Users\Igor\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\gps.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \

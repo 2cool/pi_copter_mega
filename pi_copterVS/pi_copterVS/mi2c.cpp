@@ -14,7 +14,7 @@
 
 
 int fd;
-
+/*
 int Megai2c::getsim(char * str) {
 	char reg = 3;
 	char sim_count;
@@ -28,9 +28,18 @@ int Megai2c::getsim(char * str) {
 	}
 	return res;
 }
+*/
 
-char gsm_send_buf[32];
 
+
+void Megai2c::settings(uint16_t overloadTime, uint16_t overloadVal) {
+	char send_buf[5];
+	send_buf[0] = 2;
+	*((uint16_t*)&send_buf[1]) = overloadTime;
+	*((uint16_t*)&send_buf[3]) = overloadVal;
+	write(fd, send_buf, 5);
+}
+/*
 int Megai2c::send2sim(const char *str, int len) {
 	gsm_send_buf[0] = 2;
 	memcpy(gsm_send_buf + 1, str, len);
@@ -40,7 +49,7 @@ int Megai2c::send2sim(const char *str, int len) {
 	//	printf("%c", gsm_send_buf[i]);
 }
 
-	/*
+	
 	+CMTI: "SM",1
 	+CMTI: "SM",2
 	...
@@ -151,7 +160,7 @@ int Megai2c::init()
 
 	shmPTR->sim800_reset_time = 0;
 
-	//sim800_reset();/////////////
+	mega_i2c.settings(100, 120); //if not execute/ copters motors not start;
 	
 	return 0;
 
