@@ -399,6 +399,20 @@ bool BalanceClass::loop()
 			//----------------------------------------------------
 			static float correction = 1;
 			//correction += (0.5 / min(throttle,0.5) - correction)*0.2;
+
+
+
+
+
+#ifdef FOR_TESTS
+
+		//	pitch_stab_output =0;
+		//	roll_stab_output = 0;
+			yaw_stab_output = 0;
+			//throttle = 0.5;
+#endif
+
+
 		
 			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(correction*(pitch_stab_output + Mpu.gyroPitch), Mpu.dt);
 			pitch_output = constrain(pitch_output, -max_delta, max_delta);
@@ -407,9 +421,9 @@ bool BalanceClass::loop()
 			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(correction*(yaw_stab_output - Mpu.gyroYaw), Mpu.dt);
 			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
 
-#ifdef YAW_OFF
-			yaw_output = 0;
-			pitch_output=0;
+#ifdef FOR_TESTS
+			//yaw_output = 0;
+
 #endif
 
 			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече

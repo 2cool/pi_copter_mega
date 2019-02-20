@@ -99,8 +99,8 @@ private:
 	void rotateCCW(float &x, float &y);
  public:
 	 float dist2home_2() { return get_Est_X()*get_Est_X() + get_Est_Y()*get_Est_Y(); }
-	 float get_w_accX() { return w_accX; }
-	 float get_w_accY() { return w_accY; }
+	 float get_w_faccX() { return fwaccX; }
+	 float get_w_faccY() { return fwaccY; }
 	 void getXYRelative2Zero(float&x, float&y) { x -= XatZero; y -= YatZero; }
 	// void set_cos_sin_dir();
 	// double dir_angle_GRAD, cosDirection, sinDirection;
@@ -126,7 +126,6 @@ private:
 	 int8_t max_g_cnt;
 
 	 float temp_deb;
-	 float faccX,faccY,faccZ;
 	 void initYaw(const float angle);
 	
 	 void new_calibration(const bool onlyGyro);
@@ -136,6 +135,7 @@ private:
 	 float get_roll();
 	 bool mpu_calibrated,gyro_calibratioan;
 	float accZ,accY,accX,tiltPower,cosPitch,cosRoll,sinPitch,sinRoll;
+	float faccZ, fwaccY, fwaccX;
 	float tiltPower_CF;
 	
 	 float  gyroPitch, gyroYaw, gyroRoll;

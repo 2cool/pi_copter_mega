@@ -24,8 +24,8 @@ void StabilizationClass::init(){
 
 		accXY_stabKP = 0.2f;//0.5
 		accXY_stabKP_Rep = 1.0f / accXY_stabKP;
-		set_acc_xy_speed_kp(5);
-		set_acc_xy_speed_kI(2);
+		set_acc_xy_speed_kp(6.1);
+		set_acc_xy_speed_kI(3);
 		set_acc_xy_speed_imax(Balance.get_max_angle());
 		max_speed_xy = MAX_HOR_SPEED;
 
@@ -47,7 +47,7 @@ void StabilizationClass::init(){
 	dspeedZ2accZ = 1;
 
 	pids[ACCZ_PID].kP(0.05);
-	pids[ACCZ_PID].kI(0.001);
+	pids[ACCZ_PID].kI(0.0025);
 	pids[ACCZ_PID].imax( MAX_THROTTLE_ - HOVER_THROTHLE);
 	max_stab_z_P =  MAX_VER_SPEED_PLUS;
 	max_stab_z_M = MAX_VER_SPEED_MINUS;
@@ -196,9 +196,11 @@ void StabilizationClass::XY(float &pitch, float&roll){
 
 		float need_acx = constrain((need_speedX + Mpu.get_Est_SpeedX()), -5, 5);
 		float need_acy = constrain((need_speedY + Mpu.get_Est_SpeedY()), -5, 5);
-
-		w_pitch = -pids[ACCX_SPEED].get_pid(need_acx + Mpu.get_w_accX(), Mpu.dt);
-		w_roll = pids[ACCY_SPEED].get_pid(need_acy + Mpu.get_w_accY(), Mpu.dt);
+#ifdef FOR_TESTS
+		need_acx = need_acy = 0;///////////////////////////////////
+#endif
+		w_pitch = -pids[ACCX_SPEED].get_pid(need_acx + Mpu.get_w_faccX(), Mpu.dt);
+		w_roll = pids[ACCY_SPEED].get_pid(need_acy + Mpu.get_w_faccY(), Mpu.dt);
 
 
 		//----------------------------------------------------------------преобр. в относительную систему координат
@@ -241,9 +243,11 @@ float StabilizationClass::Z(){//////////////////////////////////////////////////
 
 		float need_speedZ = getSpeed_Z(Autopilot.fly_at_altitude() - Mpu.get_Est_Alt());
 		float need_accZ = dspeedZ2accZ*constrain(need_speedZ-Mpu.get_Est_SpeedZ(), max_stab_z_M, max_stab_z_P);
+#ifdef FOR_TESTS
+		need_accZ = 0;////////////////////
+#endif
 
-		
-		float fZ = HOVER_THROTHLE + pids[ACCZ_PID].get_pid((need_accZ - Mpu.accZ), Mpu.dt)*Balance.powerK();
+		float fZ = HOVER_THROTHLE + pids[ACCZ_PID].get_pid(constrain(need_accZ - Mpu.faccZ,-2,2), Mpu.dt)*Balance.powerK();
 
 		if (Log.writeTelemetry) {
 			Log.block_start(LOG::ZSTAB);

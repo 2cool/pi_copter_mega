@@ -123,7 +123,7 @@ void MpuClass::log_emu() {
 //-----------------------------------------------------
 void MpuClass::init()
 {
-
+	faccZ = fwaccY = fwaccX = 0;
 	altitude_at_zero = XatZero = YatZero = 0;
 	hower_thr = HOVER_THROTHLE;
 	min_thr = MIN_THROTTLE_;
@@ -145,8 +145,6 @@ void MpuClass::init()
 	sinYaw = 0;
 	temp_deb = 6;
 	fx = fy = fz = 0;
-
-	faccX = faccY = faccZ = 0;
 
 	yaw_offset = yaw = pitch = roll = gyroPitch = gyroRoll = gyroYaw = accX = accY = accZ = 0;
 	sinPitch = sinRoll = 0;
@@ -568,14 +566,29 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	accX = 9.8f*(ax*cosPitch - az*sinPitch);
 	accY = 9.8f*(-ay*cosRoll + az*sinRoll);
 
+#define ACC_CF 0.05
+
+
 	test_vibration(accX, accY, accZ);
 
 	test_Est_Alt();
 	test_Est_XY();
 
+
+
+	faccZ += (accZ - faccZ)*ACC_CF;
+
+
+
 	shmPTR->pitch = pitch *= RAD2GRAD;
 	shmPTR->roll = roll *= RAD2GRAD;
 	shmPTR->yaw = yaw*=RAD2GRAD;
+
+
+
+
+
+
 	log();
 	return ret;
 }
@@ -713,6 +726,10 @@ void MpuClass::test_Est_XY() {
 	
 	w_accX = (-cosYaw*c_accX + sinYaw*c_accY); //relative to world
 	w_accY = (-cosYaw*c_accY - sinYaw*c_accX);
+
+	fwaccX += (w_accX - fwaccX)*ACC_CF;
+	fwaccY += (w_accY - fwaccY)*ACC_CF;
+
 	//--------------------------------------------------------estimate
 	estX += mpu_dt*(est_speedX + w_accX * mpu_dt*0.5f);
 	est_speedX += (w_accX*mpu_dt);
