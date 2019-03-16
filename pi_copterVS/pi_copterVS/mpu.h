@@ -34,7 +34,7 @@ class MpuClass
 {
 	friend class HmcClass;
  protected:
-
+	 float tiltPower_CF;
 	 void log_emu();
 	 void log();
 
@@ -56,8 +56,6 @@ class MpuClass
 	 float lastval[3];
 	 int16_t sensors;
 	 Quaternion q;
-	 uint8_t rate;
-	 float gaccX, gaccY;
 	 //calibration offsets for MPU6050
 	 ///////////////////////////////////   CONFIGURATION   /////////////////////////////
 	 //Change this 3 variables if you want to fine tune the skecth to your needs.
@@ -89,7 +87,7 @@ class MpuClass
 
 	float yaw,yaw_offset;
 	void test_vibration( float x,  float y,  float z);
-	float DRAG_K,_0007;
+	float _0007;
 private:
 	float altitude_at_zero,XatZero,YatZero;
 	void gyro_calibr();
@@ -99,8 +97,8 @@ private:
 	void rotateCCW(float &x, float &y);
  public:
 	 float dist2home_2() { return get_Est_X()*get_Est_X() + get_Est_Y()*get_Est_Y(); }
-	 float get_w_faccX() { return fwaccX; }
-	 float get_w_faccY() { return fwaccY; }
+	 float get_w_accX() { return w_accX; }
+	 float get_w_accY() { return w_accY; }
 	 void getXYRelative2Zero(float&x, float&y) { x -= XatZero; y -= YatZero; }
 	// void set_cos_sin_dir();
 	// double dir_angle_GRAD, cosDirection, sinDirection;
@@ -114,8 +112,8 @@ private:
 
 	 float vibration;
 	 double acc_callibr_timed;
-	 float hower_thr, min_thr, fall_thr;
-	 float e_accZ, e_speedZ, w_accZ;
+	 
+
 	 double timed,mpu_timed, gps_timed, hmc_timed, autopilot_timed, balance_timed, ms5611_timed,telem_timed,com_timed;
 
 	 float cor_c_pitch, cor_c_roll;
@@ -135,23 +133,11 @@ private:
 	 float get_roll();
 	 bool mpu_calibrated,gyro_calibratioan;
 	float accZ,accY,accX,tiltPower,cosPitch,cosRoll,sinPitch,sinRoll;
-	float faccZ, fwaccY, fwaccX;
-	float tiltPower_CF;
-	
-	 float  gyroPitch, gyroYaw, gyroRoll;
-
-
-	 string get_set();
-	 void set(const float  *ar);
-
-
-	
-	 double dt,rdt;
-	 void set_yaw();
-
-	 int16_t getGX();
-
-
+	float  gyroPitch, gyroYaw, gyroRoll;
+	string get_set();
+	void set(const float  *ar);
+	double dt,rdt;
+    int16_t getGX();
 	void init();
 	bool loop();
 	void setDLPFMode_(const uint8_t f);

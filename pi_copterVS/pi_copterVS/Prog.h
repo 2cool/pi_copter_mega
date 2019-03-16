@@ -30,7 +30,7 @@ class ProgClass
 	 float r_time,time4step2done,speed_corected_delta, old_dt;
 	 double begin_timed;
 	 float max_speed_xy,timer;
-	 float max_stab_z_P, max_stab_z_M;
+	 float max_speedZ_P, max_speedZ_M;
  public:
 	 bool intersactionFlag;
 	 float need_speedX, need_speedY;

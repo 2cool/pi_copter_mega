@@ -22,10 +22,23 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
     /*
     "name,max,progress in percent,change in percent" or only "name"
      */
+
+
+    double def_change[][]={
+            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
+            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
+            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
+            {1,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
+            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
+            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2}
+
+    };
+
+
     String a[][]={
             {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE","powerK"},
-            {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","MAX_SPEED_P","MAX_SPEED_M","CF_SPEED","CF_DIST","FILTR",_null},
-            {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","max_speed","KF_SPEED","KF_DIST","FILTR",_null,_null},
+            {"alt to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","MAX_SPEED_P","MAX_SPEED_M","FILTR",_null,_null},
+            {"alt to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR",_null,_null,_null},
             {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z"},
             {"DRAG_K","_0007","tiltPower_CF",_null,_null,_null,_null,_null,_null,_null},
             {"m power on,1,0,100",_null,_null,_null,_null,_null,_null,_null,_null,_null},
@@ -58,11 +71,6 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
         Log.i("UPS", "SET_EDIT_TEXT");
         if (upload_anyway || Telemetry.n_settings!=num ||  Telemetry.settings[0]==Commander.NO_DATA) {
 
-
-            new Thread() {
-                @Override
-                public void run() {
-
             Commander.upload_settings = num;//Integer.parseInt(n.getText().toString());
             //   Commander.button="UP"+Integer.parseInt(n.getText().toString());
             Log.i("UPS", "DOWNLOADING SETINGS");
@@ -89,15 +97,6 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
             if (uploaded==false)
                 for (int i=0; i<10; i++)
                     Telemetry.settings[i] = Commander.NO_DATA;
-
-
-                    update();
-                }
-            }.start();
-
-
-
-
         }
 
 
@@ -114,7 +113,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
     @Override
     protected  void onStart(){
         super.onStart();
-        download_settings(menu_n,false);
+        update();
 
     }
 
@@ -125,7 +124,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
     void update(){
        try {
-           Log.i("UPS", "UPDATE");
+           download_settings(menu_n,true);
+           Log.i("UPS", "UPDATE in");
            int i = 0;
            for (; i < 10; i++) {
 
@@ -157,9 +157,10 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
 
            set.setEnabled(true);
+           Log.i("UPS", "UPDATE out");
        } catch (Exception ex) {
            Thread.currentThread().interrupt();
-           Log.i("UPS", "UPDATE ERROR  EXCEPTION");
+           Log.i("UPS", "UPDATE ERROR  EXCEPTION "+ex.toString());
        }
     }
 
@@ -217,7 +218,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
             textV[i++]=findViewById(R.id.tv8);
             textV[i++]=findViewById(R.id.tv9);
 
-            update();
+          //  update();
            // download_settings(menu_n,true);
 
         }catch (Exception e){
@@ -238,14 +239,16 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
         }
         Commander.settings=true;
         Log.i("SETT","setting=true");
-        download_settings(menu_n,true);
+       // download_settings(menu_n,true);
         //finish();
+        update();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         menu_n=position;
-        download_settings(menu_n,false);
+        update();
+       // download_settings(menu_n,false);
     }
 
 
@@ -259,8 +262,9 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
 
         double dk=seek_bar_default_progress;
-        double maxChange=seek_bar_default_change;
+
         int i=seekBar.getId()-seek_bar[0].getId();
+        double maxChange=def_change[menu_n][i];//              seek_bar_default_change;
         String sf[]=a[menu_n][i].split(",");
         if (sf.length>=4) {
            dk= 0.5*Float.parseFloat(sf[1]);
@@ -270,7 +274,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
         double f=Telemetry.settings[i];
         double k=maxChange*(dk-progress)/dk;
         f-=f*k;
-        textV[i].setText(Float.toString((float)(f)));
+       // textV[i].setText(Float.toString((float)(f)));
+        textV[i].setText(String.format("%.5f", f));
     }
 
     @Override

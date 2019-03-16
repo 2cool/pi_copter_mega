@@ -136,7 +136,7 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 	Balance.init();
 	MS5611.init();
 
-
+	fall_thr = FALLING_THROTTLE;
 	sens_z = 6;
 	sens_xy = 0.2f;
 
@@ -749,7 +749,7 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 
 void AutopilotClass::control_falling(const string msg){
 	if (motors_is_on() && (control_bits & CONTROL_FALLING) == 0){
-		throttle = Mpu.fall_thr*Balance.powerK();
+		throttle = fall_thr*Balance.powerK();
 		aPitch = aRoll = 0;
 #ifdef DEBUG_MODE
 		printf( "CNTROLL FALLING\n");

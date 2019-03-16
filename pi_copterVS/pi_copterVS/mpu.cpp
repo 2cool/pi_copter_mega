@@ -123,31 +123,22 @@ void MpuClass::log_emu() {
 //-----------------------------------------------------
 void MpuClass::init()
 {
-	faccZ = fwaccY = fwaccX = 0;
-	altitude_at_zero = XatZero = YatZero = 0;
-	hower_thr = HOVER_THROTHLE;
-	min_thr = MIN_THROTTLE_;
-	fall_thr = FALLING_THROTTLE;
-	DRAG_K = 0.0052;
-	//DRAG_K = 0.022;
-	_0007=0.007;
-	gaccX =  gaccY =0;
-	acc_callibr_timed = 0;
-	rate = 100;
+
+
 	tiltPower_CF = 0.05;
+	altitude_at_zero = XatZero = YatZero = 0;
+	_0007=0.007;
+	acc_callibr_timed = 0;
+	f_pitch = f_roll = w_accX = w_accY = yaw_off = 0;
+	fx = fy = fz = sinPitch = sinRoll = 0;
+	yaw_offset = yaw = pitch = roll = gyroPitch = gyroRoll = gyroYaw = accX = accY = accZ = 0;
 
-	f_pitch = f_roll = 0;
-
-	w_accX=w_accY=0;
-	yaw_off = 0;
 	max_g_cnt = 0;
 	cosYaw = 1;
 	sinYaw = 0;
 	temp_deb = 6;
-	fx = fy = fz = 0;
-
-	yaw_offset = yaw = pitch = roll = gyroPitch = gyroRoll = gyroYaw = accX = accY = accZ = 0;
-	sinPitch = sinRoll = 0;
+	
+	
 	tiltPower = cosPitch = cosRoll = 1;
 
 	//COMP_FILTR = 0;// 0.003;
@@ -216,8 +207,8 @@ string MpuClass::get_set(){
 	
 	
 	ostringstream convert;
-	convert<<
-		DRAG_K <<","<< _0007<<","<< tiltPower_CF;
+	//convert<<
+		
 	
 	string ret = convert.str();
 	return string(ret);
@@ -229,7 +220,7 @@ void MpuClass::set(const float  *ar){
 	int i = 0;
 	if (ar[SETTINGS_ARRAY_SIZE] == SETTINGS_IS_OK){
 		int error = 0;
-
+		/*
 		float t;
 
 		t = DRAG_K;
@@ -253,6 +244,7 @@ void MpuClass::set(const float  *ar){
 		else{
 			cout << "ERROR to big or small. P=" << error << endl;
 		}
+		*/
 	}
 	else{
 		cout << "ERROR\n";
@@ -566,29 +558,14 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	accX = 9.8f*(ax*cosPitch - az*sinPitch);
 	accY = 9.8f*(-ay*cosRoll + az*sinRoll);
 
-#define ACC_CF 0.05
-
-
 	test_vibration(accX, accY, accZ);
 
 	test_Est_Alt();
 	test_Est_XY();
 
-
-
-	faccZ += (accZ - faccZ)*ACC_CF;
-
-
-
 	shmPTR->pitch = pitch *= RAD2GRAD;
 	shmPTR->roll = roll *= RAD2GRAD;
 	shmPTR->yaw = yaw*=RAD2GRAD;
-
-
-
-
-
-
 	log();
 	return ret;
 }
@@ -726,10 +703,6 @@ void MpuClass::test_Est_XY() {
 	
 	w_accX = (-cosYaw*c_accX + sinYaw*c_accY); //relative to world
 	w_accY = (-cosYaw*c_accY - sinYaw*c_accX);
-
-	fwaccX += (w_accX - fwaccX)*ACC_CF;
-	fwaccY += (w_accY - fwaccY)*ACC_CF;
-
 	//--------------------------------------------------------estimate
 	estX += mpu_dt*(est_speedX + w_accX * mpu_dt*0.5f);
 	est_speedX += (w_accX*mpu_dt);

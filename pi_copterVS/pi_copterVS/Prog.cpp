@@ -108,7 +108,7 @@ bool ProgClass::program_is_OK(){
 				const float dy = next_y - old_y;
 				float time = (float)(sqrt(dx*dx + dy*dy) / max_speed_xy);
 				const float dAlt = alt - old_alt;
-				time += dAlt / ((dAlt >= 0) ? max_stab_z_P : max_stab_z_M);
+				time += dAlt / ((dAlt >= 0) ? max_speedZ_P : max_speedZ_M);
 				time *= 1.25f;
 				time += timer;
 				
@@ -311,19 +311,19 @@ bool ProgClass::load_next(bool loadf){
 		const float speedZ = K01* (int8_t)prog[wi++];
 		
 		if (speedZ >= 0) {
-			max_stab_z_P = max(speedZ, 0.15f);
-			max_stab_z_M = MAX_VER_SPEED_MINUS;
+			max_speedZ_P = max(speedZ, 0.15f);
+			max_speedZ_M = MAX_VER_SPEED_MINUS;
 			if (loadf) {
-				Stabilization.max_stab_z_P = max_stab_z_P;
-				Stabilization.max_stab_z_M = max_stab_z_M;
+				Stabilization.max_speedZ_P = max_speedZ_P;
+				Stabilization.max_speedZ_M = max_speedZ_M;
 			}
 		}
 		else {
-			max_stab_z_P = MAX_VER_SPEED_PLUS;
-			max_stab_z_M = speedZ;
+			max_speedZ_P = MAX_VER_SPEED_PLUS;
+			max_speedZ_M = speedZ;
 			if (loadf) {
-				Stabilization.max_stab_z_P = max_stab_z_P;
-				Stabilization.max_stab_z_M = max_stab_z_M;
+				Stabilization.max_speedZ_P = max_speedZ_P;
+				Stabilization.max_speedZ_M = max_speedZ_M;
 			}
 		}
 		

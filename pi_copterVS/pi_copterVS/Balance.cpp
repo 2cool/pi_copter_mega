@@ -126,6 +126,7 @@ void BalanceClass::init()
 	//cS = 0.00536;//15 град 
 //	0.00357
 
+	min_thr = MIN_THROTTLE_;
 	f_[0] = f_[1] = f_[2] = f_[3] = 0;
 	cout << "BALANCE INIT\n";
 	
@@ -320,7 +321,7 @@ bool BalanceClass::loop()
 		if (Autopilot.motors_is_on()) { 
 
 			float pK = powerK();
-			const float min_throttle = Mpu.min_thr*pK;
+			const float min_throttle = min_thr*pK;
 			const float max_throttle = constrain(MAX_THROTTLE_*pK, MAX_THROTTLE_,0.9);
 
 			maxAngle = _max_angle_;
@@ -399,20 +400,6 @@ bool BalanceClass::loop()
 			//----------------------------------------------------
 			static float correction = 1;
 			//correction += (0.5 / min(throttle,0.5) - correction)*0.2;
-
-
-
-
-
-#ifdef FOR_TESTS
-
-		//	pitch_stab_output =0;
-		//	roll_stab_output = 0;
-			yaw_stab_output = 0;
-			//throttle = 0.5;
-#endif
-
-
 		
 			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(correction*(pitch_stab_output + Mpu.gyroPitch), Mpu.dt);
 			pitch_output = constrain(pitch_output, -max_delta, max_delta);
@@ -421,9 +408,9 @@ bool BalanceClass::loop()
 			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(correction*(yaw_stab_output - Mpu.gyroYaw), Mpu.dt);
 			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
 
-#ifdef FOR_TESTS
-			//yaw_output = 0;
-
+#ifdef YAW_OFF
+			yaw_output = 0;
+			pitch_output=0;
 #endif
 
 			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече

@@ -48,7 +48,7 @@ class BalanceClass
 
 	float _max_angle_= MAX_ANGLE_;
 	float maxAngle;
-
+	float min_thr;
  public:
 	 bool propeller_lost[4];
 	 float get_max_angle() { return _max_angle_; }

@@ -160,7 +160,7 @@ int Megai2c::init()
 
 	shmPTR->sim800_reset_time = 0;
 
-	mega_i2c.settings(333, 0); //if not execute/ copters motors not start;
+	mega_i2c.settings(150, 120); //if not execute/ copters motors not start;
 	
 	return 0;
 

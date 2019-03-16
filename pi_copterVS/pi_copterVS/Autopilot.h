@@ -62,7 +62,7 @@ class AutopilotClass
 	 //void prog_loop();
 	// float get_dist();
 	 float lowest_height;
-	
+	 float fall_thr;
 	
 
 	 
