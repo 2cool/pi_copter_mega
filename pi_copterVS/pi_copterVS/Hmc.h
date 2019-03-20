@@ -82,7 +82,7 @@
 
 class HmcClass
 {
- protected:
+ private:
 	 void log_sens();
 	 void log_base();
 
@@ -91,8 +91,10 @@ class HmcClass
 	 
 	float   dx, dy, dz;
 
-
+	friend class StabilizationClass;
  public:
+	 string get_settings();
+
 	 float fmz, fmx, fmy;
 	 void start_motor_compas_calibr();
 	 double startTimed;

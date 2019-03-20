@@ -697,5 +697,32 @@ uint8_t HmcClass::getIDC() {
 }
 
 
+string HmcClass::get_settings() {
+	ostringstream convert;
+	convert << \
+		c_base[0] << "," << \
+		c_base[1] << "," << \
+		c_base[2] << "," << \
+		dx << "," << \
+		dy << "," << \
+		dz;
+	for (int i = 0; i < 12; i++) {
+		convert << "," << base[i];
+	}
+	
+	string ret = convert.str();
+	return string(ret);
+
+
+
+
+
+
+
+
+
+}
+
+
 HmcClass Hmc;
 

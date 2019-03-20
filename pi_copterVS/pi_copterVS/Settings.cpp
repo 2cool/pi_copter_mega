@@ -4,7 +4,7 @@
 
 #include "Settings.h"
 
-
+#include "Hmc.h"
 
 
 #define EEPROM_SIZE 256
@@ -123,6 +123,28 @@ int SettingsClass::read() {
 
 
 
+
+int SettingsClass::write_all() {
+
+
+
+	FILE *f = fopen("/home/igor/copter_set.txt", "w");
+	if (f == NULL)
+	{
+		cout << "Error opening file!\n";
+		//exit(1);
+	}
+
+	//HMC
+	
+
+	fprintf(f, "%s\n", Hmc.get_settings());
+
+
+	fclose(f);
+
+
+}
 
 
 int SettingsClass::write() {

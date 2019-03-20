@@ -262,13 +262,14 @@ void StabilizationClass::setZ(const float  *ar){
 
 string StabilizationClass::get_xy_set(){
 	ostringstream convert;
-	convert<<\
-		dist2speed_H <<","<<\
+	convert << \
+		dist2speed_H << "," << \
 		max_VER_ACC << "," << \
-		pids[ACCX_SPEED].kP() <<","<<\
-		pids[ACCX_SPEED].kI() <<","<<\
-		pids[ACCX_SPEED].imax()<<","<<\
-	    max_speed_xy;
+		pids[ACCX_SPEED].kP() << "," << \
+		pids[ACCX_SPEED].kI() << "," << \
+		pids[ACCX_SPEED].imax() << "," << \
+		max_speed_xy << "," << \
+		ACCXY_CF;
 	string ret = convert.str();
 	return string(ret);
 }
@@ -302,7 +303,7 @@ void StabilizationClass::setXY(const float  *ar){
 			set_acc_xy_speed_imax(t);
 		
 		error += Commander._set(ar[i++], max_speed_xy);
-		
+		error += Commander._set(ar[i++], ACCXY_CF);
 
 		//resset_xy_integrator();
 		cout << "Stabilization XY set:\n";

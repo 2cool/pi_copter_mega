@@ -512,6 +512,7 @@ int main(int argc, char *argv[]) {
 		cout<< "\n main Signal caught!" << "\t"<<Mpu.timed << endl;
 	//WiFi.stopServer();
 	Settings.write();
+	Settings.write_all();
 	Log.close();
 
 	shmPTR->internet_run = false;
