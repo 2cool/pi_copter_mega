@@ -244,8 +244,6 @@ void BalanceClass::set(const float *ar, int n){
 			}
 			
 		}
-		
-		
 	}
 	if (error == 0){
 		cout << "balance set:\n";

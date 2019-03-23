@@ -29,6 +29,8 @@ public class Commander {
     static public boolean copter_is_busy=true;
     static final double GRAD2RAD = 0.01745329251994329576923690768489;
     static final double RAD2GRAD = 57.295779513082320876798154814105;
+    static private long last_time=0;
+    static public long motors_on_time=0;
     static private void init(){
         copter_is_busy=true;
         settings=false;
@@ -179,6 +181,14 @@ public class Commander {
                 throttle=Telemetry.corectThrottle();
             else
                 throttle = 0.5f;
+        }
+
+        long time = System.currentTimeMillis();
+        long _dt_=time-last_time;
+        last_time=time;
+
+        if ((MainActivity.command_bits_ & MainActivity.MOTORS_ON)!=0){
+            motors_on_time+=_dt_;
         }
       //  Log.d ("COMM",Float.toString(throttle));
         MainActivity.command_bits_=0;
