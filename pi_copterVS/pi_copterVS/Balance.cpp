@@ -199,9 +199,9 @@ string BalanceClass::get_set(int n){
 
 void BalanceClass::set(const float *ar, int n){
 	int i = 0;
+	int error=1;
 	if (ar[SETTINGS_ARRAY_SIZE] == SETTINGS_IS_OK){
-		int error=0;
-		
+		error=0;
 		float t;
 		if (n == 0) {
 			t = pids[PID_PITCH_RATE].kP();
@@ -242,34 +242,22 @@ void BalanceClass::set(const float *ar, int n){
 			if ((error += Commander._set(ar[i++], t)) == 0) {
 				_max_angle_ = constrain(t, 15, 35);
 			}
-
 			
-			
-			//error += Commander._set(ar[i++], yaw_stabKP);
-
-			//error += Commander._set(ar[i], _max_angle_);
-
-			//	error += Commander._set(ar[i], stop_throttle);
-
-			cout << "balance set:\n";
 		}
-		else {
-			
-			}
-		if (error == 0){
-			//for (ii = 0; ii < i; ii++){
-			//	Out.printf(ar[ii]); Out.printf(",");
-			//}
-			//Out.println(ar[ii]);
-			cout << "OK\n";
+		
+		
+	}
+	if (error == 0){
+		cout << "balance set:\n";
+		for (uint8_t ii = 0; ii < i; ii++) {
+			cout << ar[ii] << ",";
 		}
-		else{
-			cout << "ERROR to big or small. P="<<error;
-		}
+		cout << endl;
 	}
 	else{
-		cout << "ERROR\n";
+		cout << "ERROR to big or small. P="<<error;
 	}
+
 }
 
 float BalanceClass::powerK(){

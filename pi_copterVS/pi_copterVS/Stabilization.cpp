@@ -227,13 +227,13 @@ string StabilizationClass::get_z_set(){
 
 void StabilizationClass::setZ(const float  *ar){
 
-
+	uint8_t i = 0;
 	int error = 1;
 	if (ar[SETTINGS_ARRAY_SIZE] == SETTINGS_IS_OK){
 		
 		error = 0;
 		float t;
-		uint8_t i = 0;
+		
 
 		error += Commander._set(ar[i++], alt2speedZ);
 		alt2speedZ_Rep = 1.0f / alt2speedZ;
@@ -257,16 +257,18 @@ void StabilizationClass::setZ(const float  *ar){
 		
 
 		//resset_z();
+		
+	}
+	if (error == 0) {
 		cout << "Stabilization Z set:\n";
 
-		for (uint8_t ii = 0; ii < i; ii++){
+		for (uint8_t ii = 0; ii < i; ii++) {
 			cout << ar[ii] << ",";
 		}
-		cout << ar[i] << endl;
+		cout << endl;
 	}
-	if (error>0){
-		cout << "Stab Z set Error\n";
-	}
+	else
+		cout << "ERROR to big or small. P=" << error;
 }
 
 
@@ -287,12 +289,12 @@ string StabilizationClass::get_xy_set(){
 void StabilizationClass::setXY(const float  *ar){
 
 	int error = 1;
-
+	uint8_t i = 0;
 	if (ar[SETTINGS_ARRAY_SIZE] == SETTINGS_IS_OK){
 
 		error = 0;
 		float t;
-		uint8_t i = 0;
+		
 
 		error += Commander._set(ar[i++], dist2speed_H);
 		dist2speed_H_Rep = 1.0f / dist2speed_H;
@@ -314,18 +316,19 @@ void StabilizationClass::setXY(const float  *ar){
 		
 		error += Commander._set(ar[i++], max_speed_xy);
 		error += Commander._set(ar[i++], ACCXY_CF);
+	}
+	if (error == 0) {
+		cout << "Stabilization XY set : \n";
 
-		//resset_xy_integrator();
-		cout << "Stabilization XY set:\n";
-		for (uint8_t ii = 0; ii < i; ii++){
+		for (uint8_t ii = 0; ii < i; ii++) {
 			cout << ar[ii] << ",";
 		}
-		cout << ar[i] << endl;
+		cout << endl;
 	}
-	if (error>0)
-	{
-		cout << "Stab XY set Error\n";
-	}
+	else
+		cout << "ERROR to big or small. P=" << error;
+
+	
 }
 
 
