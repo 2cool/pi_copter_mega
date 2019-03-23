@@ -370,7 +370,7 @@ string AutopilotClass::get_set(){
 		MIN_THROTTLE_ << "," << \
 		sens_xy << "," << \
 		sens_z << "," << \
-		lowest_height << "," << Debug.n_debug << "," << camera_mode << "," << -gimBalPitchZero << "," << -gimBalRollZero << ",";
+		lowest_height << "," << Debug.n_debug << "," << camera_mode << "," << -gimBalPitchZero << "," << -gimBalRollZero;
 	string ret = convert.str();
 	return string(ret);
 }

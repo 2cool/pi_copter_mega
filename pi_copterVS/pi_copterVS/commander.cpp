@@ -394,7 +394,7 @@ string CommanderClass::get_set() {
 	string s = (ppp_inet) ? "1" : "0";
 	s += ",";
 	s+= (telegram_bot) ? "1" : "0";
-	s += ",";
+	
 
 	return s;
 }

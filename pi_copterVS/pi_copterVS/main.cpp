@@ -143,7 +143,7 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 	
 
 	Settings.read();
-
+	
 
 	cout << "___setup___\n";
 
@@ -166,6 +166,10 @@ int setup(int cnt) {////--------------------------------------------- SETUP ----
 #ifdef SIM800_F
 
 #endif
+
+
+
+	Settings.read_all();
 	return 0;
 
 }
@@ -485,6 +489,9 @@ int main(int argc, char *argv[]) {
 
 
 		static uint32_t ppp_delay=0;
+
+		
+
 		while (shmPTR->run_main){
 			if (loop()) {
 				shmPTR->main_cnt++;
@@ -512,7 +519,7 @@ int main(int argc, char *argv[]) {
 		cout<< "\n main Signal caught!" << "\t"<<Mpu.timed << endl;
 	//WiFi.stopServer();
 	Settings.write();
-	Settings.write_all();
+	
 	Log.close();
 
 	shmPTR->internet_run = false;
@@ -528,10 +535,12 @@ int main(int argc, char *argv[]) {
 	if (shmPTR->reboot) {
 		switch (shmPTR->reboot) {
 		case 1:
+			Settings.write_all();
 			if (string(argv[0]).find("out") == -1)
 				system("reboot");
 			break;
 		case 2:
+			Settings.write_all();
 			system("shutdown now");
 			break;
 

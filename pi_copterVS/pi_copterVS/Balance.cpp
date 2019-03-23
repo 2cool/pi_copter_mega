@@ -118,6 +118,13 @@ void BalanceClass::set_pitch_roll_pids(const float kp, const float ki, const flo
 	pids[PID_ROLL_RATE].kI(ki);
 	pids[PID_ROLL_RATE].imax(imax);
 }
+
+
+//P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE"},
+
+
+
+
 void BalanceClass::init()
 {
 //f/speed^2/0.5=cS;
@@ -157,7 +164,7 @@ void BalanceClass::init()
 	Hmc.loop();
 //	Mpu.initYaw(Hmc.heading*RAD2GRAD);
 	mid_powerK = 1;
-	power_K = 0.1;  //Єто теперь не повер к.
+	
 #ifdef DEBUG_MODE
 	printf( "Heading :%i\n", (int)Hmc.get_headingGrad());
 	
@@ -179,8 +186,7 @@ string BalanceClass::get_set(int n){
 			pids[PID_YAW_RATE].kI() << "," << \
 			pids[PID_YAW_RATE].imax() << "," << \
 			yaw_stabKP << "," << \
-			_max_angle_ << "," << \
-			power_K << ",";
+			_max_angle_;
 	}
 	else {
 		
@@ -237,12 +243,8 @@ void BalanceClass::set(const float *ar, int n){
 				_max_angle_ = constrain(t, 15, 35);
 			}
 
-			t = power_K;
-			if ((error += Commander._set(ar[i++], t,false)) == 0) {
-
-				//power_K = constrain(t, 1, 1.2);
-				power_K = t;
-			}
+			
+			
 			//error += Commander._set(ar[i++], yaw_stabKP);
 
 			//error += Commander._set(ar[i], _max_angle_);
@@ -473,7 +475,6 @@ void BalanceClass::set_off_th_() {
 	throttle = true_throttle = 0;
 	mega_i2c.throttle(f_);
 }
-
 
 
 

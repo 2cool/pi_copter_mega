@@ -16,6 +16,13 @@
 #include "Balance.h"
 #include "Prog.h"
 #include "Log.h"
+
+
+
+
+
+
+//"dist to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR"
 void StabilizationClass::init(){
 
 	{
@@ -27,6 +34,9 @@ void StabilizationClass::init(){
 		max_VER_ACC = 2;
 		dist2speed_H = 0.2f;//0.5
 		dist2speed_H_Rep = 1.0f / dist2speed_H;
+		speed2accXY = 0.5;
+
+
 		set_acc_xy_speed_kp(6.1);
 		set_acc_xy_speed_kI(3);
 		set_acc_xy_speed_imax(Balance.get_max_angle());
@@ -150,10 +160,10 @@ void StabilizationClass::XY(float &pitch, float&roll){
 			
 		}
 		dist2speed(need_speedX, need_speedY);
-		const float need_acx = need_speedX + Mpu.get_Est_SpeedX();
-		const float need_acy = need_speedY + Mpu.get_Est_SpeedY();
-		float naccX = need_acx + Mpu.get_w_accX();
-		float naccY = need_acy + Mpu.get_w_accY();
+		const float need_acx = (need_speedX + Mpu.get_Est_SpeedX())*speed2accXY;
+		const float need_acy = (need_speedY + Mpu.get_Est_SpeedY())*speed2accXY;
+		float naccX = need_acx + Mpu.fw_accX;
+		float naccY = need_acy + Mpu.fw_accY;
 
 		const float k = max_HOR_ACC/sqrt(naccX * naccX + naccY + naccY);
 		if (k < 1) {
@@ -176,10 +186,10 @@ void StabilizationClass::XY(float &pitch, float&roll){
 float StabilizationClass::Z(){
 	static float naccZF=0;
 		const float need_speedZ = getSpeed_Z(Autopilot.fly_at_altitude() - Mpu.get_Est_Alt());
-		const float need_accZ = speed2accZ*need_speedZ-Mpu.get_Est_SpeedZ();
+		const float need_accZ = speed2accZ*need_speedZ - Mpu.get_Est_SpeedZ();
 
-
-		naccZF += (constrain((need_accZ - Mpu.accZ), -max_VER_ACC, max_VER_ACC) - naccZF)*ACCZ_CF;
+		
+		naccZF += (constrain((need_accZ - Mpu.faccZ), -max_VER_ACC, max_VER_ACC) - naccZF)*ACCZ_CF;
 
 
 		const float fZ = HOVER_THROTHLE + pids[ACCZ_PID].get_pid(naccZF, Mpu.dt)*Balance.powerK();

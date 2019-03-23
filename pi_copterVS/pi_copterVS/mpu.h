@@ -76,7 +76,7 @@ class MpuClass
 	 float h_yaw;
 	uint8_t gLPF;
 	//-----------------
-	float w_accX, w_accY;
+	
 	//------------------
 	float yaw_off;
 	float f_pitch, f_roll;
@@ -97,8 +97,7 @@ private:
 	void rotateCCW(float &x, float &y);
  public:
 	 float dist2home_2() { return get_Est_X()*get_Est_X() + get_Est_Y()*get_Est_Y(); }
-	 float get_w_accX() { return w_accX; }
-	 float get_w_accY() { return w_accY; }
+
 	 void getXYRelative2Zero(float&x, float&y) { x -= XatZero; y -= YatZero; }
 	// void set_cos_sin_dir();
 	// double dir_angle_GRAD, cosDirection, sinDirection;
@@ -133,6 +132,8 @@ private:
 	 float get_roll();
 	 bool mpu_calibrated,gyro_calibratioan;
 	float accZ,accY,accX,tiltPower,cosPitch,cosRoll,sinPitch,sinRoll;
+	float w_accX, w_accY, fw_accX, fw_accY;
+	float faccZ;
 	float  gyroPitch, gyroYaw, gyroRoll;
 	string get_set();
 	void set(const float  *ar);

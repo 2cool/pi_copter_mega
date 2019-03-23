@@ -26,8 +26,8 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
     double def_change[][]={
             {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
-            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
-            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
+            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,1,0.2,0.2},
+            {0.2,0.2,0.2,0.2,0.2,0.2,1,0.2,0.2,0.2},
             {1,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
             {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
             {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2}
@@ -36,12 +36,19 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
 
     String a[][]={
-            {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE","powerK"},
+            // balance
+            {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE",_null},
+            // Z stab
             {"alt to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","MAX_SPEED_P","MAX_SPEED_M","FILTR",_null,_null},
-            {"alt to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR",_null,_null,_null},
+            // XY stab
+            {"dist to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR",_null,_null,_null},
+            // secure
             {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z"},
-            {"DRAG_K","_0007","tiltPower_CF",_null,_null,_null,_null,_null,_null,_null},
+            // mpu
+            {_null,_null,_null,_null,_null,_null,_null,_null,_null,_null},
+            //compas
             {"m power on,1,0,100",_null,_null,_null,_null,_null,_null,_null,_null,_null},
+            //rest
             {"vedeoAdr","ppp_inet","telegram",_null,_null,_null,_null,_null,_null,_null}
 
     };

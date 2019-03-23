@@ -124,7 +124,7 @@ void MpuClass::log_emu() {
 void MpuClass::init()
 {
 
-
+	fw_accX = fw_accY = faccZ = 0;
 	tiltPower_CF = 0.05;
 	altitude_at_zero = XatZero = YatZero = 0;
 	_0007=0.007;
@@ -554,6 +554,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	
 	accZ = az*cosPitch + sinPitch*ax;
 	accZ = 9.8f*(accZ*cosRoll + sinRoll*ay - 1);
+	faccZ += (accZ - faccZ)*0.5;
 
 	accX = 9.8f*(ax*cosPitch - az*sinPitch);
 	accY = 9.8f*(-ay*cosRoll + az*sinRoll);
@@ -703,6 +704,9 @@ void MpuClass::test_Est_XY() {
 	
 	w_accX = (-cosYaw*c_accX + sinYaw*c_accY); //relative to world
 	w_accY = (-cosYaw*c_accY - sinYaw*c_accX);
+
+	fw_accX += (w_accX - fw_accX)*0.5f;
+	fw_accY += (w_accY - fw_accY)*0.5f;
 	//--------------------------------------------------------estimate
 	estX += mpu_dt*(est_speedX + w_accX * mpu_dt*0.5f);
 	est_speedX += (w_accX*mpu_dt);

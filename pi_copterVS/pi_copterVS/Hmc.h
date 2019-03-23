@@ -93,7 +93,7 @@ class HmcClass
 
 	friend class StabilizationClass;
  public:
-	 string get_settings();
+	 string get_calibr_set();
 
 	 float fmz, fmx, fmy;
 	 void start_motor_compas_calibr();

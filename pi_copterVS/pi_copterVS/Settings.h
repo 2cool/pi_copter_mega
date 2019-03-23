@@ -56,6 +56,7 @@ public:
 	int read();
 
 	int write_all();
+	int read_all();
 
 	void init();
 

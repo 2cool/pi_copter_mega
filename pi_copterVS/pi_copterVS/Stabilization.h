@@ -35,7 +35,7 @@ private:
 	float dist2speed_H, dist2speed_H_Rep;
 
 	float alt2speedZ, alt2speedZ_Rep;
-	float speed2accZ;
+	float speed2accZ, speed2accXY;
 	float max_HOR_ACC, max_VER_ACC;
 	float accxy_stab(float dist, float maxA, float timeL);
 	float accxy_stab_rep(float speed, float maxA, float timeL);
@@ -53,7 +53,7 @@ private:
 	
 	
 public:
-	
+
 	void setNeedPos2Home();
 	void add2NeedPos(float speedX, float speedY, float dt);
 	void setNeedPos(float x, float y);

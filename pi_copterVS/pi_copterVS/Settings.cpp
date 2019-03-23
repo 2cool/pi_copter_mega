@@ -5,7 +5,9 @@
 #include "Settings.h"
 
 #include "Hmc.h"
-
+#include "Balance.h"
+#include "Stabilization.h"
+#include "commander.h"
 
 #define EEPROM_SIZE 256
 char EEPROM_MEM[EEPROM_SIZE];
@@ -122,7 +124,33 @@ int SettingsClass::read() {
 }
 
 
+int SettingsClass::read_all() {
 
+
+
+
+
+	FILE *f = fopen("/home/igor/copter_set.txt", "r");
+	if (f == NULL)
+	{
+		cout << "Error opening file!\n";
+		return -1;
+	}
+	char buf[1000];
+////	char c=fgetc(f);
+//	cout << c << endl;
+	while (true)  {
+		char *ret=fgets(buf, 1000, f);
+		if (ret == NULL)
+			break;
+		Commander.Settings(string(buf));
+	}
+
+	fclose(f);
+
+	
+	return 0;
+}
 
 int SettingsClass::write_all() {
 
@@ -132,17 +160,23 @@ int SettingsClass::write_all() {
 	if (f == NULL)
 	{
 		cout << "Error opening file!\n";
-		//exit(1);
+		return -1;
 	}
 
 	//HMC
 	
-
-	fprintf(f, "%s\n", Hmc.get_settings());
-
-
+	string end = ",1,1,1,1,1,1,1,1,1,1,1\n";
+	
+	fprintf(f, "0,%s", (Balance.get_set()+end).c_str());
+	fprintf(f, "1,%s", (Stabilization.get_z_set() + end).c_str());
+	fprintf(f, "2,%s", (Stabilization.get_xy_set() + end).c_str());
+//	fprintf(f, "3,%s", (Autopilot.get_set() + end).c_str());
+	//fprintf(f, "4,%s", (Mpu.get_set() + end).c_str());
+	//fprintf(f, "5,%s", (Hmc.get_set() + end).c_str());
+	//fprintf(f, "6,%s", (Commander.get_set() + end).c_str());
+	//(f, "9,%s", (Hmc.get_calibr_set() + end).c_str());
 	fclose(f);
-
+	return 0;
 
 }
 

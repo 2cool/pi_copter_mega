@@ -697,7 +697,7 @@ uint8_t HmcClass::getIDC() {
 }
 
 
-string HmcClass::get_settings() {
+string HmcClass::get_calibr_set() {
 	ostringstream convert;
 	convert << \
 		c_base[0] << "," << \
