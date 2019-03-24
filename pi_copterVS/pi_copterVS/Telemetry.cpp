@@ -238,7 +238,7 @@ Max Continuous Power 220 Watts
 
 #define WORK_I 1.5
 
-	if (Autopilot.motors_is_on() && Autopilot.get_throttle()>MIN_THROTTLE_ && (m_current[0] > WORK_I || m_current[1] > WORK_I || m_current[2] > WORK_I || m_current[3] > WORK_I)) {
+	if (Autopilot.motors_is_on() && Autopilot.get_throttle()>Balance.get_min_throttle() && (m_current[0] > WORK_I || m_current[1] > WORK_I || m_current[2] > WORK_I || m_current[3] > WORK_I)) {
 		Balance.propeller_lost[0] = (m_current[0] < WORK_I);
 		Balance.propeller_lost[1] = (m_current[1] < WORK_I);
 		Balance.propeller_lost[2] = (m_current[2] < WORK_I);

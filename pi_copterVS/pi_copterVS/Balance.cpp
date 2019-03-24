@@ -127,13 +127,10 @@ void BalanceClass::set_pitch_roll_pids(const float kp, const float ki, const flo
 
 void BalanceClass::init()
 {
-//f/speed^2/0.5=cS;
-	//speed^2*0.5*cS=f
-	//speed = sqrt(2f / cS)
-	//cS = 0.00536;//15 град 
-//	0.00357
+	max_angle = MAX_ANGLE;
+	max_throttle = MAX_THROTTLE;
+	min_throttle = MIN_THROTTLE;
 
-	min_thr = MIN_THROTTLE_;
 	f_[0] = f_[1] = f_[2] = f_[3] = 0;
 	cout << "BALANCE INIT\n";
 	
@@ -142,7 +139,7 @@ void BalanceClass::init()
 
 	Stabilization.init();
 	true_throttle = throttle = 0;
-	_max_angle_= MAX_ANGLE_;
+
 
 
 	pitch_roll_stabKP = 2;
@@ -186,7 +183,7 @@ string BalanceClass::get_set(int n){
 			pids[PID_YAW_RATE].kI() << "," << \
 			pids[PID_YAW_RATE].imax() << "," << \
 			yaw_stabKP << "," << \
-			_max_angle_;
+			max_angle;
 	}
 	else {
 		
@@ -238,9 +235,10 @@ void BalanceClass::set(const float *ar, int n){
 			if ((error += Commander._set(ar[i++], t)) == 0) {
 				yaw_stabKP = t;
 			}
-			t = _max_angle_;
+			t = max_angle;
 			if ((error += Commander._set(ar[i++], t)) == 0) {
-				_max_angle_ = constrain(t, 15, 35);
+				max_angle = constrain(t, 15, 35);
+				Stabilization.setMaxAng();
 			}
 			
 		}
@@ -288,6 +286,21 @@ void BalanceClass::reset() {
 	Stabilization.resset_xy_integrator();
 	Stabilization.resset_z();
 }
+
+bool BalanceClass::set_min_max_throttle(const float max, const float min) {
+	if (min < MIN_THROTTLE || max > MAX_THROTTLE)
+		return true;
+	max_throttle = max;
+	min_throttle = min;
+	Stabilization.setMaxThr();
+
+
+
+
+	return false;
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #define MAX_ANGLE_SPEED 360
@@ -309,33 +322,29 @@ bool BalanceClass::loop()
 		if (Autopilot.motors_is_on()) { 
 
 			float pK = powerK();
-			const float min_throttle = min_thr*pK;
-			const float max_throttle = constrain(MAX_THROTTLE_*pK, MAX_THROTTLE_,0.9);
+			const float c_min_throttle = min_throttle*pK;
+			const float c_max_throttle = (max_throttle*pK > OVER_THROTTLE) ? OVER_THROTTLE : max_throttle * pK;
 
-			maxAngle = _max_angle_;
 			if (Autopilot.z_stabState()) {
 				true_throttle=Stabilization.Z();
 				throttle = pK*true_throttle;
-				throttle = constrain(throttle, min_throttle, max_throttle);
+				throttle = constrain(throttle, c_min_throttle, c_max_throttle);
 
 				const float thr = throttle / Mpu.tiltPower;
-				if (thr > max_throttle) {
-					maxAngle = RAD2GRAD*acos(throttle / max_throttle);
-					maxAngle = constrain(maxAngle,MIN_ANGLE, _max_angle_);
+				if (thr > OVER_THROTTLE) {
+					t_max_angle = RAD2GRAD*acos(throttle / OVER_THROTTLE);
+					t_max_angle = constrain(t_max_angle,MIN_ANGLE, max_angle);
 					throttle = max_throttle;
 				}
 				else {
 					throttle = thr;
+					t_max_angle = max_angle;
 				}
 			}
 			else {
-
-				//Stabilization.Z(true);
 				true_throttle = Autopilot.get_throttle();
-				throttle = true_throttle;
-				throttle /= Mpu.tiltPower;
-				throttle = constrain(throttle, MIN_THROTTLE_, max_throttle);
-				//	Debug.load(0, throttle, f_[0]);
+				throttle = true_throttle/Mpu.tiltPower;
+				throttle = constrain(throttle, c_min_throttle, c_max_throttle);
 
 			}
 
@@ -343,23 +352,19 @@ bool BalanceClass::loop()
 				Stabilization.XY(c_pitch, c_roll);
 			}
 			else {
-				//Stabilization.XY(c_pitch, c_roll, true);
 				c_pitch = Autopilot.get_Pitch();
 				c_roll = Autopilot.get_Roll();
 			}
 
-			c_pitch = constrain(c_pitch, -maxAngle, maxAngle);
-			c_roll = constrain(c_roll, -maxAngle, maxAngle);
-
-			const float maxAngle07 = maxAngle*0.7f;
+			c_pitch = constrain(c_pitch, -t_max_angle, t_max_angle);
+			c_roll = constrain(c_roll, -t_max_angle, t_max_angle);
+			const float maxAngle07 = t_max_angle *0.7f;
 			if (abs(c_pitch) > maxAngle07 || abs(c_roll) > maxAngle07) {
-				//	c_pitch = constrain(c_pitch, -maxAngle, maxAngle);
-				//c_roll = constrain(c_roll, -maxAngle, maxAngle);
 				float k = (float)(RAD2GRAD*acos(cos(c_pitch*GRAD2RAD)*cos(c_roll*GRAD2RAD)));
 				if (k == 0)
-					k = maxAngle;
-				if (k > maxAngle) {
-					k = maxAngle / k;
+					k = t_max_angle;
+				if (k > t_max_angle) {
+					k = t_max_angle / k;
 					c_pitch *= k;
 					c_roll *= k;
 				}
@@ -425,7 +430,7 @@ bool BalanceClass::loop()
 
 				}
 #endif
-				if (throttle < MIN_THROTTLE_) {
+				if (throttle < MIN_THROTTLE) {
 					reset();
 				}
 

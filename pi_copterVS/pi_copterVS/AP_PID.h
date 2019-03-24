@@ -25,12 +25,14 @@ public:
 	void	kP(const float v)		{ _kp = v; }
 	void	kI(const float v)		{ _ki = v; }
 	void	kD(const float v, const float fCut = 20.0);
-	void	imax(const float v)	{ _imax = v; }
+	void	imax(const float v) { _imax = v; _imin = -v; }
+	void	imax(const float min, const float max) { _imax = max; _imin = min; }
 
 	float	kP()			{ return _kp; }
 	float	kI()			{ return _ki; }
 	float	kD()			{ return _kd; }
 	float	imax()			{ return _imax; }
+	float   imin()			{ return _imin; }
 	void   set_integrator(const float i);
 	float	get_integrator() const	{ return _integrator; }
 
@@ -40,7 +42,7 @@ private:
 	float				_kp;
 	float				_ki;
 	float				_kd;
-	float				_imax;
+	float				_imax,_imin;
 
 	float				_integrator;		///< integrator value
 	float				_last_error;		///< last error for derivative

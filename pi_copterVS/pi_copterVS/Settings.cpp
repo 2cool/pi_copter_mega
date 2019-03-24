@@ -151,7 +151,24 @@ int SettingsClass::read_all() {
 	
 	return 0;
 }
-
+//replace 0, to 0.0, end add 1s to end and endl;
+string r0(string str) {
+	string nstr =  (str[0] == 0 && str[1] == ',')? "0.0":str.substr(0,1);
+	int i = 1;
+	for (; i < str.length()-1; i++) {
+		if (str.at(i - 1) == ',' && str.at(i) == '0' && str.at(i + 1) == ',')
+			nstr += "0.0";
+		else
+			nstr += str.substr(i, 1);
+	}
+	if (str.at(i - 1) == ',' && str.at(i) == '0')
+		nstr += "0.0";
+	else
+		nstr += str.substr(i, 1);
+	nstr += ",1,1,1,1,1,1,1,1,1,1\n";
+	
+	return nstr;
+}
 int SettingsClass::write_all() {
 
 
@@ -164,13 +181,15 @@ int SettingsClass::write_all() {
 	}
 
 	//HMC
+
+	//0 - error ; 0.0 is ok
 	
-	string end = ",1,1,1,1,1,1,1,1,1,1,1\n";
 	
-	fprintf(f, "0,%s", (Balance.get_set()+end).c_str());
-	fprintf(f, "1,%s", (Stabilization.get_z_set() + end).c_str());
-	fprintf(f, "2,%s", (Stabilization.get_xy_set() + end).c_str());
-//	fprintf(f, "3,%s", (Autopilot.get_set() + end).c_str());
+	
+	fprintf(f, "0,%s", (r0(Balance.get_set())).c_str());
+	fprintf(f, "1,%s", (r0(Stabilization.get_z_set())).c_str());
+	fprintf(f, "2,%s", (r0(Stabilization.get_xy_set())).c_str());
+	fprintf(f, "3,%s", (r0(Autopilot.get_set())).c_str());
 	//fprintf(f, "4,%s", (Mpu.get_set() + end).c_str());
 	//fprintf(f, "5,%s", (Hmc.get_set() + end).c_str());
 	//fprintf(f, "6,%s", (Commander.get_set() + end).c_str());

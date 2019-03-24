@@ -45,12 +45,15 @@ class BalanceClass
 
 	float f_[4];
 
-	float _max_angle_= MAX_ANGLE_;
-	float maxAngle;
-	float min_thr;
+	float t_max_angle;
+	float max_throttle,min_throttle, max_angle;
  public:
+	 float get_max_throttle() { return max_throttle; }
+	 float get_min_throttle() { return min_throttle; }
+	 float get_max_angle() { return max_angle; }
+
 	 bool propeller_lost[4];
-	 float get_max_angle() { return _max_angle_; }
+	 
 	 float powerK();
 	 float c_pitch, c_roll;
 	 float get_throttle(){ return throttle; }
@@ -62,7 +65,7 @@ class BalanceClass
 	 float gf3(){ return f_[3]; }
 	// float get_throttle(){ return (throttle-1000)*0.001; }
 
-	// bool set_min_max_throttle(const float min, const float max);
+	 bool set_min_max_throttle(const float max, const float min);
 	 
 	 
 

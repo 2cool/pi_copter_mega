@@ -366,8 +366,8 @@ string AutopilotClass::get_set(){
 	ostringstream convert;
 	convert << \
 		height_to_lift_to_fly_to_home << "," << \
-		MAX_THROTTLE_ << "," << \
-		MIN_THROTTLE_ << "," << \
+		Balance.get_max_throttle() << "," << \
+		Balance.get_min_throttle() << "," << \
 		sens_xy << "," << \
 		sens_z << "," << \
 		lowest_height << "," << Debug.n_debug << "," << camera_mode << "," << -gimBalPitchZero << "," << -gimBalRollZero;
@@ -385,8 +385,8 @@ void AutopilotClass::set(const float ar[]){
 		
 		
 		error += Commander._set(ar[i++], height_to_lift_to_fly_to_home);
-		//Balance.set_min_max_throttle(ar[i++], ar[i++]);
-		i += 2;
+		error += Balance.set_min_max_throttle(ar[i++], ar[i++]);
+		//i += 2;
 		error += Commander._set(ar[i++], sens_xy);
 		error += Commander._set(ar[i++], sens_z);
 		error += Commander._set(ar[i++], lowest_height,false);
@@ -399,10 +399,10 @@ void AutopilotClass::set(const float ar[]){
 		mega_i2c.gimagl(gimBalPitchZero, gimBalRollZero);
 		if (error == 0){
 			int ii = 0;
-			cout << "Safe set:\n";
+			cout << "Save set:\n";
 
 			for (ii = 0; ii < i; ii++){
-				cout << ar[ii] << endl;
+				cout << ar[ii] << ",";
 			}
 			cout << ar[ii] << endl;
 		}

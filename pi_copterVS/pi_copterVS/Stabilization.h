@@ -53,7 +53,8 @@ private:
 	
 	
 public:
-
+	void setMaxAng();
+	void setMaxThr();
 	void setNeedPos2Home();
 	void add2NeedPos(float speedX, float speedY, float dt);
 	void setNeedPos(float x, float y);

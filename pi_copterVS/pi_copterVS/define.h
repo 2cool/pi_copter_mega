@@ -68,7 +68,7 @@
 #define MIN_ACUR_HOR_POS_4_JAMM 20
 
 
-#define MAX_ANGLE_ 35
+#define MAX_ANGLE 35
 #define MIN_ANGLE 15
 #define COS_MIN_ANGLE 0.966f
 
@@ -86,8 +86,8 @@
 #define MAX_DELTA 0.2f
 #define MAX_YAW_DELTA 0.1f
 #define FULL_THROTTLE_ 1.0f
-#define MAX_THROTTLE_ (FULL_THROTTLE_-MAX_DELTA)
-
+#define MAX_THROTTLE (FULL_THROTTLE_-MAX_DELTA)
+#define OVER_THROTTLE 0.9f
 
 
 #define CONNECTION_LOST_TIMEOUT 3
@@ -95,7 +95,7 @@
 
 #define MIDDLE_POSITION 0.5f
 #define HOVER_THROTHLE 0.5
-#define MIN_THROTTLE_ 0.4
+#define MIN_THROTTLE 0.4
 #define FALLING_THROTTLE 0.45
 
 #define STOP_THROTTLE_ 0.2f

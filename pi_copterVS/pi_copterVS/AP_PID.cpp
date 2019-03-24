@@ -11,8 +11,8 @@ AP_PID::AP_PID()
 
 void   AP_PID::set_integrator(const float i) { 
 	_integrator = i;
-	if (_integrator < -_imax) {
-		_integrator = -_imax;
+	if (_integrator < _imin) {
+		_integrator = _imin;
 	}
 	else if (_integrator > _imax) {
 		_integrator = _imax;
@@ -56,12 +56,23 @@ float AP_PID::get_pid(float error, float delta_time)
 	// Compute integral component if time has elapsed
 	if ((_ki != 0) && (delta_time > 0)) {
 		_integrator += (error * _ki) *  delta_time;
+
+		if (_integrator > _imax) {
+			_integrator = _imax;
+		}
+		else {
+			if (_integrator < _imin)
+				_integrator = _imin;
+		}
+
+		/*
 		if (_integrator < -_imax) {
 			_integrator = -_imax;
 		}
 		else if (_integrator > _imax) {
 			_integrator = _imax;
 		}
+		*/
 		output += _integrator;
 	}
 	return output;
