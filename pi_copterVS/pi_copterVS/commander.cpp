@@ -117,8 +117,8 @@ float * load(const string  buf, const uint8_t  * filds) {
 
 
 uint8_t CommanderClass::_set(const float  val, float &set, bool secure){
-	if (val == 0)
-		return 1;
+	//if (val == 0)
+	//	return 1;
 	if (secure == false){
 		set = val;
 	}else

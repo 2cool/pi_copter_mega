@@ -164,8 +164,8 @@ void StabilizationClass::XY(float &pitch, float&roll){
 			
 		}
 		dist2speed(need_speedX, need_speedY);
-		const float need_acx = (need_speedX + Mpu.get_Est_SpeedX())*speed2accXY;
-		const float need_acy = (need_speedY + Mpu.get_Est_SpeedY())*speed2accXY;
+		const float need_acx = 0;// (need_speedX + Mpu.get_Est_SpeedX())*speed2accXY;
+		const float need_acy = 0;// (need_speedY + Mpu.get_Est_SpeedY())*speed2accXY;
 		float naccX = need_acx + Mpu.fw_accX;
 		float naccY = need_acy + Mpu.fw_accY;
 
@@ -190,7 +190,7 @@ void StabilizationClass::XY(float &pitch, float&roll){
 float StabilizationClass::Z(){
 	static float naccZF=0;
 		const float need_speedZ = getSpeed_Z(Autopilot.fly_at_altitude() - Mpu.get_Est_Alt());
-		const float need_accZ = speed2accZ*need_speedZ - Mpu.get_Est_SpeedZ();
+		const float need_accZ =  speed2accZ*need_speedZ - Mpu.get_Est_SpeedZ();
 
 		
 		naccZF += (constrain((need_accZ - Mpu.faccZ), -max_VER_ACC, max_VER_ACC) - naccZF)*ACCZ_CF;
@@ -216,6 +216,7 @@ string StabilizationClass::get_z_set(){
 	convert<<\
 		alt2speedZ <<","<<\
 		speed2accZ << "," << \
+		max_VER_ACC<<","<<\
 		pids[ACCZ_PID].kP() <<","<<\
 		pids[ACCZ_PID].kI() <<","<<\
 		pids[ACCZ_PID].imax() <<","<<\
@@ -242,7 +243,7 @@ void StabilizationClass::setZ(const float  *ar){
 		error += Commander._set(ar[i++], alt2speedZ);
 		alt2speedZ_Rep = 1.0f / alt2speedZ;
 		error += Commander._set(ar[i++], speed2accZ);
-		
+		error += Commander._set(ar[i++], max_VER_ACC);
 		t = pids[ACCZ_PID].kP();
 		if ((error += Commander._set(ar[i++],t))==0)
 			pids[ACCZ_PID].kP(t);
@@ -280,7 +281,8 @@ string StabilizationClass::get_xy_set(){
 	ostringstream convert;
 	convert << \
 		dist2speed_H << "," << \
-		max_VER_ACC << "," << \
+		speed2accXY << "," << \
+		max_HOR_ACC << "," << \
 		pids[ACCX_SPEED].kP() << "," << \
 		pids[ACCX_SPEED].kI() << "," << \
 		pids[ACCX_SPEED].imax() << "," << \
@@ -302,8 +304,8 @@ void StabilizationClass::setXY(const float  *ar){
 
 		error += Commander._set(ar[i++], dist2speed_H);
 		dist2speed_H_Rep = 1.0f / dist2speed_H;
-
-		error += Commander._set(ar[i++], max_VER_ACC);
+		error+=Commander._set(ar[i++], speed2accXY);
+		error += Commander._set(ar[i++], max_HOR_ACC);
 		
 
 		t = pids[ACCX_SPEED].kP();

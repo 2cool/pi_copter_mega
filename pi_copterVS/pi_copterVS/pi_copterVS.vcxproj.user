@@ -8,7 +8,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <RemoteDebuggingMode>gdbserver</RemoteDebuggingMode>
     <DebuggerFlavor>LinuxDebugger</DebuggerFlavor>
-    <RemoteDebuggerCommandArguments>300 100 n n y n n n</RemoteDebuggerCommandArguments>
+    <RemoteDebuggerCommandArguments>100 1 n n y n n n</RemoteDebuggerCommandArguments>
     <RemoteTarget>296911998;192.168.100.235 (username=, port=22, authentication=Password)</RemoteTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">

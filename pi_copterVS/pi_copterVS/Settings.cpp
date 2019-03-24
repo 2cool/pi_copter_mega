@@ -133,7 +133,7 @@ int SettingsClass::read_all() {
 	FILE *f = fopen("/home/igor/copter_set.txt", "r");
 	if (f == NULL)
 	{
-		cout << "Error opening file!\n";
+		cout << "Error opening settings file!\n";
 		return -1;
 	}
 	char buf[1000];
@@ -176,7 +176,7 @@ int SettingsClass::write_all() {
 	FILE *f = fopen("/home/igor/copter_set.txt", "w");
 	if (f == NULL)
 	{
-		cout << "Error opening file!\n";
+		cout << "Error opening settings file!\n";
 		return -1;
 	}
 

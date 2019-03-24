@@ -187,8 +187,9 @@ public class Commander {
         long _dt_=time-last_time;
         last_time=time;
 
-        if ((MainActivity.command_bits_ & MainActivity.MOTORS_ON)!=0){
+        if ((MainActivity.control_bits & MainActivity.MOTORS_ON)!=0){
             motors_on_time+=_dt_;
+            //Log.d("ONTIME",Integer.toString((int)motors_on_time));
         }
       //  Log.d ("COMM",Float.toString(throttle));
         MainActivity.command_bits_=0;

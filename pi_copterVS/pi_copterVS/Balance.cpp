@@ -347,7 +347,8 @@ bool BalanceClass::loop()
 				throttle = constrain(throttle, c_min_throttle, c_max_throttle);
 
 			}
-
+			//Debug.load(0, true_throttle, throttle);
+			//Debug.dump();
 			if (Autopilot.xy_stabState()) {
 				Stabilization.XY(c_pitch, c_roll);
 			}
@@ -403,7 +404,7 @@ bool BalanceClass::loop()
 
 #ifdef YAW_OFF
 			yaw_output = 0;
-			pitch_output=0;
+			//pitch_output=0;
 #endif
 
 			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече
