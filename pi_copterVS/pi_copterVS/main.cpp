@@ -352,11 +352,16 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	{
-		const int i = string(argv[0]).find("/root/projects/pi_copterVS");
-		if (i == -1) {
-			sleep(10);
-		}
+	//	const int i = string(argv[0]).find("pi_copterVS.out");
+		//if (i == -1) {
+		//	sleep(10);
+		//}
 	}
+
+#ifdef NDEBUG
+	sleep(10);
+
+#endif
 
 	init_millis_micros();
 	if (millis() > 31000)
@@ -387,7 +392,7 @@ int main(int argc, char *argv[]) {
 			}
 			if (argc >= 9) {
 				int t = atoi(argv[1]);
-				t = constrain(t, 300, 300);/////
+				//t = constrain(t, 300, 300);/////
 				shmPTR->fly_at_start = 0.01f*(float)t;
 
 				t = atoi(argv[2]);

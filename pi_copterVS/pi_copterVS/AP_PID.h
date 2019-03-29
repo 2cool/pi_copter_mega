@@ -25,8 +25,11 @@ public:
 	void	kP(const float v)		{ _kp = v; }
 	void	kI(const float v)		{ _ki = v; }
 	void	kD(const float v, const float fCut = 20.0);
-	void	imax(const float v) { _imax = v; _imin = -v; }
-	void	imax(const float min, const float max) { _imax = max; _imin = min; }
+
+	void	imax(const float min, const float max) { 
+		_imax = max; 
+		_imin = min; 
+	}
 
 	float	kP()			{ return _kp; }
 	float	kI()			{ return _ki; }

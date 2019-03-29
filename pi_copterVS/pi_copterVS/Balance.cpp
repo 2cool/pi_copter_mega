@@ -8,7 +8,7 @@
 #include "GPS.h"
 #include "Log.h"
 #include "mpu.h"
-
+#include "Settings.h"
 
 
 
@@ -112,11 +112,11 @@ static const float f_constrain(const float v, const float min, const float max){
 void BalanceClass::set_pitch_roll_pids(const float kp, const float ki, const float imax) {
 	pids[PID_PITCH_RATE].kP(kp);
 	pids[PID_PITCH_RATE].kI(ki);
-	pids[PID_PITCH_RATE].imax(imax);
+	pids[PID_PITCH_RATE].imax(-imax,imax);
 
 	pids[PID_ROLL_RATE].kP(kp);
 	pids[PID_ROLL_RATE].kI(ki);
-	pids[PID_ROLL_RATE].imax(imax);
+	pids[PID_ROLL_RATE].imax(-imax,imax);
 }
 
 
@@ -152,7 +152,7 @@ void BalanceClass::init()
 
 	pids[PID_YAW_RATE].kP(0.0017f);
 	pids[PID_YAW_RATE].kI(0.0017f);
-	pids[PID_YAW_RATE].imax(0.1);
+	pids[PID_YAW_RATE].imax(-0.1,0.1);
 
 	delay(1500);
 
@@ -202,41 +202,41 @@ void BalanceClass::set(const float *ar, int n){
 		float t;
 		if (n == 0) {
 			t = pids[PID_PITCH_RATE].kP();
-			if ((error += Commander._set(ar[i++], t)) == 0) {
+			if ((error += Settings._set(ar[i++], t)) == 0) {
 				pids[PID_PITCH_RATE].kP(t);
 				pids[PID_ROLL_RATE].kP(t);
 			}
 			t = pids[PID_PITCH_RATE].kI();
-			if ((error += Commander._set(ar[i++], t)) == 0) {
+			if ((error += Settings._set(ar[i++], t)) == 0) {
 				pids[PID_PITCH_RATE].kI(t);
 				pids[PID_ROLL_RATE].kI(t);
 			}
 			t = pids[PID_PITCH_RATE].imax();
-			if ((error += Commander._set(ar[i++], t)) == 0) {
-				pids[PID_PITCH_RATE].imax(t);
-				pids[PID_ROLL_RATE].imax(t);
+			if ((error += Settings._set(ar[i++], t)) == 0) {
+				pids[PID_PITCH_RATE].imax(-t,t);
+				pids[PID_ROLL_RATE].imax(-t,t);
 			}
 
-			error += Commander._set(ar[i++], pitch_roll_stabKP);
+			error += Settings._set(ar[i++], pitch_roll_stabKP);
 
 			t = pids[PID_YAW_RATE].kP();
-			if ((error += Commander._set(ar[i++], t)) == 0) {
+			if ((error += Settings._set(ar[i++], t)) == 0) {
 				pids[PID_YAW_RATE].kP(t);
 			}
 			t = pids[PID_YAW_RATE].kI();
-			if ((error += Commander._set(ar[i++], t)) == 0) {
+			if ((error += Settings._set(ar[i++], t)) == 0) {
 				pids[PID_YAW_RATE].kI(t);
 			}
 			t = pids[PID_YAW_RATE].imax();
-			if ((error += Commander._set(ar[i++], t)) == 0) {
-				pids[PID_YAW_RATE].imax(t);
+			if ((error += Settings._set(ar[i++], t)) == 0) {
+				pids[PID_YAW_RATE].imax(-t,t);
 			}
 			t = yaw_stabKP;
-			if ((error += Commander._set(ar[i++], t)) == 0) {
+			if ((error += Settings._set(ar[i++], t)) == 0) {
 				yaw_stabKP = t;
 			}
 			t = max_angle;
-			if ((error += Commander._set(ar[i++], t)) == 0) {
+			if ((error += Settings._set(ar[i++], t)) == 0) {
 				max_angle = constrain(t, 15, 35);
 				Stabilization.setMaxAng();
 			}
@@ -292,7 +292,7 @@ bool BalanceClass::set_min_max_throttle(const float max, const float min) {
 		return true;
 	max_throttle = max;
 	min_throttle = min;
-	Stabilization.setMaxThr();
+	Stabilization.setMinMaxI_Thr();
 
 
 
@@ -321,32 +321,33 @@ bool BalanceClass::loop()
 	else {
 		if (Autopilot.motors_is_on()) { 
 
-			float pK = powerK();
+			const float pK =  powerK();
 			const float c_min_throttle = min_throttle*pK;
 			const float c_max_throttle = (max_throttle*pK > OVER_THROTTLE) ? OVER_THROTTLE : max_throttle * pK;
 
 			if (Autopilot.z_stabState()) {
-				true_throttle=Stabilization.Z();
-				throttle = pK*true_throttle;
-				throttle = constrain(throttle, c_min_throttle, c_max_throttle);
-
-				const float thr = throttle / Mpu.tiltPower;
-				if (thr > OVER_THROTTLE) {
-					t_max_angle = RAD2GRAD*acos(throttle / OVER_THROTTLE);
-					t_max_angle = constrain(t_max_angle,MIN_ANGLE, max_angle);
-					throttle = max_throttle;
-				}
-				else {
-					throttle = thr;
-					t_max_angle = max_angle;
-				}
+				true_throttle = pK * Stabilization.Z();
 			}
 			else {
 				true_throttle = Autopilot.get_throttle();
-				throttle = true_throttle/Mpu.tiltPower;
-				throttle = constrain(throttle, c_min_throttle, c_max_throttle);
 
 			}
+
+			true_throttle = constrain(true_throttle, c_min_throttle, c_max_throttle);
+			throttle = true_throttle;
+			const float thr = throttle / Mpu.tiltPower;
+			if (thr > OVER_THROTTLE) {
+				t_max_angle = RAD2GRAD * acos(throttle / OVER_THROTTLE);
+				t_max_angle = constrain(t_max_angle, MIN_ANGLE, max_angle);
+				throttle = max_throttle;
+			}
+			else {
+				throttle = thr;
+				t_max_angle = max_angle;
+			}
+
+
+
 			//Debug.load(0, true_throttle, throttle);
 			//Debug.dump();
 			if (Autopilot.xy_stabState()) {

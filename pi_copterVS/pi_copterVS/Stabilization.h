@@ -49,12 +49,12 @@ private:
 	void set_acc_xy_speed_kp(const float f){ pids[ACCX_SPEED].kP(f);	pids[ACCY_SPEED].kP(f); }
 	void set_acc_xy_speed_kI(const float f){ pids[ACCX_SPEED].kI(f);	pids[ACCY_SPEED].kI(f); }
 	void set_acc_xy_speed_kD(const float f){ pids[ACCX_SPEED].kD(f,3);	pids[ACCY_SPEED].kD(f,3); }
-	void set_acc_xy_speed_imax(const float f){ pids[ACCX_SPEED].imax(f);	pids[ACCY_SPEED].imax(f); }
+	void set_acc_xy_speed_imax(const float f){ pids[ACCX_SPEED].imax(-f,f);	pids[ACCY_SPEED].imax(-f,f); }
 	
 	
 public:
 	void setMaxAng();
-	void setMaxThr();
+	void setMinMaxI_Thr();
 	void setNeedPos2Home();
 	void add2NeedPos(float speedX, float speedY, float dt);
 	void setNeedPos(float x, float y);

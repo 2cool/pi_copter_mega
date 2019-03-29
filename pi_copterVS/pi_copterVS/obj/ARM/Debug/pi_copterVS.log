@@ -4,5 +4,6 @@
   Starting remote build
   Compiling sources:
   commander.cpp
+  Settings.cpp
   Linking objects
   pi_copterVS.vcxproj -> C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

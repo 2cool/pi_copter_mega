@@ -161,7 +161,8 @@ void MpuClass::init()
 
 	accelgyro.initialize(MPU6050_GYRO_FS_2000, MPU6050_ACCEL_FS_8, MPU6050_DLPF_BW_98);
 	//ms_open();
-	
+	sleep(1);
+	accelgyro.initialize(MPU6050_GYRO_FS_2000, MPU6050_ACCEL_FS_8, MPU6050_DLPF_BW_98);
 	writeWord(104, MPU6050_RA_XA_OFFS_H, -535);//-5525);
 	writeWord(104, MPU6050_RA_YA_OFFS_H, 219);// -1349);
 	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1214);// 1291);
@@ -224,13 +225,13 @@ void MpuClass::set(const float  *ar){
 		float t;
 
 		t = DRAG_K;
-		if (error += Commander._set(ar[i++], t) == 0)
+		if (error += Settings._set(ar[i++], t) == 0)
 			DRAG_K = t;
 		t = _0007;
-		if (error += Commander._set(ar[i++], t) == 0)
+		if (error += Settings._set(ar[i++], t) == 0)
 			_0007 = t;
 		t = tiltPower_CF;
-		if (error += Commander._set(ar[i++], t) == 0)
+		if (error += Settings._set(ar[i++], t) == 0)
 			tiltPower_CF = t;
 		cout << "mpu set:\n";
 		//int ii;
@@ -503,8 +504,10 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	float ax = n122 * 2 * (float)a[0];
 	float ay = n122 * 2 * (float)a[1];
 	float az = n122 * 2 * (float)a[2];
+	//if (az > 3)
+	//	cout<<"AZM\n" ;//??????????????????????????????????????
 
-	gravity+=(sqrt(ax * ax + ay * ay + az * az)-gravity)*0.05;
+ 	gravity+=(sqrt(ax * ax + ay * ay + az * az)-gravity)*0.05;
 	if (gravity > 1.1 || gravity < 0.9) {
 		static int cntttttsss = 0;
 		//cout << cntttttsss++ << " gravity error\n";

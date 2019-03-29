@@ -16,15 +16,15 @@
 #include "Balance.h"
 #include "Prog.h"
 #include "Log.h"
-
+#include "Settings.h"
 
 
 
 void StabilizationClass::setMaxAng() {
 	set_acc_xy_speed_imax(Balance.get_max_angle());
 }
-void StabilizationClass::setMaxThr() {
-	pids[ACCZ_PID].imax(Balance.get_max_throttle() - HOVER_THROTHLE);
+void StabilizationClass::setMinMaxI_Thr() {
+	pids[ACCZ_PID].imax(Balance.get_min_throttle()-HOVER_THROTHLE, Balance.get_max_throttle() - HOVER_THROTHLE);
 }
 //"dist to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR"
 void StabilizationClass::init(){
@@ -32,17 +32,17 @@ void StabilizationClass::init(){
 	{
 
 		ACCZ_CF = 0.1;
-		ACCXY_CF = 0.1;
+		ACCXY_CF = 0.05;
 
-		max_HOR_ACC = 5.7;
+		max_HOR_ACC = 3;
 		max_VER_ACC = 2;
-		dist2speed_H = 0.2f;//0.5
+		dist2speed_H = 0.36f;//0.5
 		dist2speed_H_Rep = 1.0f / dist2speed_H;
 		speed2accXY = 0.5;
 
 
-		set_acc_xy_speed_kp(6.1);
-		set_acc_xy_speed_kI(3);
+		set_acc_xy_speed_kp(5.1);
+		set_acc_xy_speed_kI(2.5);
 		set_acc_xy_speed_imax(Balance.get_max_angle());
 		max_speed_xy = MAX_HOR_SPEED;
 
@@ -55,13 +55,14 @@ void StabilizationClass::init(){
 
 
 
-	alt2speedZ = 0.3;
+	alt2speedZ = 1;
 	alt2speedZ_Rep = 1.0f / alt2speedZ;
 	speed2accZ = 1;
 
 	pids[ACCZ_PID].kP(0.05);
-	pids[ACCZ_PID].kI(0.001);
-	pids[ACCZ_PID].imax(Balance.get_min_throttle() - HOVER_THROTHLE,  Balance.get_max_throttle() - HOVER_THROTHLE);
+	pids[ACCZ_PID].kI(0.025);
+	setMinMaxI_Thr();
+	//pids[ACCZ_PID].imax(Balance.get_min_throttle() - HOVER_THROTHLE,  Balance.get_max_throttle() - HOVER_THROTHLE);
 	max_speedZ_P =  MAX_VER_SPEED_PLUS;
 	max_speedZ_M = MAX_VER_SPEED_MINUS;
 	//----------------------------------------------------------------------------
@@ -219,7 +220,8 @@ string StabilizationClass::get_z_set(){
 		max_VER_ACC<<","<<\
 		pids[ACCZ_PID].kP() <<","<<\
 		pids[ACCZ_PID].kI() <<","<<\
-		pids[ACCZ_PID].imax() <<","<<\
+
+
 		max_speedZ_P <<"," <<\
 		max_speedZ_M << "," << \
 		ACCZ_CF;
@@ -240,25 +242,22 @@ void StabilizationClass::setZ(const float  *ar){
 		float t;
 		
 
-		error += Commander._set(ar[i++], alt2speedZ);
+		error += Settings._set(ar[i++], alt2speedZ);
 		alt2speedZ_Rep = 1.0f / alt2speedZ;
-		error += Commander._set(ar[i++], speed2accZ);
-		error += Commander._set(ar[i++], max_VER_ACC);
+		error += Settings._set(ar[i++], speed2accZ);
+		error += Settings._set(ar[i++], max_VER_ACC);
 		t = pids[ACCZ_PID].kP();
-		if ((error += Commander._set(ar[i++],t))==0)
+		if ((error += Settings._set(ar[i++],t))==0)
 			pids[ACCZ_PID].kP(t);
 
 		t = pids[ACCZ_PID].kI();
-		if ((error += Commander._set(ar[i++], t))==0)
+		if ((error += Settings._set(ar[i++], t))==0)
 			pids[ACCZ_PID].kI(t);
 
-		t = pids[ACCZ_PID].imax();
-		if ((error += Commander._set(ar[i++], t))==0)
-			pids[ACCZ_PID].imax(t);
-
-		error += Commander._set(ar[i++], max_speedZ_P);
-		error += Commander._set(ar[i++], max_speedZ_M);
-		error += Commander._set(ar[i++], ACCZ_CF);
+	
+		error += Settings._set(ar[i++], max_speedZ_P);
+		error += Settings._set(ar[i++], max_speedZ_M);
+		error += Settings._set(ar[i++], ACCZ_CF);
 		
 
 		//resset_z();
@@ -302,26 +301,26 @@ void StabilizationClass::setXY(const float  *ar){
 		float t;
 		
 
-		error += Commander._set(ar[i++], dist2speed_H);
+		error += Settings._set(ar[i++], dist2speed_H);
 		dist2speed_H_Rep = 1.0f / dist2speed_H;
-		error+=Commander._set(ar[i++], speed2accXY);
-		error += Commander._set(ar[i++], max_HOR_ACC);
+		error+= Settings._set(ar[i++], speed2accXY);
+		error += Settings._set(ar[i++], max_HOR_ACC);
 		
 
 		t = pids[ACCX_SPEED].kP();
-		if ((error += Commander._set(ar[i++], t))==0)
+		if ((error += Settings._set(ar[i++], t))==0)
 			set_acc_xy_speed_kp(t);
 
 		t = pids[ACCX_SPEED].kI();
-		if ((error += Commander._set(ar[i++], t))==0)
+		if ((error += Settings._set(ar[i++], t))==0)
 			set_acc_xy_speed_kI(t);
 
 		t = pids[ACCX_SPEED].imax();
-		if ((error += Commander._set(ar[i++], t))==0)
+		if ((error += Settings._set(ar[i++], t))==0)
 			set_acc_xy_speed_imax(t);
 		
-		error += Commander._set(ar[i++], max_speed_xy);
-		error += Commander._set(ar[i++], ACCXY_CF);
+		error += Settings._set(ar[i++], max_speed_xy);
+		error += Settings._set(ar[i++], ACCXY_CF);
 	}
 	if (error == 0) {
 		cout << "Stabilization XY set : \n";

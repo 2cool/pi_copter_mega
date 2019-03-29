@@ -39,11 +39,11 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
             // balance
             {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE",_null},
             // Z stab
-            {"alt to speed","speed to acc","max acc","SPEED_KP","SPEED_I","SPEED_imax","MAX_SPEED_P","MAX_SPEED_M","FILTR",_null},
+            {"alt to speed","speed to acc","max acc","SPEED_KP","SPEED_I","MAX_SPEED_P","MAX_SPEED_M","FILTR",_null,_null},
             // XY stab
             {"dist to speed","speed to acc","max acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR",_null,_null},
             // secure
-            {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z"},
+            {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","lift at start","debug_n",_null,_null},//,"gimbP_Z","gimbR_Z"},
             // mpu
             {_null,_null,_null,_null,_null,_null,_null,_null,_null,_null},
             //compas
@@ -153,6 +153,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
                        seek_bar[i].setProgress(seek_bar_default_progress);
                    }
                } else {
+
                    textV[i].setText("");
                    textV[i + 10].setEnabled(false);
                    textV[i].setEnabled(false);
@@ -163,7 +164,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 //------------------------------------------
 
 
-           set.setEnabled(true);
+           set.setEnabled(Telemetry.n_settings>=0);
            Log.i("UPS", "UPDATE out");
        } catch (Exception ex) {
            Thread.currentThread().interrupt();
@@ -236,19 +237,22 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
 
 
     public void upload_settings(View view) {
-        Log.i("UPS", "UPLOADING SETINGS");
-        Commander.n =menu_n;
-        for (int i=0;i<10;i++) {
-            if (textV[i].getText().toString().length()>0)
-                Commander.sets[i] = Float.parseFloat(textV[i].getText().toString());
-            else
-                Commander.sets[i]=1;
+        if (Telemetry.n_settings!= -2) {
+
+            Log.i("SETT1", "UPLOADING SETINGS");
+            Commander.n = menu_n;
+            for (int i = 0; i < 10; i++) {
+                if (textV[i].getText().toString().length() > 0)
+                    Commander.sets[i] = Float.parseFloat(textV[i].getText().toString());
+                else
+                    Commander.sets[i] = 1;
+            }
+            Commander.settings = true;
+            Log.i("SETT1", "setting=true");
+            // download_settings(menu_n,true);
+            //finish();
+            update();
         }
-        Commander.settings=true;
-        Log.i("SETT","setting=true");
-       // download_settings(menu_n,true);
-        //finish();
-        update();
     }
 
     @Override
@@ -282,7 +286,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
         double k=maxChange*(dk-progress)/dk;
         f-=f*k;
        // textV[i].setText(Float.toString((float)(f)));
-        textV[i].setText(String.format("%.5f", f));
+        textV[i].setText(String.format("%.5f", f).replace(',','.'));
     }
 
     @Override

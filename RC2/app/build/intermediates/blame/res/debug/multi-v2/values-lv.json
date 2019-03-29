@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\2coolz\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-lv\\values-lv.xml",
+            "outputFile": "C:\\Users\\Igor\\pi_copter_mega\\RC2\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-lv\\values-lv.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\2coolz\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\420f2d4b91f58d30ae5f2d624b35f2d3\\res\\values-lv\\values.xml",
+                    "source": "C:\\Users\\Igor\\.gradle\\caches\\transforms-1\\files-1.1\\appcompat-v7-21.0.3.aar\\a244437bfa689aa6ec84b062349228bb\\res\\values-lv\\values.xml",
                     "from": {
                         "startLines": "3,4,5,6,7,8,9,10,11,12,13,14,15,16,17",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

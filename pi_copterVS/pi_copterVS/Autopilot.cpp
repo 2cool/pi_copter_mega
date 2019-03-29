@@ -43,7 +43,7 @@ THG out of Perimetr high
 
 #include "GPS.h"
 
-
+#include "Settings.h"
 #include "Telemetry.h"
 #include "Stabilization.h"
 #include "debug.h"
@@ -72,52 +72,6 @@ THG out of Perimetr high
 
 using namespace std;
 
-int camera_mode;
-enum { CAMMERA_OFF, CAMERA_RECORDING, CAMERA_TRANCLATE };
-
-
-
-/*
-chtoby zapustit' strim
-python  Camera_video_stream.py
-ffmpeg -rtsp_transport udp -i "rtsp://192.168.42.1:554/live" -c copy -f h264 udp://android_phone_address:5544
-
-pn android run
-ffplay udp://android_address:5544
-
-
-*/
-
-
-/*
-void start_video() {
-	if (camera_mode == CAMERA_RECORDING) {
-		usleep(2000000);
-		printf( "recording video START\n");
-		string s = "/home/igor/ffmpeg_cedrus264_H3/ffmpeg -f v4l2 -channel 0 -video_size 640x480 -i /dev/video0 -pix_fmt nv12 -r 30 -b:v 64k -c:v cedrus264 /home/igor/logs/video";
-		s += std::to_string(Log.counter_());
-		s += "_";
-		s += std::to_string(Log.run_counter);
-		s += ".mp4 > /dev/null 2>&1";
-		system(s.c_str());
-		
-	}
-	if (camera_mode=CAMERA_TRANCLATE){
-		printf( "transmiting video START\n");
-		string adr = WiFi.get_client_addres();
-		string s = "/home/igor/ffmpeg_cedrus264_H3/ffmpeg -f v4l2 -framerate 30 -video_size 640x480 -i /dev/video0 -f mpegts udp://"+adr+":1234 > /dev/null 2>&1";
-		system(s.c_str());
-		
-		
-	}
-}
-
-*/
-
-//каждий новий режим работі добовляется в месадж
-
-
-
 
 
 void AutopilotClass::init(){/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +83,6 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 #endif
 	shmPTR->sim800_reset = false;
 	time_at_startd = old_time_at_startd = 0;
-	camera_mode = CAMMERA_OFF;
 	lowest_height = shmPTR->lowest_altitude_to_fly;
 	last_time_data_recivedd = 0;
 	
@@ -370,7 +323,11 @@ string AutopilotClass::get_set(){
 		Balance.get_min_throttle() << "," << \
 		sens_xy << "," << \
 		sens_z << "," << \
-		lowest_height << "," << Debug.n_debug << "," << camera_mode << "," << -gimBalPitchZero << "," << -gimBalRollZero;
+		lowest_height << "," << \
+		shmPTR->fly_at_start << "," << \
+		Debug.n_debug;// << "," << \
+		-gimBalPitchZero << "," << \
+		-gimBalRollZero;
 	string ret = convert.str();
 	return string(ret);
 }
@@ -384,18 +341,19 @@ void AutopilotClass::set(const float ar[]){
 		error = 0;
 		
 		
-		error += Commander._set(ar[i++], height_to_lift_to_fly_to_home);
+		error += Settings._set(ar[i++], height_to_lift_to_fly_to_home);
 		error += Balance.set_min_max_throttle(ar[i++], ar[i++]);
 		//i += 2;
-		error += Commander._set(ar[i++], sens_xy);
-		error += Commander._set(ar[i++], sens_z);
-		error += Commander._set(ar[i++], lowest_height,false);
+		error += Settings._set(ar[i++], sens_xy);
+		error += Settings._set(ar[i++], sens_z);
+		error += Settings._set(ar[i++], lowest_height);
+		error += Settings._set(ar[i++], shmPTR->fly_at_start);
+		if (shmPTR->fly_at_start + 1 < lowest_height)
+			shmPTR->fly_at_start = lowest_height + 1;
 		Debug.n_debug = (int)ar[i++];
-		camera_mode = (int)ar[i++];
-		gimBalPitchZero= -constrain(ar[i],-15,15);
-		i++;
-		gimBalRollZero = -constrain(ar[i],-15,15);
-		i++;
+
+		//gimBalPitchZero= -constrain(ar[i],-15,15);i++;
+		//gimBalRollZero = -constrain(ar[i],-15,15);i++;
 		mega_i2c.gimagl(gimBalPitchZero, gimBalRollZero);
 		if (error == 0){
 			int ii = 0;

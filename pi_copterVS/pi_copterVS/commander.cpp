@@ -18,7 +18,7 @@
 #include "Prog.h"
 #include "define.h"
 #include "Hmc.h"
-
+#include "Settings.h"
 #include "Stabilization.h"
 #include "debug.h"
 
@@ -94,92 +94,6 @@ A,COUNTER,LAT,LON,HEIGHT,HEADING, SPEED,TIME,
 uint8_t data_errors = 0;
 
 
-
-static float ar_t333[SETTINGS_ARRAY_SIZE+1];
-float * load(const string  buf, const uint8_t  * filds) {
-	if (buf.find(",0,") != string::npos   ) {
-		ar_t333[SETTINGS_ARRAY_SIZE] = SETTINGS_ERROR;
-		cout << " !!!!! "<<buf << endl;
-		return ar_t333;
-	}
-
-	ar_t333[SETTINGS_ARRAY_SIZE] = SETTINGS_IS_OK;
-	for (int i = 0; i <SETTINGS_ARRAY_SIZE; i++){
-		float val= (float)stod(buf.substr(filds[i], filds[i + 1]- filds[i] - 1));
-		
-			ar_t333[i] = val;
-		
-	}
-
-	return ar_t333;
-}
-
-
-
-uint8_t CommanderClass::_set(const float  val, float &set, bool secure){
-	//if (val == 0)
-	//	return 1;
-	if (secure == false){
-		set = val;
-	}else
-		if (Autopilot.motors_is_on()){
-			if (set*0.8f > val)
-				set *= 0.8f;
-			else
-			if (set*1.2f < val)
-				set *= 1.2f;
-			else
-				set = val;
-		}else
-			set = val;
-	return 0;
-}
-
-bool CommanderClass::Settings(string buf){
-	cout << "settings\n";
-	uint8_t filds[11];
-	uint8_t fi = 0;
-	uint8_t i = 0;
-
-	i++;
-
-	while (fi<10 && i<buf.length()){
-		while (buf[i++] != ',');
-		filds[fi++] = i++;
-
-	}
-	filds[10] = (uint8_t)buf.length();
-
-	uint8_t n = (uint8_t)stoi(buf.substr(0, filds[0] - 1));
-	switch (n){
-	case 0:
-		Balance.set(load(buf, filds));
-		break;
-	case 1:
-		Stabilization.setZ(load(buf, filds));
-		break;
-	case 2:
-		Stabilization.setXY(load(buf, filds));
-		break;
-	case 3:
-		Autopilot.set(load(buf, filds));//secure
-		break;
-	case 4:
-		Mpu.set(load(buf,filds));
-		break;
-	case 5:
-		Hmc.set(load(buf, filds));
-		break;
-	case 6:
-		set(load(buf, filds));
-		
-		break;
-	default:
-		return false;
-	}
-	return true;
-	
-}
 
 
 
@@ -352,7 +266,7 @@ bool CommanderClass::input(){
 					Prog.add(buf + i);
 				}
 				else if (msg.find(m_SETTINGS) == 0) {
-						Settings(string((char*)(buf+i)));
+						Settings.load_(string((char*)(buf+i)),false);
 				}
 				else if (msg.find(m_UPLOAD_SETTINGS) == 0) {
 					Telemetry.getSettings(buf[i++]);

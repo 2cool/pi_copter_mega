@@ -26,9 +26,9 @@ class CommanderClass
 	
 
  public:
-	bool Settings(string msg);//settings
+	
 	 volatile bool ppp_inet, telegram_bot;
-	 uint8_t _set(const float  val, float &set, bool secure=true);
+	
 	 void setThrottle(const float t){ throttle = t; }
 	 void setPitch(const float p){ pitch = p; }
 	 void setRoll(const float r){ roll = r; }

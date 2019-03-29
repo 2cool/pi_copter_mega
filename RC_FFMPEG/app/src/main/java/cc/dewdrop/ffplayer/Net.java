@@ -13,11 +13,58 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
+
+
+
 public class Net {
     //private static final int MAX_UDP_DATAGRAM_LEN = 1500;
+
+
+
+    /**
+     * Get IP address from first non-localhost interface
+     * @param useIPv4   true=return ipv4, false=return ipv6
+     * @return  address or empty string
+     */
+    public static String getIPAddress(boolean useIPv4) {
+        try {
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface intf : interfaces) {
+                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                for (InetAddress addr : addrs) {
+                    if (!addr.isLoopbackAddress()) {
+                        String sAddr = addr.getHostAddress();
+                        //boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr);
+                        boolean isIPv4 = sAddr.indexOf(':')<0;
+
+                        if (useIPv4) {
+                            if (isIPv4)
+                                return sAddr;
+                        } else {
+                            if (!isIPv4) {
+                                int delim = sAddr.indexOf('%'); // drop ip6 zone suffix
+                                return delim<0 ? sAddr.toUpperCase() : sAddr.substring(0, delim).toUpperCase();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignored) { } // for now eat exceptions
+        return "";
+    }
+
+
+
+
+
+
+
+
+
 
     public static boolean net_runing=true;
     private static  int UDP_SERVER_PORT = 9876;
@@ -59,44 +106,13 @@ public class Net {
     static int threads=0;
 
     static Context context;
-    private void connect2esp(){
-        String networkSSID = "ESP_9BB84B";
-        //String networkPass = "pass";
 
-        WifiConfiguration conf = new WifiConfiguration();
-        conf.SSID = "\"" + networkSSID + "\"";
-        conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-
-        if (wifiManager.isWifiEnabled()==false)
-            wifiManager.setWifiEnabled(true);
-        while (wifiManager.isWifiEnabled()==false) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e2) {
-            }
-        }
-
-        WifiInfo wi=wifiManager.getConnectionInfo();
-        String sss=wi.getSSID().replaceAll("\"","");
-        if (!sss.equals(networkSSID)) {
-            wifiManager.addNetwork(conf);
-            List<WifiConfiguration> list = wifiManager.getConfiguredNetworks();
-            for (WifiConfiguration i : list) {
-                if (i.SSID != null && i.SSID.equals("\"" + networkSSID + "\"")) {
-                    wifiManager.disconnect();
-                    wifiManager.enableNetwork(i.networkId, true);
-                    wifiManager.reconnect();
-
-                    break;
-                }
-            }
-        }
-
-    }
     public void start(){
-        if (threads>0 || net_runing==false)
+        Log.d("NET","start");
+        if (threads>0 || net_runing==false) {
+            Log.d("NET","exit");
             return;
+        }
         threads++;
         Thread thread = new Thread() {
             @Override
@@ -107,6 +123,9 @@ public class Net {
 
                     //connect2esp();
                     String myIP=getIpAddress();
+                //    String myIP=getIPAddress(true);
+
+
                    // String serverIPandPort[]={"192.168.1.112:9876","192.168.1.112:9876"};//Disk.getIP(myIP);
                     String serverIPandPort[]=Disk.getIP(myIP);
 

@@ -106,8 +106,82 @@ bool  SettingsClass::readCompasMotorSettings(float base[]) {
 
 
 
+static float ar_t333[SETTINGS_ARRAY_SIZE + 1];
+float * load(const string  buf, const uint8_t  * filds) {
 
 
+	ar_t333[SETTINGS_ARRAY_SIZE] = SETTINGS_IS_OK;
+	for (int i = 0; i < SETTINGS_ARRAY_SIZE; i++) {
+		string sval = buf.substr(filds[i], filds[i + 1] - filds[i] - 1);
+		if (sval.length() == 1 && sval[0] == '0') {
+			ar_t333[SETTINGS_ARRAY_SIZE] = SETTINGS_ERROR;
+			cout << " !!!!! " << buf << endl;
+			return ar_t333;
+		}
+
+		float val = (float)stod(sval);
+
+		ar_t333[i] = val;
+
+	}
+
+	return ar_t333;
+}
+
+
+
+
+
+
+bool SettingsClass::load_(string buf, bool any_ch) {
+
+
+	any_change = any_ch;
+
+	cout << "settings\n";
+	uint8_t filds[11];
+	uint8_t fi = 0;
+	uint8_t i = 0;
+
+	i++;
+
+	while (fi < 10 && i < buf.length()) {
+		while (buf[i++] != ',');
+		filds[fi++] = i++;
+
+	}
+	filds[10] = (uint8_t)buf.length();
+
+	uint8_t n = (uint8_t)stoi(buf.substr(0, filds[0] - 1));
+	switch (n) {
+	case 0:
+		Balance.set(load(buf, filds));
+		break;
+	case 1:
+		Stabilization.setZ(load(buf, filds));
+		break;
+	case 2:
+		Stabilization.setXY(load(buf, filds));
+		break;
+	case 3:
+		Autopilot.set(load(buf, filds));//secure
+		break;
+	case 4:
+		Mpu.set(load(buf, filds));
+		break;
+	case 5:
+		Hmc.set(load(buf, filds));
+		break;
+	case 6:
+		Commander.set(load(buf, filds));
+
+		break;
+	default:
+		return false;
+	}
+	return true;
+
+}
 
 
 int SettingsClass::read() {
@@ -123,6 +197,45 @@ int SettingsClass::read() {
 	return -1;
 }
 
+#define MAX_CHANGE 0.2
+uint8_t SettingsClass::_set(const float  val_, float &set) {
+	if (any_change) {
+		set = val_;
+		return 0;
+	}
+
+	bool neg = false;
+	float val = val_;
+	if (set < 0 && val < 0) {
+		neg = true;
+		set = -set;
+		val = -val;
+
+	}
+
+	if (set > 0 && val > 0) {
+		if (val > set) {
+			if (val > set + set * MAX_CHANGE)
+				set += set * MAX_CHANGE;
+			else
+				set = val;
+
+		}
+		else if (val < set) {
+			if (val < set - set * MAX_CHANGE)
+				set -= set * MAX_CHANGE;
+			else
+				set = val;
+		}
+		if (neg) {
+			set = -set;
+		}
+	}
+
+
+
+	return 0;
+}
 
 int SettingsClass::read_all() {
 
@@ -143,7 +256,7 @@ int SettingsClass::read_all() {
 		char *ret=fgets(buf, 1000, f);
 		if (ret == NULL)
 			break;
-		Commander.Settings(string(buf));
+		load_(string(buf),true);
 	}
 
 	fclose(f);
@@ -194,6 +307,7 @@ int SettingsClass::write_all() {
 	//fprintf(f, "5,%s", (Hmc.get_set() + end).c_str());
 	//fprintf(f, "6,%s", (Commander.get_set() + end).c_str());
 	//(f, "9,%s", (Hmc.get_calibr_set() + end).c_str());
+	
 	fclose(f);
 	return 0;
 

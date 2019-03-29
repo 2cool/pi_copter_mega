@@ -19,13 +19,20 @@ public class Settings extends Activity {
 
     String _null="NULL";
     String a[][]={
-            {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE","powerK","balance"},
-            {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","MAX_SPEED_P","MAX_SPEED_M","CF_SPEED","CF_DIST","FILTR",_null,"Z stab"},
-            {"STAB_KP","SPEED_KP","SPEED_I","SPEED_imax","max_speed","KF_SPEED","KF_DIST","FILTR",_null,_null,"XY stab"},
-            {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z","secur"},
-            {"DRAG_K","_0007","tiltPower_CF",_null,_null,_null,_null,_null,_null,_null,"mpu"},
-            {"m power on",_null,_null,_null,_null,_null,_null,_null,_null,_null,"compas"},
-            {"vedeoAdr","ppp_inet","telegram",_null,_null,_null,_null,_null,_null,_null,"rest"}
+            // balance
+            {"P_R_rateKP","P_R_rateKI","P_R_rateIMAX","P_R_stabKP","YAW_rate_KP","YAW_rateE_KI","YAW_rate_IMAX","YAW_stab_KP","MAX_ANGLE",_null},
+            // Z stab
+            {"alt to speed","speed to acc","max acc","SPEED_KP","SPEED_I","SPEED_imax","SPEED_imin","MAX_SPEED_P","MAX_SPEED_M","FILTR"},
+            // XY stab
+            {"dist to speed","speed to acc","max acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR",_null,_null},
+            // secure
+            {"high_to_lift_2_home","max_throttle","min_throttle","sens_xy","sens_z","min_hight","debug_n","camera_mod","gimbP_Z","gimbR_Z"},
+            // mpu
+            {_null,_null,_null,_null,_null,_null,_null,_null,_null,_null},
+            //compas
+            {"m power on,1,0,100",_null,_null,_null,_null,_null,_null,_null,_null,_null},
+            //rest
+            {"vedeoAdr","ppp_inet","telegram",_null,_null,_null,_null,_null,_null,_null}
 
     };
 
