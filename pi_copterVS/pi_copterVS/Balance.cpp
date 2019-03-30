@@ -404,7 +404,7 @@ bool BalanceClass::loop()
 			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
 
 #ifdef YAW_OFF
-			yaw_output = 0;
+			//yaw_output = 0;
 			//pitch_output=0;
 #endif
 
@@ -443,9 +443,9 @@ bool BalanceClass::loop()
 			reset();
 		}
 		
-#define MOTORS_OFF
+//#define MOTORS_OFF
 #ifdef MOTORS_OFF
-		//f_[0] = f_[1] = f_[2] = f_[3] = 0;
+		f_[0] = f_[1] = f_[2] = f_[3] = 0;
 #endif
 		//f_[0] = f_[1] = f_[2] = f_[3] = 0.51;
 		//f_[0] = f_[1] = 0.502;

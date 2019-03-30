@@ -165,8 +165,8 @@ void StabilizationClass::XY(float &pitch, float&roll){
 			
 		}
 		dist2speed(need_speedX, need_speedY);
-		const float need_acx = 0;// (need_speedX + Mpu.get_Est_SpeedX())*speed2accXY;
-		const float need_acy = 0;// (need_speedY + Mpu.get_Est_SpeedY())*speed2accXY;
+		const float need_acx =  (need_speedX + Mpu.get_Est_SpeedX())*speed2accXY;
+		const float need_acy =  (need_speedY + Mpu.get_Est_SpeedY())*speed2accXY;
 		float naccX = need_acx + Mpu.fw_accX;
 		float naccY = need_acy + Mpu.fw_accY;
 

@@ -256,7 +256,7 @@ void EmuClass::update(const float fm_[4], double dt) {
 
 
 
-
+	
 
 	fm[0] = (fm_[0] + fm_[1])*MOTOR_FORCE;
 	fm[1] = (fm_[1] + fm_[3])*MOTOR_FORCE;
@@ -264,7 +264,7 @@ void EmuClass::update(const float fm_[4], double dt) {
 	fm[3] = (fm_[3] + fm_[2])*MOTOR_FORCE;
 
 
-
+	
 
 
 	float wacc[3], wgyro[3];
