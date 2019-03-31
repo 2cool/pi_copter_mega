@@ -51,10 +51,10 @@ void TelemetryClass::addMessage(const string msg, bool and2sms){
 }
 
 void TelemetryClass::getSettings(int n){
-	cout << "up set\n";
+	
 	if (n > 7 || n < 0)
 		return;
-
+	cout << "up set: "<<n<<"\n";
 	ostringstream convert;
 	convert << "UPS" << n <<",";
 	message += convert.str();

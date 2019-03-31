@@ -324,12 +324,12 @@ void EmuClass::update(const float fm_[4], double dt) {
 
 
 	const double arm03_force = fmin(fm[0], fm[3]);
-	const double arm03_pitch_rotation = 3*G * (fm[0] - fm[3]) -gyro_res[PITCH];
+	const double arm03_pitch_rotation = 30*G * (fm[0] - fm[3]) -gyro_res[PITCH];
 	const double arm03_yaw_rot = (motors_pow[0] + motors_pow[3]);
 	const double arm21_force = fmin(fm[1], fm[2]);
-	const double arm21_roll_rotation = 3*G * (fm[2] - fm[1]) -gyro_res[ROLL];
+	const double arm21_roll_rotation = 30*G * (fm[2] - fm[1]) -gyro_res[ROLL];
 	const double arm21_yaw_rot = (motors_pow[2] + motors_pow[1]);
-	const double yaw_rot_force = 10 * (arm21_yaw_rot - arm03_yaw_rot) - gyro_res[YAW];
+	const double yaw_rot_force = 100 * (arm21_yaw_rot - arm03_yaw_rot) - gyro_res[YAW];
 	double force = G * (arm03_force + arm21_force);
 
 	gyro[YAW] += (yaw_rot_force + wgyro[Z])*dt;

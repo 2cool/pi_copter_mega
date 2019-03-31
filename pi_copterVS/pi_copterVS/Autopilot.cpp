@@ -168,7 +168,7 @@ void AutopilotClass::add_2_need_altitude(float speed, const float dt){
 }
 //-------------------------------------------------------------------------
 void AutopilotClass::smart_commander(const float dt){
-	if (Commander.getPitch() != 0 || Commander.getRoll() != 0){
+	////if (Commander.getPitch() != 0 || Commander.getRoll() != 0){
 		const float addX = sens_xy*(Commander.getPitch());
 		const float addY = -sens_xy*(Commander.getRoll());
 		const float cyaw = Commander.getYaw()*GRAD2RAD;
@@ -178,7 +178,7 @@ void AutopilotClass::smart_commander(const float dt){
 		float speedY = -(addX * sinL - addY *cosL);
 
 		Stabilization.add2NeedPos(speedX, speedY, dt);
-	}
+	//}
 	//else{
 	//	GPS.loc.setSpeedZero();
 	//}

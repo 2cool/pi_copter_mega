@@ -32,12 +32,13 @@ int Megai2c::getsim(char * str) {
 
 
 
-void Megai2c::settings(uint16_t overloadTime, uint16_t overloadVal) {
-	char send_buf[5];
+void Megai2c::settings(uint16_t overloadTime, uint16_t overloadVal, uint8_t overloadCnt) {
+	char send_buf[6];
 	send_buf[0] = 2;
 	*((uint16_t*)&send_buf[1]) = overloadTime;
 	*((uint16_t*)&send_buf[3]) = overloadVal;
-	write(fd, send_buf, 5);
+	send_buf[5] = overloadCnt;
+	write(fd, send_buf, 6);
 }
 /*
 int Megai2c::send2sim(const char *str, int len) {
@@ -160,7 +161,7 @@ int Megai2c::init()
 
 	shmPTR->sim800_reset_time = 0;
 
-	mega_i2c.settings(300, 20); //if not execute/ copters motors not start;
+	mega_i2c.settings(1000, 20, 5); //if not execute/ copters motors not start;
 	
 	return 0;
 

@@ -125,7 +125,7 @@ public:
 	 void sound(const float);
 	 void beep_code(uint8_t);
 	 void sim800_reset();
-	 void settings(uint16_t overloadTime, uint16_t overloadVal);
+	 void settings(uint16_t overloadTime, uint16_t overloadVal, uint8_t overloadCnt);
 	 void throttle(const float n[]);
 
 	 void getiiiiv(char *iiiiv);

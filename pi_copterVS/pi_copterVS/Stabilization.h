@@ -32,11 +32,11 @@ private:
 	float ACCZ_CF, ACCXY_CF;
 
 	float mc_z,mc_pitch,mc_roll;
-	float dist2speed_H, dist2speed_H_Rep;
+	float dist2speed_XY;
 
-	float alt2speedZ, alt2speedZ_Rep;
+	float alt2speedZ;
 	float speed2accZ, speed2accXY;
-	float max_HOR_ACC, max_VER_ACC;
+	float max_XY_ACC, max_Z_ACC;
 	float accxy_stab(float dist, float maxA, float timeL);
 	float accxy_stab_rep(float speed, float maxA, float timeL);
 	//float throttle;
@@ -70,14 +70,14 @@ public:
 	}
 
 	float getDist_Z(float speed){
-		return speed*alt2speedZ_Rep;
+		return speed/alt2speedZ;
 	}
 
 	float getSpeed_XY(float dist){		
-		return dist* dist2speed_H;
+		return dist* dist2speed_XY;
 	}
 	float getDist_XY(float speed){	
-		return speed* dist2speed_H_Rep;
+		return speed/ dist2speed_XY;
 	}
 
 

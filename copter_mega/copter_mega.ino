@@ -60,6 +60,7 @@ volatile bool ring=false,ring_to_send=false;
 unsigned  long owerload_time_start;
 volatile uint16_t overloadVal;
 volatile uint64_t overloadTime;
+volatile uint8_t overloadCnt;
 volatile bool gps_status = false;
 volatile uint8_t pi_copter_color[8][3]={ {0,1,0},{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 },{ 0,1,0 } };
 
@@ -71,7 +72,7 @@ volatile bool  do_sound = true;
 
 
 
-
+volatile uint8_t overloadF = 0;
 volatile uint8_t new_colors_i = 0;
 bool ring_was = false;
 
@@ -267,7 +268,9 @@ void receiveEvent(int countToRead) {
 	{
 		overloadTime = *((uint16_t*)&inBuf[1]);
 		overloadVal = *((uint16_t*)&inBuf[3]);
+		overloadCnt = inBuf[5];
 		shutdown = false;
+		overloadF = 0;
 		break;
 	}
 	case 3: 
@@ -377,6 +380,7 @@ void setup()
 	owerload_time_start = 0;
 	overloadVal = 1000; //shutdown 
 	overloadTime = 1;
+	overloadCnt = 1;
 #ifdef ESC_CALIBR
 	on(48000, pwm_MAX_THROTTLE);
 	delay(3000);
@@ -428,6 +432,7 @@ int minar = 3000;
 
 
 
+
 void loop()
 {
 	if (cnt_reset > 0 && cnt_reset < millis()) {
@@ -438,16 +443,16 @@ void loop()
 	const float CF = 0.01;
 
 	int ar = analogRead(MI0);
-	bool overloadF = (ar < overloadVal);
+	overloadF += (ar < overloadVal);
 	fb[0] += ((float)(ar)-fb[0])*CF;
 	ar = analogRead(MI1);
-	overloadF |= (ar < overloadVal);
+	overloadF += (ar < overloadVal);
 	fb[1] += ((float)(ar)-fb[1])*CF;
 	ar = analogRead(MI2);
-	overloadF |= (ar < overloadVal);
+	overloadF += (ar < overloadVal);
 	fb[2] += ((float)(ar)-fb[2])*CF;
 	ar = analogRead(MI3);
-	overloadF |= (ar < overloadVal);
+	overloadF += (ar < overloadVal);
 	fb[3] += ((float)(analogRead(ar)) - fb[3])*CF;
 
 	if (overloadF) {
@@ -457,8 +462,12 @@ void loop()
 		}
 		else {
 			if (t - owerload_time_start > overloadTime) {
-				shutdown = true;
-				stop_motors();
+				if (overloadF > overloadCnt) {
+					shutdown = true;
+					stop_motors();
+				}
+				else
+					overloadF = 0;
 			}
 		}
 	}

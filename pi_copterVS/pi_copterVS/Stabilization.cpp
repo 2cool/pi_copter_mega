@@ -28,40 +28,35 @@ void StabilizationClass::setMinMaxI_Thr() {
 }
 //"dist to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR"
 void StabilizationClass::init(){
+	
+	
+	ACCXY_CF = 0.05;
+	max_XY_ACC = 5;
 
-	{
+	dist2speed_XY = 0.2f;//0.5
 
-		ACCZ_CF = 0.1;
-		ACCXY_CF = 0.05;
+	speed2accXY = 2;
 
-		max_HOR_ACC = 3;
-		max_VER_ACC = 2;
-		dist2speed_H = 0.36f;//0.5
-		dist2speed_H_Rep = 1.0f / dist2speed_H;
-		speed2accXY = 0.5;
-
-
-		set_acc_xy_speed_kp(5.1);
-		set_acc_xy_speed_kI(2.5);
-		set_acc_xy_speed_imax(Balance.get_max_angle());
-		max_speed_xy = MAX_HOR_SPEED;
-
-	}
+	//?????????????
+	set_acc_xy_speed_kp(2*Balance.get_max_angle() / max_XY_ACC);// 7);
+	set_acc_xy_speed_kI(0.1);
+	set_acc_xy_speed_imax(Balance.get_max_angle());
+	max_speed_xy = MAX_HOR_SPEED;
 	//--------------------------------------------------------------------------
+	//повистовляь фильтри низких и високих частот. подобранние для каждого источника и обединить
+	ACCZ_CF = 0.1;
+	max_Z_ACC = 3;
 
+	alt2speedZ = 0.2;//1
+
+	speed2accZ = 1;//1
+
+	setMinMaxI_Thr();
+
+	pids[ACCZ_PID].kP( (pids[ACCZ_PID].imax() - pids[ACCZ_PID].imin()) / max_Z_ACC);
+	pids[ACCZ_PID].kI(0.1);
 
 	
-	//повистовляь фильтри низких и високих частот. подобранние для каждого источника и обединить
-
-
-
-	alt2speedZ = 1;
-	alt2speedZ_Rep = 1.0f / alt2speedZ;
-	speed2accZ = 1;
-
-	pids[ACCZ_PID].kP(0.05);
-	pids[ACCZ_PID].kI(0.025);
-	setMinMaxI_Thr();
 	//pids[ACCZ_PID].imax(Balance.get_min_throttle() - HOVER_THROTHLE,  Balance.get_max_throttle() - HOVER_THROTHLE);
 	max_speedZ_P =  MAX_VER_SPEED_PLUS;
 	max_speedZ_M = MAX_VER_SPEED_MINUS;
@@ -102,15 +97,15 @@ void StabilizationClass::setNeedPos2Home() {
 	needXR = needXV = needYR = needYV = 0;
 }
 void StabilizationClass::dist2speed(float &x, float &y) {
-	x = dist2speed_H * x;
-	y = dist2speed_H * y;
+	x = dist2speed_XY * x;
+	y = dist2speed_XY * y;
 	max_speed_limiter(x, y);
 
 }
 void StabilizationClass::speed2dist(float &x, float &y) {
 	max_speed_limiter(x, y);
-	x *= dist2speed_H_Rep;
-	y *= dist2speed_H_Rep;
+	x /= dist2speed_XY;
+	y /= dist2speed_XY;
 }
 
 void StabilizationClass::setNeedPos(float x, float y) {
@@ -131,17 +126,38 @@ void StabilizationClass::setNeedLoc(long lat, long lon, float &x, float &y) {
 
 
 void StabilizationClass::add2NeedPos(float speedX, float speedY, float dt) {
-
-
-	float distX = speedX, distY = speedY;
-	speed2dist(distX, distY);
-
-	needXR += speedX * dt;
-	needXV = needXR + distX;
-
-	needYR += speedY * dt;
-	needYV = needYR + distY;
-
+	static bool flagzx = false;
+	static bool flagzy = false;
+	if (speedX == 0) {
+		if (flagzx == false) {
+			flagzx = true;
+			float x, y;
+			fromLoc2Pos(GPS.loc.lat_, GPS.loc.lon_, x, y);
+			needXR = needXV = x;
+		}
+	}
+	else {
+		flagzx = false;
+		float distX = speedX, distY = speedY;
+		speed2dist(distX, distY);
+		needXR += speedX * dt;
+		needXV = needXR + distX;
+	}
+	if (speedY == 0) {
+		if (flagzy == false) {
+			flagzy = true;
+			float x, y; 
+			fromLoc2Pos(GPS.loc.lat_, GPS.loc.lon_, x, y);
+			needYR = needYV = y;
+		}
+	}
+	else {
+		flagzy = false;
+		float distX = speedX, distY = speedY;
+		speed2dist(distX, distY);
+		needYR += speedY * dt;
+		needYV = needYR + distY;
+	}
 }
 float StabilizationClass::get_dist2goal(){
 	float dx= Mpu.get_Est_X() - needXV;
@@ -151,26 +167,30 @@ float StabilizationClass::get_dist2goal(){
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //float old_gps_bearing = 0, cos_bear = 1,  sin_bear = 0;
-void StabilizationClass::XY(float &pitch, float&roll){
+void StabilizationClass::XY(float &pitch, float&roll){//dont work 
 		float need_speedX, need_speedY;
 		static float naccXF = 0, naccYF = 0;
-
+		float tx, ty;
 		if (Autopilot.progState() && Prog.intersactionFlag) {
 			need_speedX = -Prog.need_speedX;
 			need_speedY = -Prog.need_speedY;
 		}
 		else {
-			need_speedX = (Mpu.get_Est_X()-needXV);
-			need_speedY = (Mpu.get_Est_Y()-needYV);
-			
+			tx = Mpu.get_Est_X();
+			need_speedX = (tx-needXV);
+			ty = Mpu.get_Est_Y();
+			need_speedY = (ty-needYV);
+
 		}
 		dist2speed(need_speedX, need_speedY);
-		const float need_acx =  (need_speedX + Mpu.get_Est_SpeedX())*speed2accXY;
-		const float need_acy =  (need_speedY + Mpu.get_Est_SpeedY())*speed2accXY;
+		tx = Mpu.get_Est_SpeedX();
+		const float need_acx =  (need_speedX + tx)*speed2accXY;
+		ty = Mpu.get_Est_SpeedY();
+		const float need_acy =  (need_speedY + ty)*speed2accXY;
 		float naccX = need_acx + Mpu.fw_accX;
 		float naccY = need_acy + Mpu.fw_accY;
 
-		const float k = max_HOR_ACC/sqrt(naccX * naccX + naccY + naccY);
+		const float k = max_XY_ACC/sqrt(naccX * naccX + naccY + naccY);
 		if (k < 1) {
 			naccX *= k;
 			naccY *= k;
@@ -182,6 +202,7 @@ void StabilizationClass::XY(float &pitch, float&roll){
 
 		const float w_pitch = -pids[ACCX_SPEED].get_pid(naccXF, Mpu.dt);
 		const float w_roll =   pids[ACCY_SPEED].get_pid(naccYF, Mpu.dt);
+
 		//----------------------------------------------------------------преобр. в относительную систему координат
 		pitch = Mpu.cosYaw*w_pitch - Mpu.sinYaw*w_roll;
 		roll = Mpu.cosYaw*w_roll + Mpu.sinYaw*w_pitch;
@@ -194,7 +215,7 @@ float StabilizationClass::Z(){
 		const float need_accZ =  speed2accZ*need_speedZ - Mpu.get_Est_SpeedZ();
 
 		
-		naccZF += (constrain((need_accZ - Mpu.faccZ), -max_VER_ACC, max_VER_ACC) - naccZF)*ACCZ_CF;
+		naccZF += (constrain((need_accZ - Mpu.faccZ), -max_Z_ACC, max_Z_ACC) - naccZF)*ACCZ_CF;
 
 
 		const float fZ = HOVER_THROTHLE + pids[ACCZ_PID].get_pid(naccZF, Mpu.dt)*Balance.powerK();
@@ -217,7 +238,7 @@ string StabilizationClass::get_z_set(){
 	convert<<\
 		alt2speedZ <<","<<\
 		speed2accZ << "," << \
-		max_VER_ACC<<","<<\
+		max_Z_ACC<<","<<\
 		pids[ACCZ_PID].kP() <<","<<\
 		pids[ACCZ_PID].kI() <<","<<\
 
@@ -243,9 +264,8 @@ void StabilizationClass::setZ(const float  *ar){
 		
 
 		error += Settings._set(ar[i++], alt2speedZ);
-		alt2speedZ_Rep = 1.0f / alt2speedZ;
 		error += Settings._set(ar[i++], speed2accZ);
-		error += Settings._set(ar[i++], max_VER_ACC);
+		error += Settings._set(ar[i++], max_Z_ACC);
 		t = pids[ACCZ_PID].kP();
 		if ((error += Settings._set(ar[i++],t))==0)
 			pids[ACCZ_PID].kP(t);
@@ -279,9 +299,9 @@ void StabilizationClass::setZ(const float  *ar){
 string StabilizationClass::get_xy_set(){
 	ostringstream convert;
 	convert << \
-		dist2speed_H << "," << \
+		dist2speed_XY << "," << \
 		speed2accXY << "," << \
-		max_HOR_ACC << "," << \
+		max_XY_ACC << "," << \
 		pids[ACCX_SPEED].kP() << "," << \
 		pids[ACCX_SPEED].kI() << "," << \
 		pids[ACCX_SPEED].imax() << "," << \
@@ -301,10 +321,9 @@ void StabilizationClass::setXY(const float  *ar){
 		float t;
 		
 
-		error += Settings._set(ar[i++], dist2speed_H);
-		dist2speed_H_Rep = 1.0f / dist2speed_H;
+		error += Settings._set(ar[i++], dist2speed_XY);
 		error+= Settings._set(ar[i++], speed2accXY);
-		error += Settings._set(ar[i++], max_HOR_ACC);
+		error += Settings._set(ar[i++], max_XY_ACC);
 		
 
 		t = pids[ACCX_SPEED].kP();

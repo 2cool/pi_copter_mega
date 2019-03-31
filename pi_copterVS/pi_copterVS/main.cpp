@@ -57,7 +57,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 */
  
-#define PROG_VERSION "ver 3.190213\n"
+#define PROG_VERSION "ver 3.190331\n"
 
 
 #define SIM800_F
@@ -260,6 +260,7 @@ void pipe_handler(int sig) {
 
 
 int printHelp() {
+	cout << PROG_VERSION << endl;
 	cout << "<-help> for this help\n";
 	cout << " <fly at start at hight in sm > <lower hight in sm> <f=write stdout to file > <log com and tel y> <start wifi> <start sms> <start gps_inet_loger> <start telegram>\n";
 	cout << "example to write in log file : pi_copter 300 100 f n y y y y\n";
