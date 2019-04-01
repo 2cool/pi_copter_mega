@@ -30,8 +30,8 @@ void StabilizationClass::setMinMaxI_Thr() {
 void StabilizationClass::init(){
 	
 	
-	ACCXY_CF = 0.05;
-	max_XY_ACC = 5;
+	ACCXY_CF = 0.1;
+	max_XY_ACC = 2.5;
 
 	dist2speed_XY = 0.2f;//0.5
 
@@ -45,7 +45,7 @@ void StabilizationClass::init(){
 	//--------------------------------------------------------------------------
 	//повистовляь фильтри низких и високих частот. подобранние для каждого источника и обединить
 	ACCZ_CF = 0.1;
-	max_Z_ACC = 3;
+	max_Z_ACC = 1;
 
 	alt2speedZ = 0.2;//1
 
@@ -180,9 +180,9 @@ void StabilizationClass::XY(float &pitch, float&roll){//dont work
 			need_speedX = (tx-needXV);
 			ty = Mpu.get_Est_Y();
 			need_speedY = (ty-needYV);
-
-		}
-		dist2speed(need_speedX, need_speedY);
+			dist2speed(need_speedX, need_speedY);
+		}//вичислять нужное ускорение по форумуле a=v*v/(2s)
+		
 		tx = Mpu.get_Est_SpeedX();
 		const float need_acx =  (need_speedX + tx)*speed2accXY;
 		ty = Mpu.get_Est_SpeedY();
