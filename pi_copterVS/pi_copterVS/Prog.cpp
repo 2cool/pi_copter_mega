@@ -232,12 +232,10 @@ bool ProgClass::getIntersection(float &x, float &y){
 				dist2line = (float)(1.0 + sqrt(xx * xx + yy * yy));
 
 			if (dist2line > r){
-#ifdef FALL_IF_STRONG_WIND
 				if (dist2line > MAX_DIST_ERROR_TO_FALL){
 					Autopilot.off_throttle(false, e_TOO_STRONG_WIND);
 					return true;
 				}
-#endif
 				ks = r / dist2line;
 			}
 			r = dist2line;

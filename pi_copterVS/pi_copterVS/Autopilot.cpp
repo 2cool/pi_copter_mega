@@ -79,7 +79,7 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 	if (init_shmPTR())
 		return;
 #ifdef FALSE_WIRE
-	Emu.init(0, 0, 0);// WIND_X, WIND_Y, WIND_Z);
+	Emu.init(1, 1, 0);// WIND_X, WIND_Y, WIND_Z);
 #endif
 	shmPTR->sim800_reset = false;
 	time_at_startd = old_time_at_startd = 0;
@@ -413,108 +413,100 @@ bool AutopilotClass::holdAltitudeStartStop(){
 //----------------------------------------------------------------------------------------------
 enum{ JUMP = 0, HOWER = 1, GO_UP_OR_NOT = 2, TEST_ALT1 = 3, GO2HOME_LOC = 4, TEST4HOME_LOC = 5, START_FAST_DESENDING = 6, TEST_ALT2 = 7,SLOW_DESENDING=8 };
 bool AutopilotClass::go2HomeProc(const float dt){
-	
-		
- switch (go2homeIndex){
-	 
-
-	case JUMP:{	
-#ifdef FALL_IF_STRONG_WIND
-		dist2home_at_begin2 = Mpu.dist2home_2();
-#endif
-		if (Mpu.get_Est_Alt() < 3)
-			holdAltitude(3);
-		go2homeIndex=HOWER;
-		break;
-	}
-
-	case HOWER:{	//висеть 20 секунд
-		f_go2homeTimer += dt;
-		if (f_go2homeTimer > ((howeAt2HOME)?HOWER_TIME:4)){ //for stabilization and connection
-			go2homeIndex = GO_UP_OR_NOT;
-		}
-		break;
-
-	}
-	case GO_UP_OR_NOT:{
-		const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
-		if (fabs(Mpu.get_Est_X()) <= accuracy && fabs(Mpu.get_Est_Y()) <= accuracy){
-			f_go2homeTimer = 6; //min time for stab
-			go2homeIndex = (Mpu.get_Est_Alt() <= (FAST_DESENDING_TO_HIGH)) ? SLOW_DESENDING : START_FAST_DESENDING;
-			Stabilization.setNeedPos2Home();
+	 switch (go2homeIndex){
+		case JUMP:{	
+			dist2home_at_begin2 = Mpu.dist2home_2();
+			if (Mpu.get_Est_Alt() < 3)
+				holdAltitude(3);
+			go2homeIndex=HOWER;
 			break;
-		}	
-		//поднятся  на высоту  X м от стартовой высоты или опуститься
-		tflyAtAltitude=flyAtAltitude = height_to_lift_to_fly_to_home;
-		go2homeIndex = TEST_ALT1;
-		break;
-	}
-	case TEST_ALT1:{
-		if (fabs(Mpu.get_Est_Alt() - flyAtAltitude) <= (ACCURACY_Z)){
-			go2homeIndex = GO2HOME_LOC;
 		}
-		break;
-	}
-	case GO2HOME_LOC:{//перелететь на место старта
-		// led_prog = 4;
-		Stabilization.setNeedPos2Home();
-		go2homeIndex = TEST4HOME_LOC;
-		aYaw_ = -RAD2GRAD * atan2(Mpu.get_Est_Y(),Mpu.get_Est_X());// GPS.loc.dir_angle_GRAD;
+		case HOWER:{	//висеть 20 секунд
+			f_go2homeTimer += dt;
+			if (f_go2homeTimer > ((howeAt2HOME)?HOWER_TIME:4)){ //for stabilization and connection
+				go2homeIndex = GO_UP_OR_NOT;
+			}
+			break;
+		}
+		case GO_UP_OR_NOT:{
+			const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
+			if (fabs(Mpu.get_Est_X()) <= accuracy && fabs(Mpu.get_Est_Y()) <= accuracy){
+				f_go2homeTimer = 6; //min time for stab
+				go2homeIndex = (Mpu.get_Est_Alt() <= (FAST_DESENDING_TO_HIGH)) ? SLOW_DESENDING : START_FAST_DESENDING;
+				Stabilization.setNeedPos2Home();
+				break;
+			}	
+			//поднятся  на высоту  X м от стартовой высоты или опуститься
+			tflyAtAltitude=flyAtAltitude = height_to_lift_to_fly_to_home;
+			go2homeIndex = TEST_ALT1;
+			break;
+		}
+		case TEST_ALT1:{
+			if (fabs(Mpu.get_Est_Alt() - flyAtAltitude) <= (ACCURACY_Z)){
+				go2homeIndex = GO2HOME_LOC;
+			}
+			break;
+		}
+		case GO2HOME_LOC:{//перелететь на место старта
+			// led_prog = 4;
+			Stabilization.setNeedPos2Home();
+			go2homeIndex = TEST4HOME_LOC;
+			aYaw_ = -RAD2GRAD * atan2(Mpu.get_Est_Y(),Mpu.get_Est_X());// GPS.loc.dir_angle_GRAD;
 
-		aYaw_ = wrap_180(aYaw_);
-		break;
-	}
-	case TEST4HOME_LOC:{//прилет на место старта
+			aYaw_ = wrap_180(aYaw_);
+			break;
+		}
+		case TEST4HOME_LOC:{//прилет на место старта
 			   
-		const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
-		if (fabs(Mpu.get_Est_X()) <= accuracy && fabs(Mpu.get_Est_Y()) <= accuracy){
-			go2homeIndex = START_FAST_DESENDING;
-			f_go2homeTimer = 0;
+			const float accuracy = ACCURACY_XY + GPS.loc.accuracy_hor_pos_;
+			if (fabs(Mpu.get_Est_X()) <= accuracy && fabs(Mpu.get_Est_Y()) <= accuracy){
+				go2homeIndex = START_FAST_DESENDING;
+				f_go2homeTimer = 0;
+			}
+			break;
 		}
-		break;
-	}
-	case START_FAST_DESENDING:
-		f_go2homeTimer += dt;
-		if (f_go2homeTimer > 5){
-			go2homeIndex = TEST_ALT2;
-			tflyAtAltitude = flyAtAltitude = (FAST_DESENDING_TO_HIGH);
-		}
-		break;
+		case START_FAST_DESENDING:
+			f_go2homeTimer += dt;
+			if (f_go2homeTimer > 5){
+				go2homeIndex = TEST_ALT2;
+				tflyAtAltitude = flyAtAltitude = (FAST_DESENDING_TO_HIGH);
+			}
+			break;
 
 
-	case TEST_ALT2:{//спуск до FAST_DESENDING_TO_HIGH метров
-		if (fabs(Mpu.get_Est_Alt() - flyAtAltitude) < (ACCURACY_Z)){
-			go2homeIndex = SLOW_DESENDING;
-		}
+		case TEST_ALT2:{//спуск до FAST_DESENDING_TO_HIGH метров
+			if (fabs(Mpu.get_Est_Alt() - flyAtAltitude) < (ACCURACY_Z)){
+				go2homeIndex = SLOW_DESENDING;
+			}
 			   
-		break;
-	}
-	case SLOW_DESENDING:
-	{ 
-		if (MS5611.fault()) {
-			control_falling(e_BARROMETR_FAULT);
-			return false;
+			break;
 		}
-		//плавній спуск
-		if (Mpu.get_Est_Alt() >lowest_height){
-			float k = Mpu.get_Est_Alt()*0.05f;
-			if (k < 0.1f)
-				k = 0.1f;
-			flyAtAltitude -= (dt*k);
-			tflyAtAltitude = flyAtAltitude;
-		}
-		else{
-			tflyAtAltitude = flyAtAltitude = lowest_height;
-		}
+		case SLOW_DESENDING:
+		{ 
+			if (MS5611.fault()) {
+				control_falling(e_BARROMETR_FAULT);
+				return false;
+			}
+			//плавній спуск
+			if (Mpu.get_Est_Alt() >lowest_height){
+				float k = Mpu.get_Est_Alt()*0.05f;
+				if (k < 0.1f)
+					k = 0.1f;
+				flyAtAltitude -= (dt*k);
+				tflyAtAltitude = flyAtAltitude;
+			}
+			else{
+				tflyAtAltitude = flyAtAltitude = lowest_height;
+			}
 						   
-		break;
-	}
- }
-#ifdef FALL_IF_STRONG_WIND
+			break;
+		}
+	 }
+
 	if (Mpu.dist2home_2() - dist2home_at_begin2 > (MAX_DIST_ERROR_TO_FALL*MAX_DIST_ERROR_TO_FALL)){
 		Autopilot.off_throttle(false, e_TOO_STRONG_WIND);
 	}
-#endif
+
 	return true;
 }
 bool AutopilotClass::going2HomeON(const bool hower){

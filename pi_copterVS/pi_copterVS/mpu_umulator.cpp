@@ -10,7 +10,7 @@
 
 #define MOTOR_FORCE 0.5
 
-//#define NOISE_ON
+#define NOISE_ON
 
 //#define TEST_4_FULL_VOLTAGE
 
@@ -249,7 +249,7 @@ void EmuClass::init(float wx, float wy, float wz,float y , float p , float r ) {
 float motors_pow[4] = { 0,0,0,0 };
 void EmuClass::update(const float fm_[4], double dt) {
 	
-	const double MCF = 0.5;
+	const double MCF = 0.7;
 
 	for (int i = 0; i < 4; i++)
 		motors_pow[i] += (fm_[i] - motors_pow[i])*MCF;

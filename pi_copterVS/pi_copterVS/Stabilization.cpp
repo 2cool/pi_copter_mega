@@ -47,7 +47,7 @@ void StabilizationClass::init(){
 	ACCZ_CF = 0.1;
 
 	max_Z_ACC = 2;
-	alt2speedZ = 0.2;//1
+	alt2speedZ = 0.5;//1
 	speed2accZ = 2;//1
 
 	setMinMaxI_Thr();
@@ -209,6 +209,11 @@ void StabilizationClass::XY(float &pitch, float&roll){//dont work
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 float StabilizationClass::Z(){
+
+	static int hecnt = 0;
+	if ((Autopilot.fly_at_altitude()+ MAX_HIGHT_ERROR_TO_FALL) < Mpu.get_Est_Alt() && hecnt++ > 5)
+		Autopilot.off_throttle(false, e_TOO_HIGHT_FROM_NEED);
+	//-------------stab
 	static float naccZF=0;
 		const float need_speedZ = getSpeed_Z(Autopilot.fly_at_altitude() - Mpu.get_Est_Alt());
 		const float need_accZ =  speed2accZ*need_speedZ - Mpu.get_Est_SpeedZ();

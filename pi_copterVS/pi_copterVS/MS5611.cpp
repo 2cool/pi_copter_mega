@@ -64,12 +64,14 @@ double MS5611Class::getAltitude(const double pressure) {
 	double alt = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка 4.4.2018-вот она
 	
 	if (fault()) {
-			return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
+		powerK = 1;
+		return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
 	}
 	else {
 		shmPTR->altitude_ = (int32_t)(alt*1000.0);
 		shmPTR->pressure = pressure;
 		gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif)*0.1;
+		powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
 	}
 	
 	return alt;
@@ -264,7 +266,7 @@ void MS5611Class::phase2() {
 
 		pressure += ((double)P - pressure)*0.3;
 		log_sens();
-		powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
+		
 		const double new_altitude = getAltitude(pressure);
 		speed = (new_altitude - altitude_) / dt;
 		//Debug.load(0, speed / 10, dt);

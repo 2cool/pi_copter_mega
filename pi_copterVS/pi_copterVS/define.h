@@ -16,9 +16,14 @@
 //#define OFF_TIMELAG
 //-----------------------------------------------
 
-//#define FALSE_WIRE
+#define FALSE_WIRE
 
-#define  DO_SOUND 1
+
+//#define  DO_SOUND 1
+
+#define DO_SOUND 0
+
+
 //#define YAW_OFF
 //#define XY_SAFE_AREA 200
 //#define Z_SAFE_AREA 40
@@ -53,14 +58,10 @@
 //#define ON_MAX_G_MOTORS_OFF
 #endif
 
-#define FALL_IF_STRONG_WIND
-
-#ifdef FALL_IF_STRONG_WIND
-#define MAX_DIST_ERROR_TO_FALL 200.0f
+#define MAX_HIGHT_ERROR_TO_FALL 50
+#define MAX_DIST_ERROR_TO_FALL 100
 #define e_TOO_STRONG_WIND "TSW"
-#endif
-
-
+#define e_TOO_HIGHT_FROM_NEED "HFN"
 
 #define NO_GPS_DATA 10
 

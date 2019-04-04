@@ -27,9 +27,8 @@ class AutopilotClass
 
 
  protected:
-#ifdef FALL_IF_STRONG_WIND
+
 	 float dist2home_at_begin2;
-#endif
 #ifdef FALL_IF_GPS_ALT_NOT_MATCH_BAROM_ALT_
 	 float gps_alt_at_begin, bar_alt_at_begin;
 #endif
