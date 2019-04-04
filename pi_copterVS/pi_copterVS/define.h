@@ -16,10 +16,10 @@
 //#define OFF_TIMELAG
 //-----------------------------------------------
 
-#define FALSE_WIRE
+//#define FALSE_WIRE
 
-#define  DO_SOUND 0
-#define YAW_OFF
+#define  DO_SOUND 1
+//#define YAW_OFF
 //#define XY_SAFE_AREA 200
 //#define Z_SAFE_AREA 40
 

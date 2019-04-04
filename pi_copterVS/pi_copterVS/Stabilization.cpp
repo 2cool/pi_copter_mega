@@ -31,30 +31,29 @@ void StabilizationClass::init(){
 	
 	
 	ACCXY_CF = 0.1;
-	max_XY_ACC = 2.5;
+	max_XY_ACC = 3;//6.8
 
 	dist2speed_XY = 0.2f;//0.5
 
 	speed2accXY = 2;
 
 	//?????????????
-	set_acc_xy_speed_kp(2*Balance.get_max_angle() / max_XY_ACC);// 7);
-	set_acc_xy_speed_kI(0.1);
+	set_acc_xy_speed_kp(5.14);// 7);
+	set_acc_xy_speed_kI(2);
 	set_acc_xy_speed_imax(Balance.get_max_angle());
 	max_speed_xy = MAX_HOR_SPEED;
 	//--------------------------------------------------------------------------
 	//повистовляь фильтри низких и високих частот. подобранние для каждого источника и обединить
 	ACCZ_CF = 0.1;
-	max_Z_ACC = 1;
 
+	max_Z_ACC = 2;
 	alt2speedZ = 0.2;//1
-
-	speed2accZ = 1;//1
+	speed2accZ = 2;//1
 
 	setMinMaxI_Thr();
 
-	pids[ACCZ_PID].kP( (pids[ACCZ_PID].imax() - pids[ACCZ_PID].imin()) / max_Z_ACC);
-	pids[ACCZ_PID].kI(0.1);
+	pids[ACCZ_PID].kP( 0.05 );
+	pids[ACCZ_PID].kI(0.05);
 
 	
 	//pids[ACCZ_PID].imax(Balance.get_min_throttle() - HOVER_THROTHLE,  Balance.get_max_throttle() - HOVER_THROTHLE);

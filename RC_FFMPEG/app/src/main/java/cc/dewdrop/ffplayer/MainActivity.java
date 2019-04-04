@@ -386,7 +386,7 @@ public static void verifyPermissions(Activity activity){
 
 
     private double dt=1,old_time=0;
-
+double angK=0.3;
     @Override
     public void onSensorChanged(SensorEvent event) {
         final int type=event.sensor.getType();
@@ -400,8 +400,8 @@ public static void verifyPermissions(Activity activity){
             }
             dt=0.001*(now-old_time);
             old_time=now;
-            pitch-=0.5*RAD2GRAD*event.values[1]*dt;
-            roll+=0.5*RAD2GRAD*event.values[0]*dt;
+            pitch-=angK*0.5*RAD2GRAD*event.values[1]*dt;
+            roll+=angK*0.5*RAD2GRAD*event.values[0]*dt;
             yaw+=0.5*RAD2GRAD*event.values[2]*dt;
             // Commander.yaw-=event.values[2]*dt;
              //Log.i("MATHr","roll="+(roll)+", pitch="+(pitch));
@@ -409,8 +409,8 @@ public static void verifyPermissions(Activity activity){
         else
         if (type==Sensor.TYPE_ACCELEROMETER){
 
-            double aRoll = Math.atan2(event.values[1], event.values[2]) * RAD2GRAD ;
-            double aPitch = Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2])) * RAD2GRAD ;
+            double aRoll = angK*Math.atan2(event.values[1], event.values[2]) * RAD2GRAD ;
+            double aPitch = angK*Math.atan2(event.values[0] , Math.sqrt(event.values[1] * event.values[1] + event.values[2] * event.values[2])) * RAD2GRAD ;
             double f=gyroscopeWork?Math.max(0.003,Math.min(0.03,dt*0.5)):0.03;
             pitch += (aPitch - pitch) * f;
             roll += (aRoll - roll) * f;
@@ -419,7 +419,7 @@ public static void verifyPermissions(Activity activity){
         }
         else
         if (type==Sensor.TYPE_ORIENTATION){
-            magnetometerWork=true;
+             magnetometerWork=true;
             double f=gyroscopeWork?1:0.1;
             double t_yaw=(DrawView.wrap_180((double)event.values[0]+90));
             if (t_yaw>90 && yaw<-90)
