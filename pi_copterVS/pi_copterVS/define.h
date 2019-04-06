@@ -16,7 +16,7 @@
 //#define OFF_TIMELAG
 //-----------------------------------------------
 
-#define FALSE_WIRE
+//#define FALSE_WIRE
 
 
 //#define  DO_SOUND 1
@@ -58,8 +58,8 @@
 //#define ON_MAX_G_MOTORS_OFF
 #endif
 
-#define MAX_HIGHT_ERROR_TO_FALL 50
-#define MAX_DIST_ERROR_TO_FALL 100
+#define MAX_HIGHT_ERROR_TO_FALL 100
+#define MAX_DIST_ERROR_TO_FALL 200
 #define e_TOO_STRONG_WIND "TSW"
 #define e_TOO_HIGHT_FROM_NEED "HFN"
 

@@ -17,7 +17,7 @@ import static java.lang.Math.cos;
 public class Monitor {
     Paint white,green;
     private float compsL;
-    private float hight,speed;
+    private float hight_t=0,hight,speed_t=0,speed;
     private double pitch, roll, yaw;
     private float xpos,ypos;
     private Bitmap bm,cmps;
@@ -28,11 +28,14 @@ public class Monitor {
         roll=-a;
     }
     public void setHeight(double h){
-        hight = (float) Math.round(h * 100) / 100;
+        hight_t+=(h*10-hight_t)*0.05;
+        hight = (float) (Math.round(hight_t)*0.1);
 
     }
     public void setSpeed(double s){
-        speed=(float) Math.round(s * 100) / 100;
+        speed_t+=(s*10-speed_t)*0.05;
+        speed=(float)(Math.round(speed_t)*0.1);
+
     }
     public void setYaw(double a){
         while(a<0)

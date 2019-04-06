@@ -22,8 +22,8 @@
   main.cpp
   debug.cpp
   inv_mpu.cpp
-  Settings.cpp
   inv_mpu_dmp_motion_driver.cpp
+  Settings.cpp
   WProgram.cpp
   Direction.cpp
   Filter.cpp

@@ -34,6 +34,7 @@ class MpuClass
 {
 	friend class HmcClass;
  protected:
+	 float ACC_XY_CF, ACC_Z_CF;
 	 float tiltPower_CF;
 	 void log_emu();
 	 void log();

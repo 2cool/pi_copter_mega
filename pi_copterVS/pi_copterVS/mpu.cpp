@@ -123,6 +123,8 @@ void MpuClass::log_emu() {
 //-----------------------------------------------------
 void MpuClass::init()
 {
+	ACC_Z_CF = 0.1;
+	ACC_XY_CF = 0.1;
 
 	fw_accX = fw_accY = faccZ = 0;
 	tiltPower_CF = 0.05;
@@ -349,6 +351,8 @@ bool MpuClass::loop(){
 	float WaccY = Emu.get_accY();
 	accZ = Emu.get_accZ();
 
+	faccZ += (accZ - faccZ)*ACC_Z_CF;
+
 	accX = (cosYaw * WaccX + sinYaw * WaccY); //relative to copter xy
 	accY = (cosYaw * WaccY - sinYaw * WaccX);
 
@@ -557,7 +561,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	
 	accZ = az*cosPitch + sinPitch*ax;
 	accZ = 9.8f*(accZ*cosRoll + sinRoll*ay - 1);
-	faccZ += (accZ - faccZ)*0.5;
+	faccZ += (accZ - faccZ)*ACC_Z_CF;
 
 	accX = 9.8f*(ax*cosPitch - az*sinPitch);
 	accY = 9.8f*(-ay*cosRoll + az*sinRoll);
@@ -708,8 +712,8 @@ void MpuClass::test_Est_XY() {
 	w_accX = (-cosYaw*c_accX + sinYaw*c_accY); //relative to world
 	w_accY = (-cosYaw*c_accY - sinYaw*c_accX);
 
-	fw_accX += (w_accX - fw_accX)*0.5f;
-	fw_accY += (w_accY - fw_accY)*0.5f;
+	fw_accX += (w_accX - fw_accX)*ACC_XY_CF;
+	fw_accY += (w_accY - fw_accY)*ACC_XY_CF;
 	//--------------------------------------------------------estimate
 	estX += mpu_dt*(est_speedX + w_accX * mpu_dt*0.5f);
 	est_speedX += (w_accX*mpu_dt);

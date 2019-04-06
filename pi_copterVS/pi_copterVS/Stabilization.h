@@ -18,9 +18,9 @@
 class StabilizationClass{
 
 
-#define ACCX_SPEED 0
-#define ACCY_SPEED 1
-#define ACCZ_PID 2
+#define SPEED_X_SPEED 0
+#define SPEED_Y_SPEED 1
+#define SPEED_Z_PID 2
 
 private:
 	
@@ -29,14 +29,14 @@ private:
 	void speed2dist(float &x, float &y);
 
 	
-	float ACCZ_CF, ACCXY_CF;
+	float SPEED_Z_CF, SPEED_XY_CF;
 
-	float mc_z,mc_pitch,mc_roll;
+
+	float speed_2_acc_Z, speed_2_acc_XY;
+	float mc_z,mc_x,mc_y,d_speedX,d_speedY;
 	float dist2speed_XY;
-
 	float alt2speedZ;
-	float speed2accZ, speed2accXY;
-	float max_XY_ACC, max_Z_ACC;
+	float max_acc_z, max_acc_xy,acc_2_power, acc_2_angle;
 	float accxy_stab(float dist, float maxA, float timeL);
 	float accxy_stab_rep(float speed, float maxA, float timeL);
 	//float throttle;
@@ -46,10 +46,10 @@ private:
 
 	float needXR, needYR, needXV, needYV;
 
-	void set_acc_xy_speed_kp(const float f){ pids[ACCX_SPEED].kP(f);	pids[ACCY_SPEED].kP(f); }
-	void set_acc_xy_speed_kI(const float f){ pids[ACCX_SPEED].kI(f);	pids[ACCY_SPEED].kI(f); }
-	void set_acc_xy_speed_kD(const float f){ pids[ACCX_SPEED].kD(f,3);	pids[ACCY_SPEED].kD(f,3); }
-	void set_acc_xy_speed_imax(const float f){ pids[ACCX_SPEED].imax(-f,f);	pids[ACCY_SPEED].imax(-f,f); }
+	void set_acc_xy_speed_kp(const float f){ pids[SPEED_X_SPEED].kP(f);	pids[SPEED_Y_SPEED].kP(f); }
+	void set_acc_xy_speed_kI(const float f){ pids[SPEED_X_SPEED].kI(f);	pids[SPEED_Y_SPEED].kI(f); }
+	void set_acc_xy_speed_kD(const float f){ pids[SPEED_X_SPEED].kD(f,3);	pids[SPEED_Y_SPEED].kD(f,3); }
+	void set_acc_xy_speed_imax(const float f){ pids[SPEED_X_SPEED].imax(-f,f);	pids[SPEED_Y_SPEED].imax(-f,f); }
 	
 	
 public:
