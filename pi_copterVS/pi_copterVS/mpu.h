@@ -80,7 +80,6 @@ class MpuClass
 	
 	//------------------
 	float yaw_off;
-	float f_pitch, f_roll;
 	float pitch, roll;
 	float est_alt_, est_speedZ;
 	float estX, estY, est_speedX, est_speedY;

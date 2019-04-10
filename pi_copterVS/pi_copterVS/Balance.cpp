@@ -146,7 +146,7 @@ void BalanceClass::init()
 	
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
 	
-	set_pitch_roll_pids(0.001, 0.001, 0.2); 
+	set_pitch_roll_pids(0.0013, 0.0, 0); 
 
 	yaw_stabKP = 2;
 
@@ -377,8 +377,8 @@ bool BalanceClass::loop()
 			static float roll_stab_output = 0;
 			static float yaw_stab_output = 0;
 
-#define BAL_F 0.33f
-
+//#define BAL_F 0.33f
+#define BAL_F 1
 			pitch_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_pitch() - c_pitch)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED)-pitch_stab_output)*BAL_F;
 			roll_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED)-roll_stab_output)*BAL_F;
 			yaw_stab_output += (f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED)-yaw_stab_output)*BAL_F;

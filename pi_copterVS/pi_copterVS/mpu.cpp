@@ -75,8 +75,6 @@ void MpuClass::log() {
 		Log.loadMem((uint8_t*)g, 6, false);
 		Log.loadMem((uint8_t*)a, 6, false);
 
-		Log.loadFloat(f_pitch * RAD2GRAD);
-		Log.loadFloat(f_roll * RAD2GRAD);
 		Log.loadFloat(pitch);
 		Log.loadFloat(roll);
 		Log.loadFloat(yaw);
@@ -102,8 +100,6 @@ void MpuClass::log_emu() {
 		Log.block_start(LOG::MPU_EMU);
 
 		Log.loadByte((uint8_t)(dt * 1000));
-		Log.loadFloat(f_pitch * RAD2GRAD);
-		Log.loadFloat(f_roll * RAD2GRAD);
 		Log.loadFloat(pitch);
 		Log.loadFloat(roll);
 		Log.loadFloat(yaw);
@@ -131,7 +127,7 @@ void MpuClass::init()
 	altitude_at_zero = XatZero = YatZero = 0;
 	_0007=0.007;
 	acc_callibr_timed = 0;
-	f_pitch = f_roll = w_accX = w_accY = yaw_off = 0;
+	w_accX = w_accY = yaw_off = 0;
 	fx = fy = fz = sinPitch = sinRoll = 0;
 	yaw_offset = yaw = pitch = roll = gyroPitch = gyroRoll = gyroYaw = accX = accY = accZ = 0;
 
@@ -158,13 +154,10 @@ void MpuClass::init()
 
 
 
-
-
-
-	accelgyro.initialize(MPU6050_GYRO_FS_2000, MPU6050_ACCEL_FS_8, MPU6050_DLPF_BW_98);
+	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_20);
 	//ms_open();
 	sleep(1);
-	accelgyro.initialize(MPU6050_GYRO_FS_2000, MPU6050_ACCEL_FS_8, MPU6050_DLPF_BW_98);
+	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_20);
 	writeWord(104, MPU6050_RA_XA_OFFS_H, -535);//-5525);
 	writeWord(104, MPU6050_RA_YA_OFFS_H, 219);// -1349);
 	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1214);// 1291);
@@ -261,9 +254,11 @@ int16_t MpuClass::getGX(){
 }
 //-----------------------------------------------------
 const float n003 = 0.030517578f;
-const float n006 =  0.061035156f;
+//const float n006 =  0.061035156f;
 //4g
-const float n122 = 1.220740379e-4;
+//const float n122 = 1.220740379e-4;
+const float n305 = 3.0518509475e-5;
+
 //2g
 //const float n604 = 0.00006103515625f;
 
@@ -453,9 +448,9 @@ void MpuClass::gyro_calibr() {
 			cal_g_roll += g[0];
 			cal_g_yaw += g[2];
 			cal_g_cnt++;
-			agpitch = n006 * ((double)cal_g_pitch / (double)cal_g_cnt);
-			agroll = n006 * ((double)cal_g_roll / (double)cal_g_cnt);
-			agyaw = n006 * ((double)cal_g_yaw / (double)cal_g_cnt);
+			agpitch = n003 * ((double)cal_g_pitch / (double)cal_g_cnt);
+			agroll = n003 * ((double)cal_g_roll / (double)cal_g_cnt);
+			agyaw = n003 * ((double)cal_g_yaw / (double)cal_g_cnt);
 		}
 		else {
 			AHRS.setBeta(0.01);
@@ -502,12 +497,12 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 		}
 	}
 	accelgyro.getMotion6(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2]);
-	gyroPitch =  n006 * (float)g[1] - agpitch;
-	gyroRoll =  n006 * (float)g[0] - agroll;
-	gyroYaw =  n006 * (float)g[2] - agyaw;
-	float ax = n122 * 2 * (float)a[0];
-	float ay = n122 * 2 * (float)a[1];
-	float az = n122 * 2 * (float)a[2];
+	gyroPitch =  n003 * (float)g[1] - agpitch;
+	gyroRoll =  n003 * (float)g[0] - agroll;
+	gyroYaw =  n003 * (float)g[2] - agyaw;
+	float ax = n305 * 2 * (float)a[0];
+	float ay = n305 * 2 * (float)a[1];
+	float az = n305 * 2 * (float)a[2];
 	//if (az > 3)
 	//	cout<<"AZM\n" ;//??????????????????????????????????????
 
@@ -599,12 +594,16 @@ void MpuClass::new_calibration(const bool onlyGyro){
 
 
 
-float Z_CF_DIST = 0.03;//CF filter
-float Z_CF_SPEED = 0.01;//CF filter //при 0.005 На ошибку в ACC на 0.1 ошибка в исоте на метр.
+float Z_CF_DIST = 0.003;//CF filter
+float Z_CF_SPEED = 0.001;//CF filter //при 0.005 На ошибку в ACC на 0.1 ошибка в исоте на метр.
 float AltErrorI=0;
 void MpuClass::test_Est_Alt() {
 
 	float alt = MS5611.alt();
+	   	 	
+
+
+
 	if (timed<8) {
 		est_alt_ = alt;
 		est_speedZ = 0;
@@ -646,7 +645,11 @@ void MpuClass::test_Est_Alt() {
 	//Debug.load(0, est_speedZ, est_alt_);
 	//Debug.dump();
 	
-
+	//static float old1 = 0, old2 = 0;
+	//Debug.load(0, est_alt_-old1, alt-old2);
+	//old1 = est_alt_;
+	//old2 = alt;
+	//Debug.dump();
 	
 	
 }

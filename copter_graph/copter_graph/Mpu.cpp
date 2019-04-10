@@ -250,8 +250,7 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 
 
 
-	f_pitch = *(float*)&buf[j]; j += 4;
-	f_roll = *(float*)&buf[j]; j += 4;
+	
 	pitch= *(float*)&buf[j]; j += 4;
 	roll= *(float*)&buf[j]; j += 4;
 	yaw = *(float*)&buf[j]; j += 4;;

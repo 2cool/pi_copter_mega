@@ -3,10 +3,10 @@
   Validating architecture
   Starting remote build
   Compiling sources:
-  MS5611.cpp
   AP_PID.cpp
   FIND.cpp
   Location.cpp
+  MS5611.cpp
   Autopilot.cpp
   GeoDot.cpp
   GPS.cpp

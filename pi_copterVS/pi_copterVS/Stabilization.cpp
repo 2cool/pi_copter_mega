@@ -42,7 +42,7 @@ void StabilizationClass::init(){
 	speed_2_acc_Z = 1;
 	acc_2_power = 0.025;
 	max_acc_z = 6;
-	alt2speedZ = 0.2;
+	alt2speedZ = 0.5;
 	pids[SPEED_Z_PID].kP( 0.15 );
 	pids[SPEED_Z_PID].kI(0.25);
 
