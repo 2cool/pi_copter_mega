@@ -119,10 +119,7 @@ void MpuClass::log_emu() {
 //-----------------------------------------------------
 void MpuClass::init()
 {
-	ACC_Z_CF = 0.1;
-	ACC_XY_CF = 0.1;
 
-	fw_accX = fw_accY = faccZ = 0;
 	tiltPower_CF = 0.05;
 	altitude_at_zero = XatZero = YatZero = 0;
 	_0007=0.007;
@@ -145,8 +142,6 @@ void MpuClass::init()
 	q.w = 1; q.x = q.y = q.z = 0;
 	oldmpuTimed = mpu_time_ = 0.000001*micros();
 
-
-
 	cout << "Initializing MPU6050\n";
 
 #ifndef FALSE_WIRE
@@ -154,10 +149,10 @@ void MpuClass::init()
 
 
 
-	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_20);
+	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_98);
 	//ms_open();
 	sleep(1);
-	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_20);
+	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_98);
 	writeWord(104, MPU6050_RA_XA_OFFS_H, -535);//-5525);
 	writeWord(104, MPU6050_RA_YA_OFFS_H, 219);// -1349);
 	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1214);// 1291);
@@ -556,7 +551,6 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	
 	accZ = az*cosPitch + sinPitch*ax;
 	accZ = 9.8f*(accZ*cosRoll + sinRoll*ay - 1);
-	faccZ += (accZ - faccZ)*ACC_Z_CF;
 
 	accX = 9.8f*(ax*cosPitch - az*sinPitch);
 	accY = 9.8f*(-ay*cosRoll + az*sinRoll);
@@ -594,8 +588,8 @@ void MpuClass::new_calibration(const bool onlyGyro){
 
 
 
-float Z_CF_DIST = 0.003;//CF filter
-float Z_CF_SPEED = 0.001;//CF filter //при 0.005 На ошибку в ACC на 0.1 ошибка в исоте на метр.
+float Z_CF_DIST = 0.015;//CF filter
+float Z_CF_SPEED = 0.0025;//CF filter //при 0.005 На ошибку в ACC на 0.1 ошибка в исоте на метр.
 float AltErrorI=0;
 void MpuClass::test_Est_Alt() {
 
@@ -668,13 +662,8 @@ void MpuClass::rotateCCW(float &x, float &y) {
 }
 
 
-//float XY_KF_DIST = 0.1f;
-//float XY_KF_SPEED = 0.1f;
-
-float XY_KF_DIST = 0.01f;
-float XY_KF_SPEED = 0.01f;
-
-
+float XY_KF_DIST = 0.05f;
+float XY_KF_SPEED = 0.05f;
 
 float est_XError = 0, est_XErrorI = 0;
 float est_YError = 0, est_YErrorI = 0;
@@ -685,7 +674,6 @@ void MpuClass::test_Est_XY() {
 	if (GPS.loc.dX == 0 && GPS.loc.dY == 0) {
 		est_XError = est_XErrorI = est_YError = est_YErrorI = 0;
 		estX = estY = est_speedX = est_speedY = 0;
-		return;
 	}
 	est_XError = GPS.loc.dX - estX;
 	est_YError = GPS.loc.dY - estY;
@@ -715,8 +703,6 @@ void MpuClass::test_Est_XY() {
 	w_accX = (-cosYaw*c_accX + sinYaw*c_accY); //relative to world
 	w_accY = (-cosYaw*c_accY - sinYaw*c_accX);
 
-	fw_accX += (w_accX - fw_accX)*ACC_XY_CF;
-	fw_accY += (w_accY - fw_accY)*ACC_XY_CF;
 	//--------------------------------------------------------estimate
 	estX += mpu_dt*(est_speedX + w_accX * mpu_dt*0.5f);
 	est_speedX += (w_accX*mpu_dt);
@@ -729,7 +715,8 @@ void MpuClass::test_Est_XY() {
 	estY += (GPS.loc.dY - estY)*XY_KF_DIST;
 	est_speedY += (GPS.loc.speedY - est_speedY)*XY_KF_SPEED;
 	
-	//Debug.load(0, (int)(estX*100), (int)(estY*100), yaw * RAD2GRAD);
+	//Debug.load(0, Mpu.w_accX, Mpu.w_accY);
+	//Debug.dump();
 }
 
 /*

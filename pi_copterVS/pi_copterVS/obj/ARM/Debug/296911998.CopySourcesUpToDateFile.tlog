@@ -1,6 +1,6 @@
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\AP_PID.cpp|636895723026649339|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Autopilot.cpp|636899850942466843|~/projects/pi_copterVS|
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp|636904217519369353|~/projects/pi_copterVS|
+C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp|636906791873915783|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\commander.cpp|636895723026969363|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\debug.cpp|636851776472647902|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Direction.cpp|636814224277196361|~/projects/pi_copterVS|
@@ -16,7 +16,7 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Location.cpp|636852256524
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Log.cpp|636814224277306369|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MadgwickAHRS.cpp|636851776472387885|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\main.cpp|636904002467103810|~/projects/pi_copterVS|
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.cpp|636904238096224642|~/projects/pi_copterVS|
+C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.cpp|636906791873745774|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MPU6050.cpp|636851776472337879|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.cpp|636900705202543282|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.cpp|636899857810880770|~/projects/pi_copterVS|
@@ -24,7 +24,7 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp|6368998381000017
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.cpp|636903077299725250|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\RC_Filter.cpp|636814224277406371|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Settings.cpp|636895723026729350|~/projects/pi_copterVS|
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.cpp|636904217519159338|~/projects/pi_copterVS|
+C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.cpp|636906878287422483|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Telemetry.cpp|636895765677666401|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\WProgram.cpp|636827215386632096|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\AP_PID.h|636895723026659337|~/projects/pi_copterVS|
@@ -32,7 +32,7 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Autopilot.h|6368998381251
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.h|636895723026709348|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\commander.h|636895723026979367|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\debug.h|636814224277756392|~/projects/pi_copterVS|
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\define.h|636904002469966878|~/projects/pi_copterVS|
+C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\define.h|636906569940135965|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Direction.h|636814224277196361|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\dmpKey.h|636814224277776394|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\dmpmap.h|636814224277786392|~/projects/pi_copterVS|
@@ -50,7 +50,7 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Location.h|63685225652433
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Log.h|636814224277316371|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MadgwickAHRS.h|636851776472397886|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MotionSensor.h|636814224277386372|~/projects/pi_copterVS|
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.h|636904238096074633|~/projects/pi_copterVS|
+C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mpu.h|636906791873515756|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MPU6050.h|636851776472357890|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.h|636856089570802281|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.h|636851841850862342|~/projects/pi_copterVS|
@@ -58,6 +58,6 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.h|636885930300914377
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.h|636896340345808693|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\RC_Filter.h|636814224277416372|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Settings.h|636895723026739351|~/projects/pi_copterVS|
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h|636900737557652848|~/projects/pi_copterVS|
+C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h|636906791873625759|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Telemetry.h|636814224277456376|~/projects/pi_copterVS|
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\WProgram.h|636827215386402057|~/projects/pi_copterVS|

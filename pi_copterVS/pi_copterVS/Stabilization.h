@@ -31,12 +31,9 @@ private:
 	
 	float SPEED_Z_CF, SPEED_XY_CF;
 
-
-	float speed_2_acc_Z, speed_2_acc_XY;
 	float mc_z,mc_x,mc_y,d_speedX,d_speedY;
 	float dist2speed_XY;
 	float alt2speedZ;
-	float max_acc_z, max_acc_xy,acc_2_power, acc_2_angle;
 	float accxy_stab(float dist, float maxA, float timeL);
 	float accxy_stab_rep(float speed, float maxA, float timeL);
 	//float throttle;

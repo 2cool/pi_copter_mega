@@ -28,23 +28,17 @@ void StabilizationClass::setMinMaxI_Thr() {
 }
 //"dist to speed","speed to acc","SPEED_KP","SPEED_I","SPEED_imax","max_speed","FILTR"
 void StabilizationClass::init(){
-	speed_2_acc_XY = 1;
-	acc_2_angle = 1;
-	max_acc_xy = 6;
 
 	dist2speed_XY = 0.2f;//0.5
-	set_acc_xy_speed_kp(5);
-	set_acc_xy_speed_kI(2);
+	set_acc_xy_speed_kp( 5);
+	set_acc_xy_speed_kI( 2);
 	set_acc_xy_speed_imax(Balance.get_max_angle());
 	max_speed_xy = MAX_HOR_SPEED;
 	//--------------------------------------------------------------------------
-	//повистовляь фильтри низких и високих частот. подобранние для каждого источника и обединить
-	speed_2_acc_Z = 1;
-	acc_2_power = 0.025;
-	max_acc_z = 6;
-	alt2speedZ = 0.5;
+
+	alt2speedZ = 0.2;
 	pids[SPEED_Z_PID].kP( 0.15 );
-	pids[SPEED_Z_PID].kI(0.25);
+	pids[SPEED_Z_PID].kI( 0.25 );
 
 	setMinMaxI_Thr();
 	max_speedZ_P =  MAX_VER_SPEED_PLUS;
@@ -171,23 +165,24 @@ void StabilizationClass::XY(float &pitch, float&roll){//dont work
 		}//вичислять нужное ускорение по форумуле a=v*v/(2s)
 		dist2speed(need_speedX, need_speedY);
 		d_speedX += ((need_speedX + Mpu.get_Est_SpeedX()) - d_speedX)*XY_FILTER;
-		d_speedX = constrain(d_speedX, -max_acc_xy, max_acc_xy);
 		d_speedY += ((need_speedY + Mpu.get_Est_SpeedY()) - d_speedY)*XY_FILTER;
-		d_speedY = constrain(d_speedY, -max_acc_xy, max_acc_xy);
 
 	//	mc_x += (mc_pitch - Mpu.get_Est_SpeedZ() - mc_z)*Z_FILTER;
 	//	mc_z = constrain(mc_z, -max_acc_z, max_acc_z);
-		const float accX_C =  ((d_speedX * speed_2_acc_XY) - Mpu.w_accX)*acc_2_angle;
-		const float accY_C = ((d_speedY * speed_2_acc_XY) - Mpu.w_accY)*acc_2_angle;
+	//	const float accX_C =  ((d_speedX * speed_2_acc_XY) - Mpu.w_accX)*acc_2_angle;
+	//	const float accY_C = ((d_speedY * speed_2_acc_XY) - Mpu.w_accY)*acc_2_angle;
 
-		const float w_pitch = -(accX_C+pids[SPEED_X_SPEED].get_pid(d_speedX, Mpu.dt));
-		const float w_roll = accY_C + pids[SPEED_Y_SPEED].get_pid(d_speedY, Mpu.dt);
+		const float w_pitch = -(pids[SPEED_X_SPEED].get_pid(d_speedX, Mpu.dt));
+		const float w_roll = pids[SPEED_Y_SPEED].get_pid(d_speedY, Mpu.dt);
 
 		
 
 		//----------------------------------------------------------------преобр. в относительную систему координат
 		pitch = Mpu.cosYaw*w_pitch - Mpu.sinYaw*w_roll;
 		roll = Mpu.cosYaw*w_roll + Mpu.sinYaw*w_pitch;
+
+		//Debug.load(0, pitch, roll);
+		//Debug.dump();
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -201,10 +196,11 @@ float StabilizationClass::Z(){
 	const float need_speedZ = getSpeed_Z(Autopilot.fly_at_altitude() - Mpu.get_Est_Alt());
 
 	mc_z += (need_speedZ - Mpu.get_Est_SpeedZ() - mc_z)*Z_FILTER;
-	mc_z = constrain(mc_z, -max_acc_z, max_acc_z);
-	const float accZ_C = ((mc_z * speed_2_acc_Z) - Mpu.faccZ)*acc_2_power;
+	//const float accZ_C = ((mc_z * speed_2_acc_Z) - Mpu.faccZ)*acc_2_power;
 
-	float fZ = HOVER_THROTHLE + accZ_C + pids[SPEED_Z_PID].get_pid(mc_z, Mpu.dt)*Balance.powerK();
+
+
+	float fZ = HOVER_THROTHLE +  pids[SPEED_Z_PID].get_pid(mc_z, Mpu.dt)*Balance.powerK();
 	return fZ;
 }
 
@@ -234,9 +230,6 @@ string StabilizationClass::get_z_set() {
 	ostringstream convert;
 	convert << \
 		alt2speedZ << "," << \
-		speed_2_acc_Z << "," << \
-		acc_2_power << "," << \
-		max_acc_z << "," << \
 		pids[SPEED_Z_PID].kP() << "," << \
 		pids[SPEED_Z_PID].kI() << "," << \
 		max_speedZ_P << "," << \
@@ -254,9 +247,6 @@ void StabilizationClass::setZ(const float  *ar) {
 		error = 0;
 		float t;
 		error += Settings._set(ar[i++], alt2speedZ);
-		error += Settings._set(ar[i++], speed_2_acc_Z);
-		error += Settings._set(ar[i++], acc_2_power);
-		error += Settings._set(ar[i++], max_acc_z);
 		t = pids[SPEED_Z_PID].kP();
 		if ((error += Settings._set(ar[i++], t)) == 0)
 			pids[SPEED_Z_PID].kP(t);
@@ -285,9 +275,6 @@ string StabilizationClass::get_xy_set() {
 	ostringstream convert;
 	convert << \
 		dist2speed_XY << "," << \
-		speed_2_acc_XY << "," << \
-		acc_2_angle << "," << \
-		max_acc_xy << "," << \
 		pids[SPEED_X_SPEED].kP() << "," << \
 		pids[SPEED_X_SPEED].kI() << "," << \
 		max_speed_xy << "," << \
@@ -307,9 +294,6 @@ void StabilizationClass::setXY(const float  *ar){
 		
 
 		error += Settings._set(ar[i++], dist2speed_XY);
-		error += Settings._set(ar[i++], speed_2_acc_XY);
-		error += Settings._set(ar[i++], acc_2_angle);
-		error += Settings._set(ar[i++], max_acc_xy);
 		t = pids[SPEED_X_SPEED].kP();
 		if ((error += Settings._set(ar[i++], t))==0)
 			set_acc_xy_speed_kp(t);

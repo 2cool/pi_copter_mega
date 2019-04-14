@@ -130,23 +130,15 @@ void BalanceClass::init()
 	max_angle = MAX_ANGLE;
 	max_throttle = MAX_THROTTLE;
 	min_throttle = MIN_THROTTLE;
-
 	f_[0] = f_[1] = f_[2] = f_[3] = 0;
 	cout << "BALANCE INIT\n";
-	
 	c_pitch = c_roll = 0;
-	
-
 	Stabilization.init();
 	true_throttle = throttle = 0;
-
-
-
 	pitch_roll_stabKP = 2;
-	
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
-	
-	set_pitch_roll_pids(0.0013, 0.0, 0); 
+	//set_pitch_roll_pids(0.0017,  0.0001, 0.2);
+	set_pitch_roll_pids(0.0007, 0.001, 0.2);
 
 	yaw_stabKP = 2;
 
@@ -303,8 +295,8 @@ bool BalanceClass::set_min_max_throttle(const float max, const float min) {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-#define MAX_ANGLE_SPEED 360
-#define MAX_YAW_SPEED 180
+#define MAX_D_ANGLE_SPEED 70
+#define MAX_D_YAW_SPEED 70
 //#define MAX_POWER_K_IF_MAX_ANGLE_30 1.12
 
 
@@ -379,9 +371,9 @@ bool BalanceClass::loop()
 
 //#define BAL_F 0.33f
 #define BAL_F 1
-			pitch_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_pitch() - c_pitch)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED)-pitch_stab_output)*BAL_F;
-			roll_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_ANGLE_SPEED, MAX_ANGLE_SPEED)-roll_stab_output)*BAL_F;
-			yaw_stab_output += (f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_YAW_SPEED, MAX_YAW_SPEED)-yaw_stab_output)*BAL_F;
+			pitch_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_pitch() - c_pitch)), -MAX_D_ANGLE_SPEED, MAX_D_ANGLE_SPEED)-pitch_stab_output)*BAL_F;
+			roll_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_D_ANGLE_SPEED, MAX_D_ANGLE_SPEED)-roll_stab_output)*BAL_F;
+			yaw_stab_output += (f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_D_YAW_SPEED, MAX_D_YAW_SPEED)-yaw_stab_output)*BAL_F;
 
 			//float pitch_gk = min(abs(pitch_stab_output*power_K), 1);
 			//float roll_gk = min(abs(roll_stab_output*power_K), 1);

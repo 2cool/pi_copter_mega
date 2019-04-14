@@ -34,7 +34,6 @@ class MpuClass
 {
 	friend class HmcClass;
  protected:
-	 float ACC_XY_CF, ACC_Z_CF;
 	 float tiltPower_CF;
 	 void log_emu();
 	 void log();
@@ -132,8 +131,7 @@ private:
 	 float get_roll();
 	 bool mpu_calibrated,gyro_calibratioan;
 	float accZ,accY,accX,tiltPower,cosPitch,cosRoll,sinPitch,sinRoll;
-	float w_accX, w_accY, fw_accX, fw_accY;
-	float faccZ;
+	float w_accX, w_accY;
 	float  gyroPitch, gyroYaw, gyroRoll;
 	string get_set();
 	void set(const float  *ar);
