@@ -157,7 +157,7 @@ void StabilizationClass::XY(float &pitch, float&roll){//dont work
 			need_speedY = -Prog.need_speedY;
 		}
 		else {
-			tx = Mpu.get_Est_X();
+			tx = Mpu.get_Est_X(); 
 			need_speedX = (tx-needXV);
 			ty = Mpu.get_Est_Y();
 			need_speedY = (ty-needYV);

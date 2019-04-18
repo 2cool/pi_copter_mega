@@ -446,8 +446,8 @@ try{//неиследованная ошибка вискакивает.
 
 
 
-        xy.x=(int)(copterX*Math.pow(2,i)-x);
-        xy.y=(int)(copterY*Math.pow(2,i)-y);
+        xy.x=(int)(copterX*Math.pow(2,i))-x;
+        xy.y=(int)(copterY*Math.pow(2,i))-y;
 
         return xy;
     }
@@ -457,6 +457,9 @@ try{//неиследованная ошибка вискакивает.
             Point xy=lon_lat_2_XY(GPSservice.mLastLocation.getLatitude(),GPSservice.mLastLocation.getLongitude());
             red.setStyle(Paint.Style.FILL);
             g.drawCircle(xy.x,xy.y,8,red);
+            int x=(int)(100*Math.sin(Math.toRadians(-MainActivity.yaw+90)));
+            int y=(int)(100*Math.cos(Math.toRadians(-MainActivity.yaw+90)));
+            g.drawLine(xy.x,xy.y,xy.x-x,xy.y-y,red);
         }
 
     }
