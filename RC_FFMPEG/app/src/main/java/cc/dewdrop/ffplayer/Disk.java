@@ -191,7 +191,7 @@ public class Disk {
             if ( file.exists()==false) {
                 try {
                     FileOutputStream stream = new FileOutputStream("/sdcard/RC/ip.set");
-                    stream.write("192.168.1.112:9876\n".getBytes());
+                    stream.write("192.168.100.235:9876\n".getBytes());
                     stream.close();
                     stream = new FileOutputStream("/sdcard/RC/counter.txt");
                     stream.write("9999\n".getBytes());
