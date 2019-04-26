@@ -87,7 +87,6 @@ void Pressure::parser(byte buf[], int n) {
 	static double t_alt = 0;
 	if (pressure > 80000 && pressure < 120000) {
 		altitude = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));
-
 		if (old_alt == 0)
 			old_alt=t_alt=told_alt2=told_alt1 = altitude;
 

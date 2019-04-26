@@ -58,7 +58,7 @@ void Graph::filter(float src, int dataI, int elementi, float max) {
 
 #define SOME_K 0.9
 int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
-
+	/*
 	Graphics g(hdc);
 
 	g.Clear(Color(255, 255, 255, 255));
@@ -127,7 +127,7 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 		}
 	}
 
-
+	*/
 
 	return 0;
 }
@@ -360,21 +360,9 @@ int Graph::decode_Log() {
 
 
 
-		if ((control_bits&MOTORS_ON) && !(old_control_bits&MOTORS_ON)) {
-			zero_alt = press.altitude;
-			fly_at_altitude = press.altitude;
-		}
-
-		if ((control_bits&MOTORS_ON) && (control_bits&Z_STAB) && !(old_control_bits&Z_STAB)) {
-			fly_at_altitude = press.altitude;
-
-		}
-
-
-
-		old_control_bits = control_bits;
 		
-		sensors_data[n].sd[GPS_Z] = gps_log.z;
+		
+		//sensors_data[n].sd[GPS_Z] = gps_log.z;
 
 		sensors_data[n].sd[TIME] = mpu.time;
 		sensors_data[n].sd[DT] = mpu.dt;
@@ -395,44 +383,39 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[THROTTLE] = bal.thr;
 		sensors_data[n].sd[C_PITCH] = bal.ap_pitch;
 		sensors_data[n].sd[C_ROLL] = bal.ap_roll;
-	//	sensors_data[n].sd[HEADING] = bal.ap_yaw;
+	//	sensors_data[n].sd[C_YAW] = bal.ap_yaw;
 
-		sensors_data[n].sd[HEADING] = hmc.heading;
+		sensors_data[n].sd[C_YAW] = hmc.heading;
 
 
 	static float sZ = 0, speedZ = 0;
 
 		float alt = press.altitude;
 	
-		sZ += 0.01*(speedZ + mpu.accZnF*0.01*0.5f);
-		sZ += (alt - sZ)*0.03;
+		
 
-		speedZ += mpu.accZnF*0.01;
-		speedZ += (press.speed - speedZ)*0.01;
-
-
-
-		static float altt = 0;
-		if (altt == 0)
-			altt = press.altitude;
-		altt += (press.altitude - altt)*0.001;
-
-		sensors_data[n].sd[PRESSURE] = flags[FILTER]?sZ:press.altitude;// -fly_at_altitude;
-		sensors_data[n].sd[PRESSURE_SPEED] = flags[FILTER]?speedZ:press.speed;// -fly_at_altitude;
-		sensors_data[n].sd[STAB_Z] =  mpu.est_alt;
+		sensors_data[n].sd[SZ] =  mpu.est_alt;
 		sensors_data[n].sd[SPEED_Z] = mpu.est_speedZ;
+
+
+		static float zero_alt = 0;
+		if (!(control_bits & MOTORS_ON)) {
+			zero_alt = press.altitude;
+			
+		}
+		sensors_data[n].sd[BAR_ALT] = press.altitude- zero_alt;
 
 		static double tacc_bar = 0;
 		tacc_bar += (press.acc - tacc_bar)*0.01;
 
-		sensors_data[n].sd[PRESSURE_ACC] = tacc_bar;
+		//sensors_data[n].sd[PRESSURE_ACC] = tacc_bar;
 
 
 		sensors_data[n].sd[MI0] = tel.m_current[0];
 		sensors_data[n].sd[MI1] = tel.m_current[1];
 		sensors_data[n].sd[MI2] = tel.m_current[2];
 		sensors_data[n].sd[MI3] = tel.m_current[3];
-		sensors_data[n].sd[BAT_F] = tel.m_current[4];
+		sensors_data[n].sd[VOLTAGE] = tel.m_current[4];
 
 
 		//sensors_data[n].sd[STAB_SPEED_Z] = stab.speedZ;
@@ -444,7 +427,7 @@ int Graph::decode_Log() {
 
 
 		static double pres_alt = 0;
-		pres_alt += (sensors_data[n].sd[PRESSURE] - pres_alt)*0.0001;
+	//	pres_alt += (sensors_data[n].sd[PRESSURE] - pres_alt)*0.0001;
 	//	sensors_data[n].sd[PRESSURE] = pres_alt;
 		n++;
 
@@ -564,7 +547,7 @@ int Graph::decode_Log() {
 	kalman[MI1] = Kalman(10, 0);
 	kalman[MI2] = Kalman(10, 0);
 	kalman[MI3] = Kalman(10, 0);
-	kalman[BAT_F] = Kalman(10, 0);
+	kalman[VOLTAGE] = Kalman(10, 0);
 
 
 	kalman[GYRO_PITCH] = Kalman(1, 0);
@@ -588,11 +571,11 @@ int Graph::decode_Log() {
 	kalman[PRESSURE_ACC] = Kalman(30000, 0);
 
 
-	//	kalman[HEADING] = Kalman(10, 0);
+	//	kalman[C_YAW] = Kalman(10, 0);
 	kalman[GYRO_PITCH] = Kalman(100, 0);
 	kalman[GYRO_ROLL] = Kalman(100, 0);
 	kalman[GYRO_YAW] = Kalman(100, 0);
-	kalman[BAT_F] = Kalman(10, 12);
+	kalman[VOLTAGE] = Kalman(10, 12);
 
 	kalman[R_PITCH] = Kalman(60, 0);
 	kalman[R_ROLL] = Kalman(60, 0);
@@ -787,8 +770,8 @@ Graph::Graph(char*fn)
 	for (int i = 0; i < ALL_ELEMENTS; i++)
 		flags[i] = false;
 
-	color[BAT_F] = Color(255, 200, 0, 0);
-	name[BAT_F] = L"BAT";
+	color[VOLTAGE] = Color(255, 200, 0, 0);
+	name[VOLTAGE] = L"BAT";
 
 
 	color[MI0] = Color(255, 200, 0, 0);
@@ -799,7 +782,7 @@ Graph::Graph(char*fn)
 	name[MI2] = L"MI2";
 	color[MI3] = Color(255, 0, 100, 200);
 	name[MI3] = L"MI3";
-
+/*
 	color[STAB_SPEED_Z] = Color(255, 100, 100, 0);
 	name[STAB_SPEED_Z] = L"Stab_SpZ";
 
@@ -808,21 +791,21 @@ Graph::Graph(char*fn)
 
 	color[STAB_Z] = Color(255, 100, 100, 0);
 	name[STAB_Z] = L"stab_Z";
+	*/
 
 
 
+	///color[STAB_Z] = Color(255, 100, 100, 0);
+	//name[STAB_Z] = L"stab_Z";
 
-	color[STAB_Z] = Color(255, 100, 100, 0);
-	name[STAB_Z] = L"stab_Z";
 
+	//color[G_SPEED_X] = Color(255, 255, 0, 0);
+	//name[G_SPEED_X] = L"G_SPEEDX";
+	//color[G_SPEED_Y] = Color(255, 0, 180, 255);
+	//name[G_SPEED_Y] = L"G_SPEEDY";
 
-	color[G_SPEED_X] = Color(255, 255, 0, 0);
-	name[G_SPEED_X] = L"G_SPEEDX";
-	color[G_SPEED_Y] = Color(255, 0, 180, 255);
-	name[G_SPEED_Y] = L"G_SPEEDY";
-
-	color[G_SPEED] = Color(255, 0, 180, 255);
-	name[G_SPEED] = L"G_SPEED_k/h";
+	//color[G_SPEED] = Color(255, 0, 180, 255);
+	//name[G_SPEED] = L"G_SPEED_k/h";
 
 
 	color[F0] = Color(255, 255, 0, 0);
@@ -835,26 +818,27 @@ Graph::Graph(char*fn)
 	name[F3] = L"F3";
 
 
-	color[PRESSURE] = Color(255, 255, 0, 0);
-	name[PRESSURE] = L"alt pres";
+	//color[PRESSURE] = Color(255, 255, 0, 0);
+	//name[PRESSURE] = L"alt pres";
 
-	color[PRESSURE_ACC] = Color(255, 255, 0, 100);
-	name[PRESSURE_ACC] = L"acc pres";
+	//color[PRESSURE_ACC] = Color(255, 255, 0, 100);
+	//name[PRESSURE_ACC] = L"acc pres";
 
-	color[PRESSURE_SPEED] = Color(255, 255, 0, 100);
-	name[PRESSURE_SPEED] = L"speed pres";
+//	color[PRESSURE_SPEED] = Color(255, 255, 0, 100);
+//	name[PRESSURE_SPEED] = L"speed pres";
 
 	color[SZ] = Color(255, 155, 100, 0);
-	name[SZ] = L"SZ    ";
-	color[GPS_Z] = Color(255, 50, 180, 200);
-	name[GPS_Z] = L"GPS Z"
+	name[SZ] = L"SZ";
+	//color[GPS_Z] = Color(255, 50, 180, 200);
+	//name[GPS_Z] = L"GPS Z"
 
 
 		;
 	color[SPEED_Z] = Color(255, 255, 0, 180);
-	name[SPEED_Z] = L"speedZ    ";
+	name[SPEED_Z] = L"speedZ";
 
-
+	color[BAR_ALT] = Color(255, 155, 0, 180);
+	name[BAR_ALT] = L"bar_alt    ";
 
 
 	color[THROTTLE] = Color(255, 120, 180, 120);
@@ -871,35 +855,35 @@ Graph::Graph(char*fn)
 
 	//--------------------------------------------------------------------------------------------------------------------------------------------
 
-	color[EMU_ROLL] = Color(100, 255, 0, 0);
-	name[EMU_ROLL] = L"e_roll";
-	color[EMU_PITCH] = Color(100, 0, 200, 0);
-	name[EMU_PITCH] = L"e_pitch";
+	//color[EMU_ROLL] = Color(100, 255, 0, 0);
+	//name[EMU_ROLL] = L"e_roll";
+	//color[EMU_PITCH] = Color(100, 0, 200, 0);
+	//name[EMU_PITCH] = L"e_pitch";
 
 
-	color[MAXACC] = Color(100, 0, 0, 0);
-	name[MAXACC] = L"e_maxacc";
+	//color[MAXACC] = Color(100, 0, 0, 0);
+	//name[MAXACC] = L"e_maxacc";
 
 
 
 
 	color[PITCH] = Color(255, 0, 200, 0);
 	name[PITCH] = L"pitch";
-	color[R_PITCH] = Color(250, 0, 200, 100);
-	name[R_PITCH] = L"r_pitch";
+	//color[R_PITCH] = Color(250, 0, 200, 100);
+	//name[R_PITCH] = L"r_pitch";
 
-	color[ANGLE] = Color(250, 0, 200, 0);
-	name[ANGLE] = L"angle";
-	color[ACC] = Color(250, 255, 0, 0);
-	name[ACC] = L"eACC";
-	color[GACC] = Color(150, 0, 0, 200);
-	name[GACC] = L"gacc";
+	//color[ANGLE] = Color(250, 0, 200, 0);
+	//name[ANGLE] = L"angle";
+	//color[ACC] = Color(250, 255, 0, 0);
+	//name[ACC] = L"eACC";
+	//color[GACC] = Color(150, 0, 0, 200);
+	//name[GACC] = L"gacc";
 
 
 	color[ROLL] = Color(255, 255, 0, 0);
 	name[ROLL] = L"roll";
-	color[R_ROLL] = Color(250, 255, 100, 0);
-	name[R_ROLL] = L"r_roll";
+	//color[R_ROLL] = Color(250, 255, 100, 0);
+	//name[R_ROLL] = L"r_roll";
 
 
 	color[C_PITCH] = Color(180, 0, 200, 0);
@@ -921,16 +905,16 @@ Graph::Graph(char*fn)
 	color[ACCZ] = Color(100, 0, 0, 100);
 	name[ACCZ] = L"accZ";
 
-
+/*
 	color[GACCX] = Color(255, 0, 100, 0);
 	name[GACCX] = L"gaccX";
 	color[GACCY] = Color(180, 100, 0, 0);
 	name[GACCY] = L"gaccY";
 	color[GACCZ] = Color(100, 0, 0, 100);
 	name[GACCZ] = L"gaccZ";
-
-	color[HEADING] = Color(100, 0, 0, 0);
-	name[HEADING] = L"Heading";
+*/
+	color[C_YAW] = Color(100, 0, 0, 0);
+	name[C_YAW] = L"Heading";
 
 	color[YAW] = Color(100, 0, 0, 200);
 	name[YAW] = L"Yaw";
@@ -951,7 +935,7 @@ Graph::Graph(char*fn)
 	color[SPEED_Y] = Color(100, 200, 0, 200);
 	name[SPEED_Y] = L"speed_y";
 
-	color[EXP0] = Color(100, 200, 0, 0);
+/*	color[EXP0] = Color(100, 200, 0, 0);
 	name[EXP0] = L"exp0";
 	color[EXP1] = Color(100, 200, 0, 200);
 	name[EXP1] = L"exp1";
@@ -960,18 +944,18 @@ Graph::Graph(char*fn)
 	name[EXP2] = L"exp2";
 	color[EXP3] = Color(100, 200, 0, 200);
 	name[EXP3] = L"exp3";
+	*/
 
 
-
-	color[M_C_PITCH] = Color(100, 200, 100, 0);
-	name[M_C_PITCH] = L"mcpitch";
+	//color[M_C_PITCH] = Color(100, 200, 100, 0);
+	//name[M_C_PITCH] = L"mcpitch";
 
 	color[SY] = Color(255, 255, 0, 0);
 	name[SY] = L"s_y";
 
 
 
-
+	/*
 	color[M_C_ROLL] = Color(100, 200, 100, 200);
 	name[M_C_ROLL] = L"wspeed_y";
 
@@ -983,7 +967,7 @@ Graph::Graph(char*fn)
 	name[I_PITCH] = L"i_pitch";
 	color[I_ROLL] = Color(255, 0, 20, 200);
 	name[I_ROLL] = L"i_roll";
-
+*/
 
 
 
@@ -1078,8 +1062,8 @@ int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 	double mull_x = SOME_K * (double)rect.Width / (gps_log.max_x - gps_log.min_x);
 	mull_x = mull_y = min(mull_x, mull_y);
 	int ind = 1;
-	int y = (sensors_data[_p].sd[Y] - gps_log.min_y) * mull_y;
-	int x = (sensors_data[_p].sd[X] - gps_log.min_x) * mull_x;
+	int y = 0;// (sensors_data[_p].sd[Y] - gps_log.min_y) * mull_y;
+	int x = 0;// (sensors_data[_p].sd[X] - gps_log.min_x) * mull_x;
 
 	g.DrawLine(&pen, x - 10, y, x + 10, y);
 	g.DrawLine(&pen, x, y - 10, x, y + 10);
@@ -1146,9 +1130,10 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	//draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
 	//draw(g, rect, mpu._max[mROLL], mpu._min[mROLL], ROLL);
 
-	draw(g, rect, 15, -15, PITCH);
-	draw(g, rect,15, -15, ROLL);
-
+	draw(g, rect, 35, -35, PITCH);
+	draw(g, rect,35, -35, ROLL);
+	draw(g, rect, 35, -35, C_PITCH);
+	draw(g, rect, 35, -35, C_ROLL);
 
 	draw(g, rect, 180, -180, YAW);
 	draw(g, rect, 4, -4, ACCX);
@@ -1157,41 +1142,42 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 180, -180, GYRO_PITCH);
 	draw(g, rect, 180, -180, GYRO_ROLL);
 
+	draw(g, rect, 180, -180, C_YAW);
+
 
 	draw(g, rect, mpu._max[mGYRO_PITCH], mpu._min[mGYRO_PITCH], GYRO_PITCH);
 	draw(g, rect, 10, 0, MI0);
 	draw(g, rect, 10, 0, MI1);
 	draw(g, rect, 10, 0, MI2);
 	draw(g, rect, 10, 0, MI3);
-	draw(g, rect, 1680, 1440, BAT_F);
+	draw(g, rect, 1680, 1440, VOLTAGE);
 
-	draw(g, rect, 5, -5, STAB_SPEED_Z);
-	draw(g, rect, 2, -2, F_Z);
-	draw(g, rect, press.max_alt, press.min_alt,  STAB_Z);
+//	draw(g, rect, 5, -5, STAB_SPEED_Z);
+	//draw(g, rect, 2, -2, F_Z);
+	//draw(g, rect, press.max_alt, press.min_alt,  STAB_Z);
 
 	draw(g, rect, 1, 0, F0);
 	draw(g, rect, 1, 0, F1);
 	draw(g, rect, 1, 0, F2);
 	draw(g, rect, 1, 0, F3);
 	draw(g, rect, 1, 0, THROTTLE);
-	draw(g, rect, 20, -20, C_PITCH);
-	draw(g, rect, 20, -20, C_ROLL);
-	draw(g, rect, 180, -180, HEADING);
 
 
-	draw(g, rect, gps_log.min_z+2, gps_log.min_z, GPS_Z);
+
+	//draw(g, rect, gps_log.min_z+2, gps_log.min_z, GPS_Z);
 //	draw(g, rect, mpu._max[mMAXACC], mpu._min[mMAXACC], MAXACC);
 	//draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
 
 
-
+	draw(g, rect, mpu._max[SX],mpu._min[SX], SZ);
 	draw(g, rect, 3, -3, SPEED_Z);
-	draw(g, rect, press.max_alt, press.min_alt, STAB_Z);
-	draw(g, rect, press.max_alt,  press.min_alt,PRESSURE);
+	draw(g, rect, 3, -3, BAR_ALT);
+	//draw(g, rect, press.max_alt, press.min_alt, STAB_Z);
+//	draw(g, rect, press.max_alt,  press.min_alt,PRESSURE);
 	//draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
-	draw(g, rect, 5, -5, PRESSURE_SPEED);
+//	draw(g, rect, 5, -5, PRESSURE_SPEED);
 
-	draw(g, rect, 5, -5, PRESSURE_ACC);
+//	draw(g, rect, 5, -5, PRESSURE_ACC);
 
 
 

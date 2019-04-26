@@ -1,36 +1,3 @@
 ﻿  Validating sources
   Copying sources remotely to '192.168.100.235'
-  Validating architecture
-  Starting remote build
-  Compiling sources:
-  AP_PID.cpp
-  FIND.cpp
-  Location.cpp
-  MS5611.cpp
-  Autopilot.cpp
-  GeoDot.cpp
-  GPS.cpp
-  Log.cpp
-  Prog.cpp
-  Balance.cpp
-  Hmc.cpp
-  mi2c.cpp
-  MadgwickAHRS.cpp
-  commander.cpp
-  I2Cdev.cpp
-  RC_Filter.cpp
-  main.cpp
-  debug.cpp
-  inv_mpu.cpp
-  inv_mpu_dmp_motion_driver.cpp
-  Settings.cpp
-  WProgram.cpp
-  Direction.cpp
-  Filter.cpp
-  mpu.cpp
-  Stabilization.cpp
-  MPU6050.cpp
-  Telemetry.cpp
-  mpu_umulator.cpp
-  Linking objects
-  pi_copterVS.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Application Type\Linux\1.0\Linux.targets(192,5): error : Could not connect to the remote system. Please verify your connection settings, and that your machine is on the network and reachable.

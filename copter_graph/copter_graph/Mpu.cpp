@@ -208,49 +208,28 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	static double old_time = 0;
 	
 	uint64_t itime = loaduint64t(buf, j);
+	j += 8;
 	time = (double)itime *0.001;
-
-	if (time > 80)
-		time--;
+	//if (time > 80)
+	//	time--;
 	dt = time - old_time;
 	old_time = time;
 
-	j += 8;
-
+	
 	int g[3];
 	int a[3];
 	int q[4];
 
 
-	g[0] = load_int16(buf, j);
-	j += 2;
-	g[1] = load_int16(buf, j);
-	j += 2;
-	g[2] = load_int16(buf, j);
-	j += 2;
-
-	a[0] = load_int16(buf, j);
-	j += 2;
-	a[1] = load_int16(buf, j);
-	j += 2;
-	a[2] = load_int16(buf, j);
-	j += 2;
 
 
-	q[0] = load_int32(buf, j);
-	j += 4;
-	q[1] = load_int32(buf, j);
-	j += 4;
-	q[2] = load_int32(buf, j);
-	j += 4;
-	q[3] = load_int32(buf, j);
-	j += 4;
+	memcpy(g, &(buf[j]), 6);
+	j += 6;
+	memcpy(a, &(buf[j]), 6);
+	j += 6;
+	memcpy(q, &(buf[j]), 16);
+	j += 16;
 
-
-
-
-
-	
 	pitch= *(float*)&buf[j]; j += 4;
 	roll= *(float*)&buf[j]; j += 4;
 	yaw = *(float*)&buf[j]; j += 4;;
@@ -258,22 +237,27 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	gyroRoll = *(float*)&buf[j]; j += 4;
 	gyroYaw = *(float*)&buf[j]; j += 4;
 
-	//p1.loop(0);
-	//p0.loop(pitch);
-	
-
-	//roll = pitch;
-	//pitch = p0.possition*10;
-
 #define ACC_CF 0.007
 
+	const float f = (filter ? ACC_CF : 1);
+	if (j <= len) { 
+		const float tacc =  *(float*)& buf[j];
+		j += 4;
+		accX += (tacc - accX)*f; 
+	}
+	if (j <= len) {
+		const float tacc = *(float*)& buf[j];
+		j += 4;
+		accY += (tacc - accY)*f; 
+	}
+	if (j <= len) {
+		accZnF = *(float*)& buf[j];	
+		j += 4;
 
-
-	if (j <= len) { accX += ((*(float*)&buf[j] - accX)*(filter ? ACC_CF : 1)); j += 4; }
-	if (j <= len) { accY += ((*(float*)&buf[j] - accY)*(filter ? ACC_CF : 1)); j += 4; }
-	if (j <= len) { accZnF = *(float*)&buf[j];	j += 4; }
-	 accZ += ((accZnF - accZ)*(filter ? ACC_CF : 1));
-	//accZ = *(float*)&buf[j];
+		accZ += (accZnF - accZ)*f;
+		//accZ = *(float*)&buf[j];
+	}
+	
 
 	if (j <= len) { 
 		est_alt = *(float*)&buf[j]; j += 4; }
@@ -281,43 +265,24 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 		est_speedZ = *(float*)&buf[j]; j += 4; }
 
 
-	
-
-	/*
-	qw = 1.5259e-5f*(float)q[0] / 16384.0f;
-	qx = 1.5259e-5f*(float)q[1] / 16384.0f;
-	qy = 1.5259e-5f*(float)q[2] / 16384.0f;
-	qz = 1.5259e-5f*(float)q[3] / 16384.0f;
-
-	toEulerianAngle();
 
 
-	pitch = -pitch;
-	g_yaw = -g_yaw;
+	_max[mPITCH] = 60;
+	_min[mPITCH] = -60;
+	_max[mROLL] = 60;
+	_min[mROLL] = -60;
+	_max[mYAW] = 180;
+	_min[mYAW] = -180;
+
+	_max[mACCX] = 5;
+	_min[mACCX] = -5;
+	_max[mACCY] = 5;
+	_min[mACCY] = -5;
+	_max[mACCZ] = 5;
+	_min[mACCZ] = -5;
 
 
-	sin_cos(yaw, sinYaw, cosYaw);
-	sin_cos(pitch, sinPitch, cosPitch);
-	sin_cos(roll, sinRoll, cosRoll);
-
-	tiltPower += (constrain(cosPitch*cosRoll, 0.5f, 1) - tiltPower)*tiltPower_CF;
-	gyroPitch = -n006 * (float)g[1] - agpitch;
-	gyroRoll = n006 * (float)g[0] - agroll;
-	gyroYaw = -n006 * (float)g[2] - agyaw;
-
-	float x = n122 * (float)a[0];
-	float y = -n122 * (float)a[1];
-	float z = n122 * (float)a[2];
-
-
-	accZ = z * cosPitch + sinPitch * x;
-	accZ = 9.8f*(accZ*cosRoll - sinRoll * y - 1) - ac_accZ;
-
-	accY = 9.8f*(x*cosPitch - z * sinPitch) - ac_accX;
-	//accY = 9.8f*(y*cosRoll + z * sinRoll) - ac_accY;
-
-	*/
-
+/*
 	loadmax_min(mPITCH, pitch,true);
 	loadmax_min(mROLL, roll, true);
 	loadmax_min(mYAW, yaw, true);
@@ -325,8 +290,9 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	loadmax_min(mACCX, accX, true);
 	loadmax_min(mACCY, accY, true);
 	loadmax_min(mACCZ, accZ, true);
-
-
+*/
+	
+	loadmax_min(SZ, est_alt, true);
 
 
 }

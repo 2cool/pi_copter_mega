@@ -207,11 +207,11 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
 
 
 	tb[tbuttons++] = new TButton(xButton, yButton+=yButoonStep, L"pitch", gr,PITCH);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"r_pitch", gr, R_PITCH);
+//	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"r_pitch", gr, R_PITCH);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"cp_pitch", gr, C_PITCH);
 
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"roll", gr, ROLL);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"r_roll", gr, R_ROLL);
+//	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"r_roll", gr, R_ROLL);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"cp_roll", gr, C_ROLL);
 //tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"e_pitch", gr, EMU_PITCH);
 //tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"e_roll", gr, EMU_ROLL);
@@ -229,17 +229,17 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"THROTTLE", gr, THROTTLE);
 
 	yButton += 2;
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"GACCX ", gr, GACCX);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"GACCY ", gr, GACCY);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"GACCZ ", gr, GACCZ);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"BAT ", gr, BAT_F);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"GACCX ", gr, GACCX);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"GACCY ", gr, GACCY);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"GACCZ ", gr, GACCZ);
+	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"BAT ", gr, VOLTAGE);
 	yButton += 2;
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"ESPX ", gr, EXP0);
+/*	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"ESPX ", gr, EXP0);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"ESPY ", gr, EXP1);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"ESPAX ", gr, EXP2);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"ESPAY ", gr, EXP3);
 
-
+*/
 
 	yButton = -yButoonStep;
 	xButton = 65;
@@ -251,7 +251,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"accZ", gr, ACCZ);
 	yButton += 5;
 
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"Head", gr, HEADING);
+	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"Head", gr, C_YAW);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"Yaw", gr, YAW);
 
 
@@ -262,39 +262,44 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow)
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"speedX", gr, SPEED_X);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"speedY", gr, SPEED_Y);
 
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mcpitch", gr, M_C_PITCH);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mcroll", gr, M_C_ROLL);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mcpitch", gr, M_C_PITCH);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mcroll", gr, M_C_ROLL);
 
-
+	/*
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"i_thr", gr, I_THROTHLE);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"i_yaw", gr, I_YAW);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"i_pitch", gr, I_PITCH);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"i_roll", gr, I_ROLL);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"alt_bar", gr, PRESSURE);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"speed_bar", gr, PRESSURE_SPEED);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"acc_bar", gr, PRESSURE_ACC);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"SZ    ", gr, SZ);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"gps_Z    ", gr, GPS_Z);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"SPEED_Z    ", gr, SPEED_Z);
+	*/
+	
+	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"alt", gr, SZ);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"gps_Z    ", gr, GPS_Z);
+	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"speedZ    ", gr, SPEED_Z);
+    tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"bar_alt", gr, BAR_ALT);
+
+
+
 
 	xButton +=65;
 	yButton = -yButoonStep;
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"gspeedX", gr, G_SPEED_X);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"gspeedY", gr, G_SPEED_Y);
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"gspeed km/h", gr, G_SPEED);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"gspeedX", gr, G_SPEED_X);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"gspeedY", gr, G_SPEED_Y);
+	//tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"gspeed km/h", gr, G_SPEED);
 
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mi0 ", gr, MI0);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mi1 ", gr, MI1);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mi2 ", gr, MI2);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"mi3 ", gr, MI3);
 
-	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"maxacc ", gr, MAXACC);
-
+//	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"maxacc ", gr, MAXACC);
+/*
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"stab_spz ", gr, STAB_SPEED_Z);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"stab_FZ ", gr, F_Z);
 	tb[tbuttons++] = new TButton(xButton, yButton += yButoonStep, L"stab_sZ ", gr, STAB_Z);
 
-
+*/
 
 	//tb[tbuttons++] = new TButton(10, yButton += yButoonStep, L"roll", gr, ROLL);
 	//tb[tbuttons++] = new TButton(10, yButton += yButoonStep, L"yaw", gr, YAW);
