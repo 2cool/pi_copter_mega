@@ -1,6 +1,6 @@
 #pragma once
 #include "graph.h"
-enum { mPITCH, mROLL, mrPITCH, mrROLL, mYAW, mGYRO_PITCH, mGYRO_ROLL, mGYRO_YAW, mACCX, mACCY, mACCZ,mMAXACC ,mALL_E };
+enum { mPITCH, mROLL, mrPITCH, mrROLL, mYAW, mGYRO_PITCH, mGYRO_ROLL, mGYRO_YAW, mACCX, mACCY, mACCZ,mMAXACC ,mEX,mEY,mALL_E };
 #define M_PI  3.14159265358979323846f
 #define RAD2GRAD  57.29578
 class Mpu
@@ -20,7 +20,7 @@ public:
 
 
 
-	int _max_minC[mALL_E] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
+	int _max_minC[mALL_E] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 	float _max[mALL_E], _min[mALL_E];
 
 

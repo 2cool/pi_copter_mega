@@ -285,8 +285,8 @@ void TelemetryClass::testBatteryVoltage(){
 	//if (low_voltage)
 	//	addMessage(e_VOLT_MON_ERROR);
 
-	powerK = (MAX_VOLTAGE_AT_START * SN) / voltage;
-	powerK = constrain(powerK, 1, 1.35f);
+	float t_powerK = (MAX_VOLTAGE_AT_START * SN) / voltage;
+	powerK += (constrain(t_powerK, 1, 1.35f) - powerK)*0.001;
 }
 
 bool newGPSData = false;

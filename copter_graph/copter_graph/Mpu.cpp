@@ -227,8 +227,8 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	j += 6;
 	memcpy(a, &(buf[j]), 6);
 	j += 6;
-	memcpy(q, &(buf[j]), 16);
-	j += 16;
+	//memcpy(q, &(buf[j]), 16);
+	//j += 16;
 
 	pitch= *(float*)&buf[j]; j += 4;
 	roll= *(float*)&buf[j]; j += 4;
@@ -264,8 +264,18 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	if (j <= len) { 
 		est_speedZ = *(float*)&buf[j]; j += 4; }
 
-
-
+	if (j <= len) {
+		estX = *(float*)& buf[j]; j += 4;
+	}
+	if (j <= len) {
+		est_speedX = *(float*)& buf[j]; j += 4;
+	}
+	if (j <= len) {
+		estY = *(float*)& buf[j]; j += 4;
+	}
+	if (j <= len) {
+		est_speedY = *(float*)& buf[j]; j += 4;
+	}
 
 	_max[mPITCH] = 60;
 	_min[mPITCH] = -60;
@@ -293,6 +303,9 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 */
 	
 	loadmax_min(SZ, est_alt, true);
+
+	loadmax_min(mEX,estX);
+	loadmax_min(mEY,estY);
 
 
 }

@@ -134,13 +134,14 @@ public class Net {
                     int i=0;
                     while (serverIPandPort[i]!=null && serverIPandPort[i].length()>10) {
 
-
-                        if (runTCPClient(serverIPandPort[i])==true)
-                            if (ip_OK==false) {
+                        Log.d("NET3","CONNECT TO "+Integer.toString(i));
+                        if (runTCPClient(serverIPandPort[i])==true) {
+                            if (ip_OK == false) {
                                 i++;
-                                if (i>=serverIPandPort.length)
-                                    i=0;
+                                if (i >= serverIPandPort.length)
+                                    i = 0;
                             }
+                        }
 
                     }
                 }
@@ -163,7 +164,7 @@ public class Net {
 
         if (dataloaded==false) {
             dataloaded=true;
-            //  Disk.loadLatLonAlt("/sdcard/RC/lostCon_location.save", true);
+            Disk.loadLatLonAlt("/sdcard/RC/lostCon_location.save", true);
         }
 
 
@@ -181,24 +182,26 @@ public class Net {
 
                 copterAddress=InetAddress.getByName(s[IP]);
                 UDP_SERVER_PORT=Integer.parseInt(s[PORT]);
+
                 do {
                     try {
                         socket = new Socket(copterAddress, UDP_SERVER_PORT);
                         break;
                     } catch (java.net.SocketException e) {
-                        //socket.close();
+                        socket.close();
+                        Log.i("NET",e.getMessage());
                     }
                 }while(true);
+
+
                 socket.setSoTimeout(3000);
                 out=socket.getOutputStream();
                 in =socket.getInputStream();
 
 
-                int timeOutErrors=0;
-                Log.i("UDP","TCP_CLIENT STARTING...");
+                Log.i("NET","TCP_CLIENT STARTING...");
 
 
-                String str="";
                 Commander.new_connection();
                 while(net_runing){
 
@@ -219,24 +222,20 @@ public class Net {
 
                     }catch(java.net.SocketTimeoutException e){
                         socket.setSoTimeout(5000);
-                        Log.i("UDP","SocketTimeoutException");
+                        Log.i("NET","SocketTimeoutException");
                         //if (++timeOutErrors>=1){
                         //Log.i("UDP","SocketTimeoutException & reboot");
                         if (socket.isClosed() == false && socket.isConnected()) {
                             socket.shutdownInput();
                             socket.shutdownOutput();
                             socket.close();
-                            ret=true;
-
-
-
 
                             if (Commander.link)
                                 Disk.saveLatLonAlt("/sdcard/RC/lostCon_location.save",Telemetry.lat,Telemetry.lon,Telemetry._alt);
                             Commander.link=false;
 
                         }
-                        socket=null;
+
                         break;
                         //}
                     }
@@ -244,7 +243,7 @@ public class Net {
                 }
 
             } catch (Exception e) {
-                Log.i("UDP", "EXCEPTION "+e.getMessage());
+                Log.i("NET", "EXCEPTION "+e.getMessage());
                 if (e.getMessage().indexOf("ECONNREFUSED")!=-1)
                     ret= true;
                 else
@@ -258,12 +257,12 @@ public class Net {
                 Commander.link=false;
                 if (MainActivity.drawView!=null)
                     MainActivity.drawView.postInvalidate();
-                Log.i("UDP","TCP_CLIENT KILLED!");
+                Log.i("NET","TCP_CLIENT KILLED!");
 
 
             }
         }catch (Exception e){
-            Log.i("UDP", "TCP CLIENT EXCEPTION "+e.getMessage());
+            Log.i("NET", "TCP CLIENT EXCEPTION "+e.getMessage());
         }
         return true;
     }

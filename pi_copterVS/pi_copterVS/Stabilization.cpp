@@ -113,8 +113,7 @@ void StabilizationClass::add2NeedPos(float speedX, float speedY, float dt) {
 		if (flagzx == false) {
 			flagzx = true;
 			float x, y;
-			fromLoc2Pos(GPS.loc.lat_, GPS.loc.lon_, x, y);
-			needXR = needXV = x;
+			needXR = needXV = Mpu.get_Est_X();
 		}
 	}
 	else {
@@ -128,8 +127,7 @@ void StabilizationClass::add2NeedPos(float speedX, float speedY, float dt) {
 		if (flagzy == false) {
 			flagzy = true;
 			float x, y; 
-			fromLoc2Pos(GPS.loc.lat_, GPS.loc.lon_, x, y);
-			needYR = needYV = y;
+			needYV = needYR = Mpu.get_Est_Y();
 		}
 	}
 	else {

@@ -20,8 +20,8 @@
 #include <math.h>
 
 
-//#define sampleFreq	512.0f		// sample frequency in Hz
-#define betaDef		0.01f		// 2 * proportional gain
+
+#define betaDef		0.9f		// 2 * proportional gain
 
 //---------------------------------------------------------------------------------------------------
 // AHRS algorithm update

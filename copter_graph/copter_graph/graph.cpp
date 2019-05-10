@@ -58,17 +58,24 @@ void Graph::filter(float src, int dataI, int elementi, float max) {
 
 #define SOME_K 0.9
 int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
-	/*
+	
 	Graphics g(hdc);
+
+
+	const float maxY = 10;// mpu._max[mEY];
+	const float minY = -10;// mpu._min[mEY];
+	const float maxX = 10;// mpu._max[mEX];
+	const float minX = -10;// mpu._min[mEX];
 
 	g.Clear(Color(255, 255, 255, 255));
 
 	p = lSize * pos;
 	step = (double)(lSize - p)*zoom / rect.Width;
-	double mull_y = SOME_K * (double)rect.Height / (gps_log.max_y - gps_log.min_y);
-	double mull_x = SOME_K * (double)rect.Width / (gps_log.max_x - gps_log.min_x);
+	double mull_y = SOME_K * (double)rect.Height / abs(maxY/minY);// (gps_log.max_y - gps_log.min_y);
+	double mull_x = SOME_K * (double)rect.Width / abs(maxX / minX);//(gps_log.max_x - gps_log.min_x);
 	mull_x = mull_y = min(mull_x, mull_y);
 	int startX, startY;
+	
 	{
 		int dy[2], dx[2];
 		int y0 = 0;
@@ -80,14 +87,14 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 
 		if (p < gpsI)
 			p = gpsI;
-		startY = dy[0] = y0 + (sensors_data[(int)p].sd[Y] - gps_log.min_y) * mull_y;
-		startX = dx[0] = x0 + (sensors_data[(int)p].sd[X] - gps_log.min_x) * mull_x;
+		startY = dy[0] = y0 + (sensors_data[(int)p].sd[SY] - minY) * mull_y;
+		startX = dx[0] = x0 + (sensors_data[(int)p].sd[SX] - minX) * mull_x;
 
 
 		Pen pen(Color(255, 0, 0, 0));
 		for (int x = rect.X + 1, i = 1; x < rect.X + rect.Width; x++, i++) {
-			dy[ind & 1] = y0 + (sensors_data[(int)(p + (step*i))].sd[Y] - gps_log.min_y) * mull_y;
-			dx[ind & 1] = x0 + (sensors_data[(int)(p + (step*i))].sd[X] - gps_log.min_x) * mull_x;
+			dy[ind & 1] = y0 + (sensors_data[(int)(p + (step*i))].sd[SY] - minY) * mull_y;
+			dx[ind & 1] = x0 + (sensors_data[(int)(p + (step*i))].sd[SX] - minX) * mull_x;
 
 			int x1 = dx[(ind - 1) & 1];
 			int x2 = dx[ind & 1];
@@ -100,7 +107,8 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 
 		}
 	}
-	if (flags[SX] || flags[SY]) {
+	
+	if (true){//flags[SX] || flags[SY]) {
 		int dy[2], dx[2];
 		int y0 = 0;
 		int x0 = 0;
@@ -108,8 +116,8 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 
 		int ind = 1;
 
-		dy[0] = y0 + (sensors_data[(int)p].sd[SY] - gps_log.min_y) * mull_y;
-		dx[0] = x0 + (sensors_data[(int)p].sd[SX] - gps_log.min_x) * mull_x;
+		dy[0] = y0 + (sensors_data[(int)p].sd[SY] - minY) * mull_y;
+		dx[0] = x0 + (sensors_data[(int)p].sd[SX] - minX) * mull_x;
 
 		startX - dx[0];
 		startY - dy[0];
@@ -117,8 +125,8 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 
 		Pen pen(Color(255, 255, 0, 0));
 		for (int x = rect.X + 1, i = 1; x < rect.X + rect.Width; x++, i++) {
-			dy[ind & 1] = y0 + (sensors_data[(int)(p + (step*i))].sd[SY] - gps_log.min_y) * mull_y;
-			dx[ind & 1] = x0 + (sensors_data[(int)(p + (step*i))].sd[SX] - gps_log.min_x) * mull_x;
+			dy[ind & 1] = y0 + (sensors_data[(int)(p + (step*i))].sd[SY] - minY) * mull_y;
+			dx[ind & 1] = x0 + (sensors_data[(int)(p + (step*i))].sd[SX] - minX) * mull_x;
 
 			g.DrawLine(&pen, dx[(ind - 1) & 1], dy[(ind - 1) & 1], dx[ind & 1], dy[ind & 1]);
 			ind++;
@@ -127,7 +135,7 @@ int Graph::updateGPS(HDC hdc, RectF rect, double zoom, double pos) {
 		}
 	}
 
-	*/
+	
 
 	return 0;
 }
@@ -376,6 +384,12 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[GYRO_ROLL] = mpu.gyroRoll;
 		sensors_data[n].sd[GYRO_YAW] = mpu.gyroYaw;
 
+
+		sensors_data[n].sd[SX] = mpu.estX;
+		sensors_data[n].sd[SY] = mpu.estY;
+		sensors_data[n].sd[SPEED_X] = mpu.est_speedX;
+		sensors_data[n].sd[SPEED_Y] = mpu.est_speedY;
+
 		sensors_data[n].sd[F0] = bal.f0;
 		sensors_data[n].sd[F1] = bal.f1;
 		sensors_data[n].sd[F2] = bal.f2;
@@ -403,7 +417,8 @@ int Graph::decode_Log() {
 			zero_alt = press.altitude;
 			
 		}
-		sensors_data[n].sd[BAR_ALT] = press.altitude- zero_alt;
+		sensors_data[n].sd[BAR_ALT] = press.altitude;
+		sensors_data[n].sd[GPS_ALT] = gps_log.z;
 
 		static double tacc_bar = 0;
 		tacc_bar += (press.acc - tacc_bar)*0.01;
@@ -434,292 +449,6 @@ int Graph::decode_Log() {
 	}
 
 
-	/*
-
-	log_bank_size = *(uint16_t*)buffer;
-	i += 2;
-	bool starPointOK = false;
-
-
-	if (indexes[LOG::MPU] == 0) {
-	do {
-	//if (indexes[LOG::MPU] > 157000) { lSize = i; break; }
-	switch (buffer[i]) {
-	case LOG::MPU: {
-	mpu.view(indexes[LOG::MPU], buffer, i);
-	break;
-	}
-	case LOG::MPU_M: {
-	i += 17;
-	break;
-	}
-	case LOG::TELE: {
-	i += 11;
-	break;
-	}
-	case LOG::AUTO: {
-	i += 5;
-	break;
-	}
-	case LOG::HMC:
-	indexes[LOG::HMC]++;
-	i += 17;
-	break;
-	case LOG::MS5: {
-	press.view(indexes[LOG::MS5], buffer, i);
-	break;
-	}
-	case LOG::GpS:
-	indexes[LOG::GpS]++;
-	i += 1 + sizeof(SEND_I2C);
-	i += 8 * 4;
-	break;
-
-	case LOG::COMM: {
-	indexes[LOG::COMM]++;
-
-	unsigned short len = *(unsigned short*)(buffer + i + 1);
-	i += len + 3;
-	break;
-	}
-	case LOG::STABXY: {
-	indexes[LOG::STABXY]++;
-
-
-
-	i += 17;
-	break;
-	}
-	case LOG::STABZ: {
-	indexes[LOG::STABZ]++;
-
-	i += 9;
-	break;
-	}
-
-	case  LOG::BAL: {
-	indexes[LOG::BAL]++;
-	bal.decode(buffer, i, false);
-	//i += 43;
-	log_bank_size = *(uint16_t*)(buffer + i);
-	i += 2;
-	break;
-	}
-	case LOG::EMU: {
-	indexes[LOG::EMU]++;
-	i += buffer[i + 1] + 2;
-	break;
-	}
-
-	default: {
-
-	int res = findLog(buffer, i, lSize);
-	if (res == -1) {
-	lSize = i - 2;
-	break;
-	}
-	else
-	i = res;
-	}
-	}
-
-	} while (i < lSize);
-
-	sensors_data = (SensorsData*)malloc(sizeof(SensorsData)*(indexes[LOG::MPU] + 1));
-
-	}
-	i = 2;
-	int dataI = 0;
-
-	modes[modesI].mode = def_mode;
-	modes[modesI].index = dataI;
-	modesI++;
-
-	kalman[GACCX] = Kalman(300, 0);
-	kalman[GACCY] = Kalman(300, 0);
-	kalman[GACCZ] = Kalman(300, 0);
-	kalman[F0] = Kalman(10, 0);
-	kalman[F1] = Kalman(10, 0);
-	kalman[F2] = Kalman(10, 0);
-	kalman[F3] = Kalman(10, 0);
-
-	kalman[MI0] = Kalman(10, 0);
-	kalman[MI1] = Kalman(10, 0);
-	kalman[MI2] = Kalman(10, 0);
-	kalman[MI3] = Kalman(10, 0);
-	kalman[VOLTAGE] = Kalman(10, 0);
-
-
-	kalman[GYRO_PITCH] = Kalman(1, 0);
-	//kalman[GACCX] = Kalman(100, 0);
-
-
-	//	kalman[F3] = Kalman(10, 0);
-	kalman[ACC] = Kalman(100, 0);
-	kalman[GACC] = Kalman(100, 0);
-	kalman[ANGLE] = Kalman(100, 0);
-
-	kalman[ACCX] = Kalman(100, 0);
-	kalman[ACCY] = Kalman(100, 0);
-	kalman[ACCZ] = Kalman(100, 0);
-	kalman[EXP2] = Kalman(100, 0);
-	kalman[EXP3] = Kalman(100, 0);
-	kalman[G_SPEED] = Kalman(100, 0);
-
-	kalman[PRESSURE] = Kalman(30000, 0);
-	kalman[PRESSURE_SPEED] = Kalman(30000, 0);
-	kalman[PRESSURE_ACC] = Kalman(30000, 0);
-
-
-	//	kalman[C_YAW] = Kalman(10, 0);
-	kalman[GYRO_PITCH] = Kalman(100, 0);
-	kalman[GYRO_ROLL] = Kalman(100, 0);
-	kalman[GYRO_YAW] = Kalman(100, 0);
-	kalman[VOLTAGE] = Kalman(10, 12);
-
-	kalman[R_PITCH] = Kalman(60, 0);
-	kalman[R_ROLL] = Kalman(60, 0);
-	kalman[THROTTLE] = Kalman(300, 0);
-	mi[0] = mi[1] = mi[2] = mi[3] = 0;
-	bat = 0;
-	cf = flags[FILTER] ? 0.1 : 1;
-
-
-
-	press.init(flags[FILTER], 1, 0.01, 0.01);
-
-
-	FILE *klm = fopen("d:/klm.txt", "w");
-	;
-	do {
-	if (i > 3050)
-	i = i;
-	switch (buffer[i]) {
-
-	case LOG::MPU: {
-	mpu.decode(buffer, i);
-	break;
-	}
-	case LOG::MPU_M: {
-
-	#ifdef _MPU_M
-	#endif
-	i += 17;
-	break;
-	}
-	case LOG::TELE: {
-	i += 11;
-	break;
-	}
-	case LOG::AUTO: {
-	new_mode_ver = true;
-	def_mode = *(uint32_t*)(&buffer[i + 1]);
-	modes[modesI].mode = def_mode;
-	modes[modesI].index = dataI;
-	if (def_mode&GO2HOME)
-	def_mode = def_mode;
-	modesI++;
-	i += 5;
-	break;
-	}
-	case LOG::HMC:
-	i += 17;
-	break;
-	case LOG::MS5: {
-	press.decode(buffer, i);
-	break;
-	}
-	case LOG::GpS: {
-	gps_log.decode(buffer, i);
-	//i += 1 + sizeof(SEND_I2C);
-	//i += 8 * 4;
-
-	break;
-	}
-
-	case LOG::COMM: {
-
-
-	unsigned short len = *(unsigned short*)(buffer + i + 1);
-	i += len + 3;
-	break;
-	}
-	case LOG::STABXY: {
-
-	i += 17;
-	break;
-	}
-
-	case LOG::STABZ: {
-
-	filter(*(float*)(&buffer[i + 1]), dataI, SZ);
-	filter(*(float*)(&buffer[i + 5]), dataI, SPEED_Z);
-
-	i += 9;
-	break;
-	}
-	case LOG::BAL: {
-
-
-	//------------------------------------------------------------------------------------
-	sensors_data[dataI].sd[TIME] = mpu.time;
-	sensors_data[dataI].sd[DT] = mpu.dt;
-	sensors_data[dataI].sd[PITCH] = mpu.f[mPITCH];
-	sensors_data[dataI].sd[ROLL] = mpu.f[mROLL];
-	sensors_data[dataI].sd[GYRO_PITCH] = mpu.f[mGYRO_PITCH];
-	sensors_data[dataI].sd[F0] = bal.f[bF0];
-
-
-
-
-
-	sensors_data[dataI].sd[MAXACC] = mpu.f[mMAXACC];
-
-
-	sensors_data[dataI].sd[PRESSURE] = press.alt;
-	sensors_data[dataI].sd[PRESSURE_SPEED] = press.speed;
-	sensors_data[dataI].sd[PRESSURE_ACC] = press.acc;
-
-	sensors_data[dataI].sd[X] = gps_log.gx2home;
-	sensors_data[dataI].sd[Y] = gps_log.gy2home;
-	sensors_data[dataI].sd[GPS_Z] = gps_log.z;
-
-
-
-
-	i += 43;
-	i += 2;
-
-	dataI++;
-	break;
-	}
-
-	case LOG::EMU: {
-
-	i += buffer[i + 1]+2;
-	break;
-	}
-	default: {
-
-	int res = findLog(buffer, i, lSize);
-	if (res == -1) {
-	lSize = i - 2;
-	break;
-	}
-	else
-	i = res;
-	}
-	}
-
-	} while (i < lSize);
-	fclose(klm);
-	lSize = dataI;
-	free(buffer);
-
-	*/
-
-
-	//fclose(klm);
 	lSize = n;
 
 	return 0;
@@ -827,8 +556,7 @@ Graph::Graph(char*fn)
 //	color[PRESSURE_SPEED] = Color(255, 255, 0, 100);
 //	name[PRESSURE_SPEED] = L"speed pres";
 
-	color[SZ] = Color(255, 155, 100, 0);
-	name[SZ] = L"SZ";
+	
 	//color[GPS_Z] = Color(255, 50, 180, 200);
 	//name[GPS_Z] = L"GPS Z"
 
@@ -837,8 +565,14 @@ Graph::Graph(char*fn)
 	color[SPEED_Z] = Color(255, 255, 0, 180);
 	name[SPEED_Z] = L"speedZ";
 
+
+	color[SZ] = Color(255, 155, 100, 0);
+	name[SZ] = L"SZ";
 	color[BAR_ALT] = Color(255, 155, 0, 180);
 	name[BAR_ALT] = L"bar_alt    ";
+
+	color[GPS_ALT] = Color(155, 255, 0, 180);
+	name[GPS_ALT] = L"gps_alt    ";
 
 
 	color[THROTTLE] = Color(255, 120, 180, 120);
@@ -1053,11 +787,12 @@ int Graph::drawGPSmarkder(HDC hdc, RectF rect, double pos) {
 	if (_p < gpsI)
 		_p = gpsI;
 
-
-
-
-
 	Pen pen(Color(255, 0, 0, 0));
+
+	g.DrawLine(&pen, 0, 0, 500, 500);// , y - 10, x, y + 10);
+
+
+	
 	double mull_y = SOME_K * (double)rect.Height / (gps_log.max_y - gps_log.min_y);
 	double mull_x = SOME_K * (double)rect.Width / (gps_log.max_x - gps_log.min_x);
 	mull_x = mull_y = min(mull_x, mull_y);
@@ -1136,13 +871,20 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 35, -35, C_ROLL);
 
 	draw(g, rect, 180, -180, YAW);
-	draw(g, rect, 4, -4, ACCX);
-	draw(g, rect, 4, -4, ACCY);
-	draw(g, rect, 4, -4, ACCZ);
-	draw(g, rect, 180, -180, GYRO_PITCH);
-	draw(g, rect, 180, -180, GYRO_ROLL);
+	draw(g, rect, 20, -20, ACCX);
+	draw(g, rect, 20, -20, ACCY);
+	draw(g, rect, 20, -20, ACCZ);
+	draw(g, rect, 30, -30, GYRO_PITCH);
+	draw(g, rect, 30, -30, GYRO_ROLL);
+	draw(g, rect, 30, -30, GYRO_YAW);
 
-	draw(g, rect, 180, -180, C_YAW);
+
+
+	draw(g, rect, 10, -10, SX);
+	draw(g, rect, 10, -10, SY);
+	draw(g, rect, 10, -10, SPEED_X);
+	draw(g, rect, 10, -10, SPEED_Y);
+
 
 
 	draw(g, rect, mpu._max[mGYRO_PITCH], mpu._min[mGYRO_PITCH], GYRO_PITCH);
@@ -1152,9 +894,7 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 10, 0, MI3);
 	draw(g, rect, 1680, 1440, VOLTAGE);
 
-//	draw(g, rect, 5, -5, STAB_SPEED_Z);
-	//draw(g, rect, 2, -2, F_Z);
-	//draw(g, rect, press.max_alt, press.min_alt,  STAB_Z);
+
 
 	draw(g, rect, 1, 0, F0);
 	draw(g, rect, 1, 0, F1);
@@ -1162,22 +902,19 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 1, 0, F3);
 	draw(g, rect, 1, 0, THROTTLE);
 
+#define MAX_ALT press.max_alt
+#define MIN_ALT press.min_alt
+//#define MAX_ALT 130
+//#define MIN_ALT 117
+	draw(g, rect, MAX_ALT, MIN_ALT, SZ);
+	draw(g, rect, MAX_ALT, MIN_ALT, BAR_ALT);
+	draw(g, rect, MAX_ALT, MIN_ALT, GPS_ALT);
 
 
-	//draw(g, rect, gps_log.min_z+2, gps_log.min_z, GPS_Z);
-//	draw(g, rect, mpu._max[mMAXACC], mpu._min[mMAXACC], MAXACC);
-	//draw(g, rect, mpu._max[mPITCH], mpu._min[mPITCH], PITCH);
+	//draw(g, rect, 9, -3, SZ);
+	//draw(g, rect, 9, -3, BAR_ALT);
 
-
-	draw(g, rect, mpu._max[SX],mpu._min[SX], SZ);
 	draw(g, rect, 3, -3, SPEED_Z);
-	draw(g, rect, 3, -3, BAR_ALT);
-	//draw(g, rect, press.max_alt, press.min_alt, STAB_Z);
-//	draw(g, rect, press.max_alt,  press.min_alt,PRESSURE);
-	//draw(g, rect, press.max_a, press.min_a, PRESSURE_ACC);
-//	draw(g, rect, 5, -5, PRESSURE_SPEED);
-
-//	draw(g, rect, 5, -5, PRESSURE_ACC);
 
 
 

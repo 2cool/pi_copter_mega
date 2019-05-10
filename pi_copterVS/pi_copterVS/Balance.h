@@ -33,7 +33,6 @@
 class BalanceClass
 {
  protected:
-	 float mid_powerK;
 	 void reset();
 	 void log();
 

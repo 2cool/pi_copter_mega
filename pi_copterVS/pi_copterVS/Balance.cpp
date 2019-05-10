@@ -138,7 +138,7 @@ void BalanceClass::init()
 	pitch_roll_stabKP = 2;
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
 	//set_pitch_roll_pids(0.0017,  0.0001, 0.2);
-	set_pitch_roll_pids(0.0007, 0.001, 0.2);
+	set_pitch_roll_pids(0.001, 0.001, 0.2);
 
 	yaw_stabKP = 2;
 
@@ -152,7 +152,7 @@ void BalanceClass::init()
 	Hmc.init();
 	Hmc.loop();
 //	Mpu.initYaw(Hmc.heading*RAD2GRAD);
-	mid_powerK = 1;
+
 	
 #ifdef DEBUG_MODE
 	printf( "Heading :%i\n", (int)Hmc.get_headingGrad());
@@ -249,8 +249,8 @@ void BalanceClass::set(const float *ar, int n){
 }
 
 float BalanceClass::powerK(){
-	mid_powerK +=(Telemetry.powerK*MS5611.powerK- mid_powerK)*0.001;
-	return mid_powerK;
+	return (Telemetry.powerK*MS5611.powerK);
+	
 }
 
 void BalanceClass::log() {

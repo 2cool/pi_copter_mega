@@ -405,6 +405,7 @@ double angK=0.3;
             yaw+=0.5*RAD2GRAD*event.values[2]*dt;
             // Commander.yaw-=event.values[2]*dt;
              //Log.i("MATHr","roll="+(roll)+", pitch="+(pitch));
+           // Log.i("GYRO","gyro_work "+Double.toString(f));
         }
         else
         if (type==Sensor.TYPE_ACCELEROMETER){
@@ -415,7 +416,7 @@ double angK=0.3;
             pitch += (aPitch - pitch) * f;
             roll += (aRoll - roll) * f;
             //update=DrawView.control_type_acc.is_pressed();
-            Log.i("GYRO","gyro_work "+Double.toString(f));
+
         }
         else
         if (type==Sensor.TYPE_ORIENTATION){

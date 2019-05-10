@@ -60,18 +60,40 @@ float fspeed = 0;
 bool MS5611Class::fault() {
 	return wrong_altitude_cnt > MAX_BAROMETR_ERRORS;
 }
+
+#define ALT_NOT_SET -10000
 double MS5611Class::getAltitude(const double pressure) {
-	double alt = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));//Где блядь проверка 4.4.2018-вот она
-	
+	static float old_alt= ALT_NOT_SET;
+	static float gps_barometr_alt_dif = ALT_NOT_SET;
+
+	const float gps_alt = GPS.loc.altitude - gps_barometr_alt_dif;
+
+
+	double alt = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));
+	if (old_alt == ALT_NOT_SET)
+		old_alt = alt;
+
 	if (fault()) {
 		powerK = 1;
-		return GPS.loc.altitude - gps_barometr_alt_dif - GPS_ALT_MAX_ERROR;
+		return gps_alt - GPS_ALT_MAX_ERROR;
 	}
 	else {
-		shmPTR->altitude_ = (int32_t)(alt*1000.0);
-		shmPTR->pressure = pressure;
-		gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif)*0.1;
-		powerK = constrain(PRESSURE_AT_0 / pressure, 1, 1.2);
+		
+
+		if (GPS.loc.accuracy_hor_pos_ <= MIN_ACUR_HOR_POS_2_START) {
+
+			if (gps_barometr_alt_dif == ALT_NOT_SET)
+				gps_barometr_alt_dif = GPS.loc.altitude - altitude_;
+			
+			if (abs(old_alt-alt) > 4 || abs(gps_alt - alt) > 4)
+				alt = gps_alt;
+			else
+				gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif) * 0.01;
+
+			old_alt = alt;
+		}
+
+		powerK += (constrain(PRESSURE_AT_0 / pressure, 1, 1.2) - powerK)*0.001;
 	}
 	
 	return alt;
@@ -245,6 +267,7 @@ void MS5611Class::phase2() {
 		//float pr = (float)(D1 * SENS / 2097152 - OFF) * 0.000030517578125;
 
 		int32_t tP = ((((int64_t)D1*SENS) / 2097152 - OFF) / 32768);
+
 		if (tP < 80000 || tP > 107000) {
 			cout << "PRESSURE ERROR " << tP << "\t"<<Mpu.timed << endl;
 			ct = NORM_CT +NORM_CT;
@@ -259,18 +282,20 @@ void MS5611Class::phase2() {
 		const double dt = 0.02;// (Mpu.timed - old_timed);
 		old_timed = Mpu.timed;
 
-		if (pressure == PRESSURE_AT_0) {
+		if (altitude_ == ALT_NOT_SET) {
 			pressure = P;
-			altitude_ =  getAltitude(pressure);
+			altitude_ =  getAltitude(pressure);	
 		}
 
 		pressure += ((double)P - pressure)*0.3;
 		log_sens();
 		
 		const double new_altitude = getAltitude(pressure);
+
+		shmPTR->altitude_ = (int32_t)(new_altitude * 1000.0);
+		shmPTR->pressure = pressure;
+
 		speed = (new_altitude - altitude_) / dt;
-		//Debug.load(0, speed / 10, dt);
-		//Debug.dump();
 		altitude_ = new_altitude;
 
 
@@ -294,7 +319,6 @@ float MS5611Class::get_pressure(float h) {
 //-------------------------------------------init-------------------------
 int MS5611Class::init() {
 	oldAltt = 100000;
-	gps_barometr_alt_dif = 0;
 	old_timed = 0;
 	bar_task = 0;
 	bar_zero = 0x0;
@@ -302,7 +326,8 @@ int MS5611Class::init() {
 	
 
 	wrong_altitude_cnt = 0;
-	speed = altitude_ = 0;
+	speed = 0;
+	altitude_ = ALT_NOT_SET;
 	//altitude_error = ALT_NOT_SET;
 
 	powerK = 1;

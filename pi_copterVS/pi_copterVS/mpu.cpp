@@ -85,7 +85,7 @@ void MpuClass::log() {
 		Log.loadFloat(accY);
 		Log.loadFloat(accZ);
 
-		Log.loadFloat(get_Est_Alt());
+		Log.loadFloat(est_alt_);
 		Log.loadFloat(est_speedZ);
 		Log.loadFloat(get_Est_X());
 		Log.loadFloat(est_speedX);
@@ -149,10 +149,10 @@ void MpuClass::init()
 
 
 
-	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_98);
+	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_20);
 	//ms_open();
 	sleep(1);
-	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_98);
+	accelgyro.initialize(MPU6050_GYRO_FS_1000, MPU6050_ACCEL_FS_2, MPU6050_DLPF_BW_20);
 	writeWord(104, MPU6050_RA_XA_OFFS_H, -535);//-5525);
 	writeWord(104, MPU6050_RA_YA_OFFS_H, 219);// -1349);
 	writeWord(104, MPU6050_RA_ZA_OFFS_H, 1214);// 1291);
@@ -341,7 +341,7 @@ bool MpuClass::loop(){
 	float WaccY = Emu.get_accY();
 	accZ = Emu.get_accZ();
 
-	faccZ += (accZ - faccZ)*ACC_Z_CF;
+	//faccZ += (accZ - faccZ)*ACC_Z_CF;
 
 	accX = (cosYaw * WaccX + sinYaw * WaccY); //relative to copter xy
 	accY = (cosYaw * WaccY - sinYaw * WaccX);
@@ -517,6 +517,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	gyroYaw = -gyroYaw;
 	pitch = -pitch;
 	yaw = -yaw;
+
 
 	/*
 	if (abs(roll) >90*GRAD2RAD) {

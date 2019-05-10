@@ -168,6 +168,11 @@ public class Commander {
         //  buf[1]=buf[2]=buf[3]=0;
 
         counter++;
+
+
+
+
+
         int mask=get32to8bMask(MainActivity.command_bits_);
 
         load_32int2buf(buf,i,MainActivity.command_bits_);

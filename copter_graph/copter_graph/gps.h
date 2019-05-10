@@ -6,7 +6,7 @@ HWND gps_hwnd = NULL;
 
 LRESULT CALLBACK WndProcGPS(HWND, UINT, WPARAM, LPARAM);
 VOID OnPaintGPS(HDC hdc) {
-
+	
 	gpsField.X = 0;
 	gpsField.Y = 0;
 	gpsField.Width = gpsRect.right - gpsRect.left;

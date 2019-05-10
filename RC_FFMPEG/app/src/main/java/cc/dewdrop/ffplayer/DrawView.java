@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -106,11 +107,12 @@ public class DrawView extends View {
             }
             go_to_home.set(MainActivity.toHomeF());
 
-            if (!(MainActivity.progF() || MainActivity.toHomeF()) ) {
+            if (!(MainActivity.progF() || MainActivity.toHomeF()) && MainActivity.motorsOnF() ) {
                 if (!MainActivity.horizontOnF()) //always is on it this prog
                     MainActivity.horizonOn();
                 if (!MainActivity.compassOnF())
                     MainActivity.compassOn();
+                //Log.d("DEB","SWITCH ON");
             }
 
             smart_ctrl.set(MainActivity.smartCntrF());
