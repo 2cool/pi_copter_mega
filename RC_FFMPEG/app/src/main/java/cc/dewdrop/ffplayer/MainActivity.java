@@ -346,6 +346,10 @@ public static void verifyPermissions(Activity activity){
                             openSettings();
                         if (DrawView.exitProg.getStat()==3)
                             exit();
+                        if (DrawView.comp_calibr.getStat()==3)
+                            command_bits_|=COMPASS_CALIBR;
+                        if (DrawView.comp_m_calibr.getStat()==3)
+                            command_bits_|=COMPASS_MOTOR_CALIBR;
                         if (DrawView.reboot.getStat()==3)
                             command_bits_|=REBOOT;
                         if (DrawView.shutdown.getStat()==3)

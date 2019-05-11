@@ -212,7 +212,6 @@ void HmcClass::loop(){
 	if (do_compass_motors_calibr)
 		motTest(fmx, fmy, fmz);
 
-	
 	if (Autopilot.motors_is_on() && motors_power_on){
 		float kx, ky, kz,k;
 		//m0;
