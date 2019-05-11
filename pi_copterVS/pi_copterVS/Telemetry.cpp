@@ -199,12 +199,22 @@ Max Continuous Current 14 Amps
 Max Continuous Power 220 Watts
 */
 
+/*
+
 	shmPTR->m_current[0] = m_current[0] = 0.027 *(float)(1004- data[0]);
 	shmPTR->m_current[1] = m_current[1] = 0.027 *(float)(995 - data[1]);
 	shmPTR->m_current[2] = m_current[2] = 0.022 *(float)(999 - data[2]);
 	shmPTR->m_current[3] = m_current[3] = 0.025 *(float)(996 - data[3]);
+*/	
 	
-	
+
+#define CUR_K 51.15
+	shmPTR->m_current[0] = m_current[0] = 1.024 *( 20 - (float)(data[0]-24) / CUR_K);
+	shmPTR->m_current[1] = m_current[1] = 1.024 * (20 - (float)(data[1]-24) / CUR_K);
+	shmPTR->m_current[2] = m_current[2] = 1.024 * (20 - (float)(data[2]-24) / CUR_K);
+	shmPTR->m_current[3] = m_current[3] = 1.024 * (20 - (float)(data[3]-24) / CUR_K);
+
+
 
 	/*/////////////
 	static float mc0 = 0, mc1 = 0, mc2 = 0, mc3 = 0;
@@ -214,27 +224,21 @@ Max Continuous Power 220 Watts
 	mc3 += (m_current[3] - mc3)*0.03;
 	Debug.dump(mc0, mc1, mc2, mc3);
 
-	/////////////*/
+	/////////////
 
 
-	//Debug.dump((float)data[0], data[1], data[2], data[3]);
 
-#define MOTORS_STALLED_I_MAX 15
-#define MOTORS_STALLED_I_MIN -1
-#define MOT_STALLED "msd"
+	static float d[4] = { 1000,1000,1000,1000 };
+	for (int i=0; i<4; i++)
+		d[i] += (data[i] - d[i]) * 1;
 
-	if (Autopilot.motors_is_on() && Mpu.get_Est_Alt() < 10 &&
-		(
-			m_current[0]>MOTORS_STALLED_I_MAX || m_current[0]< MOTORS_STALLED_I_MIN ||
-			m_current[1]>MOTORS_STALLED_I_MAX || m_current[1]< MOTORS_STALLED_I_MIN ||
-			m_current[2]>MOTORS_STALLED_I_MAX || m_current[2]< MOTORS_STALLED_I_MIN ||
-			m_current[3]>MOTORS_STALLED_I_MAX || m_current[3]< MOTORS_STALLED_I_MIN)
-		) 
-	{
-		//Autopilot.off_throttle(true, MOT_STALLED);
-		cout<<"motors stalled\n";
+*/
 
-	}
+	//Debug.dump((float)d[0], d[1], d[2], d[3]);
+	//Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
+
+
+/*
 
 #define WORK_I 1.5
 
@@ -245,6 +249,8 @@ Max Continuous Power 220 Watts
 		Balance.propeller_lost[3] = (m_current[3] < WORK_I);
 		//printf("propeller lost\n");
 	}
+
+*/
 
 
 //	Debug.dump(m_current[0], m_current[1], m_current[2], m_current[3]);
@@ -261,7 +267,7 @@ void TelemetryClass::testBatteryVoltage(){
 	//const double time_nowd = Mpu.timed;
 	double dt = Mpu.timed - old_timed;
 	old_timed = Mpu.timed;
-	float current = m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.2;
+	float current = m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.64;
 	//if (current < 2)?????????????? проверить с батареей
 	//	current = 0.6;
 	f_current += (current - f_current)*0.03;

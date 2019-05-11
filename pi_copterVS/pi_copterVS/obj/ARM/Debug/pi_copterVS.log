@@ -3,15 +3,15 @@
   Validating architecture
   Starting remote build
   Compiling sources:
-  AP_PID.cpp
-  FIND.cpp
   MS5611.cpp
+  AP_PID.cpp
   Location.cpp
+  FIND.cpp
   Autopilot.cpp
   GeoDot.cpp
   GPS.cpp
-  Log.cpp
   Prog.cpp
+  Log.cpp
   Balance.cpp
   Hmc.cpp
   mi2c.cpp
@@ -22,12 +22,12 @@
   main.cpp
   debug.cpp
   inv_mpu.cpp
-  inv_mpu_dmp_motion_driver.cpp
   Settings.cpp
+  inv_mpu_dmp_motion_driver.cpp
   WProgram.cpp
   Direction.cpp
-  mpu.cpp
   Filter.cpp
+  mpu.cpp
   Stabilization.cpp
   MPU6050.cpp
   Telemetry.cpp

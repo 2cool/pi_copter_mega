@@ -1,6 +1,6 @@
 C:\Users\Igor\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\Adafruit_NeoPixel-master\Adafruit_NeoPixel.cpp.o: \
- C:\Arduino\libraries\Adafruit_NeoPixel-master\Adafruit_NeoPixel.cpp \
- C:\Arduino\libraries\Adafruit_NeoPixel-master\Adafruit_NeoPixel.h \
+ C:\Arduino\hardware\arduino\avr\libraries\Adafruit_NeoPixel-master\Adafruit_NeoPixel.cpp \
+ C:\Arduino\hardware\arduino\avr\libraries\Adafruit_NeoPixel-master\Adafruit_NeoPixel.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/binary.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/WCharacter.h \

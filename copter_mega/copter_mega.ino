@@ -136,7 +136,7 @@ void stop_motors() {
 	OCR3 = pwm_OFF_THROTTLE;
 }
 
-void on(const uint16_t COUNTER, const uint16_t throthle)
+void on(const uint16_t COUNTER)
 {
 	//old_g_pitch = 1000;
 
@@ -164,7 +164,7 @@ void on(const uint16_t COUNTER, const uint16_t throthle)
 	ICR3 = ICR4 = ICR5 = COUNTER;
 	OCR_GP = pwm_OFF_THROTTLE + (pwm_OFF_THROTTLE / 2);
 	OCR_GR = pwm_OFF_THROTTLE + (pwm_OFF_THROTTLE / 2);
-	OCR0 = OCR1 = OCR2 = OCR3 =  throthle;
+	
 	//OCR4B = 0;// 35000;
 }
 
@@ -382,11 +382,17 @@ void setup()
 	overloadTime = 1;
 	overloadCnt = 1;
 #ifdef ESC_CALIBR
-	on(48000, pwm_MAX_THROTTLE);
-	delay(3000);
+	on(48000);
+	OCR0 = OCR1 = OCR2 = OCR3 = pwm_MAX_THROTTLE;
+//	OCR0 = pwm_MAX_THROTTLE;
+//	OCR1 = OCR2 = OCR3 = pwm_OFF_THROTTLE;
+
+
+	delay(1500);
 	OCR0 = OCR1 = OCR2 = OCR3 = pwm_OFF_THROTTLE;
 #else
-	on(48000, pwm_OFF_THROTTLE);
+	on(48000);
+	OCR0 = OCR1 = OCR2 = OCR3 = pwm_OFF_THROTTLE;
 #endif
 	//Serial.begin(9600);
 	//while (!Serial);

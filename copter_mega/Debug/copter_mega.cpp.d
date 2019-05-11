@@ -13,6 +13,6 @@ C:\Users\Igor\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\copt
  C:\Arduino\hardware\arduino\avr\variants\mega/pins_arduino.h \
  C:\Arduino\hardware\arduino\avr\libraries\Wire\src/Wire.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/Stream.h \
- C:\Arduino\libraries/Adafruit_NeoPixel-master\Adafruit_NeoPixel.h \
+ C:\Arduino\hardware\arduino\avr\libraries/Adafruit_NeoPixel-master\Adafruit_NeoPixel.h \
  C:\Arduino\hardware\arduino\avr\cores\arduino/Arduino.h \
  C:\Users\Igor\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\gps.h

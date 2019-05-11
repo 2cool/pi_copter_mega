@@ -446,6 +446,8 @@ bool BalanceClass::loop()
 		//if (propeller_lost[1] || propeller_lost[2]) 	f_[1] = f_[2] = 0;
 	//	if (f_[0]>=0.4 || f_[1]>0.4 || f_[2]>0.4 || f_[3]>0.4)	f_[0] = f_[1] = f_[2] = f_[3] = 0.3;
 
+		
+
 		mega_i2c.throttle(f_);  //670 micros
 		log();
 	}
