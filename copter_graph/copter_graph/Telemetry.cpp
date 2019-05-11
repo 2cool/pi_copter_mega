@@ -15,10 +15,7 @@ Telemetry::~Telemetry()
 uint16_t data[5];
 void Telemetry::parser(byte buf[], int n) {
 
-
 	memcpy((byte*)data, &buf[n], 10);
-
-
 
 #define CUR_K 51.15
 	 m_current[0] = 1.024 * (20 - (float)(data[0] - 24) / CUR_K);
