@@ -48,6 +48,7 @@ class CommanderClass
 
 	 void init();
 	 bool input();
+	 void controls2zero();
 
 };
 	

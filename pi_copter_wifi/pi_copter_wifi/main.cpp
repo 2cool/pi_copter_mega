@@ -53,7 +53,7 @@ int init_shmPTR() {
 //thread t;
 
 
-
+uint64_t offline_time = 0;
 bool newConnection_;
 bool is_connected(void) { return shmPTR->connected>0; }
 string get_client_addres();
@@ -232,12 +232,15 @@ void server() {
 			if (shmPTR->connected == 0)
 				shmPTR->client_addr = cli_addr.sin_addr.s_addr;
 			shmPTR->connected++;
-			if (shmPTR->connected == 1)
+			if (shmPTR->connected == 1) {
 				cout << "ONLINE\n";
+				offline_time = 0;
+			}
 		}
 		else {
 			if (shmPTR->connected) {
-
+				if (offline_time == 0)
+					offline_time = millis();
 				cout << "OFFLINE\n";//ERROR reading from socket\n";
 				
 			}
@@ -253,7 +256,7 @@ void server() {
 		
 		n = write(newsockfd, shmPTR->wifiWbuffer, shmPTR->wifibuffer_data_len_4_write);
 		if (n <= 0) {
-			cout << "wa\n";
+			//cout << "wa\n";
 			n = write(newsockfd, shmPTR->wifiWbuffer, shmPTR->wifibuffer_data_len_4_write);
 
 		}
@@ -277,7 +280,55 @@ void server() {
 
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+std::string exec(const std::string cmd) {
+	//printf(cmd.c_str());
+	//printf("\n");
+	char buffer[128];
+	std::string result = "";
+	FILE* pipe = popen(cmd.c_str(), "r");
+	if (!pipe) {
+		//throw std::runtime_error("popen() failed!");
+		cout << "inet pipe brock\n";
+		return "";
+	}
+	while (!feof(pipe)) {
+		if (fgets(buffer, 128, pipe) != NULL)
+			result += buffer;
+	}
+	//cout << "close pipe\n";
+	pclose(pipe);
+	return result;
+}
+//----------------------------------------------------------
+void test_wifi() {
+	int ln = 2;
+	cout << "test wifi work\n";
+	string ret = exec("ifconfig wlan0");
+	int ip;
+	string myIP = "";
+	ip = ret.find("192.168.");
+	if (ip >= 0)
+		myIP = ret.substr(ip, 8 + ret.substr(ip + 8).find(".")) + ".1";
+	if (myIP.length() > 0)
+		ret = exec("ping -w 1 -c 1 " + myIP);
+	if (ret.find("1 received") == string::npos) {
+		if (--ln <= 0) {
+			//printf( "%s %i\n", ret.c_str(),n);
+			ret = exec("nmcli dev wifi | grep 2coolzNET");
+			if (ret.find(" 2coolzNET ") != string::npos) {
+				exec("ifconfig wlan0 down");
+				delay(1000);
+				exec("ifconfig wlan0 up");
+				delay(5000);
+				ln = 2;
+			}
+		}
+	}
+	else {
+		ln = 2;
+		cout << "test is OK\n";
+	}
+}
 void watch_d() {
 
 	static int errors = 0;
@@ -297,6 +348,11 @@ void watch_d() {
 				errors = 0;
 				old_main_cnt = shmPTR->main_cnt;
 			}
+
+			if (offline_time && millis() - offline_time > 15000) {
+				test_wifi();
+			}
+
 			delay(100);
 		}
 		else {

@@ -24,7 +24,9 @@
 
 #include "Log.h"
 
-
+void CommanderClass::controls2zero() {
+	yaw = yaw_offset = pitch = roll = throttle = 0;
+}
 void CommanderClass::init()
 {
 	init_shmPTR();
@@ -38,7 +40,7 @@ void CommanderClass::init()
 	ppp_inet = true;
 	telegram_bot = false;
 
-	yaw = yaw_offset = pitch = roll = throttle = 0;
+	controls2zero();
 
 
 }

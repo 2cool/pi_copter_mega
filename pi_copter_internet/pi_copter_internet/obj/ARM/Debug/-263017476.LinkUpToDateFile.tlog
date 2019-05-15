@@ -1,0 +1,1 @@
+g++ -o "/root/projects/pi_copter_internet/../pi_copter_internet/bin/ARM/Debug/pi_copter_internet.out" -Wl,--no-undefined -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack /root/projects/pi_copter_internet/../pi_copter_internet/obj/ARM/Debug/main.o -lpthread

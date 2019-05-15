@@ -741,18 +741,12 @@ bool AutopilotClass::off_throttle(const bool force, const string msg){//////////
 
 void AutopilotClass::connectionLost_(){ ///////////////// LOST
 #ifdef FALSE_WIRE
-	if (true)
-		return;
+	//if (true)
+	//	return;
 #endif
 	cout << "connection lost" << "\t"<<Mpu.timed<<endl;
-	//Out.println("CONNECTION LOST");
-	
-
-	//Telemetry.addMessage(e_LOST_CONNECTION);
-	//Out.println("con lost!");
-	//Out.println(millis());
-
-	Commander.init();
+	Telemetry.addMessage(e_LOST_CONNECTION);
+	Commander.controls2zero();
 
 #ifdef OFF_MOTOR_IF_LOST_CONNECTION
 if (motors_is_on())
@@ -993,7 +987,7 @@ int  AutopilotClass::exit() {
 
 
 
-
+#define MAX_GIMAGL_PITCH 20
 #define MAX_GIMBAL_ROLL 20
 void AutopilotClass::gimBalRollCorrection() {
 	static float old_g_roll = 1000;

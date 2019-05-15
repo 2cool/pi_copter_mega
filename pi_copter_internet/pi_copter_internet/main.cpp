@@ -58,7 +58,8 @@ using namespace std;
 //#define FORTEST
 
 #ifdef FORTEST
-#include "../../../../2coolz/pi_copter_mega/pi_copterVS/pi_copterVS/glob_header.h"
+//#include "../../../../2coolz/pi_copter_mega/pi_copterVS/pi_copterVS/glob_header.h"
+#include "C:/Users/Igor/pi_copter_mega/pi_copterVS/pi_copterVS/glob_header.h"
 
 #else
 #include "../pi_copterVS/glob_header.h"
@@ -81,12 +82,12 @@ void pipe_handler(int sig) {
 
 
 
-#define PPP_INET
+//#define PPP_INET
 #define TELEGRAM_BOT_RUN
 #define LOGER_RUN
 
-bool start_loger=false, start_telegram = false;
-
+bool f_start_loger=false, f_start_telegram = false, f_start_ppp=false;
+bool telegram_inet_ok = false, loger_inet_ok = false;
 
 std::string exec(const std::string cmd) {
 	//printf(cmd.c_str());
@@ -103,6 +104,7 @@ std::string exec(const std::string cmd) {
 		if (fgets(buffer, 128, pipe) != NULL)
 			result += buffer;
 	}
+	//cout << "close pipe\n";
 	pclose(pipe);
 	return result;
 }
@@ -159,7 +161,11 @@ void delay(unsigned long t) {
 
 //////////////////////////////////////////////////////////////////////////
 
+/*
+https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/getUpdates
+https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_id=241349746&text=hi_or
 
+*/
 
 
 static unsigned int telegram_cnt = 0;
@@ -168,7 +174,7 @@ string sms_phone_number;
 string sms_mes;
 
 static const std::string head = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/";
-static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_idbot = telegram.Bot(token='bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww')&text=";
+static const std::string htext = "curl -k -s \"https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendMessage?chat_id=241349746&text=";
 
 volatile int _sms_n;
 
@@ -276,6 +282,22 @@ void parse_sms_command() {
 
 /*
 
+sudo pico /etc/gammurc
+insert just this:
+
+[gammu]
+device = /dev/ttyS2
+connection = at115200
+
+
+
+[gammu]
+device = /dev/ttyAMA0
+connection = at115200
+
+
+
+
 root@2cool:~# gammu Чgetsms 0 2
 Location 2, folder "Inbox", SIM memory, Inbox folder
 SMS message
@@ -358,38 +380,37 @@ int readsms_n() {
 	string tttt;
 	//int smsc_number =	str.find("SMSC number          : \"");
 	std::size_t  remote_number =  str.find("Remote number        : \"");
-	std::size_t status =		  str.find("Status               : ");
-	if (status != string::npos)
-		if (str.c_str()[23] == 'U') {
-
-			if (remote_number != string::npos) {
-				remote_number += 24;
-				std::size_t len = str.substr(remote_number).find("\"");
-				if (len != string::npos) {
-					sms_phone_number = str.substr(remote_number, len);
-					if (sms_phone_number.find("+380") == string::npos)
-						sms_phone_number = "+380973807646";
-
+	std::size_t status =		  str.find("Status               : UnRead");
+	if (status != string::npos) {
+			
+		if (remote_number != string::npos) {
+			remote_number += 24;
+			std::size_t len = str.substr(remote_number).find("\"");
+			if (len != string::npos) {
+				sms_phone_number = str.substr(remote_number, len);
+				if (sms_phone_number.find("+380") == string::npos)
+					sms_phone_number = "+380973807646";
 
 
-				}
-				else
-					return -1;
+
 			}
 			else
 				return -1;
+		}
+		else
+			return -1;
 
-			std::size_t mess = str.find("\n\n");
-			if (mess != string::npos) {
-				std::size_t len = str.substr(mess + 2).find("\n\n");
-				if (len != string::npos) {
-					sms_mes = str.substr(mess + 2, len);
-				}
-				else
-					return -1;
+		std::size_t mess = str.find("\n\n");
+		if (mess != string::npos && mess > status) {
+			std::size_t len = str.substr(mess + 2).find("\n\n");
+			if (len != string::npos) {
+				sms_mes = str.substr(mess + 2, len);
 			}
 			else
 				return -1;
+		}
+		else
+			return -1;
 
 			parse_sms_command();
 		}
@@ -436,14 +457,15 @@ void send_sos(string msg) {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void _stop_ppp_read_sms_start_ppp() { // external
+	if (f_start_ppp) {
+		shmPTR->ppp_run = false;
+		cout << "ppp_run stop\n";
+		while (shmPTR->inet_ok) {
+			delay(100);
+		}
 
-	shmPTR->ppp_run = false;
-	cout << "ppp_run stop\n";
-	while (shmPTR->inet_ok) {
-		delay(100);
+		cout << "inet off\n";
 	}
-
-	cout << "inet off\n";
 	_sms_n = 0;
 	shmPTR->sms_at_work = 1;
 
@@ -452,7 +474,7 @@ void _stop_ppp_read_sms_start_ppp() { // external
 	}
 	cout << "sms_done\n";
 	delay(100);
-	shmPTR->ppp_run = true;
+	shmPTR->ppp_run = f_start_ppp;
 }
 
 
@@ -464,16 +486,20 @@ void sms_loop() {
 			delay(100);
 		}
 		if (shmPTR->sms_at_work == 1) {
-			shmPTR->ppp_run = false;
-			while (shmPTR->inet_ok)
-				delay(100);
+			if (f_start_ppp) {
+				shmPTR->ppp_run = false;
+				while (shmPTR->inet_ok)
+					delay(100);
+			}
 			readsms();
 		
 		}
 		if (shmPTR->sms_at_work == 2) {
-			shmPTR->ppp_run = false;
-			while (shmPTR->inet_ok)
-				delay(100);
+			if (f_start_ppp) {
+				shmPTR->ppp_run = false;
+				while (shmPTR->inet_ok)
+					delay(100);
+			}
 			sendsms();
 		}
 
@@ -502,11 +528,12 @@ void telegram_loop() {
 		delay(100);
 		uint32_t time = millis();
 		//commander
-		if (time - last_update > 15000) {
+		if (time - last_update > 10000) {
 			//printf("upd\n");
 			last_update = time;
 			std::string upd = "" + exec(head + "getUpdates\"");
 			//printf("%s\n", upd.c_str());
+			telegram_inet_ok=(upd.length() > 0 && upd.find("ok") >= 0);
 			if (old_message_len == 0 || old_message_len > upd.length())
 				old_message_len = upd.length();
 			else
@@ -663,6 +690,7 @@ void loger_loop() {
 
 		getCommunication();
 		int n = write(sockfd_loger, com, 42);
+		loger_inet_ok = n >= 42;
 		if (n < 42) {
 			cout << "loger: ERROR writing to socket\n";
 			serial_n = 1;
@@ -682,6 +710,7 @@ int start_ppp() {
 
 
 	shmPTR->ppp_run = true;
+#ifdef PPP_INET
 	cout << "starting ppp...\n";
 	system("poff -a");
 	delay(3000);
@@ -689,67 +718,55 @@ int start_ppp() {
 	delay(3000);
 	system("route add default dev ppp0");
 	delay(3000);
+#endif
 	return 0;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////
 static int no_inet_errors = 0;
-int stop_ppp(bool test_inet=true) {
+void stop_ppp(bool test_inet=true) {
+	if (!f_start_ppp)
+		return;
 
 	if (test_inet && shmPTR->inet_ok == false)
-		return 0;
-
-
-
+		return;
+#ifdef PPP_INET
 	system("route add default dev wlan0");
 	delay(3000);
 	system("poff -a");
 	delay(3000);
 	cout << "---------PPP STOPED---------\n";
+#endif
 	shmPTR->inet_ok = false;
-
+	delay(1000);
 }
 
 
 void test_ppp_inet_and_local_loop() {
 	int n = 2;
-	int ln = 2;
+	
 	while (shmPTR->ppp_run && shmPTR->run_main) {
 		delay(15000);
-		string ret = exec("ping -w 5 -c 1 8.8.8.8");
-		if (ret.find("1 received") == string::npos) {
-			if (--n <= 0) {
-				cout << "no inet " << ret << " " << n << endl;
-				no_inet_errors++;
-				break;
-			}
-		}
-		else {
-			if (shmPTR->inet_ok == false) {
-				cout << "internet OK\n";
-				shmPTR->inet_ok = true;
-			}
-			n = 2;
-			no_inet_errors = 0;
-			delay(3000);
-			
-		}
-
-		ret = exec("ping -w 1 -c 1 192.168.43.1");
-		if (ret.find("1 received") == string::npos) {
-			if (--ln <= 0) {
-				//printf( "%s %i\n", ret.c_str(),n);
-				ret = exec("nmcli dev wifi | grep 2coolzNET");
-				if (ret.find(" 2coolzNET ") != string::npos) {
-					exec("ifconfig wlan0 down");
-					delay(1000);
-					exec("ifconfig wlan0 up");
-					delay(5000);
-					ln = 2;
+		if (!telegram_inet_ok && !loger_inet_ok) {
+			string ret = exec("ping -w 5 -c 1 8.8.8.8");
+			if (ret.find("1 received") == string::npos) {
+				if (--n <= 0) {
+					cout << "no inet " << ret << " " << n << endl;
+					no_inet_errors++;
+					break;
 				}
 			}
+			else {
+				if (shmPTR->inet_ok == false) {
+					cout << "internet OK\n";
+					shmPTR->inet_ok = true;
+				}
+				n = 2;
+				no_inet_errors = 0;
+				delay(3000);
+
+			}
 		}
-		else
-			ln = 2;
+		
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -767,9 +784,11 @@ void ppp_loop() {
 		stop_ppp(false);
 		if (no_inet_errors >= 2) {
 			no_inet_errors = 0;
+#ifdef PPP_INET
 			system("poff -a");
 			sleep(3);
 			system("pkill gammu");
+#endif
 			shmPTR->sim800_reset = true;
 		}
 
@@ -813,8 +832,9 @@ int main(int argc, char *argv[])//lat,lon,.......
 	printf("<start loger y> <start telegram y> <cout to file>\n");
 	if (argc >= 3) {
 
-		start_loger = (argv[1][0] == 'y' || argv[1][0] == 'Y');
-		start_telegram = (argv[2][0] == 'y' || argv[2][0] == 'Y');
+		f_start_loger = (argv[1][0] == 'y' || argv[1][0] == 'Y');
+		f_start_telegram = (argv[2][0] == 'y' || argv[2][0] == 'Y');
+		f_start_ppp = f_start_loger | f_start_telegram;
 	}
 	if (argc >=4 ){
 		out = std::ofstream(argv[3]); //откроем файл дл€ вывод
@@ -847,14 +867,15 @@ int main(int argc, char *argv[])//lat,lon,.......
 	delay(400);
 	if (flag)
 		return 0;
-
+#ifdef PPP_INET
 	system("poff -a");
+#endif
 	sleep(3);
 	system("gammu getallsms");
 	system("gammu deleteallsms 1");
 
 	shmPTR->inet_ok = false;
-	shmPTR->internet_run = false;
+	shmPTR->internet_run = true; //main loop
 	shmPTR->loger_run = false;
 	shmPTR->telegram_run = true;
 	shmPTR->sms_at_work = 0;
@@ -866,18 +887,18 @@ int main(int argc, char *argv[])//lat,lon,.......
 	cout << "start sms loop\n";
 	thread tsms(sms_loop);
 	tsms.detach();
-	if (start_loger || start_telegram) {
-		shmPTR->internet_run = true;
+	if (f_start_ppp) {
+		//shmPTR->internet_run = true;
 		cout << "start ppp loop\n";
 		thread tppp(ppp_loop);
 		tppp.detach();
 	}
-	if (start_loger) {
+	if (f_start_loger) {
 		cout << "start loger loop\n";
 		thread tl(loger_loop);
 		tl.detach();
 	}
-	if (start_telegram) {
+	if (f_start_telegram) {
 		cout << "start telegram loop\n";
 		thread tg(telegram_loop);
 		tg.detach();
@@ -898,7 +919,7 @@ int main(int argc, char *argv[])//lat,lon,.......
 	shmPTR->ppp_run = false;
 	
 	stop_ppp();
-	sleep(3);
+	
 	shmPTR->internet_run = false;
 	
 	cout << "internet's down...\n";
