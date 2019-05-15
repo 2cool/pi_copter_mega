@@ -309,7 +309,7 @@ void watch_dog() {
 				int ret=system(t.c_str());
 
 			}
-		/*
+		
 		if (start_inet)
 			if (internet_cnt == shmPTR->internet_cnt) {
 				cout << "--------------ppp starting" << "\t"<<Mpu.timed << endl;
@@ -336,7 +336,7 @@ void watch_dog() {
 				int ret = system(t.c_str());
 			
 			}
-			*/
+			
 	}
 }
 std::ofstream out;

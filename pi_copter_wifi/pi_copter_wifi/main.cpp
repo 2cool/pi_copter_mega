@@ -350,6 +350,7 @@ void watch_d() {
 			}
 
 			if (offline_time && millis() - offline_time > 15000) {
+				offline_time = millis();
 				test_wifi();
 			}
 
@@ -370,6 +371,13 @@ std::streambuf *coutbuf;// старый буфер
 int main(int argc, char *argv[])
 {
 	init_shmPTR();
+
+	int tmp = shmPTR->wifi_cnt;
+	delay(1000);
+	if (tmp != shmPTR->wifi_cnt) {
+		cout << "wifi_clone\n";
+		return -1;
+	}
 	
 	thread tl(watch_d);
 	tl.detach();

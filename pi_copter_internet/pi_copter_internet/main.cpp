@@ -82,7 +82,7 @@ void pipe_handler(int sig) {
 
 
 
-//#define PPP_INET
+#define PPP_INET
 #define TELEGRAM_BOT_RUN
 #define LOGER_RUN
 
@@ -521,6 +521,7 @@ void telegram_loop() {
 		while ( shmPTR->inet_ok == false || shmPTR->telegram_run == false) {
 			delay(100);
 			telegram_cnt = 0;
+			telegram_inet_ok = false;
 		}
 
 		
@@ -641,6 +642,7 @@ void loger_loop() {
 		delay(1000);
 
 		while (shmPTR->inet_ok == false || shmPTR->loger_run == false) {
+			loger_inet_ok = false;
 			delay(100);
 			if (serial_n > 1) {
 				cout << "loger stoped\n";
@@ -736,7 +738,7 @@ void stop_ppp(bool test_inet=true) {
 	delay(3000);
 	cout << "---------PPP STOPED---------\n";
 #endif
-	shmPTR->inet_ok = false;
+	shmPTR->inet_ok = telegram_inet_ok = loger_inet_ok = false;
 	delay(1000);
 }
 
@@ -859,7 +861,12 @@ int main(int argc, char *argv[])//lat,lon,.......
 //	if (shmPTR->internet_run)
 //		return 0;
 
-
+	int tmp = shmPTR->internet_cnt;
+	delay(1000);
+	if (tmp != shmPTR->internet_cnt) {
+		cout << "inet_clone\n";
+		return -1;
+	}
 
 	thread wd(watch_d);
 	wd.detach();
