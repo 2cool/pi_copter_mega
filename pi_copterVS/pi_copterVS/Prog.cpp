@@ -114,7 +114,7 @@ bool ProgClass::program_is_OK(){
 				
 				fullTime += time;
 				if (fullTime>timeLeft){//MAX_TIME_LONG_FLIGHT){
-					cout << "to long fly for prog!" << "\t"<<Mpu.timed << endl;
+					cout << "to long fly for prog!" <<" fly time="<<fullTime<<". Time left="<<timeLeft<<".\t"<<Mpu.timed << endl;
 					return false;
 				}
 			old_y = next_y;

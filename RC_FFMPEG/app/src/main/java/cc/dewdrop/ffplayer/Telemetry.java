@@ -23,7 +23,7 @@ public class Telemetry {
     static private double oldlat,oldlon;
     static public double dist=0,speed=0,v_speed=0,alt_time=0 ,speed_time=0,alt_speed;
     static public String messages=null;
-    static public double heading=0,	battery_consumption=0,vibration=0;
+    static public float heading=0,	battery_consumption=0,vibration=0;
     //	static public String message="message";
     static float motorsTh[];
 
@@ -635,7 +635,7 @@ public class Telemetry {
         //	loadBUF16(i, Mpu.vibration * 1000);
 
         gimbalPitch= buf[i++];
-        heading=1.4173228346456692913385826771654*(float)buf[i++];
+        heading=1.4173228f*(float)buf[i++];
 
         //тут читаем сообщения если они кому нужни так как у нас все данніе риходят и муд
         int mes_len=load_int16(buf,i);

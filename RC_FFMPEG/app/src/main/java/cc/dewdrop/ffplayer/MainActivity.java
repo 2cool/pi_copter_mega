@@ -36,7 +36,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
    static private FFVideoView mVideoView;
    public static boolean update=true;
     public static int updateTimeMsec=50;
-    public static double pitch=0,roll=0,yaw=0;
+    public static float pitch=0,roll=0,yaw=0;
     private static boolean runMainUpdate=true;
     public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, COMPASS_ON=64,HORIZONT_ON=128;
     public final static int MPU_ACC_CALIBR=0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR=0x400,

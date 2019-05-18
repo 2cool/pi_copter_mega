@@ -240,7 +240,7 @@ public class Commander {
                 tax = ax;
                 tay = ay;
             }else{
-                double da=GRAD2RAD*(Telemetry.heading-heading);
+                double da=GRAD2RAD*(Telemetry.heading-MainActivity.yaw);
                 //Log.d("HEADING",Double.toString(da));
                 tax=(float)(ax*Math.cos(da)-ay*Math.sin(da));
                 tay=(float)(ax*Math.sin(da)+ay*Math.cos(da));
@@ -321,7 +321,7 @@ public class Commander {
         sended_ay=ay;
         sended_ax=ax;
 
-        Log.d("COMM",Float.toString(MainActivity.control_bits));
+        Log.d("COMM",heading+" "+headingOffset);
         return i;
 
     }

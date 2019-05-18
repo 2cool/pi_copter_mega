@@ -108,18 +108,16 @@ public class DrawView extends View {
                 motors_on[1].set(MainActivity.motorsOnF());
             }
             go_to_home.set(MainActivity.toHomeF());
-
+//------------------------------------------------------------------------------------------------------
             if (!(MainActivity.progF() || MainActivity.toHomeF()) && MainActivity.motorsOnF() ) {
 
-
+                if (!MainActivity.horizontOnF()) //always is on it this mode
+                    MainActivity.horizonOn();
                 if (DrawView.head_less_.is_pressed()){
-                    MainActivity.compassOn(yaw_off.is_pressed() ^ MainActivity.compassOnF());
+                    MainActivity.compassOn(!yaw_off.is_pressed() ^ MainActivity.compassOnF());
                 }else {
-                    if (!MainActivity.horizontOnF()) //always is on it this mode
-                        MainActivity.horizonOn();
                     if (!MainActivity.compassOnF())
                         MainActivity.compassOn();
-                    //Log.d("DEB","SWITCH ON");
                 }
             }
 
@@ -399,7 +397,15 @@ public class DrawView extends View {
         if (head_less_.getStat()==3){
             yaw_off.set(head_less_.is_pressed());
             j_left.set_block_X(yaw_off.is_pressed());
-            Commander.headingOffset=0;
+            if (head_less_.is_pressed()){
+                heading=(float)(Telemetry.heading-MainActivity.yaw);
+            }else {
+              //  Commander.heading=heading = MainActivity.yaw;
+                Commander.heading=heading=Telemetry.heading;
+                Commander.headingOffset=0;
+            }
+          //  heading=(float)(Telemetry.heading-MainActivity.yaw);
+           // Commander.headingOffset=0;
         }
         if (yaw_off.getStat()==3){
             j_left.set_block_X(yaw_off.is_pressed());
@@ -488,6 +494,9 @@ public class DrawView extends View {
         pitch_roll_controls(event);
 
         smart_ctrl.onTouchEvent(event);
+
+
+
         if (smart_ctrl.getStat()==3)
             if (MainActivity.toHomeF()==false && MainActivity.progF()==false)
                 MainActivity.smartCtrl();
@@ -510,8 +519,16 @@ public class DrawView extends View {
         if (desc_off.getStat()==3)
             j_left.set_block_Y(desc_off.is_pressed());
         go_to_home.onTouchEvent(event);
-        if (go_to_home.getStat()==3)
+        if (go_to_home.getStat()==3) {
             MainActivity.toHome();
+            if (head_less_.is_pressed()) {
+                Commander.headingOffset = (float) (Telemetry.heading - MainActivity.yaw);
+              //  Commander.heading = heading = (float) MainActivity.yaw;
+            }else{
+                Commander.heading = heading=(float)Telemetry.heading;
+                Commander.headingOffset=0;
+            }
+        }
 
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
@@ -594,6 +611,7 @@ public class DrawView extends View {
 
     double old_yaw=0;
     double ma_pitch=0,ma_roll=0;
+    long old_time=0;
     void main_onDraw(final Canvas c){
 
         updateControls();
@@ -609,7 +627,11 @@ public class DrawView extends View {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        long now=System.currentTimeMillis();
+        double dt=0.001*(now-old_time);
+        old_time=now;
+        if (dt>0.1)
+            dt=0.1;
 
         if (head_less_.is_pressed()){   //old control type
 
@@ -619,7 +641,12 @@ public class DrawView extends View {
             }
             //отключить флаг управления всегда включен
             Commander.heading=(float)MainActivity.yaw;
-            Commander.headingOffset=heading+=j_left.getX()*MainActivity.dt;
+            heading += 45 * j_left.getX() * dt;
+            heading=(float)wrap_180(heading);
+            Commander.headingOffset = heading;
+
+
+            //Log.d("COMM", heading +" "+j_left.getX()+ "dt="+dt);
 
         }else{                          //new control type
             if (j_left.getX()!=0)
