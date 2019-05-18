@@ -46,14 +46,14 @@ public class MainActivity extends Activity  implements SensorEventListener {
     static public int command_bits_=0;
     private static boolean secure_flug=false;
     static boolean prog_is_loaded(){return (PROGRAM_LOADED&control_bits)!=0;}
-    static boolean compassOnF(){return (HORIZONT_ON&control_bits)!=0;}
+    static boolean compassOnF(){return (COMPASS_ON&control_bits)!=0;}
     static boolean horizontOnF(){return (HORIZONT_ON&control_bits)!=0;}
     static boolean progF(){return (PROGRAM&control_bits)!=0;}
     static boolean toHomeF(){return (GO2HOME&control_bits)!=0;}
     static boolean motorsOnF(){return (MOTORS_ON&control_bits)!=0;}
     static boolean smartCntrF(){return (XY_STAB&control_bits)!=0;}
     static boolean altHoldF(){return (Z_STAB&control_bits)!=0;}
-
+    static public double dt=1,old_time=0;
     //private static boolean game_speed=false;
     public static boolean gyroscopeWork=false, magnetometerWork =false;
 
@@ -74,7 +74,12 @@ public class MainActivity extends Activity  implements SensorEventListener {
     public static void horizonOn(){command_bits_|=HORIZONT_ON;}
     public static void compassOn(){command_bits_|=COMPASS_ON;}
 
-
+    public static void compassOn(boolean f){
+        if (f)
+            command_bits_|=COMPASS_ON;
+        else
+            command_bits_&= (0xffffffff)^COMPASS_ON;
+    }
 
 
 
@@ -90,7 +95,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
 
     public static void start_stop(){
         command_bits_|=MOTORS_ON;
-        Commander.heading=(float)yaw;
+       // Commander.heading=(float)yaw;
        // Log.d("PWR","PWR");
     }
 
@@ -389,7 +394,7 @@ public static void verifyPermissions(Activity activity){
     }
 
 
-    private double dt=1,old_time=0;
+
 double angK=0.3;
     @Override
     public void onSensorChanged(SensorEvent event) {

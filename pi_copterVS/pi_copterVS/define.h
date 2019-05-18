@@ -16,8 +16,8 @@
 //#define OFF_TIMELAG
 //-----------------------------------------------
 
-//#define FALSE_WIRE
-#define  DO_SOUND 1
+#define FALSE_WIRE
+#define  DO_SOUND 0
 
 
 //#define YAW_OFF

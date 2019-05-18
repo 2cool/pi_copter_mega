@@ -369,7 +369,7 @@ bool BalanceClass::loop()
 			static float roll_stab_output = 0;
 			static float yaw_stab_output = 0;
 
-#define BAL_F 0.33f
+#define BAL_F 1
 
 			pitch_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_pitch() - c_pitch)), -MAX_D_ANGLE_SPEED, MAX_D_ANGLE_SPEED)-pitch_stab_output)*BAL_F;
 			roll_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_D_ANGLE_SPEED, MAX_D_ANGLE_SPEED)-roll_stab_output)*BAL_F;

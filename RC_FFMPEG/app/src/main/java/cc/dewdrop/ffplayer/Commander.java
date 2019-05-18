@@ -234,6 +234,23 @@ public class Commander {
         ax=pitch;
         ay=roll;
 
+
+        if (DrawView.head_less_.is_pressed()) {
+            if ((MainActivity.smartCntrF())) {
+                tax = ax;
+                tay = ay;
+            }else{
+                double da=GRAD2RAD*(Telemetry.heading-heading);
+                //Log.d("HEADING",Double.toString(da));
+                tax=(float)(ax*Math.cos(da)-ay*Math.sin(da));
+                tay=(float)(ax*Math.sin(da)+ay*Math.cos(da));
+            }
+        }else{
+            tax = ax;
+            tay = ay;
+        }
+
+/*
         if ((MainActivity.smartCntrF())) {
             tax = ax;
             tay = ay;
@@ -243,7 +260,7 @@ public class Commander {
             tax=(float)(ax*Math.cos(da)-ay*Math.sin(da));
             tay=(float)(ax*Math.sin(da)+ay*Math.cos(da));
         }
-
+*/
 
 
 
@@ -304,7 +321,7 @@ public class Commander {
         sended_ay=ay;
         sended_ax=ax;
 
-
+        Log.d("COMM",Float.toString(MainActivity.control_bits));
         return i;
 
     }

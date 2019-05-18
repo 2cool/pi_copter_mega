@@ -150,7 +150,7 @@ public class Monitor {
                 true);
         c.drawBitmap(compsN,xpos-compsL*scale*0.5f,ypos-size1*1.5f,white);
         //phone direction
-        green.setAlpha((DrawView.head_less.is_pressed())?255:100);
+        green.setAlpha((DrawView.head_less_.is_pressed())?255:100);
         final float dy=(float) Math.max(-90,Math.min(90,DrawView.wrap_180(MainActivity.yaw-DrawView.wrap_180(yaw))));
         //Log.d("MONIT",Float.toString(dy)+" "+Double.toString(MainActivity.yaw)+ " "+Double.toString(yaw));
         final float w=-(scale*compsL);

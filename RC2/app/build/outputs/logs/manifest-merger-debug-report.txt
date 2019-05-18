@@ -4,8 +4,8 @@ ADDED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\a244437bfa689aa6ec84b062349228bb\AndroidManifest.xml:14:4-17:12
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\cef0acde648afccc155241150230affb\AndroidManifest.xml:14:4-17:12
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\45046f005136cc12c85eb0a54c4daa54\AndroidManifest.xml:14:4-17:12
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\7c72e562b081a4cdde04320298168baa\AndroidManifest.xml:14:4-17:12
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:2:1-52:12
@@ -61,10 +61,10 @@ ADDED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:20:
 		ADDED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:20:22-76
 application
 ADDED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:23:5-50:19
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\a244437bfa689aa6ec84b062349228bb\AndroidManifest.xml:16:5-19
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\a244437bfa689aa6ec84b062349228bb\AndroidManifest.xml:16:5-19
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\cef0acde648afccc155241150230affb\AndroidManifest.xml:16:5-19
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\cef0acde648afccc155241150230affb\AndroidManifest.xml:16:5-19
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\45046f005136cc12c85eb0a54c4daa54\AndroidManifest.xml:16:5-19
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\45046f005136cc12c85eb0a54c4daa54\AndroidManifest.xml:16:5-19
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\7c72e562b081a4cdde04320298168baa\AndroidManifest.xml:16:5-19
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\7c72e562b081a4cdde04320298168baa\AndroidManifest.xml:16:5-19
 	android:label
 		ADDED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:26:9-41
 	android:icon
@@ -116,10 +116,10 @@ ADDED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml:49:
 uses-sdk
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\a244437bfa689aa6ec84b062349228bb\AndroidManifest.xml:15:5-42
-MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\appcompat-v7-21.0.3.aar\a244437bfa689aa6ec84b062349228bb\AndroidManifest.xml:15:5-42
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\cef0acde648afccc155241150230affb\AndroidManifest.xml:15:5-42
-MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-1\files-1.1\support-v4-21.0.3.aar\cef0acde648afccc155241150230affb\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\45046f005136cc12c85eb0a54c4daa54\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\45046f005136cc12c85eb0a54c4daa54\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\7c72e562b081a4cdde04320298168baa\AndroidManifest.xml:15:5-42
+MERGED from [com.android.support:support-v4:21.0.3] C:\Users\Igor\.gradle\caches\transforms-2\files-2.1\7c72e562b081a4cdde04320298168baa\AndroidManifest.xml:15:5-42
 INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml
 	android:minSdkVersion
 		INJECTED from C:\Users\Igor\pi_copter_mega\RC2\app\src\main\AndroidManifest.xml

@@ -18,8 +18,8 @@
 #include "Log.h"
 #include "Settings.h"
 
-float Z_FILTER = 0.2;
-float XY_FILTER = 0.06;
+float Z_FILTER = 1;
+float XY_FILTER = 1;
 void StabilizationClass::setMaxAng() {
 	set_acc_xy_speed_imax(Balance.get_max_angle());
 }

@@ -35,10 +35,12 @@ public class DrawView extends View {
     static public float sm[];
     BatteryMonitor batMon;
     private static Joystick j_left,j_right;
-    static public Img_button yaw_off, desc_off, pitch_off, roll_off, head_less,menu;
+    static public Img_button yaw_off, desc_off, pitch_off, roll_off,menu;
     static public Img_button pitch_roll_off,go_to_home;
-    static public Img_button control_type_acc,showMap,showSettings,hold_alt,smart_ctrl,extra_buttons;
+    static public Img_button showMap,showSettings,hold_alt,smart_ctrl,extra_buttons;
     static public Img_button[]motors_on=new Img_button[2];
+
+    static public Img_button control_type_acc_, head_less_;
     static public float maxAngle=35;
     Monitor monitor;
     static private int screen=viewMain;
@@ -108,11 +110,17 @@ public class DrawView extends View {
             go_to_home.set(MainActivity.toHomeF());
 
             if (!(MainActivity.progF() || MainActivity.toHomeF()) && MainActivity.motorsOnF() ) {
-                if (!MainActivity.horizontOnF()) //always is on it this prog
-                    MainActivity.horizonOn();
-                if (!MainActivity.compassOnF())
-                    MainActivity.compassOn();
-                //Log.d("DEB","SWITCH ON");
+
+
+                if (DrawView.head_less_.is_pressed()){
+                    MainActivity.compassOn(yaw_off.is_pressed() ^ MainActivity.compassOnF());
+                }else {
+                    if (!MainActivity.horizontOnF()) //always is on it this mode
+                        MainActivity.horizonOn();
+                    if (!MainActivity.compassOnF())
+                        MainActivity.compassOn();
+                    //Log.d("DEB","SWITCH ON");
+                }
             }
 
             smart_ctrl.set(MainActivity.smartCntrF());
@@ -253,15 +261,15 @@ public class DrawView extends View {
 
 
 
-        control_type_acc =new Img_button(sc.getRect(nX-2,0),
+        control_type_acc_ =new Img_button(sc.getRect(nX-2,0),
                 context.getResources().getDrawable(R.drawable.touch),
                 context.getResources().getDrawable(R.drawable.gyro),true);
 
 
-        head_less =new Img_button(sc.getRect(1,0),
+        head_less_ =new Img_button(sc.getRect(1,0),
                 context.getResources().getDrawable(R.drawable.touch),
                 context.getResources().getDrawable(R.drawable.compass_on),true);
-        head_less.enabled(MainActivity.magnetometerWork);
+        head_less_.enabled(MainActivity.magnetometerWork);
         
 
         fpv =new Img_button(sc.getRect(4,0),
@@ -386,10 +394,10 @@ public class DrawView extends View {
 
 
     void yaw_controls(final MotionEvent event){
-        head_less.onTouchEvent(event);
+        head_less_.onTouchEvent(event);
         yaw_off.onTouchEvent(event);
-        if (head_less.getStat()==3){
-            yaw_off.set(head_less.is_pressed());
+        if (head_less_.getStat()==3){
+            yaw_off.set(head_less_.is_pressed());
             j_left.set_block_X(yaw_off.is_pressed());
             Commander.headingOffset=0;
         }
@@ -398,9 +406,9 @@ public class DrawView extends View {
         }
     }
     void pitch_roll_controls(final MotionEvent event){
-        control_type_acc.onTouchEvent(event);
-        if (control_type_acc.getStat()==3){
-            if (control_type_acc.is_pressed()){
+        control_type_acc_.onTouchEvent(event);
+        if (control_type_acc_.getStat()==3){
+            if (control_type_acc_.is_pressed()){
                 pitch_roll_off.set(true);
                 j_right.set_block_X(true);
                 j_right.set_block_Y(true);
@@ -411,7 +419,9 @@ public class DrawView extends View {
                 j_right.set_block_Y(false);
             }
         }
-        if (control_type_acc.is_pressed()){
+
+
+        if (control_type_acc_.is_pressed()){
             pitch_roll_off.onTouchEvent(event);
             if (pitch_roll_off.getStat()==3){
                 j_right.set_block_X(pitch_roll_off.is_pressed());
@@ -596,29 +606,26 @@ public class DrawView extends View {
         old_yaw=MainActivity.yaw;
         ma_pitch+=(MainActivity.pitch / maxAngle - ma_pitch)*1;
         ma_roll+=(MainActivity.roll  / maxAngle - ma_roll)*1;
-        if (control_type_acc.is_pressed()) {
-            j_right.setJosticY((float) (ma_pitch));
-            j_right.setJosticX((float) (ma_roll));
-        }
 
-        if (yaw_off.is_pressed()){
-            Commander.heading=heading;
-            Commander.headingOffset=0;
-        }else {
-            if (head_less.is_pressed()) {
-                Commander.heading = heading = (float) MainActivity.yaw;
-                Commander.headingOffset = 0;
-                j_left.setJosticX(0);
-            } else {
-                if (j_left.getX()!=0)
-                    Commander.heading = (float) Telemetry.heading;
-                Commander.headingOffset =  j_left.getX()*90;
-                  //Log.d("HEAD",Double.toString(Telemetry.heading)+" "+Double.toString(Commander.headingOffset));
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        if (head_less_.is_pressed()){   //old control type
+
+            if (control_type_acc_.is_pressed()) {
+                j_right.setJosticY((float) (ma_pitch));
+                j_right.setJosticX((float) (ma_roll));
             }
-            heading=Commander.heading;
+            //отключить флаг управления всегда включен
+            Commander.heading=(float)MainActivity.yaw;
+            Commander.headingOffset=heading+=j_left.getX()*MainActivity.dt;
+
+        }else{                          //new control type
+            if (j_left.getX()!=0)
+                Commander.heading = (float) Telemetry.heading;
+            Commander.headingOffset =  j_left.getX()*90;
         }
-
-
 
 
         batMon.setVoltage(0.25f*Telemetry.batVolt);
@@ -629,7 +636,7 @@ public class DrawView extends View {
       //  Log.d("JLEFT",Double.toString(j_left.getY()));
 
         Commander.roll = j_right.getX() * maxAngle;
-        Commander.pitch = -j_right.getY() * maxAngle;;
+        Commander.pitch = -j_right.getY() * maxAngle;
 
 
 
@@ -640,16 +647,16 @@ public class DrawView extends View {
         yaw_off.paint(c);
         desc_off.paint(c);
 
-        if (control_type_acc.is_pressed())
+        if (control_type_acc_.is_pressed())
             pitch_roll_off.paint(c);
         else {
             pitch_off.paint(c);
             roll_off.paint(c);
         }
 
-        head_less.paint(c);
+        head_less_.paint(c);
         menu.paint(c);
-        control_type_acc.paint(c);
+        control_type_acc_.paint(c);
         j_left.paint(c);
         j_right.paint(c);
         motors_on[0].paint(c);
