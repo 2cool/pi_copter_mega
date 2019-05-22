@@ -7,29 +7,29 @@
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(230,11): warning : conversion to ‘__gnu_cxx::__alloc_traits<std::allocator<char> >::value_type {aka char}’ from ‘int’ may alter its value [-Wconversion]
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(230,11): warning :     str[i] += 32;
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(230,11): warning :            ^
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(628,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(628,11): warning :   com[i++] = now->tm_year - 100;
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(628,11): warning :            ^
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(629,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(629,11): warning :   com[i++] = now->tm_mon + 1;
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(629,11): warning :            ^
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(630,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(630,11): warning :   com[i++] = now->tm_mday;
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(630,11): warning :            ^
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(631,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(631,11): warning :   com[i++] = now->tm_hour;
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(631,11): warning :   com[i++] = now->tm_year - 100;
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(631,11): warning :            ^
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(632,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(632,11): warning :   com[i++] = now->tm_min;
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(632,11): warning :   com[i++] = now->tm_mon + 1;
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(632,11): warning :            ^
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(633,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(633,11): warning :   com[i++] = now->tm_sec;
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(633,11): warning :   com[i++] = now->tm_mday;
 C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(633,11): warning :            ^
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(656,27): warning : conversion to ‘short unsigned int’ from ‘float’ may alter its value [-Wfloat-conversion]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(656,27): warning :   ((unsigned short*)tb)[0] = course;
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(656,27): warning :                            ^
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(724,37): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(724,37): warning :     serv_addr.sin_port = htons(portno);
-C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(724,37): warning :                                      ^
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(634,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(634,11): warning :   com[i++] = now->tm_hour;
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(634,11): warning :            ^
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(635,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(635,11): warning :   com[i++] = now->tm_min;
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(635,11): warning :            ^
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(636,11): warning : conversion to ‘unsigned char’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(636,11): warning :   com[i++] = now->tm_sec;
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(636,11): warning :            ^
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(659,27): warning : conversion to ‘short unsigned int’ from ‘float’ may alter its value [-Wfloat-conversion]
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(659,27): warning :   ((unsigned short*)tb)[0] = course;
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(659,27): warning :                            ^
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(727,37): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(727,37): warning :     serv_addr.sin_port = htons(portno);
+C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\main.cpp(727,37): warning :                                      ^
   Linking objects
   pi_copter_internet.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copter_internet\pi_copter_internet\bin\ARM\Debug\pi_copter_internet.out

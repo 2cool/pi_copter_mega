@@ -552,6 +552,7 @@ void telegram_send_video_frame(string name) {
 void telegram_loop() {
 	static uint old_message_len = 0;
 	static uint32_t last_update = 0;
+	static uint32_t last_message_t = millis();
 
 	shmPTR->telegram_run = true;
 
@@ -569,7 +570,8 @@ void telegram_loop() {
 		delay(100);
 		uint32_t time = millis();
 		//commander
-		if (time - last_update > 10000) {
+		const uint32_t interval = ((time - last_message_t) < 20) ? 1000 : 10000;
+		if (time - last_update > interval) {
 			//printf("upd\n");
 			last_update = time;
 			std::string upd = "" + exec(head + "getUpdates\"");
@@ -580,6 +582,7 @@ void telegram_loop() {
 			else
 				if (old_message_len < upd.length()) {
 					old_message_len = upd.length();
+					last_message_t = time;
 					//int dat_pos = 6 + upd.rfind("date\":");
 					uint mes_pos = upd.rfind(",\"text\":\"");
 					if (mes_pos != string::npos) {
