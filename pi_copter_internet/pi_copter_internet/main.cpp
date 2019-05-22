@@ -53,7 +53,7 @@
 using namespace std;
 
 
-
+void telegram_send_video_frame(string name);
 
 //#define FORTEST
 
@@ -232,7 +232,7 @@ string down_case(string &str) {
 	return str;
 }
 const static int  com_bit[] = { MOTORS_ON ,GO2HOME,CONTROL_FALLING,REBOOT,SHUTDOWN,GIMBAL_PLUS,GIMBAL_MINUS,PROGRAM,Z_STAB,XY_STAB,COMPASS_ON,HORIZONT_ON,MPU_GYRO_CALIBR,COMPASS_CALIBR };
-const static string str_com[] = { "motorson","go2home","cntrf","reboot","shutdown","gimbp","gimbm","prog","zstab","xystab","compason","horizonton","mpugyrocalibr","compasscalibr","stat", "help", "help_all" };
+const static string str_com[] = { "motorson","go2home","cntrf","reboot","shutdown","gimbp","gimbm","prog","zstab","xystab","compason","horizonton","mpugyrocalibr","compasscalibr","stat", "help","image" };
 const static int arr_size = sizeof(com_bit) / 4;
 //-----------------------------------------------------------------------------
 void parse_messages_(string message, string &send) {
@@ -251,12 +251,20 @@ void parse_messages_(string message, string &send) {
 			}
 
 		}
-		if (message.find(str_com[14]) != string::npos) {
+		if (message.find(str_com[14]) != string::npos) {//stat
 			add_stat(send);
 		}
-		else if (message.find(str_com[15]) != string::npos) {
+		else if (message.find(str_com[15]) != string::npos) {//help
 			for (int i = 0; i < 17; i++)
 				send += str_com[i] + ",";
+		}
+		else if (message.find(str_com[16]) != string::npos) {
+			if (f_start_telegram) {
+				
+				string name = exec("date +%s");// +".jpg";
+				name = name.substr(0, name.length() - 1) + ".jpg";
+				telegram_send_video_frame(name);
+			}
 		}
 	}
 	if (send.compare(in) == 0) {
@@ -508,6 +516,38 @@ void sms_loop() {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+/*
+
+ ffmpeg -rtsp_transport udp -i "rtsp://192.168.42.1:554/live" -vframes 1 /home/igor/logs/image.jpg
+
+
+curl -s -X POST "https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendPhoto" -F chat_id=241349746 -F photo="@/home/igor/logs/image.jpg"
+
+*/
+
+
+
+
+
+
+void telegram_send_video_frame(string name) {
+	string ex = "ffmpeg -rtsp_transport udp -i rtsp://192.168.42.1:554/live -vframes 1 /home/igor/logs/" + name;
+	exec(ex);
+	cout << "save image " << ex << endl;
+	ex = "curl -s -X POST https://api.telegram.org/bot272046998:AAESv6nbLLWWm1nGaYPRc9Etr04XhY3aUww/sendPhoto -F chat_id=241349746 -F photo=@/home/igor/logs/" + name;
+	exec(ex);
+	cout << "send image " << ex << endl;
+}
+
+
+
+
 
 void telegram_loop() {
 	static uint old_message_len = 0;
