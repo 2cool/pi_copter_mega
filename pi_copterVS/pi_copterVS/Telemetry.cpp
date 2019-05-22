@@ -162,15 +162,14 @@ int TelemetryClass::get_voltage4one_cell() { return (int)(voltage / SN); }
 int TelemetryClass::check_time_left_if_go_to_home(){
 	double last = max(0,  battery_charge-consumed_charge);
 	float max_fly_time = min(MAX_FLY_TIME,last/f_current);
+	float time_left = max_fly_time;
+	if (Autopilot.motors_is_on()) {
+		const float dist2home = (float)sqrt(Mpu.dist2home_2());
+		const float time2home = dist2home * (1.0f / MAX_HOR_SPEED);
+		const float time2down = abs((Mpu.get_Est_Alt()) * (1.0f / MAX_VER_SPEED_MINUS));
+		time_left -= (time2home + time2down);
+	}
 
-	const float dist2home = (float)sqrt(Mpu.dist2home_2());
-	const float time2home = dist2home * (1.0f / MAX_HOR_SPEED);
-	const float time2down = abs((Mpu.get_Est_Alt())*(1.0f / MAX_VER_SPEED_MINUS));
-	const float time_left=(max_fly_time - time2home - time2down);
-
-
-
-	//printf("%f\n", time_left);
 	return (int)time_left;
 
 }

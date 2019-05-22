@@ -69,7 +69,7 @@ int GPS_Loger::decode(SEND_I2C*p, bool rotate ) {
 
 	double distance = mymath.distance_(n_lat, n_lon, lat, lon);
 	double bearing = mymath.bearing_(n_lat, n_lon, lat, lon);
-
+	yaw = bearing*RAD2GRAD;
 	static double old_distance = 0;
 
 	gy = (distance - old_distance)*sin(bearing);

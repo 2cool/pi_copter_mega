@@ -377,6 +377,7 @@ int Graph::decode_Log() {
 		sensors_data[n].sd[PITCH] = mpu.pitch;
 		sensors_data[n].sd[ROLL] = mpu.roll;
 		sensors_data[n].sd[YAW] = mpu.yaw;
+		sensors_data[n].sd[GPS_YAW] = gps_log.yaw;
 		sensors_data[n].sd[ACCX] = mpu.accX;
 		sensors_data[n].sd[ACCY] = mpu.accY;
 		sensors_data[n].sd[ACCZ] = mpu.accZ;
@@ -652,7 +653,8 @@ Graph::Graph(char*fn)
 
 	color[YAW] = Color(100, 0, 0, 200);
 	name[YAW] = L"Yaw";
-
+	color[GPS_YAW] = Color(50, 30, 30, 200);
+	name[GPS_YAW] = L"GPS_Yaw";
 	color[GYRO_PITCH] = Color(255, 0, 200, 0);
 	name[GYRO_PITCH] = L"gyro pitch";
 	color[GYRO_ROLL] = Color(255, 255, 0, 0);
@@ -871,6 +873,8 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 35, -35, C_ROLL);
 
 	draw(g, rect, 180, -180, YAW);
+	draw(g, rect, 180, -180, GPS_YAW);
+
 	draw(g, rect, 20, -20, ACCX);
 	draw(g, rect, 20, -20, ACCY);
 	draw(g, rect, 20, -20, ACCZ);
