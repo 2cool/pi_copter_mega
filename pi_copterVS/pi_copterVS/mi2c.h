@@ -113,6 +113,7 @@ class Megai2c
 protected:
 	int current_led_mode;
 public:
+	uint8_t  DO_SOUND = 0;
 	void set_led_mode(uint8_t n,uint8_t briht, bool pulse=false);
 
 	 bool ring_received;

@@ -57,7 +57,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 */
  
-#define PROG_VERSION "ver 3.190518\n"
+#define PROG_VERSION "ver 3.190523\n"
 
 
 #define SIM800_F
@@ -471,7 +471,7 @@ int main(int argc, char *argv[]) {
 	if (signal(SIGPIPE, pipe_handler) == SIG_ERR) {
 		return EXIT_FAILURE;
 	}
-
+	mega_i2c.DO_SOUND = (string(argv[0]).find("out") == -1) ? 1 : 0;
 	mega_i2c.init();
 	string str = string(argv[0]);
 	str = str.substr(str.length() - 4, str.length());

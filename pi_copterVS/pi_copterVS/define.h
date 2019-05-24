@@ -17,7 +17,7 @@
 //-----------------------------------------------
 
 //#define FALSE_WIRE
-#define  DO_SOUND 1
+
 
 
 //#define YAW_OFF
