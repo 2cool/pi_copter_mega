@@ -388,7 +388,7 @@ void setup()
 //	OCR1 = OCR2 = OCR3 = pwm_OFF_THROTTLE;
 
 
-	delay(1500);
+	delay(5000);
 	OCR0 = OCR1 = OCR2 = OCR3 = pwm_OFF_THROTTLE;
 #else
 	on(48000);

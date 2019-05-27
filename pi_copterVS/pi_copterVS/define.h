@@ -16,7 +16,7 @@
 //#define OFF_TIMELAG
 //-----------------------------------------------
 
-//#define FALSE_WIRE
+#define FALSE_WIRE
 
 
 

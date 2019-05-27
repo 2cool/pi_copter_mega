@@ -302,12 +302,17 @@ public static void verifyPermissions(Activity activity){
         SensorManager mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor magnetic_field=mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        Sensor magnetic_fi_=mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+
         Sensor gyroscope=mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
 
         int speed=(sensorUpdateSpeedFastest)?SensorManager.SENSOR_DELAY_FASTEST:SensorManager.SENSOR_DELAY_NORMAL;
         mSensorManager.registerListener(this, accelerometer,speed );
         mSensorManager.registerListener(this, magnetic_field, speed);
+        mSensorManager.registerListener(this, magnetic_fi_, speed);
+
         mSensorManager.registerListener(this, gyroscope, speed);
         rl1 =findViewById(R.id.rl1);
         mVideoView = findViewById(R.id.videoView);
@@ -392,13 +397,28 @@ public static void verifyPermissions(Activity activity){
 
         //   }
     }
+    float easing = 0.01F;
 
+    float azimuth;
+    float pitch_;
+    float roll_;
+    float[] gravity = new float[3];
+    float[] geomagnetic = new float[3];
+    float[] I = new float[16];
+    float[] R_ = new float[16];
+    float[] orientation = new float[3];
+void arrayCopy(float s[],float d[]){
+    d[0]=s[0];
+    d[1]=s[1];
+    d[2]=s[2];
+}
 
 
 double angK=0.3;
     @Override
     public void onSensorChanged(SensorEvent event) {
         final int type=event.sensor.getType();
+        if (event.accuracy == SensorManager.SENSOR_STATUS_ACCURACY_LOW) return;
 
         if (type==Sensor.TYPE_GYROSCOPE){
             gyroscopeWork=true;
@@ -425,6 +445,7 @@ double angK=0.3;
             pitch += (aPitch - pitch) * f;
             roll += (aRoll - roll) * f;
             //update=DrawView.control_type_acc.is_pressed();
+            arrayCopy(event.values, gravity);
 
         }
         else
@@ -439,6 +460,15 @@ double angK=0.3;
             yaw += (t_yaw - yaw )*f;
             //  Commander.heading=(float)heading_t;
            // Log.d("SENhD", Double.toString(yaw));
+        }else if (type==Sensor.TYPE_MAGNETIC_FIELD){
+            arrayCopy(event.values, geomagnetic);
+        }
+        if (SensorManager.getRotationMatrix(R_, I, gravity, geomagnetic)) {
+            SensorManager.getOrientation(R_, orientation);
+            azimuth += easing * (orientation[0] - azimuth);
+            pitch_ += easing * (orientation[1] - pitch_);
+            roll_ += easing * (orientation[2] - roll_);
+          //  Log.d("DKDKDKD"," "+(int)(pitch_*RAD2GRAD)+" "+(int)(roll_*RAD2GRAD)+" "+(int)((azimuth*RAD2GRAD)-yaw));
         }
 
     }

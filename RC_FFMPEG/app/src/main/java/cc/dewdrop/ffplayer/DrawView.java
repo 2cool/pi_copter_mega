@@ -153,6 +153,13 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.reboot),
                 context.getResources().getDrawable(R.drawable.reboot),false);
 
+        go_to_home =new Img_button(sc.getRect(nX/2+2,0),
+                context.getResources().getDrawable(R.drawable.go2home_off),
+                context.getResources().getDrawable(R.drawable.go2home),false);
+        do_prog =new Img_button(sc.getRect(nX/2+2,1),
+                context.getResources().getDrawable(R.drawable.route),
+                context.getResources().getDrawable(R.drawable.prog),true);
+        do_prog.enabled(false);
         shutdown=new Img_button(sc.getRect(nX-1,0),
                 context.getResources().getDrawable(R.drawable.shutdown),
                 context.getResources().getDrawable(R.drawable.shutdown),false);
@@ -169,8 +176,8 @@ public class DrawView extends View {
 
 
         showMap =new Img_button(sc.getRect(nX/2,3),
-                context.getResources().getDrawable(R.drawable.route),
-                context.getResources().getDrawable(R.drawable.route),false);
+                context.getResources().getDrawable(R.drawable.route_prog),
+                context.getResources().getDrawable(R.drawable.route_prog),false);
         showSettings=new Img_button(sc.getRect(1,0),
                 context.getResources().getDrawable(R.drawable.settings),
                 context.getResources().getDrawable(R.drawable.settings),false);
@@ -282,8 +289,8 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.photo),false);
 
         menu=new Img_button(sc.getRect(7,0),
-                context.getResources().getDrawable(R.drawable.menu),
-                context.getResources().getDrawable(R.drawable.menu),false);
+                context.getResources().getDrawable(R.drawable.extra_buttons),
+                context.getResources().getDrawable(R.drawable.extra_buttons),false);
 
 
 
@@ -307,17 +314,12 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.smart_on),true);
         smart_ctrl.set(true);
         extra_buttons=new Img_button(sc.getRect(8,0),
-                context.getResources().getDrawable(R.drawable.circle),
-                context.getResources().getDrawable(R.drawable.extra_buttons),true);
+                context.getResources().getDrawable(R.drawable.info),
+                context.getResources().getDrawable(R.drawable.circle),true);
        // extra_buttons.set(true);
-        go_to_home =new Img_button(sc.getRect(9,0),
-                context.getResources().getDrawable(R.drawable.go2home_off),
-                context.getResources().getDrawable(R.drawable.go2home),false);
 
-        do_prog =new Img_button(sc.getRect(3,0),
-                context.getResources().getDrawable(R.drawable.route),
-                context.getResources().getDrawable(R.drawable.prog),true);
-        do_prog.enabled(false);
+
+
 
 
 
@@ -518,24 +520,11 @@ public class DrawView extends View {
         desc_off.onTouchEvent(event);
         if (desc_off.getStat()==3)
             j_left.set_block_Y(desc_off.is_pressed());
-        go_to_home.onTouchEvent(event);
-        if (go_to_home.getStat()==3) {
-            MainActivity.toHome();
-            if (head_less_.is_pressed()) {
-                Commander.headingOffset = (float) (Telemetry.heading - MainActivity.yaw);
-              //  Commander.heading = heading = (float) MainActivity.yaw;
-            }else{
-                Commander.heading = heading=(float)Telemetry.heading;
-                Commander.headingOffset=0;
-            }
-        }
+
 
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
-        do_prog.onTouchEvent(event);
-        if (do_prog.getStat()==3){
-            MainActivity.Prog();
-        }
+
 
         // invalidate();
         return true;
@@ -551,6 +540,22 @@ public class DrawView extends View {
         showMap.onTouchEvent(event);
         exitProg.onTouchEvent(event);
         reboot.onTouchEvent(event);
+        do_prog.onTouchEvent(event);
+        if (do_prog.getStat()==3){
+            MainActivity.Prog();
+        }
+        go_to_home.onTouchEvent(event);
+        if (go_to_home.getStat()==3) {
+            invalidate();
+            MainActivity.toHome();
+            if (head_less_.is_pressed()) {
+                Commander.headingOffset = (float) (Telemetry.heading - MainActivity.yaw);
+                //  Commander.heading = heading = (float) MainActivity.yaw;
+            }else{
+                Commander.heading = heading=(float)Telemetry.heading;
+                Commander.headingOffset=0;
+            }
+        }
         shutdown.onTouchEvent(event);
         comp_calibr.onTouchEvent(event);
         comp_calibr.onTouchEvent(event);
@@ -692,12 +697,12 @@ public class DrawView extends View {
         fpv.paint(c);
         smart_ctrl.paint(c);
         hold_alt.paint(c);
-        go_to_home.paint(c);
+     //   go_to_home.paint(c);
         if (fpv.is_pressed()) {
             vrc.paint(c);
             photo.paint(c);
         }
-        do_prog.paint(c);
+
 
 
 
@@ -718,6 +723,8 @@ public class DrawView extends View {
         comp_m_calibr.paint(c);
         gps_on_off.paint(c);
         showSettings.paint(c);
+        go_to_home.paint(c);
+        do_prog.paint(c);
     }
 
 
