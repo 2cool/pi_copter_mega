@@ -191,6 +191,8 @@ public class Commander {
         long time = System.currentTimeMillis();
         long _dt_=time-last_time;
         last_time=time;
+        if (_dt_>1000)
+            _dt_=1000;
 
         if ((MainActivity.control_bits & MainActivity.MOTORS_ON)!=0){
             motors_on_time+=_dt_;

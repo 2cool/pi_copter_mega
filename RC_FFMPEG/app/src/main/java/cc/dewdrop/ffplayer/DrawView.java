@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -75,6 +74,7 @@ public class DrawView extends View {
     }
 
     private static long message_time=0;
+    float v_speed =0;
     private  void updateControls(){
 
         motors_on[0].enabled(Commander.link);
@@ -90,6 +90,8 @@ public class DrawView extends View {
         ftx.p[ftx.CAM_ZOOM]=Integer.toString(Commander.fpv_zoom-1);
         ftx.p[ftx.CUR]=Integer.toString((int)(Telemetry.current*Telemetry.batVolt*0.00001f))+"W "+Integer.toString((int)(Telemetry.battery_consumption / 3.6));
         ftx.p[ftx.M_ON_T]=Integer.toString((int)(Commander.motors_on_time/1000));
+        v_speed +=0.03*(Telemetry.v_speed- v_speed);
+        ftx.p[ftx.VSPEED]=constStrLen(Double.toString(v_speed),5);
 
         if (Telemetry.messages!=null) {
             message_time=System.currentTimeMillis();
@@ -153,13 +155,6 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.reboot),
                 context.getResources().getDrawable(R.drawable.reboot),false);
 
-        go_to_home =new Img_button(sc.getRect(nX/2+2,0),
-                context.getResources().getDrawable(R.drawable.go2home_off),
-                context.getResources().getDrawable(R.drawable.go2home),false);
-        do_prog =new Img_button(sc.getRect(nX/2+2,1),
-                context.getResources().getDrawable(R.drawable.route),
-                context.getResources().getDrawable(R.drawable.prog),true);
-        do_prog.enabled(false);
         shutdown=new Img_button(sc.getRect(nX-1,0),
                 context.getResources().getDrawable(R.drawable.shutdown),
                 context.getResources().getDrawable(R.drawable.shutdown),false);
@@ -176,8 +171,8 @@ public class DrawView extends View {
 
 
         showMap =new Img_button(sc.getRect(nX/2,3),
-                context.getResources().getDrawable(R.drawable.route_prog),
-                context.getResources().getDrawable(R.drawable.route_prog),false);
+                context.getResources().getDrawable(R.drawable.route),
+                context.getResources().getDrawable(R.drawable.route),false);
         showSettings=new Img_button(sc.getRect(1,0),
                 context.getResources().getDrawable(R.drawable.settings),
                 context.getResources().getDrawable(R.drawable.settings),false);
@@ -289,8 +284,8 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.photo),false);
 
         menu=new Img_button(sc.getRect(7,0),
-                context.getResources().getDrawable(R.drawable.extra_buttons),
-                context.getResources().getDrawable(R.drawable.extra_buttons),false);
+                context.getResources().getDrawable(R.drawable.menu),
+                context.getResources().getDrawable(R.drawable.menu),false);
 
 
 
@@ -314,12 +309,17 @@ public class DrawView extends View {
                 context.getResources().getDrawable(R.drawable.smart_on),true);
         smart_ctrl.set(true);
         extra_buttons=new Img_button(sc.getRect(8,0),
-                context.getResources().getDrawable(R.drawable.info),
-                context.getResources().getDrawable(R.drawable.circle),true);
+                context.getResources().getDrawable(R.drawable.circle),
+                context.getResources().getDrawable(R.drawable.extra_buttons),true);
        // extra_buttons.set(true);
+        go_to_home =new Img_button(sc.getRect(9,0),
+                context.getResources().getDrawable(R.drawable.go2home_off),
+                context.getResources().getDrawable(R.drawable.go2home),false);
 
-
-
+        do_prog =new Img_button(sc.getRect(3,0),
+                context.getResources().getDrawable(R.drawable.route),
+                context.getResources().getDrawable(R.drawable.prog),true);
+        do_prog.enabled(false);
 
 
 
@@ -520,11 +520,24 @@ public class DrawView extends View {
         desc_off.onTouchEvent(event);
         if (desc_off.getStat()==3)
             j_left.set_block_Y(desc_off.is_pressed());
-
+        go_to_home.onTouchEvent(event);
+        if (go_to_home.getStat()==3) {
+            MainActivity.toHome();
+            if (head_less_.is_pressed()) {
+                Commander.headingOffset = (float) (Telemetry.heading - MainActivity.yaw);
+              //  Commander.heading = heading = (float) MainActivity.yaw;
+            }else{
+                Commander.heading = heading=(float)Telemetry.heading;
+                Commander.headingOffset=0;
+            }
+        }
 
         j_left.onTouchEvent(event);
         j_right.onTouchEvent(event);
-
+        do_prog.onTouchEvent(event);
+        if (do_prog.getStat()==3){
+            MainActivity.Prog();
+        }
 
         // invalidate();
         return true;
@@ -540,22 +553,6 @@ public class DrawView extends View {
         showMap.onTouchEvent(event);
         exitProg.onTouchEvent(event);
         reboot.onTouchEvent(event);
-        do_prog.onTouchEvent(event);
-        if (do_prog.getStat()==3){
-            MainActivity.Prog();
-        }
-        go_to_home.onTouchEvent(event);
-        if (go_to_home.getStat()==3) {
-            invalidate();
-            MainActivity.toHome();
-            if (head_less_.is_pressed()) {
-                Commander.headingOffset = (float) (Telemetry.heading - MainActivity.yaw);
-                //  Commander.heading = heading = (float) MainActivity.yaw;
-            }else{
-                Commander.heading = heading=(float)Telemetry.heading;
-                Commander.headingOffset=0;
-            }
-        }
         shutdown.onTouchEvent(event);
         comp_calibr.onTouchEvent(event);
         comp_calibr.onTouchEvent(event);
@@ -697,12 +694,12 @@ public class DrawView extends View {
         fpv.paint(c);
         smart_ctrl.paint(c);
         hold_alt.paint(c);
-     //   go_to_home.paint(c);
+        go_to_home.paint(c);
         if (fpv.is_pressed()) {
             vrc.paint(c);
             photo.paint(c);
         }
-
+        do_prog.paint(c);
 
 
 
@@ -723,8 +720,6 @@ public class DrawView extends View {
         comp_m_calibr.paint(c);
         gps_on_off.paint(c);
         showSettings.paint(c);
-        go_to_home.paint(c);
-        do_prog.paint(c);
     }
 
 

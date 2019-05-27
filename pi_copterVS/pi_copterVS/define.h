@@ -16,7 +16,7 @@
 //#define OFF_TIMELAG
 //-----------------------------------------------
 
-#define FALSE_WIRE
+//#define FALSE_WIRE
 
 
 
@@ -69,8 +69,8 @@
 #define MIN_ANGLE 15
 #define COS_MIN_ANGLE 0.966f
 
-#define HIGHT_TO_LIFT_ON_TO_FLY_TO_HOME 50
-#define FAST_DESENDING_TO_HIGH 20
+#define HIGHT_TO_LIFT_ON_TO_FLY_TO_HOME 30
+#define FAST_DESENDING_TO_HIGH 15
 
 #define MAX_HOR_SPEED 10
 #define MAX_VER_SPEED_PLUS 5
