@@ -44,6 +44,8 @@ void HmcClass::init()
 
 	cout << "Initializing I2C devices...\n";
 	initialize();
+	delay(100);
+	initialize();
 	cout << "Testing device connections...\n";
 	ok = testConnection();
 	cout << ok ? "HMC5883L connection successful\n" : "HMC5883L connection failed\n";

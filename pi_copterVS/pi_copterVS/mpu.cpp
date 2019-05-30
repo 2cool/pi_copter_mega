@@ -287,15 +287,14 @@ void MpuClass::calc_corrected_ang(){
 ///////////////////////////////////////////////////////////////////
 
 bool MpuClass::loop(){
-
-
-
+	static uint8_t hmc_f = 0x11b;
 
 	timed = (0.000001*(double)micros());
 	double ___dt = (float)(timed - oldmpuTimed);// *div;
 	if (___dt < 0.01)
 		return false;
-	Hmc.loop();
+	if (!((hmc_f++)&0b11))
+		Hmc.loop();
 	MS5611.loop();
 	GPS.loop();
 	dt = 0.01;
@@ -456,6 +455,7 @@ void MpuClass::gyro_calibr() {
 double gravity = 1;
 
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
+	static uint8_t hmc_f = 0x11b;
 	bool ret = true;
 	timed = 0.000001*(double)micros();
 	mpu_dt = timed - mpu_time_;
@@ -476,7 +476,8 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 
 	double _dt = (timed - oldmpuTimed);
 	if (ret=(_dt >= 0.01)) {
-		Hmc.loop();
+		if (0==((++hmc_f) & 0b11))
+			Hmc.loop();
 		oldmpuTimed = timed;
 		dt = constrain(_dt, 0.01, 0.03);
 		rdt = 1.0 / dt;

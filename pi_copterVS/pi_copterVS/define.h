@@ -69,7 +69,7 @@
 #define MIN_ANGLE 15
 #define COS_MIN_ANGLE 0.966f
 
-#define HIGHT_TO_LIFT_ON_TO_FLY_TO_HOME 30
+#define HIGHT_TO_LIFT_ON_TO_FLY_TO_HOME 50
 #define FAST_DESENDING_TO_HIGH 15
 
 #define MAX_HOR_SPEED 10
@@ -133,9 +133,15 @@
 #define e_BARROMETR_FAULT   "BFT"
 #define e_BARROMETR_FAULT_COPTER_AT_HOME "BCH"
 #define e_PROG_INDEX_ERROR "PIE"
+#define e_PROG_TOO_LONG_FROM_START "TOO"
+#define e_PROG_TOO_LONG_DISTANCE "TOL"
+#define e_port_R_W_ERROR "PRW"
+
+
 #define i_OFF_MOTORS     "MD0"
 #define i_CONTROL_FALL   "CNF"
 #define i_MAX_THR        "MXT"
+
 
 #define m_START_STOP  "S_S"
 #define m_HOLD_HIGHT  "AHD"

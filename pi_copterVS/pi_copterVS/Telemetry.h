@@ -61,6 +61,7 @@ class TelemetryClass
 
 
 	 int check_time_left_if_go_to_home();
+	 int fly_time_left();
 	 void testBatteryVoltage();
 
 	 void init_();

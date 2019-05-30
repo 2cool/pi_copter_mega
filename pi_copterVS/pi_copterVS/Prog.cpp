@@ -89,7 +89,7 @@ void ProgClass::loop(){
 
 #define MAX_TIME_LONG_FLIGHT  1200
 bool ProgClass::program_is_OK(){
-	float timeLeft=Telemetry.check_time_left_if_go_to_home();
+	float timeLeft=Telemetry.fly_time_left();
 
 	if (prog_data_size >= 14 && prog_steps_count_must_be == steps_count){
 		prog_data_index = 0;
@@ -115,6 +115,7 @@ bool ProgClass::program_is_OK(){
 				fullTime += time;
 				if (fullTime>timeLeft){//MAX_TIME_LONG_FLIGHT){
 					cout << "to long fly for prog!" <<" fly time="<<fullTime<<". Time left="<<timeLeft<<".\t"<<Mpu.timed << endl;
+					Telemetry.addMessage(e_PROG_TOO_LONG_DISTANCE);
 					return false;
 				}
 			old_y = next_y;
@@ -129,7 +130,8 @@ bool ProgClass::program_is_OK(){
 		const float y2 = next_y - Mpu.get_Est_Y();
 		const float dist = (float)sqrt(x2*x2 + y2*y2);
 		if (dist >= 20 || alt  >= 20){
-			cout << "end poitn to far from star!!!" << "\t"<<Mpu.timed << endl;;
+			cout << "end poitn to far from star!!!" << "\t"<<Mpu.timed << endl;
+			Telemetry.addMessage(e_PROG_TOO_LONG_FROM_START);
 			return false;
 		}
 		cout << "time for flyghy: " << (int)fullTime << "\t"<<Mpu.timed << endl;
@@ -141,7 +143,7 @@ else
 }
 
 bool ProgClass::start(){
-	if (Autopilot.program_is_loaded()){
+	if (Autopilot.program_is_loaded() && program_is_OK()){
 		step_index = 0;
 		prog_data_index = 0;
 		time4step2done = 0;
@@ -454,7 +456,7 @@ bool ProgClass::add(byte*buf)
 	cout << steps_count << ". dot added! " << prog_data_size << "\t"<<Mpu.timed << endl;
 	//Autopilot.program_is_loaded(prog_steps_count_must_be == steps_count);
 	if (prog_steps_count_must_be == steps_count) {
-		Autopilot.program_is_loaded(program_is_OK());
+		Autopilot.program_is_loaded(true);
 	}
 	return true;
 }

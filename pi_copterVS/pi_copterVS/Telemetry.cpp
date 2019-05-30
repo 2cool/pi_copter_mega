@@ -27,7 +27,7 @@
 #include "Log.h"
 
 #define BALANCE_DELAY 120
-#define MAX_FLY_TIME 900
+#define MAX_FLY_TIME 600
 #define BAT_ZERO 350.0f
 #define BAT_50P 385.0f
 #define BAT_timeout 0.05
@@ -158,11 +158,14 @@ void TelemetryClass::loop()
 }
 
 int TelemetryClass::get_voltage4one_cell() { return (int)(voltage / SN); }
-
+int TelemetryClass::fly_time_left() {
+	int fly_time=max(0,  battery_charge-consumed_charge);
+	fly_time = min(MAX_FLY_TIME, fly_time);
+	return fly_time;
+}
 int TelemetryClass::check_time_left_if_go_to_home(){
-	double last = max(0,  battery_charge-consumed_charge);
-	float max_fly_time = min(MAX_FLY_TIME,last/f_current);
-	float time_left = max_fly_time;
+	float time_left = fly_time_left();
+
 	if (Autopilot.motors_is_on()) {
 		const float dist2home = (float)sqrt(Mpu.dist2home_2());
 		const float time2home = dist2home * (1.0f / MAX_HOR_SPEED);
@@ -265,12 +268,13 @@ void TelemetryClass::testBatteryVoltage(){
 	update_voltage();
 	//const double time_nowd = Mpu.timed;
 	double dt = Mpu.timed - old_timed;
+	if (dt > 1)
+		dt = 1;
 	old_timed = Mpu.timed;
 	float current = m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.64;
 	//if (current < 2)?????????????? проверить с батареей
 	//	current = 0.6;
 	f_current += (current - f_current)*0.03;
-	
 	consumed_charge += current *dt;
 
 	//printf("charge=%f, cons ch=%f, bat ch=%f\n", current,consumed_charge, battery_charge);
