@@ -229,7 +229,7 @@ public class Map extends Activity {
             String t[]=file[i].toString().split("/");
             if (t[t.length-1].endsWith(".log")) {
                 String ts=t[t.length - 1];
-                ts=ts.substring(0,ts.length()-5);
+                ts=ts.substring(0,ts.length()-4);
                 fileMenu.add(0, logs+1000, 0, ts);
                 logName[logs]=t[t.length - 1];
                 logs++;

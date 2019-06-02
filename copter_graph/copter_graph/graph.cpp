@@ -912,7 +912,7 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 //#define MIN_ALT 117
 	draw(g, rect, MAX_ALT, MIN_ALT, SZ);
 	draw(g, rect, MAX_ALT, MIN_ALT, BAR_ALT);
-	draw(g, rect, MAX_ALT, MIN_ALT, GPS_ALT);
+	draw(g, rect, MAX_ALT+50, MIN_ALT+50, GPS_ALT);
 
 
 	//draw(g, rect, 9, -3, SZ);
