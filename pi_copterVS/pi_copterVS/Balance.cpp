@@ -375,16 +375,8 @@ bool BalanceClass::loop()
 			roll_stab_output += (f_constrain(pitch_roll_stabKP*(wrap_180(Mpu.get_roll() - c_roll)), -MAX_D_ANGLE_SPEED, MAX_D_ANGLE_SPEED)-roll_stab_output)*BAL_F;
 			yaw_stab_output += (f_constrain(yaw_stabKP*wrap_180(-Autopilot.get_yaw() - Mpu.get_yaw()), -MAX_D_YAW_SPEED, MAX_D_YAW_SPEED)-yaw_stab_output)*BAL_F;
 
-			//float pitch_gk = min(abs(pitch_stab_output*power_K), 1);
-			//float roll_gk = min(abs(roll_stab_output*power_K), 1);
-			//заменить на подавление частоти раскачивания.
-			// rate PIDS
-		//	уменьшить макс дельту думаю из за слишком большой происходит раскачивание
-		//		или по крайней мере динамическую дельту надо уменьшить.
-			const float max_delta = 0.3;// 0.5;// (throttle < 0.6f) ? 0.3f : MAX_DELTA;
-
-			//напоминание
-			//----------------------------------------------------
+			const float max_delta = 0.3;
+			const float yaw_max_delta = 0.2;
 			static float correction = 1;
 			//correction += (0.5 / min(throttle,0.5) - correction)*0.2;
 		
@@ -393,23 +385,17 @@ bool BalanceClass::loop()
 			float roll_output = pK*pids[PID_ROLL_RATE].get_pid(correction*(roll_stab_output + Mpu.gyroRoll), Mpu.dt);
 			roll_output = constrain(roll_output, -max_delta, max_delta);
 			float yaw_output = pK*pids[PID_YAW_RATE].get_pid(correction*(yaw_stab_output - Mpu.gyroYaw), Mpu.dt);
-			yaw_output = constrain(yaw_output, -0.1f, 0.1f);
+			yaw_output = constrain(yaw_output, -yaw_max_delta, yaw_max_delta);
 
 #ifdef YAW_OFF
 			//yaw_output = 0;
 			//pitch_output=0;
 #endif
 
-			float m_yaw_output = -yaw_output;  //антираскачивание при низкой мощности на плече
-			if ((throttle + yaw_output) < min_throttle)
-				yaw_output = min_throttle - throttle;//???????????????????????????????????????????????????
-			if ((throttle + m_yaw_output) < min_throttle)
-				m_yaw_output = min_throttle - throttle;
-
-			f_[3] = f_constrain((throttle + roll_output + pitch_output + m_yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
+			f_[3] = f_constrain((throttle + roll_output + pitch_output - yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 			f_[1] = f_constrain((throttle + roll_output - pitch_output + yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 			f_[2] = f_constrain((throttle - roll_output + pitch_output + yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
-			f_[0] = f_constrain((throttle - roll_output - pitch_output + m_yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
+			f_[0] = f_constrain((throttle - roll_output - pitch_output - yaw_output), STOP_THROTTLE_, FULL_THROTTLE_);
 
 			if (Hmc.do_compass_motors_calibr) {
 				f_[0] = f_[1] = f_[2] = f_[3] = 0;
@@ -450,7 +436,7 @@ bool BalanceClass::loop()
 		mega_i2c.throttle(f_);  //670 micros
 		log();
 	}
-	Mpu.balance_timed = 0.000001*(double)micros();
+
 	return true;
 }
 

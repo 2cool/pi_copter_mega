@@ -112,7 +112,7 @@ private:
 	 double acc_callibr_timed;
 	 
 
-	 double timed,mpu_timed, gps_timed, hmc_timed, autopilot_timed, balance_timed, ms5611_timed,telem_timed,com_timed;
+	 double timed,mpu_timed, gps_timed, hmc_timed, autopilot_timed,  ms5611_timed,telem_timed,com_timed;
 
 	 float cor_c_pitch, cor_c_roll;
 	 double oldmpuTimed;

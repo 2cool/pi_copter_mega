@@ -14,12 +14,12 @@
 
 //#define OFF_MOTOR_IF_LOST_CONNECTION  
 //#define OFF_TIMELAG
-//-----------------------------------------------
+//-----------------------------------------------------------------
 
-//#define FALSE_WIRE
+#define FALSE_WIRE
 
-
-
+//----------------------------------------------------------------
+//#define ALWAYS_SOUND
 //#define YAW_OFF
 //#define XY_SAFE_AREA 200
 //#define Z_SAFE_AREA 40
@@ -87,7 +87,7 @@
 #define OVER_THROTTLE 0.9f
 
 
-#define CONNECTION_LOST_TIMEOUT 3
+#define CONNECTION_LOST_TIMEOUT 5
 #define TIMEOUT_LAG 0.5
 
 #define MIDDLE_POSITION 0.5f
@@ -136,7 +136,7 @@
 #define e_PROG_TOO_LONG_FROM_START "TOO"
 #define e_PROG_TOO_LONG_DISTANCE "TOL"
 #define e_port_R_W_ERROR "PRW"
-
+#define e_MPU_TOO_LONG "MPU"
 
 #define i_OFF_MOTORS     "MD0"
 #define i_CONTROL_FALL   "CNF"
@@ -163,7 +163,7 @@
 #define m_UPLOAD_SETTINGS "UPS"
 #define m_PROGRAM	   "PRG"
 #define m_FPV			"FPV"
-enum { B_CONNECTION_LOST = 1, B_MS611_ERROR, B_ACC_ERROR, B_LOW_VOLTAGE, B_GPS_ACCURACY_E, B_MPU_TOO_LONG, B_GPS_TOO_LONG , B_BARROMETR_ERR,B_I2C_ERR};
+enum { B_CONNECTION_LOST = 1, B_MS611_ERROR, B_ACC_ERROR, B_LOW_VOLTAGE, B_GPS_ACCURACY_E, B_MPU_TOO_LONG, B_GPS_TOO_LONG , B_BARROMETR_ERR,B_I2C_ERR, B_COMMAND_RECEIVED};
 
 
 struct SEND_I2C {

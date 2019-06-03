@@ -250,8 +250,13 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 					return;
 				}
 #ifndef OFF_TIMELAG
-				if ((timelag > TIMEOUT_LAG))
-					Commander.data_reset();
+				if (timelag > TIMEOUT_LAG) {
+					float _timeout_LAG = TIMEOUT_LAG;
+					if (Mpu.get_Est_Alt() > 15 || Mpu.get_Est_Alt() / Mpu.get_Est_SpeedZ() > 5)
+						_timeout_LAG = 2;
+					if (timelag > _timeout_LAG)
+						Commander.data_reset();
+				}
 #endif
 				if (compass_onState())
 					aYaw_ = Commander.get_yaw_minus_offset();
@@ -828,7 +833,10 @@ void AutopilotClass::horizont_tr() {
 		control_bits ^= HORIZONT_ON;
 }
 
-
+void AutopilotClass::set_gimBalPitch(const float angle) {
+	if (mega_i2c.gimagl(gimBalPitchZero + angle, gimBalRollZero))
+		gimbalPitch = angle;
+}
 void AutopilotClass::gimBalPitchADD(const float add) {
 	if (!progState())
 		if (mega_i2c.gimagl((gimBalPitchZero + gimbalPitch + add), gimBalRollZero))
@@ -881,6 +889,10 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 		return true;
 	//	uint8_t mask = control_bits_^bits;
 	//printf("comm=%i\n", bits);
+
+
+	mega_i2c.beep_code(B_COMMAND_RECEIVED);
+
 	if (MOTORS_ON&bits)  {
 		Hmc.do_compass_motors_calibr = false;
 		bool on = motors_is_on() == false;
@@ -999,7 +1011,7 @@ void AutopilotClass::gimBalRollCorrection() {
 
 
 	if (old_g_roll != gimBalRollZero) {
-		mega_i2c.gimagl(-(gimBalPitchZero + gimbalPitch), gimBalRollZero);
+		mega_i2c.gimagl((gimBalPitchZero + gimbalPitch), gimBalRollZero);
 		old_g_roll = gimBalRollZero;
 	}
 }

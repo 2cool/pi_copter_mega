@@ -471,7 +471,11 @@ int main(int argc, char *argv[]) {
 	if (signal(SIGPIPE, pipe_handler) == SIG_ERR) {
 		return EXIT_FAILURE;
 	}
+#ifdef ALWAYS_SOUND
+	mega_i2c.DO_SOUND = 1;
+#else
 	mega_i2c.DO_SOUND = (string(argv[0]).find("out") == -1) ? 1 : 0;
+#endif
 	mega_i2c.init();
 	string str = string(argv[0]);
 	str = str.substr(str.length() - 4, str.length());

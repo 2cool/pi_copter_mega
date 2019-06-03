@@ -287,14 +287,12 @@ void MpuClass::calc_corrected_ang(){
 ///////////////////////////////////////////////////////////////////
 
 bool MpuClass::loop(){
-	static uint8_t hmc_f = 0x11b;
 
 	timed = (0.000001*(double)micros());
 	double ___dt = (float)(timed - oldmpuTimed);// *div;
 	if (___dt < 0.01)
 		return false;
-	if (!((hmc_f++)&0b11))
-		Hmc.loop();
+	Hmc.loop();
 	MS5611.loop();
 	GPS.loop();
 	dt = 0.01;
@@ -455,7 +453,7 @@ void MpuClass::gyro_calibr() {
 double gravity = 1;
 
 bool MpuClass::loop() {//-------------------------------------------------L O O P-------------------------------------------------------------
-	static uint8_t hmc_f = 0x11b;
+	
 	bool ret = true;
 	timed = 0.000001*(double)micros();
 	mpu_dt = timed - mpu_time_;
@@ -476,8 +474,7 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 
 	double _dt = (timed - oldmpuTimed);
 	if (ret=(_dt >= 0.01)) {
-		if (0==((++hmc_f) & 0b11))
-			Hmc.loop();
+		Hmc.loop();
 		oldmpuTimed = timed;
 		dt = constrain(_dt, 0.01, 0.03);
 		rdt = 1.0 / dt;
@@ -485,10 +482,11 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 		static uint cnt2l = 0;
 		if (dt > 0.03) {
 			if (cnt2l++) {
-				cout << "MPU DT too long " << endl;// << dt << ":" << dt << ":" << timed << endl;
-				cout << endl << ms5611_timed - old_tied << " " << hmc_timed - old_tied << " " << gps_timed - old_tied <<
-					" " << telem_timed - old_tied << " " << com_timed - old_tied << " " << autopilot_timed - old_tied << " " << mpu_timed - old_tied << endl;
+				//cout << "MPU DT too long " << endl;// << dt << ":" << dt << ":" << timed << endl;
+				//cout << endl << ms5611_timed - old_tied << " " << hmc_timed - old_tied << " " << gps_timed - old_tied <<
+					//" " << telem_timed - old_tied << " " << com_timed - old_tied << " " << autopilot_timed - old_tied << " " << mpu_timed - old_tied << endl;
 				mega_i2c.beep_code(B_MPU_TOO_LONG);
+				Telemetry.addMessage(e_MPU_TOO_LONG);
 			}
 		}
 	}

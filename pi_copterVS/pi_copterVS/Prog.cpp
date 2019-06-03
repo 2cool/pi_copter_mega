@@ -363,7 +363,8 @@ bool ProgClass::load_next(bool loadf){
 		old_cam_angle = 1.4173228f*(int8_t)prog[wi++];
 		//printf("camera ang=%f\n", old_cam_angle);
 		if (loadf)
-			mega_i2c.gimagl(Autopilot.gimBalPitchZero+old_cam_angle,Autopilot.gimBalRollZero);
+			Autopilot.set_gimBalPitch(old_cam_angle);
+			//mega_i2c.gimagl(Autopilot.gimBalPitchZero+old_cam_angle,Autopilot.gimBalRollZero);
 	}
 
 	if (prog[prog_data_index] & LED_CONTROL) {
