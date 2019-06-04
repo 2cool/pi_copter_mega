@@ -11,27 +11,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b79624cd-cb7a-47df-b554-aa6316b37993" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/copter_graph.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/copter_graph.vcxproj.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/graph.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/graph.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.log" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.command.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.read.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.write.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.read.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.write.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/graph.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/graph.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.idb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.idb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.ilk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/GPS.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/GPS.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Telemetry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Telemetry.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.Local_Remote_PathMapping.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.Local_Remote_PathMapping.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/compile.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/compile.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/compile.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/compile.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/link.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/pi_copterVS.lastbuildstate" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/pi_copterVS.lastbuildstate" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -51,7 +44,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/LogReader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-90">
+            <state relative-caret-position="17">
               <caret line="42" column="34" selection-start-line="42" selection-start-column="25" selection-end-line="42" selection-end-column="34" />
             </state>
           </provider>
@@ -120,38 +113,10 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane" />
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ffplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ffplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="myTools" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -275,7 +240,7 @@
       <window_info anchor="bottom" id="Terminal" order="4" weight="0.32978722" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="6" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Build" order="7" weight="0.44966444" />
+      <window_info anchor="bottom" id="Build" order="7" visible="true" weight="0.44966444" />
       <window_info anchor="bottom" id="Find" order="8" />
       <window_info anchor="bottom" id="Android Profiler" order="9" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
@@ -373,7 +338,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/LogReader.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-90">
+        <state relative-caret-position="17">
           <caret line="42" column="34" selection-start-line="42" selection-start-column="25" selection-end-line="42" selection-end-column="34" />
         </state>
       </provider>

@@ -517,32 +517,6 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	pitch = -pitch;
 	yaw = -yaw;
 
-
-	/*
-	if (abs(roll) >90*GRAD2RAD) {
-		yaw = -Autopilot.get_yaw();
-		roll = (roll > 0) ? 180*GRAD2RAD-roll : -180*GRAD2RAD-roll;
-		if (abs(pitch) > 35 * GRAD2RAD) {
-			pitch_flag = true;
-			if (abs(roll) > abs(pitch))
-				pitch_flag = false;
-		}
-		else
-			if (abs(roll) > 35 * GRAD2RAD) {
-				pitch_flag = false;
-				if (abs(pitch) > abs(roll))
-					pitch_flag = true;
-			}
-		if (pitch_flag)
-			pitch = ((pitch > 0) ? M_PI : -M_PI) - pitch;
-		else
-			roll = ((roll > 0) ? M_PI : -M_PI) - roll;
-	}
-	*/
-
-	//Debug.load(0, pitch*RAD2GRAD, roll*RAD2GRAD, yaw*RAD2GRAD);
-	//Debug.load(0, gyroPitch, gyroRoll, gyroYaw);
-	//Debug.dump(true);
 	sin_cos(yaw, sinYaw, cosYaw);
 	sin_cos(pitch, sinPitch, cosPitch);
 	sin_cos(roll, sinRoll, cosRoll);

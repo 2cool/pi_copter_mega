@@ -271,7 +271,7 @@ void TelemetryClass::testBatteryVoltage(){
 	if (dt > 1)
 		dt = 1;
 	old_timed = Mpu.timed;
-	float current = 1.25*(m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.64);
+	float current = 1.325*(m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.64);
 
 	f_current += (current - f_current)*0.03;
 	consumed_charge += current *dt;

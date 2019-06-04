@@ -3,23 +3,23 @@
   Validating architecture
   Starting remote build
   Compiling sources:
+  MS5611.cpp
+  Location.cpp
   AP_PID.cpp
   FIND.cpp
   Autopilot.cpp
-  Location.cpp
-  MS5611.cpp
   GeoDot.cpp
   GPS.cpp
-  Log.cpp
   Prog.cpp
+  Log.cpp
   Balance.cpp
   Hmc.cpp
   mi2c.cpp
   MadgwickAHRS.cpp
   commander.cpp
   I2Cdev.cpp
-  main.cpp
   RC_Filter.cpp
+  main.cpp
   debug.cpp
   inv_mpu.cpp
   inv_mpu_dmp_motion_driver.cpp
@@ -33,4 +33,4 @@
   Telemetry.cpp
   mpu_umulator.cpp
   Linking objects
-  pi_copterVS.vcxproj -> C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out
+  pi_copterVS.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out
