@@ -14,7 +14,12 @@
 #include "debug.h"
 #include "Telemetry.h"
 
-enum { LAT_LON = 1, DIRECTION = 2, ALTITUDE = 4,  CAMERA_ANGLE = 8, TIMER = 16,SPEED_XY=32,SPEED_Z=64,LED_CONTROL=128};
+enum { LAT_LON = 1, DIRECTION = 2, ALTITUDE = 4,  CAMERA_ANGLE = 8, TIMER = 16,SPEED_XY=32,SPEED_Z=64,DO_ACTION=128};
+
+
+
+//int high 4bits ZOOM
+enum {LED0,LED1,LED2,LED3,LED4,LED5,LED6,PHOTO,START_VIDEO,STOP_VIDEO, PHOTO360, DO_NOTHIN};
 
 
 #define MAX_HA 3
@@ -32,7 +37,81 @@ void ProgClass::init(){
 
 }
 
+/*
 
+shmPTR->fpv_adr = *(buf+i++);
+shmPTR->fpv_port = *(int16_t*)(buf + i);
+i += 2;
+shmPTR->fpv_zoom = *(buf + i++);
+shmPTR->fpv_code = *(int16_t*)(buf + i);
+
+*/
+
+
+
+
+
+void ProgClass::takePhoto() {
+//769
+}
+
+
+void ProgClass::takePhoto360() {
+	static long cam_time = 0;
+	static float cam_yaw = 0,cam_pitch = 0;
+	if (cam_time == 0) {
+		cam_time = millis() + 3000;
+		cam_yaw = cam_pitch = 0;
+		Autopilot.setYaw(cam_yaw);
+		Autopilot.set_gimBalPitch(cam_pitch);
+		return;
+	}
+	if (millis() >= cam_time) {
+		takePhoto();
+		Autopilot.setYaw(cam_yaw);
+		cam_time = millis() + 2000;
+		cam_yaw += 22.5;
+		if (cam_yaw > 360) {
+			if (cam_pitch == 0) {
+				cam_yaw = 0;
+				cam_pitch += 30;
+				Autopilot.setYaw(cam_yaw);
+				Autopilot.set_gimBalPitch(cam_pitch);
+				cam_time = millis() + 4000;
+			}
+			else {
+				cam_time = 0;
+				do_action = false;
+			}
+		}
+	}
+
+}
+void ProgClass::Do_Action() {
+
+		
+	if (action >= LED6)
+		;
+	else 
+		switch (action) {
+			case PHOTO:
+				takePhoto();
+				do_action = false;
+				break;
+			
+			case START_VIDEO:
+				//513
+				do_action = false;
+				break;
+			case STOP_VIDEO:
+				//514
+				do_action = false;
+				break;
+			case PHOTO360:
+				takePhoto360();
+				break;
+	}
+}
 
 #define MIN_DT 0.01
 
@@ -54,6 +133,13 @@ void ProgClass::loop(){
 	old_dt = dt;
 
 	if (go_next == false) {
+
+
+
+		if (do_action)
+			Do_Action();
+
+
 		if (timer == 0) {
 			if (altFlag == false)
 				altFlag = (alt == old_alt) || (abs(Mpu.get_Est_Alt() - Autopilot.fly_at_altitude()) <= (ACCURACY_Z));
@@ -77,7 +163,7 @@ void ProgClass::loop(){
 		}
 	}
 	if (go_next){
-		go_next = distFlag = altFlag = false;
+		go_next = distFlag = altFlag = do_action = false;
 		if (load_next(true) == false){
 			cout << "PROG END" << "\t"<<Mpu.timed << endl;
 			Autopilot.start_stop_program(false);
@@ -152,7 +238,8 @@ bool ProgClass::start(){
 		next_x = Mpu.get_Est_X();
 		next_y = Mpu.get_Est_Y();
 		alt = Mpu.get_Est_Alt();
-		go_next = distFlag = altFlag = true;
+		go_next = distFlag = altFlag = do_action = true;
+		action = LED0;
 		return true;
 	}
 	else{
@@ -367,8 +454,19 @@ bool ProgClass::load_next(bool loadf){
 			//mega_i2c.gimagl(Autopilot.gimBalPitchZero+old_cam_angle,Autopilot.gimBalRollZero);
 	}
 
-	if (prog[prog_data_index] & LED_CONTROL) {
-		wi++;//now not used
+
+#define TIME2TEKE_PHOTO_OR_START_VIDEO 2
+
+	if (prog[prog_data_index] & DO_ACTION) {
+		action = prog[wi++];
+		do_action =  !(action == DO_NOTHIN);
+		if (do_action) {
+			if (action >= PHOTO && action <= STOP_VIDEO && timer < TIME2TEKE_PHOTO_OR_START_VIDEO)
+				timer = TIME2TEKE_PHOTO_OR_START_VIDEO;
+		}
+		else
+			do_action == false; // temp//not used
+		
 	}
 
 	prog_data_index = wi;
@@ -441,7 +539,7 @@ bool ProgClass::add(byte*buf)
 		//printf("camera angle=%i\n", buf[i - 1]);
 	}
 
-	if (buf[0] & LED_CONTROL){
+	if (buf[0] & DO_ACTION){
 		prog[pi++] = buf[i++];
 		//printf("led prog=%i\n",buf[i-1]);
 	}

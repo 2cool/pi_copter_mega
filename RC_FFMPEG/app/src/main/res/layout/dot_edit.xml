@@ -152,33 +152,41 @@
 
 
         <EditText
-            android:layout_width="79dp"
-            android:layout_height="wrap_content"
-            android:inputType="numberSigned"
-            android:ems="10"
             android:id="@+id/eled_prog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_row="10"
-            android:layout_column="0"
+            android:layout_column="2"
+            android:ems="10"
+            android:inputType="text"
             android:text="6" />
 
         <SeekBar
+            android:id="@+id/sled_prog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/sled_prog"
             android:layout_row="11"
             android:layout_column="0"
             android:layout_columnSpan="3"
-            android:max="7"
+            android:max="11"
             android:progress="6" />
 
         <TextView
+            android:id="@+id/textView21"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_row="10"
+            android:layout_column="1"
+            android:text="prog:"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Led Program"
-            android:id="@+id/textView21"
             android:layout_row="10"
-            android:layout_column="1" />
+            android:layout_column="0"
+            android:text=" Do" />
 
     </GridLayout>
 

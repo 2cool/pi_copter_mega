@@ -7,7 +7,7 @@ public class GeoDot {
     public int index;
     public double tx,ty;
     public double alt,direction,timer,cam_ang,dDist,dAlt;
-    public int led_prog;
+    public int action;
     double speed=0,speedZ=0;
     public int lat,lon;
 
@@ -21,7 +21,7 @@ public class GeoDot {
                 Math.PI / 2)/ (Math.PI / 180.0);
     }
 
-    GeoDot(int index, double tx, double ty,double _timer,double _alt, double _dir, double _cam_ang,double dDist,double dAlt, double speed, double speedZ,int led_prog){
+    GeoDot(int index, double tx, double ty,double _timer,double _alt, double _dir, double _cam_ang,double dDist,double dAlt, double speed, double speedZ,int action){
         this.index=index;
         this.tx=tx;
         this.ty=ty;
@@ -36,7 +36,7 @@ public class GeoDot {
         this.dAlt=dAlt;
         this.speed=speed;
         this.speedZ=speedZ;
-        this.led_prog=led_prog;
+        this.action = action;
     }
 
     GeoDot(String str){
@@ -59,7 +59,7 @@ public class GeoDot {
             speed *= 0.1;
             speedZ = Integer.parseInt(s[i++]);
             speedZ *= 0.1;
-            led_prog = (s.length > i) ? led_prog = Integer.parseInt(s[i++]) : 6;
+            action = (s.length > i) ? action = Integer.parseInt(s[i++]) : 6;
         }else
             this.index=-1;
     }
@@ -76,10 +76,10 @@ public class GeoDot {
         s+=Integer.toString((int)dAlt)+",";
         s+=Integer.toString((int)(speed*10))+",";
         s+=Integer.toString((int)(speedZ*10))+",";
-        s+=Integer.toString((int)led_prog);
+        s+=Integer.toString((int) action);
         return s;
     }
-    static public final int LAT_LON = 1, DIRECTION = 2, ALTITUDE = 4,  CAMERA_ANGLE = 8, TIMER = 16,SPEED_XY=32,SPEED_Z=64,LED_CONTROL=128;
+    static public final int LAT_LON = 1, DIRECTION = 2, ALTITUDE = 4,  CAMERA_ANGLE = 8, TIMER = 16,SPEED_XY=32,SPEED_Z=64, DO_ACTION =128;
     static void load_int4buf(byte buf[], int i, int val){
         buf[i+0]=(byte)(val&255);
         buf[i+1]=(byte)((val>>8)&255);
@@ -105,10 +105,10 @@ public class GeoDot {
         oldDir=direction;
         oldCamAng=cam_ang;
         oldTimer=timer;
-        old_led_prog=led_prog;
+        old_led_prog= action;
 
         int i=off;
-        int mask=(LAT_LON+DIRECTION+ALTITUDE+CAMERA_ANGLE+TIMER+SPEED_XY+SPEED_Z+LED_CONTROL);
+        int mask=(LAT_LON+DIRECTION+ALTITUDE+CAMERA_ANGLE+TIMER+SPEED_XY+SPEED_Z+ DO_ACTION);
         buf[i++]=(byte)(mask&255);
 
         buf[i++]=(byte)index;
@@ -138,7 +138,7 @@ public class GeoDot {
         d=cam_ang;
         d*= 0.70555555555555555555555555555556;
         buf[i++]=(byte)d;
-        buf[i++]=(byte)led_prog;
+        buf[i++]=(byte) action;
 
 
         return i;
@@ -204,10 +204,10 @@ public class GeoDot {
             buf[i++]=(byte)d;
         }
 
-        if (old_led_prog!=led_prog){
-            old_led_prog=led_prog;
-            prog_mask|=LED_CONTROL;
-            buf[i++]=(byte)led_prog;
+        if (old_led_prog!= action){
+            old_led_prog= action;
+            prog_mask|= DO_ACTION;
+            buf[i++]=(byte) action;
         }
 
 

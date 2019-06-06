@@ -16,8 +16,9 @@ class ProgClass
 {
 #define PROG_MEMORY_SIZE 20000
  protected:
-	 bool go_next, distFlag, altFlag;
+	 bool go_next, distFlag, altFlag, do_action;
 	 float next_x, next_y, old_x, old_y;
+	 uint8_t action;
 
 	 uint8_t oldTimer;
 	 float old_alt,alt, oldDir, old_cam_angle;
@@ -31,6 +32,10 @@ class ProgClass
 	 double begin_timed;
 	 float max_speed_xy,timer;
 	 float max_speedZ_P, max_speedZ_M;
+	 void takePhoto360();
+	 void takePhoto();
+
+	 void Do_Action();
  public:
 	 bool intersactionFlag;
 	 float need_speedX, need_speedY;

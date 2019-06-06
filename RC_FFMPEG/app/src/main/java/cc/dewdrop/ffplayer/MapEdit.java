@@ -5,17 +5,11 @@ package cc.dewdrop.ffplayer;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -26,10 +20,10 @@ import android.widget.TextView;
  */
 public class MapEdit extends Activity {
 
-
+    static public final String progs[]={"led0","led1","led2","led3","led4","led5","led6","photo","start video","stop video","360photo","nothing1"};
     static public boolean active=false;
-    private EditText eLed_prog, eTimer,eSpeed,eVSpeed,eAltitude,eCamAng;
-    static private SeekBar sTimer, sSpeed, sVSpeed,sAltitude,sCamAng, sLed_prog;
+    private EditText e_Prog, eTimer,eSpeed,eVSpeed,eAltitude,eCamAng;
+    static private SeekBar sTimer, sSpeed, sVSpeed,sAltitude,sCamAng, sProg;
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -76,8 +70,8 @@ public class MapEdit extends Activity {
             //90 -  -10
             sCamAng.setProgress((int)d.cam_ang+10);
             eCamAng.setText(getNum(d.cam_ang,2));
-            eLed_prog.setText(getNum(d.led_prog,1));
-            sLed_prog.setProgress(d.led_prog);
+            e_Prog.setText(progs[d.action]);
+            sProg.setProgress(d.action);
             eTimer.setText(getNum(d.timer,2));
             sTimer.setProgress((int)d.timer);
             eSpeed.setText(getNum(d.speed,2));
@@ -93,8 +87,8 @@ public class MapEdit extends Activity {
 
             eCamAng.setText(Integer.toString(Programmer.cam_ang));
             sCamAng.setProgress(Programmer.cam_ang+10);
-            eLed_prog.setText(getNum(Programmer.led_prog,1));
-            sLed_prog.setProgress(Programmer.led_prog);
+            e_Prog.setText(progs[Programmer.action]);
+            sProg.setProgress(Programmer.action);
             eTimer.setText(Integer.toString(0));
             sTimer.setProgress(0);
             eSpeed.setText(getNum(Programmer.speed, 2));
@@ -126,9 +120,9 @@ public class MapEdit extends Activity {
         eCamAng=(EditText)findViewById(R.id.editTextCamAng);
         eCamAng.setEnabled(false);
         sCamAng=(SeekBar)findViewById(R.id.seekBarCamAng);
-        sLed_prog=(SeekBar)findViewById(R.id.sled_prog);
-        eLed_prog=(EditText)findViewById(R.id.eled_prog);
-        eLed_prog.setEnabled(false);
+        sProg =(SeekBar)findViewById(R.id.sled_prog);
+        e_Prog =(EditText)findViewById(R.id.eled_prog);
+        e_Prog.setEnabled(false);
         eSpeed=(EditText)findViewById(R.id.editTextSpeed);
 
         eSpeed.setEnabled(false);
@@ -193,7 +187,7 @@ public class MapEdit extends Activity {
         });
 
 
-        sLed_prog.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        sProg.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -206,7 +200,7 @@ public class MapEdit extends Activity {
                 if (++inListener==1) {
 
                     double led_prog=progress;
-                    Programmer.led_prog=(int)(led_prog);
+                    Programmer.action =(int)(led_prog);
                     Programmer.changeLedProg();
 
                     update();

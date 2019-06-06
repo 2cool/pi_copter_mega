@@ -81,7 +81,7 @@ public class Programmer {
             speedProgress=1;
             vspeedProgress=1;
             cam_ang=35;
-            led_prog=6;
+            action =6;
         }
     }
 
@@ -92,7 +92,7 @@ public class Programmer {
     }
     static public  void changeLedProg(){
         if (progSize>0) {
-            dot[progSize-1].led_prog=led_prog;
+            dot[progSize-1].action = action;
         }
     }
 
@@ -154,7 +154,7 @@ public class Programmer {
     ///////////////////////////////////////////////
     static final public double maxSpeed=10,maxUpSpeed=5,maxDownSpeed=-3;
     static public int cam_ang=35;
-    static public int led_prog=6;
+    static public int action =6;
 
 
     static double fullDist;
@@ -218,7 +218,7 @@ public class Programmer {
         speed=maxSpeed*speedHK;
         speedZ=speedVK*((altitude-oldAltitude>0)?maxUpSpeed:maxDownSpeed);
         altitude=alt;
-        GeoDot d=new GeoDot(progSize,x,y,timer,altitude,direction,cam_ang,distance,altitude-oldAltitude,speed, speedZ,led_prog);
+        GeoDot d=new GeoDot(progSize,x,y,timer,altitude,direction,cam_ang,distance,altitude-oldAltitude,speed, speedZ, action);
         oldAltitude=altitude;
 
 
@@ -320,7 +320,7 @@ public class Programmer {
         speedProgress=dot[i].speed/maxSpeed;
         vspeedProgress=dot[i].speedZ/((dot[i].speedZ>0)?maxUpSpeed:maxDownSpeed);
         cam_ang=(int)dot[i].cam_ang;
-        led_prog=dot[i].led_prog;
+        action =dot[i].action;
 
         progSize=progIndex;
         return true;
