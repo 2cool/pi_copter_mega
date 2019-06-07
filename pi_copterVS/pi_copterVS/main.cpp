@@ -280,8 +280,8 @@ void watch_dog() {
 		
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;
 		uint8_t internet_cnt = shmPTR->internet_cnt;
-		uint8_t fpv_cnt = shmPTR->fpv_cnt;
 		delay(6000);
+		uint8_t fpv_cnt = shmPTR->fpv_cnt;
 	/*	if (fpv_cnt == shmPTR->fpv_cnt  && Mpu.timed>15) {
 
 			cout << "fpv killed\n";
@@ -374,7 +374,11 @@ int main(int argc, char *argv[]) {
 	shmPTR->wifi_cnt = 0;
 	shmPTR->run_main = true;
 	shmPTR->inet_ok = false;
-	shmPTR->fpv_zoom = 0;
+	shmPTR->fpv_zoom = 1;
+	shmPTR->fpv_adr = 0;
+	shmPTR->fpv_port = 0;
+
+
 	thread tl(watch_dog);
 	tl.detach();
 

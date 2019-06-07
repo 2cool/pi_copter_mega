@@ -389,6 +389,7 @@ void TelemetryClass::update_buf() {
 
 
 	loadBUF8(i, yaw * 0.705555555555f);
+	loadBUF32(i, shmPTR->status);
 
 	if (message.length() && i + message.length() + 2 < TELEMETRY_BUF_SIZE) {
 		loadBUF16(i, message.length());

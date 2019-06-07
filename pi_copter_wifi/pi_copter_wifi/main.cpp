@@ -1,4 +1,4 @@
-#include <cstdio>
+п»ї#include <cstdio>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -278,7 +278,6 @@ void server() {
 }
 
 
-
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 std::string exec(const std::string cmd) {
 	//printf(cmd.c_str());
@@ -299,6 +298,20 @@ std::string exec(const std::string cmd) {
 	pclose(pipe);
 	return result;
 }
+
+
+//"*  2coolzNET      Infra  11    54 Mbit/s  93      в–‚в–„в–†в–€  WPA1 WPA2"
+void get_signal_strong() {
+	string ret = exec("nmcli dev wifi | grep 2coolzNET");
+	if (ret.length() >= 20) {
+		string strong = ret.substr(2 + ret.find("/s"), 5);
+		int signal = atoi(strong.c_str());
+		shmPTR->status = signal;
+	}
+}
+
+
+
 //----------------------------------------------------------
 void test_wifi() {
 	int ln = 2;
@@ -330,7 +343,7 @@ void test_wifi() {
 	}
 }
 void watch_d() {
-
+	static int cnt_wifi_strong = 0;
 	static int errors = 0;
 	shmPTR->wifi_run = true;
 	uint old_main_cnt = shmPTR->main_cnt - 1;
@@ -355,6 +368,12 @@ void watch_d() {
 			}
 
 			delay(100);
+			cnt_wifi_strong++;
+			cnt_wifi_strong &= 15;
+			if (cnt_wifi_strong == 1)
+			{
+				get_signal_strong();
+			}
 		}
 		else {
 			flag = 1;
@@ -366,7 +385,7 @@ void watch_d() {
 }
 
 std::ofstream out;
-std::streambuf *coutbuf;// старый буфер
+std::streambuf *coutbuf;// СЃС‚Р°СЂС‹Р№ Р±СѓС„РµСЂ
 
 int main(int argc, char *argv[])
 {
@@ -396,9 +415,9 @@ int main(int argc, char *argv[])
 
 
 	if (argc == 2) {
-		out = std::ofstream(argv[1]); //откроем файл для вывод
-		coutbuf = std::cout.rdbuf(); //запомним старый буфер
-		std::cout.rdbuf(out.rdbuf()); //и теперь все будет в файл!
+		out = std::ofstream(argv[1]); //РѕС‚РєСЂРѕРµРј С„Р°Р№Р» РґР»СЏ РІС‹РІРѕРґ
+		coutbuf = std::cout.rdbuf(); //Р·Р°РїРѕРјРЅРёРј СЃС‚Р°СЂС‹Р№ Р±СѓС„РµСЂ
+		std::cout.rdbuf(out.rdbuf()); //Рё С‚РµРїРµСЂСЊ РІСЃРµ Р±СѓРґРµС‚ РІ С„Р°Р№Р»!
 		std::cerr.rdbuf(out.rdbuf());
 	}
 

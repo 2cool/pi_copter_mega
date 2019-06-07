@@ -1,6 +1,7 @@
 package cc.dewdrop.ffplayer;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import cc.dewdrop.ffplayer.utils.FFUtils;
 
 public class Settings extends Activity implements AdapterView.OnItemSelectedListener,SeekBar.OnSeekBarChangeListener{
 
@@ -177,6 +180,10 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
+
+
+
+
             super.onCreate(savedInstanceState);
 
             setContentView(R.layout.settings_scrolling);

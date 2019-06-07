@@ -175,7 +175,8 @@ int open_socket() {
 	{
 		cout<<"\n Socket creation error \n";
 		return -1;
-	}
+	}else
+		cout << "Socket creation OK \n";
 
 	memset(&serv_addr, '0', sizeof(serv_addr));
 
@@ -204,7 +205,7 @@ char buffer[1024] = { 0 };
 // 513 video start
 // 514 video stop
 
-int send_msg(uint16_t msg) {
+void send_msg(uint16_t msg) {
 	const string tosend= "{\"msg_id\":"+to_string(msg)+",\"token\":" + stoken + "}";
 
 	send(sock, tosend.c_str(), strlen(tosend.c_str()), 0);
@@ -223,9 +224,7 @@ int set_zoom(int zoom) {
 
 	return 0;
 }
-
-int camera_video_stream() {
-	//-------------------------------------------------------
+int connect_to_camera() {
 	string tosend = "{\"msg_id\":257,\"token\":0}";
 
 	int cnt = 0;
@@ -239,19 +238,25 @@ int camera_video_stream() {
 			int beg = 9 + str.find("\"param\": ");
 			int len = str.substr(beg).find(" }");
 			stoken = str.substr(beg, len);
-
-			tosend = "{\"msg_id\":259,\"token\":" + stoken + ",\"param\":\"none_force\"}";
-			//cout << tosend.c_str() << endl;
-			send(sock, tosend.c_str(), strlen(tosend.c_str()), 0);
-			read(sock, buffer, 1024);
-			//cout << "Live webcam stream is now available.\n";
+			cout << "Connection to camera OK\n";
 			return 0;
 		}
 	} while (cnt++ < 3);
+	cout << "Connection to camera ERROR: " << buffer << endl;
+	
+	return -1;
 
-
-	printf("%s\n", buffer);
-	return 0;
+	
+}
+int camera_video_stream() {
+	//-------------------------------------------------------
+		string tosend = "{\"msg_id\":259,\"token\":" + stoken + ",\"param\":\"none_force\"}";
+		//cout << tosend.c_str() << endl;
+		send(sock, tosend.c_str(), strlen(tosend.c_str()), 0);
+		read(sock, buffer, 1024);
+		//cout << "Live webcam stream is now available.\n";
+		return 0;
+		
 }
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -302,55 +307,87 @@ sudo dhclient wlx7cdd901e13d5
 const static string connect2camera = "wpa_supplicant -B -iwlx7cdd901e13d5 -c /etc/camera.conf -Dwext && dhclient wlx7cdd901e13d5";
 
 
+bool fpv_stream = false;
+int main_cnt_err = 0;
 int main()
 {
-	
 	//stop_ffmpeg_stream();
 	init_shmPTR();
+
+	if (!shmPTR->fpv_run) {
+		cout << "FPV EXIT\n";
+		return 0;
+	}
+	int clone=shmPTR->fpv_cnt;
+	delay(600);
+	if (clone != shmPTR->fpv_cnt) {
+		cout << "FPV CLONE\n";
+		return 0;
+	}
+
+
+
+
 	//wlx7cdd901e13d5
 	int old_main_cnt = shmPTR->main_cnt;
-	while (shmPTR->fpv_run) {
-		while (shmPTR->fpv_zoom == 0 && shmPTR->fpv_run) {
-			delay(200);
-			shmPTR->fpv_cnt++;
-			if (shmPTR->main_cnt == old_main_cnt) 
-				return 0;
-			old_main_cnt = shmPTR->main_cnt;
-		}
-
-		string ret = exec("nice -n -20 ifconfig wlx7cdd901e13d5");
-		if (ret.find("192.168.42.") == string::npos) {
-			system(connect2camera.c_str());
-			sleep(4);
-		}
-		int zoom = shmPTR->fpv_zoom;
-		
-		open_socket();
-		camera_video_stream();
-		start_ffmpeg_stream();
-		set_zoom(zoom - 1);
-		while (shmPTR->fpv_zoom > 0 && shmPTR->fpv_run) {
-			delay(200);
-			shmPTR->fpv_cnt++;
-			if (zoom != shmPTR->fpv_zoom) {
-				zoom = shmPTR->fpv_zoom;
-				set_zoom(zoom-1);
-			}
-			if (shmPTR->fpv_code) {
-				send_msg(shmPTR->fpv_code);
-				shmPTR->fpv_code = 0;
-			}
-			if (shmPTR->main_cnt == old_main_cnt) {
-				stop_ffmpeg_stream();
-				return 0;
-			}
-			old_main_cnt = shmPTR->main_cnt;
-			
-		}
-
-		stop_ffmpeg_stream();
-		shutdown(sock, SHUT_RDWR);
+	string ret = exec("nice -n -20 ifconfig wlx7cdd901e13d5");
+	if (ret.find("192.168.42.") == string::npos) {
+		system(connect2camera.c_str());
+		sleep(4);
 	}
+	open_socket();
+	int zoom=0;
+	shmPTR->fpv_zoom = 1;
+
+	connect_to_camera();
+
+	while (shmPTR->fpv_run) {
+		delay(200);
+		shmPTR->fpv_cnt++;
+		if (shmPTR->fpv_adr != 0 && shmPTR->fpv_port != 0) 
+		{
+			if (!fpv_stream) 
+			{
+				fpv_stream = true;
+				camera_video_stream();
+				start_ffmpeg_stream();
+				//zoom = shmPTR->fpv_zoom;
+				//set_zoom(zoom - 1);
+				//cout << "start_fpv" << endl;
+			}
+		}
+		else if (fpv_stream)
+		{
+			cout << "stop_fpv" << endl;
+			fpv_stream = false;
+			stop_ffmpeg_stream();
+		}
+		if (zoom != shmPTR->fpv_zoom) {
+			zoom = shmPTR->fpv_zoom;
+			//cout << zoom << endl;
+			set_zoom(zoom - 1);
+		}
+		if (shmPTR->fpv_code) {
+			//cout << shmPTR->fpv_code << endl;
+			send_msg(shmPTR->fpv_code);
+			shmPTR->fpv_code = 0;
+		}
+
+
+		if (shmPTR->main_cnt == old_main_cnt) {
+			if (++main_cnt_err > 5)
+				break;
+		}
+		else
+			main_cnt_err = 0;
+
+
+		old_main_cnt = shmPTR->main_cnt;
+	}
+
+	stop_ffmpeg_stream();
+	shutdown(sock, SHUT_RDWR);
+	
 	cout << "FPV EXIT\n";
   
     return 0;

@@ -52,15 +52,17 @@ shmPTR->fpv_code = *(int16_t*)(buf + i);
 
 
 void ProgClass::takePhoto() {
+	shmPTR->fpv_code = 769;
 //769
 }
+
 
 
 void ProgClass::takePhoto360() {
 	static long cam_time = 0;
 	static float cam_yaw = 0,cam_pitch = 0;
 	if (cam_time == 0) {
-		cam_time = millis() + 3000;
+		cam_time = millis() + 6000;
 		cam_yaw = cam_pitch = 0;
 		Autopilot.setYaw(cam_yaw);
 		Autopilot.set_gimBalPitch(cam_pitch);
@@ -69,7 +71,7 @@ void ProgClass::takePhoto360() {
 	if (millis() >= cam_time) {
 		takePhoto();
 		Autopilot.setYaw(cam_yaw);
-		cam_time = millis() + 2000;
+		cam_time = millis() + 4000;
 		cam_yaw += 22.5;
 		if (cam_yaw > 360) {
 			if (cam_pitch == 0) {
@@ -77,7 +79,7 @@ void ProgClass::takePhoto360() {
 				cam_pitch += 30;
 				Autopilot.setYaw(cam_yaw);
 				Autopilot.set_gimBalPitch(cam_pitch);
-				cam_time = millis() + 4000;
+				cam_time = millis() + 6000;
 			}
 			else {
 				cam_time = 0;
@@ -90,8 +92,8 @@ void ProgClass::takePhoto360() {
 void ProgClass::Do_Action() {
 
 		
-	if (action >= LED6)
-		;
+	if (action <= LED6)
+		do_action = false;
 	else 
 		switch (action) {
 			case PHOTO:
@@ -110,6 +112,8 @@ void ProgClass::Do_Action() {
 			case PHOTO360:
 				takePhoto360();
 				break;
+			default:
+				do_action = false;
 	}
 }
 
@@ -132,12 +136,14 @@ void ProgClass::loop(){
 
 	old_dt = dt;
 
+	if (do_action)
+		Do_Action();
+
 	if (go_next == false) {
 
 
 
-		if (do_action)
-			Do_Action();
+		
 
 
 		if (timer == 0) {
@@ -162,7 +168,7 @@ void ProgClass::loop(){
 
 		}
 	}
-	if (go_next){
+	if (go_next && !do_action){
 		go_next = distFlag = altFlag = do_action = false;
 		if (load_next(true) == false){
 			cout << "PROG END" << "\t"<<Mpu.timed << endl;
@@ -454,7 +460,7 @@ bool ProgClass::load_next(bool loadf){
 			//mega_i2c.gimagl(Autopilot.gimBalPitchZero+old_cam_angle,Autopilot.gimBalRollZero);
 	}
 
-
+#define TIME2TEKE_PHOTO360 160
 #define TIME2TEKE_PHOTO_OR_START_VIDEO 2
 
 	if (prog[prog_data_index] & DO_ACTION) {
@@ -463,9 +469,13 @@ bool ProgClass::load_next(bool loadf){
 		if (do_action) {
 			if (action >= PHOTO && action <= STOP_VIDEO && timer < TIME2TEKE_PHOTO_OR_START_VIDEO)
 				timer = TIME2TEKE_PHOTO_OR_START_VIDEO;
+			if (!loadf && action == PHOTO360 && timer < TIME2TEKE_PHOTO360)
+				timer = TIME2TEKE_PHOTO360;
 		}
 		else
 			do_action == false; // temp//not used
+
+		do_action &= loadf;
 		
 	}
 
@@ -541,7 +551,7 @@ bool ProgClass::add(byte*buf)
 
 	if (buf[0] & DO_ACTION){
 		prog[pi++] = buf[i++];
-		//printf("led prog=%i\n",buf[i-1]);
+		printf("action=%i\n",buf[i-1]);
 	}
 
 	if (steps_count == 0){

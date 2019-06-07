@@ -266,20 +266,25 @@ bool CommanderClass::input(){
 				msg += *(buf + i++);
 				if (msg.find(m_PROGRAM) == 0 && Autopilot.progState()==false) {
 					Prog.add(buf + i);
+					mega_i2c.beep_code(B_COMMAND_RECEIVED);
 				}
 				else if (msg.find(m_SETTINGS) == 0) {
-						Settings.load_(string((char*)(buf+i)),false);
+					Settings.load_(string((char*)(buf+i)),false);
+					mega_i2c.beep_code(B_COMMAND_RECEIVED);
 				}
 				else if (msg.find(m_UPLOAD_SETTINGS) == 0) {
 					Telemetry.getSettings(buf[i++]);
+					mega_i2c.beep_code(B_COMMAND_RECEIVED);
 				}
 				else if (msg.find(m_FPV) == 0) {
+					cout << "FPV\n";
 					shmPTR->fpv_adr = *(buf+i++);
 					shmPTR->fpv_port = *(int16_t*)(buf + i);
 					i += 2;
 					shmPTR->fpv_zoom = *(buf + i++);
 					shmPTR->fpv_code = *(int16_t*)(buf + i);
 					i += 2;
+					mega_i2c.beep_code(B_COMMAND_RECEIVED);
 				}
 			}
 		}

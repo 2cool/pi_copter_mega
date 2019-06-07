@@ -33,7 +33,7 @@ import cc.dewdrop.ffplayer.widget.FFVideoView;
 public class MainActivity extends Activity  implements SensorEventListener {
     final static double RAD2GRAD = 57.29578;
     Activity this_act;
-   static private FFVideoView mVideoView;
+   static public FFVideoView mVideoView;
    public static boolean update=true;
     public static int updateTimeMsec=50;
     public static float pitch=0,roll=0,yaw=0;
@@ -56,7 +56,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
     static public double dt=1,old_time=0;
     //private static boolean game_speed=false;
     public static boolean gyroscopeWork=false, magnetometerWork =false;
-
+    public static boolean reopen_fpv=false;
     static protected boolean sensorUpdateSpeedFastest=true;
     Net net=null;
 
@@ -205,15 +205,25 @@ public static void verifyPermissions(Activity activity){
 }
 
     void openSettings(){
+
+
+
+        reopen_fpv=DrawView.fpv_.is_pressed();
+        DrawView.fpv_.set(false);
+        DrawView.fpv_stop();
+
       //  DrawView.turn2MainScreen();
         Intent myIntent = new Intent(this, Settings.class);
         this.startActivity(myIntent);
+
     }
 
     //open map
     void openMap(){
-        DrawView.fpv.set(false);
-        mVideoView.stopVideo();
+        reopen_fpv=DrawView.fpv_.is_pressed();
+        DrawView.fpv_.set(false);
+        DrawView.fpv_stop();
+        //mVideoView.stopVideo();
         Intent myIntent = new Intent(this_act, Map.class);
         this_act.startActivity(myIntent);
     }
@@ -234,6 +244,18 @@ public static void verifyPermissions(Activity activity){
             Log.e("Socket exception", ex.toString());
         }
         return null;
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();  // Always call the superclass method first
+        if (reopen_fpv && DrawView.fpv_.is_pressed()==false) {
+            reopen_fpv=false;
+            DrawView.fpv_.set(true);
+            DrawView.fpv_start_stop();
+        }
+        // Activity being restarted from stopped state
     }
 
     @Override
@@ -262,7 +284,7 @@ public static void verifyPermissions(Activity activity){
             mScaleFactor *= (scd+1);
             mScaleFactor = Math.max(1f, Math.min(mScaleFactor, 4));
            // Log.d("SCALE",Float.toString((mScaleFactor-1)*33.667f+1));
-            if (DrawView.fpv.is_pressed()){
+           // if (DrawView.fpv.is_pressed()){
 
                 int zoom=(int)((mScaleFactor-1)*84.6f+1);
                 if (zoom>101)
@@ -271,7 +293,7 @@ public static void verifyPermissions(Activity activity){
                     Commander.fpv_zoom=zoom;
                     Commander.fpv=true;
                 }
-            }
+          //  }
 
             return true;
         }
@@ -345,6 +367,10 @@ public static void verifyPermissions(Activity activity){
                     if (MainActivity.drawView != null ){//&& update) {
                         update=false;
 
+
+
+
+
                         if (DrawView.showMap.getStat()==3)
                             openMap();
                         if (DrawView.showSettings.getStat()==3)
@@ -367,6 +393,10 @@ public static void verifyPermissions(Activity activity){
                         }
 
 
+
+
+
+
                         MainActivity.drawView.postInvalidate();
 
                     }
@@ -378,7 +408,7 @@ public static void verifyPermissions(Activity activity){
 
 
 
-    static public void startVideo(){
+    static public void startFPV_Video(){
         String adr=getIpAddress();
 
         String videoPath = "udp://"+adr+":5544";//

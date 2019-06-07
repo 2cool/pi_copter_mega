@@ -95,7 +95,7 @@ public class GeoDot {
 
 
     private static double oldLat,oldLon,oldAlt,oldDir,oldCamAng,oldTimer;
-    private static int old_led_prog;
+    private static int old_action;
     private static int oldSXY=0,oldSZ=0;
     int getFirst(byte buf[], int off){
 
@@ -105,7 +105,7 @@ public class GeoDot {
         oldDir=direction;
         oldCamAng=cam_ang;
         oldTimer=timer;
-        old_led_prog= action;
+        old_action = action;
 
         int i=off;
         int mask=(LAT_LON+DIRECTION+ALTITUDE+CAMERA_ANGLE+TIMER+SPEED_XY+SPEED_Z+ DO_ACTION);
@@ -204,8 +204,8 @@ public class GeoDot {
             buf[i++]=(byte)d;
         }
 
-        if (old_led_prog!= action){
-            old_led_prog= action;
+        if (old_action != action){
+            old_action = action;
             prog_mask|= DO_ACTION;
             buf[i++]=(byte) action;
         }

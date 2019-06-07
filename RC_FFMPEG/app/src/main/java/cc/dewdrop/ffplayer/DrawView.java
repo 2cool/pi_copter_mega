@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -16,6 +17,7 @@ import cc.dewdrop.ffplayer.myTools.Img_button;
 import cc.dewdrop.ffplayer.myTools.Joystick;
 import cc.dewdrop.ffplayer.myTools.Monitor;
 import cc.dewdrop.ffplayer.myTools.Square_Cells;
+import cc.dewdrop.ffplayer.utils.FFUtils;
 
 public class DrawView extends View {
 
@@ -45,7 +47,7 @@ public class DrawView extends View {
     static private int screen=viewMain;
     FlightTextInfo ftx;
     static public Img_button exitMenu,exitProg,reboot,shutdown,comp_calibr,comp_m_calibr,gps_on_off;
-    static public Img_button  fpv,vrc,photo,do_prog;
+    static public Img_button  fpv_,vrc_,photo_,do_prog;
 
     static Paint green_c = new Paint();
 
@@ -79,9 +81,11 @@ public class DrawView extends View {
 
         motors_on[0].enabled(Commander.link);
         motors_on[1].enabled(Commander.link);
-        fpv.enabled(Commander.link);
+        fpv_.enabled(Commander.link);
+        photo_.enabled(Commander.link);
+        vrc_.enabled(Commander.link);
         do_prog.enabled(MainActivity.prog_is_loaded());
-        ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8);
+        ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8) + " | " + (Telemetry.status&255) +" %";
         ftx.p[ftx._2HM]="2h: "+Integer.toString((int)Telemetry.dist)+"  h:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"v:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
         ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),4);
         ftx.p[ftx.VIBR]=constStrLen(Double.toString(Telemetry.vibration/1000),5);
@@ -272,20 +276,20 @@ public class DrawView extends View {
         head_less_.enabled(MainActivity.magnetometerWork);
         
 
-        fpv =new Img_button(sc.getRect(4,0),
+        fpv_ =new Img_button(sc.getRect(4,0),
                 context.getResources().getDrawable(R.drawable.fpv_off),
                 context.getResources().getDrawable(R.drawable.fpv),true);
 
-        vrc =new Img_button(sc.getRect(5,0),
+        vrc_ =new Img_button(sc.getRect(5,0),
                 context.getResources().getDrawable(R.drawable.vrc_off),
                 context.getResources().getDrawable(R.drawable.vrc_on),true);
-        photo =new Img_button(sc.getRect(6,0),
+        photo_ =new Img_button(sc.getRect(6,0),
                 context.getResources().getDrawable(R.drawable.photo),
-                context.getResources().getDrawable(R.drawable.photo),false);
+                context.getResources().getDrawable(R.drawable.photo),true);
 
         menu=new Img_button(sc.getRect(7,0),
                 context.getResources().getDrawable(R.drawable.menu),
-                context.getResources().getDrawable(R.drawable.menu),false);
+                context.getResources().getDrawable(R.drawable.menu),true);
 
 
 
@@ -343,27 +347,38 @@ public class DrawView extends View {
 
     }
 
+    static public void fpv_stop(){
+        if (Commander.fpv_addr!=0){
+            Log.d("FPV", "STOP");
+
+            MainActivity.stopVideo();
+            Commander.fpv_addr = 0;
+            Commander.fpv_port = 0;
+            Commander.fpv = true;
+        }
+    }
 
 
 
-    private void fpv_start_stop(){
-        if (fpv.is_pressed()) {
-            MainActivity.startVideo();
+    static public void fpv_start_stop(){
+        if (fpv_.is_pressed() && Commander.fpv_addr==0) {
             String myIP=Net.getIpAddress();
             Commander.fpv_addr=(byte)Integer.parseInt(myIP.substring(myIP.lastIndexOf('.')+1));
             Commander.fpv_port=5544;
             Commander.fpv_zoom=1;
             Commander.fpv=true;
+            Log.d("FPV","START");
+            MainActivity.startFPV_Video();
+
+
         }else {
-            MainActivity.stopVideo();
-            Commander.fpv_zoom=0;
-            Commander.fpv=true;
+            fpv_stop();
         }
     }
     private void fpv_photo_video(final MotionEvent event){
-        vrc.onTouchEvent(event);
-        if (vrcf != vrc.is_pressed()) {
-            vrcf = vrc.is_pressed();
+        vrc_.onTouchEvent(event);
+        if (vrcf != vrc_.is_pressed()) {
+            vrcf = vrc_.is_pressed();
             MainActivity.stopVideo();
             Commander.fpv_code = (short) ((vrcf) ? 513 : 514);
             Commander.fpv = true;
@@ -377,15 +392,17 @@ public class DrawView extends View {
                     } catch (InterruptedException ex) {
                         Thread.currentThread().interrupt();
                     }
-                    MainActivity.startVideo();
+                    MainActivity.startFPV_Video();
                 }
             };
             thread.start();
         }
-        photo.onTouchEvent(event);
-        if (photo.getStat() == 3) {
+        photo_.onTouchEvent(event);
+        if (photo_.getStat() == 3) {
             Commander.fpv_code = 769;
             Commander.fpv = true;
+           // Commander.fpv_zoom=1;
+
         }
     }
 
@@ -475,11 +492,11 @@ public class DrawView extends View {
         if (menu.getStat()==3)
             screen=viewMenu;
 
-        fpv.onTouchEvent(event);
-        if (fpv.getStat()==3)
+        fpv_.onTouchEvent(event);
+        if (fpv_.getStat()==3)
             fpv_start_stop();
-        if (fpv.is_pressed())
-            fpv_photo_video(event);
+
+        fpv_photo_video(event);
 
         motors_control(event);
 
@@ -691,14 +708,14 @@ public class DrawView extends View {
         motors_on[0].paint(c);
         motors_on[1].paint(c);
         batMon.paint(c);
-        fpv.paint(c);
+        fpv_.paint(c);
         smart_ctrl.paint(c);
         hold_alt.paint(c);
         go_to_home.paint(c);
-        if (fpv.is_pressed()) {
-            vrc.paint(c);
-            photo.paint(c);
-        }
+      //  if (fpv.is_pressed()) {
+            vrc_.paint(c);
+            photo_.paint(c);
+       // }
         do_prog.paint(c);
 
 
@@ -725,10 +742,14 @@ public class DrawView extends View {
 
     public void onDraw(Canvas c) {
 
+
+
+
+
         super.onDraw(c);
         //
 
-        if (fpv.is_pressed()==false)
+        if (fpv_.is_pressed()==false)
             c.drawRect(0,0,sm[0],sm[1],black);
 
         switch(screen) {
