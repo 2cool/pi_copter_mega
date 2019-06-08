@@ -32,27 +32,16 @@ public class DrawMap extends View {
     static public Point screenP=new Point();
     static public int zoom=1;
     static public int type=7;
-
     static Img_button ib_zoom_out,ib_zoom_in,ib_menu,ib_add,ib_edit,ib_upload,ib_del;
     static MySlider sDirection;
-
-
     static public UPD_MON monitor=new UPD_MON();
-
     static public InetMaps im=new InetMaps(monitor);
     public MyTile myile;
     Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     Paint black = new Paint();
-
-
-
-
-
-
-
-    int textX,textY;
-
+    int textX;
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public DrawMap(Context context) {
         super(context);
 
@@ -86,6 +75,7 @@ public class DrawMap extends View {
                 context.getResources().getDrawable(R.drawable.delite),false);
     }
     private int oldtx=0, oldty=0;
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private void dragImgM(final Point c){
         int tx=c.x>>8;
         int ty=c.y>>8;
@@ -119,12 +109,9 @@ public class DrawMap extends View {
             }catch (Exception ex){System.out.println("dragImgM "+ex.toString());}
         }
     }
-
-
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     static Rectangle r = new Rectangle();
     MyTile [][]imgM;
-
     private void updater(){
         if (threadRun == false){
             threadRun=true;
@@ -146,6 +133,7 @@ public class DrawMap extends View {
             }).start();
         }
     }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private void init(Canvas c){
         Rect r=c.getClipBounds();
         updater();
@@ -159,7 +147,6 @@ public class DrawMap extends View {
             for (int x = 0; x < sx; x++)
                 imgM[x][y] = new MyTile();
     }
-
     static boolean threadRun=false;
     static int oldType=-1;
     private void drawMap(Canvas c) {
@@ -170,27 +157,18 @@ public class DrawMap extends View {
 
         if (imgM == null)
             init(c);
-
-
-
-
         if (c==null)
             return;
         //try{
         if (r==null || imgM==null)return;
         double size=0,sizeR=0,n=imgM.length*imgM[0].length,blank=0;
-
-
         Point center=new Point(screenP.x-(r.width>>1),screenP.y-(r.height>>1));
-
         //  Log.i("MAP", "x= "+center.x);
         //  Log.i("MAP", "y= "+center.y);
-
         //imgM[x][y];
         Point d=new Point(center.x&255,center.y&255);
-
         dragImgM(center);
-try{//неиследованная ошибка вискакивает.
+        try{//неиследованная ошибка вискакивает.
         for (int my=0,y=center.y; y<=center.y+r.height+256; y+=256,my++){
             int sy=(my<<8)-d.y;
             for (int mx=0,x=center.x; x<=center.x+r.width+256; x+=256,mx++){
@@ -198,25 +176,18 @@ try{//неиследованная ошибка вискакивает.
                 MyTile tile=(imgM[mx][my].img!=null && type==oldType)?imgM[mx][my]:(imgM[mx][my]=im.getTile(x>>8, y>>8, zoom));
                 size+=tile.size;
                 Bitmap img=tile.img;
-
-
                 if (img!=null)
                     c.drawBitmap(img, sx, sy, paint);
             }
         }
-
-    } catch (Exception e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         oldType=type;
-
-
-
     }
 
-
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public static void addZoom(int z){
         zoom+=z;
         if (zoom>19) {
@@ -227,9 +198,6 @@ try{//неиследованная ошибка вискакивает.
             zoom = 1;
             return;
         }
-
-
-
         xDown=r.width>>1;
         yDown=r.height>>1;
 
@@ -248,7 +216,7 @@ try{//неиследованная ошибка вискакивает.
         Log.i("MAP", "zoom= "+zoom);
     }
 
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     double dist=0;
     int fullDist=0;
     static public Programmer prog=new Programmer();
@@ -260,7 +228,7 @@ try{//неиследованная ошибка вискакивает.
         double x=(double)screenP.x*Math.pow(2,i);
         double y=(double)screenP.y*Math.pow(2,i);
 
-        dist=prog.addDot_(x,y,Programmer.altitude,Programmer.speedProgress,Programmer.vspeedProgress,1000,0);
+        dist=prog.addDot_(x,y,Programmer.altitude,Programmer.speed_,Programmer.speedZ_,1000,0,6);
         if (dist>=0)
             fullDist+=dist;
         // jTextFieldFullLen.setText(Integer.toString((int)fullDist));
@@ -269,11 +237,8 @@ try{//неиследованная ошибка вискакивает.
         invalidate();
     }
 
-
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     static float xDown=0,yDown=0;
-
-
     final long tap_max_time = 1000;
     final int DRAG_LEN=1;//      32;
     static public boolean progLoaded=false;
@@ -291,13 +256,13 @@ try{//неиследованная ошибка вискакивает.
             double angle=360*sDirection.getPos()-180;
 
             Log.i("MAP","ang="+angle);
-            prog.changeDirectionInLastDot(angle,Programmer.speedProgress,Programmer.vspeedProgress);
+
+            if (DrawMap.selectedDot>=0)
+                prog.dot[DrawMap.selectedDot].direction=Programmer.direction=angle;
 
             invalidate();
             return true;
         }
-
-
         ib_zoom_out.onTouchEvent(event);
         if (ib_zoom_out.getStat()==3)
             addZoom(-1);
@@ -323,7 +288,7 @@ try{//неиследованная ошибка вискакивает.
             Commander.startUPLoadingProgram();
         }
         ib_edit.onTouchEvent(event);
-        if (ib_edit.getStat()==3 && MapEdit.active==false && prog.getSize()>0){
+        if (ib_edit.getStat()==3 &&selectedDot>=0  && MapEdit.active==false && prog.getSize()>0){
             MapEdit.active=true;
             Intent myIntent = new Intent(Map.cont, MapEdit.class);
             Map.cont.startActivity(myIntent);
@@ -337,12 +302,7 @@ try{//неиследованная ошибка вискакивает.
                     progLoaded=false;
                 //invalidate();
         }
-
-
-
-
         int pIndex = event.getActionIndex();
-
         int maskedAction = event.getActionMasked();
         switch (maskedAction) {
             case MotionEvent.ACTION_DOWN:
@@ -378,33 +338,15 @@ try{//неиследованная ошибка вискакивает.
 
                 break;
             case MotionEvent.ACTION_CANCEL:
-
-
-
                 //  Log.i("MAP", "tap= "+tap);
                 break;
-
-
-
-
-
         }
-
-
-
         mScaleGestureDetector.onTouchEvent(event);
-
-
-
         invalidate();
-
-
-
-
         return true;
     }
 
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public double lat,lon;
     private void fromPointToLatLng(){
 
@@ -423,35 +365,22 @@ try{//неиследованная ошибка вискакивает.
         //  jTextPaneLon.setText(grad_min_sec(lon,'E','W'));
 
     }
-
-
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     static private double startPos_lat,startPos_lon;
 
     Point lon_lat_2_XY(double lat,double lon){
         Point xy=new Point();
-
-
         double siny =  Math.min(Math.max(Math.sin(lat* (Math.PI / 180.0)), -.9999),.9999);
-
         double copterX=( 128.0 + lon * (256.0/360.0));
         double copterY=( 128.0 + 0.5 * Math.log((1 + siny) / (1 - siny)) * -(256.0 / (2 * Math.PI)));
-
-
         double i=(double)zoom;
-
         int y=(int)((double)screenP.y-(r.height>>1));
         int x=(int)((double)screenP.x-(r.width>>1));
-
-
-
-
         xy.x=(int)(copterX*Math.pow(2,i))-x;
         xy.y=(int)(copterY*Math.pow(2,i))-y;
-
         return xy;
     }
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private void drawPhonePos(Canvas g){
         if (GPSservice.mLastLocation != null){
             Point xy=lon_lat_2_XY(GPSservice.mLastLocation.getLatitude(),GPSservice.mLastLocation.getLongitude());
@@ -463,7 +392,7 @@ try{//неиследованная ошибка вискакивает.
         }
 
     }
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private void drawCopterPos(Canvas g){
         if (progLoaded==false ){
             startPos_lat=Telemetry.lat;
@@ -492,6 +421,7 @@ try{//неиследованная ошибка вискакивает.
         g.drawLine(x, y, x+(int)sx, y+(int)sy,red);
 
     }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private boolean drawDot(Canvas sg,int x, int y,int dir,int ray_length){
 
         double i = 19 - (double) zoom;
@@ -521,94 +451,72 @@ try{//неиследованная ошибка вискакивает.
         sg.drawLine(x, y, x+(int)sx, y+(int)sy,yellow);
         return selected;
     }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private double lastDist1=0,fullDist1=0;
     private double lastAlt1=0;
     private double fullTime=0;
-
-
-    private int selectedDot=0;
-
-
+    public static int selectedDot=-1;
     private void drawProgDots(Canvas sg) {
         fullDist1=lastDist1=fullTime=0;
         double i = 19 - (double) zoom;
-
         int y = (int) ((double) screenP.y - (r.height >> 1));
         int x = (int) ((double) screenP.x - (r.width >> 1));
-
-
         int index = 0;
         GeoDot dot = prog.get(index);
         if (dot == null) {
             lastAlt1=0;
             return;
         }
-
-
-
-
-
-
-
+        selectedDot=-1;
         int x0 = (int) (dot.tx / Math.pow(2, i) - x);
         int y0 = (int) (dot.ty / Math.pow(2, i) - y);
-
-
         if (drawDot(sg, x0, y0, (int)dot.direction,(int)(64)))
             selectedDot=0;
-
-
-        double upTime=0;
+        double upTime=0, spTime=0;;
         if (dot.speedZ!=0)
             upTime=1.25*dot.dAlt/dot.speedZ;
-        fullTime=Math.max(dot.timer,upTime);
+        if (dot.speed>0)
+            spTime=1.25*lastDist1/dot.speed;
 
-
+        fullTime=Math.max(dot.timer_,upTime+spTime);
         lastAlt1= dot.alt;
         lastDist1=fullDist1=0;
-
         index=1;
         while (true) {
             dot = prog.get(index);
             if (dot == null)
                 break;
             else {
-
                 lastAlt1=dot.alt;
                 lastDist1=dot.dDist;
-
-
-                double spTime=0;
+                spTime=0;
                 upTime=0;
                 if (dot.speed>0)
                     spTime=1.25*lastDist1/dot.speed;
                 if (dot.speedZ!=0)
-                    upTime=1.25*dot.dAlt/dot.speedZ;
+                    if (dot.dAlt>0)
+                        upTime=1.25*dot.dAlt/dot.speedZ;
+                    else
+                        upTime=-1.25*dot.dAlt/dot.speedZ/3*5;
 
-                fullTime+=Math.max(Math.max(dot.timer,spTime),upTime);
-
+                fullTime+=Math.max(Math.max(dot.timer_,spTime),upTime);
                 fullDist1+=lastDist1;
-
                 int x1 = (int) (dot.tx / Math.pow(2, i) - x);
                 int y1 = (int) (dot.ty / Math.pow(2, i) - y);
-
                 double tx=x1-x0;
                 double ty=y1-y0;
                 double pixelLen=Math.sqrt(tx*tx+ty*ty)/lastDist1;
-
                 sg.drawLine(x0, y0, x1, y1, red);
                 x0 = x1;
                 y0 = y1;
 
                 if (drawDot(sg, x0, y0, (int)dot.direction,(int)(pixelLen*dot.speed/0.2)))
-                    selectedDot=index;//dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+                    selectedDot=index;
                 index++;
-
-
             }
         }
     }
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     Paint red=new Paint();
     Paint yellow=new Paint();
     private void drawCross(final Canvas c){
@@ -618,31 +526,16 @@ try{//неиследованная ошибка вискакивает.
         yellow.setStyle(Paint.Style.STROKE);
         float x=r.width>>1;
         float y=r.height>>1;
-
         c.drawLine(x-10,y,x+10,y,red);
         c.drawLine(x,y-10,x,y+10,red);
-
-
-
-
     }
-
-
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     @Override
     public void onDraw(Canvas c) {
 
         updater();
-        //  Log.i("MAP","onDraw") ;
 
         drawMap(c);
-      //  bZoom_out.draw(c);
-       // bAddDot.draw(c);
-       // bProgLoad.draw(c);
-       // bEdit.draw(c);
-       // bDelite.draw(c);
-       // bMenu.draw(c);
-
         sDirection.draw(c);
         drawCross(c);
         fromPointToLatLng();
@@ -666,8 +559,6 @@ try{//неиследованная ошибка вискакивает.
         c.drawText("Time. "+MapEdit.getNum(fullTime,2)+" s.",textX,yind+=20,black);
         c.drawText("dots. "+Integer.toString(Programmer.size()),textX,yind+=20,black);
         //drawMap(c);
-
-
 
         ib_zoom_out.paint(c);
         ib_zoom_in.paint(c);

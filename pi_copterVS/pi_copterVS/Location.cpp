@@ -109,7 +109,7 @@ void LocationClass::updateXY(){
 	shmPTR->dist2home_2 =dx*dx + dy*dy;
 	dist2zero_2 = dX * dX + dY * dY;
 	//Out.println(dist2home_2);
-	if (abs(dist2zero_2 - oldDist_2) > MAX_DIST2UPDATE){
+	if (fabs(dist2zero_2 - oldDist_2) > MAX_DIST2UPDATE){
 		oldDist_2 = dist2zero_2;
 		update();
 	}
@@ -251,8 +251,8 @@ double LocationClass::set_cos_sin_dir(){
 
 //	dir_angle_GRAD = angle*RAD2GRAD;
 	//ErrorLog.println(angle*RAD2GRAD);
-//	cosDirection = abs(cos(angle));
-//	sinDirection = abs(sin(angle));
+//	cosDirection = fabs(cos(angle));
+//	sinDirection = fabs(sin(angle));
 	
 }
 

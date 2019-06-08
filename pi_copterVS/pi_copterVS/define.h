@@ -78,7 +78,7 @@
 
 #define ACCURACY_XY 3
 #define ACCURACY_Z 3
-#define HOWER_TIME 60
+#define HOWER_TIME 30
 
 #define MAX_DELTA 0.2f
 #define MAX_YAW_DELTA 0.1f

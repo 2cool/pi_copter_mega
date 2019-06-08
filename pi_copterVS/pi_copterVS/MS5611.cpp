@@ -85,7 +85,7 @@ double MS5611Class::getAltitude(const double pressure) {
 			if (gps_barometr_alt_dif == ALT_NOT_SET)
 				gps_barometr_alt_dif = GPS.loc.altitude - altitude_;
 			
-			if (abs(old_alt-alt) > 4 || abs(gps_alt - alt) > 4)
+			if (fabs(old_alt-alt) > 4 || fabs(gps_alt - alt) > 4)
 				alt = gps_alt;
 			else
 				gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif) * 0.01;

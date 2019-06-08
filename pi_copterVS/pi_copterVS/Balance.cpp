@@ -138,13 +138,13 @@ void BalanceClass::init()
 	pitch_roll_stabKP = 2;
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
 	//set_pitch_roll_pids(0.0017,  0.0001, 0.2);
-	set_pitch_roll_pids(0.001, 0.001, 0.2);
+	set_pitch_roll_pids(0.001, 0.001, 0.3);
 
 	yaw_stabKP = 2;
 
 	pids[PID_YAW_RATE].kP(0.0017f);
 	pids[PID_YAW_RATE].kI(0.0017f);
-	pids[PID_YAW_RATE].imax(-0.1,0.1);
+	pids[PID_YAW_RATE].imax(-0.2,0.2);
 
 	delay(1500);
 
@@ -353,7 +353,7 @@ bool BalanceClass::loop()
 			c_pitch = constrain(c_pitch, -t_max_angle, t_max_angle);
 			c_roll = constrain(c_roll, -t_max_angle, t_max_angle);
 			const float maxAngle07 = t_max_angle *0.7f;
-			if (abs(c_pitch) > maxAngle07 || abs(c_roll) > maxAngle07) {
+			if (fabs(c_pitch) > maxAngle07 || fabs(c_roll) > maxAngle07) {
 				float k = (float)(RAD2GRAD*acos(cos(c_pitch*GRAD2RAD)*cos(c_roll*GRAD2RAD)));
 				if (k == 0)
 					k = t_max_angle;
@@ -378,7 +378,7 @@ bool BalanceClass::loop()
 			const float max_delta = 0.3;
 			const float yaw_max_delta = 0.2;
 			static float correction = 1;
-			//correction += (0.5 / min(throttle,0.5) - correction)*0.2;
+			//correction += (0.5 / fmin(throttle,0.5) - correction)*0.2;
 		
 			float pitch_output = pK*pids[PID_PITCH_RATE].get_pid(correction*(pitch_stab_output + Mpu.gyroPitch), Mpu.dt);
 			pitch_output = constrain(pitch_output, -max_delta, max_delta);

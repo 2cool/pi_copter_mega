@@ -35,14 +35,10 @@ using namespace std;
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define EULER 2.718281828459045235360287471352
 
-#define min(a,b) ((a)<(b)?(a):(b))
-#define max(a,b) ((a)>(b)?(a):(b))
-#define abs(x) ((x)>0?(x):-(x))
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
-#define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
-#define radians(deg) ((deg)*DEG_TO_RAD)
-#define degrees(rad) ((rad)*RAD_TO_DEG)
-#define sq(x) ((x)*(x))
+
+
+
 
 //#define string std::string
 #define bool bool
@@ -111,9 +107,9 @@ inline void sin_cos(const float a, float &s, float &c) {
 	c = (float)cos(a);
 	/*
 	const double ss = s*s;
-	c = (float)sqrt(1 - min(1.0f, ss));
+	c = (float)sqrt(1 - fmin(1.0f, ss));
 	//30.7.2017 corected
-	if (abs(a) > 90)
+	if (fabs(a) > 90)
 		c = -c;
 		*/
 }

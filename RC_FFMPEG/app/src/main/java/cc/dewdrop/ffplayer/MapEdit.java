@@ -1,8 +1,4 @@
 package cc.dewdrop.ffplayer;
-
-
-
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -10,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -19,12 +16,13 @@ import android.widget.TextView;
  * Created by igor on 8/26/2016.
  */
 public class MapEdit extends Activity {
-
-    static public final String progs[]={"led0","led1","led2","led3","led4","led5","led6","photo","start video","stop video","360photo","nothing1"};
     static public boolean active=false;
     private EditText e_Prog, eTimer,eSpeed,eVSpeed,eAltitude,eCamAng;
     static private SeekBar sTimer, sSpeed, sVSpeed,sAltitude,sCamAng, sProg;
+    static int inListener=0;
 
+
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -32,8 +30,9 @@ public class MapEdit extends Activity {
             hideSystemUI();
         }
     }
-
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private void hideSystemUI() {
         // Enables regular immersive mode.
         // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
@@ -50,6 +49,7 @@ public class MapEdit extends Activity {
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     static public  String getNum(double num, int n){
         n++;
         if (Math.abs(num)<0.1)
@@ -61,50 +61,52 @@ public class MapEdit extends Activity {
         }else
             return s;
     }
-
-    protected void update(){
-
-        GeoDot d=Programmer.get_current_dot();
-        if (d!=null){
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    protected void update(int index) {
+        GeoDot d = Programmer.get_dot(index);
+        Log.d("UPADD", " " + DrawMap.selectedDot);
+        // d=Programmer.get_current_dot_();
+        if (d != null) {
             //  eCamAng.setText(Integer.toString((int)d.cam_ang));
             //90 -  -10
-            sCamAng.setProgress((int)d.cam_ang+10);
-            eCamAng.setText(getNum(d.cam_ang,2));
-            e_Prog.setText(progs[d.action]);
-            sProg.setProgress(d.action);
-            eTimer.setText(getNum(d.timer,2));
-            sTimer.setProgress((int)d.timer);
-            eSpeed.setText(getNum(d.speed,2));
-            sSpeed.setProgress((int)(100*(d.speed/Programmer.maxSpeed)));
-            double zsk=((d.speedZ > 0)?(d.speedZ/Programmer.maxUpSpeed):(d.speedZ/Programmer.maxDownSpeed));
-            eVSpeed.setText(getNum(d.speedZ,2));
-            sVSpeed.setProgress((int)(100*zsk));
-            eAltitude.setText(getNum(d.alt,2));
-            sAltitude.setProgress((int)(d.alt));
+            sCamAng.setProgress((int) d.cam_ang + 10);
+            eCamAng.setText(getNum(d.cam_ang, 2));
+            e_Prog.setText(Programmer.prog_names[d.action_]);
+            sProg.setProgress(d.action_);
+            eTimer.setText(getNum(d.timer_, 2));
+            sTimer.setProgress((int) d.timer_);
+            eSpeed.setText(""+d.speed);
+            sSpeed.setProgress((int) d.speed);
+          //  //double zsk = ((d.speedZ > 0) ? (d.speedZ / Programmer.maxUpSpeed) : (d.speedZ / Programmer.maxDownSpeed));
+            eVSpeed.setText(getNum(d.speedZ, 2));
+            sVSpeed.setProgress((int) d.speedZ);
+            eAltitude.setText(getNum(d.alt, 2));
+            sAltitude.setProgress((int) (d.alt));
 
-        }else {
-
-
+        }
+    }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    protected void Update()
+    {
             eCamAng.setText(Integer.toString(Programmer.cam_ang));
             sCamAng.setProgress(Programmer.cam_ang+10);
-            e_Prog.setText(progs[Programmer.action]);
-            sProg.setProgress(Programmer.action);
-            eTimer.setText(Integer.toString(0));
-            sTimer.setProgress(0);
-            eSpeed.setText(getNum(Programmer.speed, 2));
-            sSpeed.setProgress((int) (100 * Programmer.speedProgress));
-            eVSpeed.setText(getNum(Programmer.speedZ, 2));
-            sVSpeed.setProgress((int) (100 * Programmer.vspeedProgress));
+            e_Prog.setText(Programmer.prog_names[Programmer.action_]);
+            sProg.setProgress(Programmer.action_);
+            eTimer.setText(Integer.toString(Programmer.timer));
+            sTimer.setProgress(Programmer.timer);
+            eSpeed.setText(""+Programmer.speed_);
+            sSpeed.setProgress((int) (Programmer.speed_));
+            eVSpeed.setText(""+Programmer.speedZ_);
+            sVSpeed.setProgress((int) (Programmer.speedZ_));
             eAltitude.setText(getNum(Programmer.altitude, 2));
             sAltitude.setProgress((int) (Programmer.altitude));
 
-
-        }
-
     }
-    static int inListener=0;
+
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         active=true;
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -120,8 +122,8 @@ public class MapEdit extends Activity {
         eCamAng=(EditText)findViewById(R.id.editTextCamAng);
         eCamAng.setEnabled(false);
         sCamAng=(SeekBar)findViewById(R.id.seekBarCamAng);
-        sProg =(SeekBar)findViewById(R.id.sled_prog);
-        e_Prog =(EditText)findViewById(R.id.eled_prog);
+        sProg =(SeekBar)findViewById(R.id.s_prog);
+        e_Prog =(EditText)findViewById(R.id.e_prog);
         e_Prog.setEnabled(false);
         eSpeed=(EditText)findViewById(R.id.editTextSpeed);
 
@@ -135,34 +137,27 @@ public class MapEdit extends Activity {
         eAltitude=(EditText)findViewById(R.id.editTextAltitude);
         eAltitude.setEnabled(false);
         sAltitude=(SeekBar)findViewById(R.id.seekBarAltitude);
-
-        update();
-
-
-
+        update(DrawMap.selectedDot);
+//-----------------------------------
         sTimer.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-
-                    double timer=progress;
-                    if (!DrawMap.prog.changeTimerInLastDot(timer,Programmer.speedProgress,Programmer.vspeedProgress))
-                        update();
+                   // Programmer.timer=progress;
+                    Programmer.timer=progress;
+                    Programmer.dot[DrawMap.selectedDot].timer_=progress;
+                    Update();
+                    Programmer.timer=0;
                 }
                 inListener--;
-
-
             }
         });
-
-
+//---------------------------------------------------------------------
         sAltitude.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -175,93 +170,86 @@ public class MapEdit extends Activity {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
 
-                    double altitude=progress;
-                    if (!DrawMap.prog.changeAltitudeInLastDot(altitude,Programmer.speedProgress,Programmer.vspeedProgress))
-                        Programmer.altitude=altitude;
-                    update();
+                    Programmer.altitude=progress;
+                    double old_alt=Programmer.dot[DrawMap.selectedDot].alt;
+                    Programmer.dot[DrawMap.selectedDot].alt=progress;
+                    Programmer.dot[DrawMap.selectedDot].dAlt-=old_alt-progress;
+                    Update();
+                    if (DrawMap.selectedDot<Programmer.progSize-1)
+                        Programmer.altitude=Programmer.dot[Programmer.progSize-1].alt;
                 }
                 inListener--;
-
-
             }
         });
-
-
+//--------------------------------------------------------------------------------------
         sProg.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-
-                    double led_prog=progress;
-                    Programmer.action =(int)(led_prog);
-                    Programmer.changeLedProg();
-
-                    update();
+                    Programmer.action_=progress;
+                    Programmer.dot[DrawMap.selectedDot].action_=progress;
+                    if (progress==Programmer.PHOTO_360) {
+                        if (Programmer.dot[DrawMap.selectedDot].timer_ < 120) {
+                            Programmer.timer = 120;
+                            Programmer.dot[DrawMap.selectedDot].timer_ = 120;
+                        }
+                    }else{
+                        Programmer.timer = 0;
+                        Programmer.dot[DrawMap.selectedDot].timer_ = 0;
+                    }
+                    Update();
+                    Programmer.action_=Programmer.LED6;
                 }
                 inListener--;
-
-
             }
         });
-
-
-
-
+//--------------------------------------------------------------------------------------
         sCamAng.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-
-                    double camAng=progress;
-                    Programmer.cam_ang=(int)(camAng-10);
-                    Programmer.changeCameraAngle();
-
-                    update();
+                    Programmer.cam_ang=(progress-10);
+                    Programmer.dot[DrawMap.selectedDot].cam_ang=(progress-10);
+                    Update();
+                    if (DrawMap.selectedDot<Programmer.progSize-1)
+                        Programmer.cam_ang=(int)Programmer.dot[Programmer.progSize-1].cam_ang;
                 }
                 inListener--;
-
-
             }
         });
-
+//--------------------------------------------------------------------------------------
         sSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-                    double speedProgress=0.01*(double)sSpeed.getProgress();
-                    if (speedProgress<0.1)
-                        speedProgress=0.1;
-                    if (!DrawMap.prog.changeSpeedInLastDot(speedProgress,Programmer.vspeedProgress))
-                        Programmer.speedProgress=speedProgress;
-                    update();
+                    if (progress==0)
+                        progress++;
+                    Programmer.dot[DrawMap.selectedDot].speed=progress;
+                    Programmer.speed_=progress;
+                    Update();
+                    if (DrawMap.selectedDot<Programmer.progSize-1)
+                        Programmer.speed_=(int)Programmer.dot[Programmer.progSize-1].speed;
                 }
                 inListener--;
 
             }
         });
-
+//--------------------------------------------------------------------------------------
         sVSpeed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -274,27 +262,20 @@ public class MapEdit extends Activity {
 
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-                    double vspeedProgress=0.01*(double)sVSpeed.getProgress();
-                    if (vspeedProgress<0.03)
-                        vspeedProgress=0.037;
-                    if (!DrawMap.prog.changeSpeedInLastDot(Programmer.speedProgress,vspeedProgress))
-                        Programmer.vspeedProgress=vspeedProgress;
-                    update();
+                    if (progress==0)
+                        progress++;
+                    Programmer.dot[DrawMap.selectedDot].speedZ=progress;
+                    Programmer.speedZ_=progress;
+                    Update();
+                    if (DrawMap.selectedDot<Programmer.progSize-1)
+                        Programmer.speedZ_=(int)Programmer.dot[Programmer.progSize-1].speedZ;
                 }
                 inListener--;
 
             }
         });
-
-
-
-
-
-
-
-
-
-        eCamAng.addTextChangedListener(new TextWatcher() {
+//--------------------------------------------------------------------------------------
+      /*  eCamAng.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
                 if (++inListener==1) {
                     String st=s.toString();
@@ -305,8 +286,7 @@ public class MapEdit extends Activity {
                         else
                         if (Programmer.cam_ang>10)
                             Programmer.cam_ang=10;
-                        Programmer.changeCameraAngle();
-
+                        Programmer.dot[DrawMap.selectedDot].cam_ang=Programmer.cam_ang;
                     }
                 }
                 inListener--;
@@ -314,45 +294,14 @@ public class MapEdit extends Activity {
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
-
-
-
-
-        eAltitude.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-
-
-
-            }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });
-
-
-
-
-
-
-
+        });*/
     }
+
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     @Override
     protected void onPause() {
         super.onPause();
         active=false;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 }

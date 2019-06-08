@@ -700,8 +700,8 @@ void MpuClass::set_cos_sin_dir() {
 
 		dir_angle_GRAD = angle*RAD2GRAD;
 		//ErrorLog.println(angle*RAD2GRAD);
-		cosDirection = abs(cos(angle));
-		sinDirection = abs(sin(angle));
+		cosDirection = fabs(cos(angle));
+		sinDirection = fabs(sin(angle));
 
 }
 */

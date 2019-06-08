@@ -69,7 +69,10 @@
             android:id="@+id/seekBarSpeed"
             android:layout_row="3"
             android:layout_column="0"
+            android:progress="10"
+            android:max="10"
             android:layout_columnSpan="3" />
+
 
         <EditText
             android:layout_width="102dp"
@@ -95,6 +98,8 @@
             android:id="@+id/seekBarVerSpeed"
             android:layout_row="5"
             android:layout_column="0"
+            android:progress="5"
+            android:max="5"
             android:layout_columnSpan="3" />
 
         <EditText
@@ -152,7 +157,7 @@
 
 
         <EditText
-            android:id="@+id/eled_prog"
+            android:id="@+id/e_prog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_row="10"
@@ -162,7 +167,7 @@
             android:text="6" />
 
         <SeekBar
-            android:id="@+id/sled_prog"
+            android:id="@+id/s_prog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_row="11"

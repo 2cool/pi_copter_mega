@@ -159,8 +159,8 @@ void TelemetryClass::loop()
 
 int TelemetryClass::get_voltage4one_cell() { return (int)(voltage / SN); }
 int TelemetryClass::fly_time_left() {
-	int fly_time=max(0,  battery_charge-consumed_charge);
-	fly_time = min(MAX_FLY_TIME, fly_time);
+	int fly_time=fmax(0,  battery_charge-consumed_charge);
+	fly_time = fmin(MAX_FLY_TIME, fly_time);
 	return fly_time;
 }
 int TelemetryClass::check_time_left_if_go_to_home(){
@@ -169,7 +169,7 @@ int TelemetryClass::check_time_left_if_go_to_home(){
 	if (Autopilot.motors_is_on()) {
 		const float dist2home = (float)sqrt(Mpu.dist2home_2());
 		const float time2home = dist2home * (1.0f / MAX_HOR_SPEED);
-		const float time2down = abs((Mpu.get_Est_Alt()) * (1.0f / MAX_VER_SPEED_MINUS));
+		const float time2down = fabs((Mpu.get_Est_Alt()) * (1.0f / MAX_VER_SPEED_MINUS));
 		time_left -= (time2home + time2down);
 	}
 
@@ -271,7 +271,7 @@ void TelemetryClass::testBatteryVoltage(){
 	if (dt > 1)
 		dt = 1;
 	old_timed = Mpu.timed;
-	float current = 1.325*(m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.64);
+	float current = 1.27*(m_current[0] + m_current[1] + m_current[2] + m_current[3] + 0.64);
 
 	f_current += (current - f_current)*0.03;
 	consumed_charge += current *dt;

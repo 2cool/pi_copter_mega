@@ -319,9 +319,14 @@ int main()
 		return 0;
 	}
 	int clone=shmPTR->fpv_cnt;
-	delay(600);
+	int old_main_cnt = shmPTR->main_cnt;
+	delay(2000);
 	if (clone != shmPTR->fpv_cnt) {
 		cout << "FPV CLONE\n";
+		return 0;
+	}
+	if (old_main_cnt == shmPTR->main_cnt) {
+		cout << "MAIN dont run\n";
 		return 0;
 	}
 
@@ -329,7 +334,24 @@ int main()
 
 
 	//wlx7cdd901e13d5
-	int old_main_cnt = shmPTR->main_cnt;
+	
+
+
+	do {
+		static bool print = true;
+		string ret=exec("nice -n -20  nmcli dev wifi | grep YDXJ_1234567");
+		if (ret.length() < 10) {
+			if (print) {
+				cout << "camera wifi not found...\n";
+				print = false;
+			}
+			sleep(5);
+		}
+		else
+			break;
+	} while (true);
+	cout << "camera found\n";
+
 	string ret = exec("nice -n -20 ifconfig wlx7cdd901e13d5");
 	if (ret.find("192.168.42.") == string::npos) {
 		system(connect2camera.c_str());

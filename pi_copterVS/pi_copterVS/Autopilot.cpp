@@ -145,7 +145,7 @@ void AutopilotClass::add_2_need_altitude(float speed, const float dt){
 
 
 		if (speed<-0.2 && (tflyAtAltitude < lowest_height || flyAtAltitude < lowest_height))
-			speed = max(-0.2, speed);
+			speed = fmax(-0.2, speed);
 
 		tflyAtAltitude += speed * dt;
 
@@ -770,10 +770,10 @@ return;
 	
 }
 void AutopilotClass::calibration() {/////////////////////////////////////////////////////////////////////////////////////////////////
-
+	
 	cout << "Set Calibr NOT USET.\n";
 	/*
-	if (abs(cPitch + Commander.pitch) > 0.1 || abs(cRoll + Commander.roll) > 0.1)
+	if (fabs(cPitch + Commander.pitch) > 0.1 || fabs(cRoll + Commander.roll) > 0.1)
 		return;
 
 	cPitch += Commander.pitch;
@@ -1004,7 +1004,7 @@ int  AutopilotClass::exit() {
 void AutopilotClass::gimBalRollCorrection() {
 	static float old_g_roll = 1000;
 	const float roll = Mpu.get_roll();
-	if (abs(roll) > MAX_GIMBAL_ROLL)
+	if (fabs(roll) > MAX_GIMBAL_ROLL)
 		gimBalRollZero = -2 * (roll - ((roll > 0) ? MAX_GIMBAL_ROLL : -MAX_GIMBAL_ROLL));
 	else
 		gimBalRollZero = 0;

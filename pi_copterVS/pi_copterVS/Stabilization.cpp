@@ -205,7 +205,7 @@ float StabilizationClass::Z(){
 void StabilizationClass::resset_z(){
 	mc_z = 0;
 	pids[SPEED_Z_PID].reset_I();
-	pids[SPEED_Z_PID].set_integrator(max(HOVER_THROTHLE,Autopilot.get_throttle()) - HOVER_THROTHLE);
+	pids[SPEED_Z_PID].set_integrator(fmax(HOVER_THROTHLE,Autopilot.get_throttle()) - HOVER_THROTHLE);
 	
 }
 void StabilizationClass::resset_xy_integrator(){

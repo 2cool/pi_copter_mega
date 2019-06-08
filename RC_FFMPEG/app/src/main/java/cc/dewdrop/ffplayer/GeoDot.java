@@ -4,23 +4,27 @@ package cc.dewdrop.ffplayer;
  * Created by igor on 8/21/2016.
  */
 public class GeoDot {
+
+    static public final int LAT_LON = 1, DIRECTION = 2, ALTITUDE = 4,  CAMERA_ANGLE = 8, TIMER = 16,SPEED_XY=32,SPEED_Z=64, DO_ACTION =128;
+
     public int index;
     public double tx,ty;
-    public double alt,direction,timer,cam_ang,dDist,dAlt;
-    public int action;
+    public double alt,direction,timer_,cam_ang,dDist,dAlt;
+    public int action_;
     double speed=0,speedZ=0;
     public int lat,lon;
 
 
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private static double getLon(final double tx){
         return (tx - 67108864.0) / (134217728.0 / 360.0);
     }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private static double getLat(final double ty){
         return (2 * Math.atan(Math.exp((ty - 67108864.0) / -(134217728.0 / (2 * Math.PI)))) -
                 Math.PI / 2)/ (Math.PI / 180.0);
     }
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     GeoDot(int index, double tx, double ty,double _timer,double _alt, double _dir, double _cam_ang,double dDist,double dAlt, double speed, double speedZ,int action){
         this.index=index;
         this.tx=tx;
@@ -30,15 +34,15 @@ public class GeoDot {
 
         alt=_alt;
         direction=_dir;
-        timer=_timer;
+        timer_=_timer;
         cam_ang=_cam_ang;
         this.dDist=dDist;
         this.dAlt=dAlt;
         this.speed=speed;
         this.speedZ=speedZ;
-        this.action = action;
+        this.action_ = action;
     }
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     GeoDot(String str){
         String s[]=str.split(",");
         int i=0;
@@ -51,18 +55,19 @@ public class GeoDot {
 
             alt = Integer.parseInt(s[i++]);
             direction = Integer.parseInt(s[i++]);
-            timer = Integer.parseInt(s[i++]);
+            timer_ = Integer.parseInt(s[i++]);
             cam_ang = Integer.parseInt(s[i++]);
             dDist = Integer.parseInt(s[i++]);
             dAlt = Integer.parseInt(s[i++]);
             speed = Integer.parseInt(s[i++]);
-            speed *= 0.1;
+         //   speed *= 0.1;
             speedZ = Integer.parseInt(s[i++]);
-            speedZ *= 0.1;
-            action = (s.length > i) ? action = Integer.parseInt(s[i++]) : 6;
+          //  speedZ *= 0.1;
+            action_=Integer.parseInt(s[i++]);// = (s.length > i) ? action = Integer.parseInt(s[i++]) : 6;
         }else
             this.index=-1;
     }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public String toString(){
         String s="";
         s+=Integer.toString(index)+",";
@@ -70,16 +75,17 @@ public class GeoDot {
         s+=Integer.toString((int)ty)+",";
         s+=Integer.toString((int)alt)+",";
         s+=Integer.toString((int)direction)+",";
-        s+=Integer.toString((int)timer)+",";
+        s+=Integer.toString((int)timer_)+",";
         s+=Integer.toString((int)cam_ang)+",";
         s+=Integer.toString((int)dDist)+",";
         s+=Integer.toString((int)dAlt)+",";
-        s+=Integer.toString((int)(speed*10))+",";
-        s+=Integer.toString((int)(speedZ*10))+",";
-        s+=Integer.toString((int) action);
+        s+=Integer.toString((int)(speed))+",";
+        s+=Integer.toString((int)(speedZ))+",";
+        s+=Integer.toString((int) action_);
         return s;
     }
-    static public final int LAT_LON = 1, DIRECTION = 2, ALTITUDE = 4,  CAMERA_ANGLE = 8, TIMER = 16,SPEED_XY=32,SPEED_Z=64, DO_ACTION =128;
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     static void load_int4buf(byte buf[], int i, int val){
         buf[i+0]=(byte)(val&255);
         buf[i+1]=(byte)((val>>8)&255);
@@ -87,13 +93,14 @@ public class GeoDot {
         buf[i+3]=(byte)((val>>24)&255);
 
     }
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     static byte load_int2buf(byte buf[], int i, int val){
         buf[i+0]=(byte)(val&255);
         buf[i+1]=(byte)(val>>8);
         return (byte)(buf[i]^buf[i+1]);
     }
 
-
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     private static double oldLat,oldLon,oldAlt,oldDir,oldCamAng,oldTimer;
     private static int old_action;
     private static int oldSXY=0,oldSZ=0;
@@ -104,23 +111,23 @@ public class GeoDot {
         oldAlt=alt;
         oldDir=direction;
         oldCamAng=cam_ang;
-        oldTimer=timer;
-        old_action = action;
+        oldTimer=timer_;
+        old_action = action_;
 
         int i=off;
         int mask=(LAT_LON+DIRECTION+ALTITUDE+CAMERA_ANGLE+TIMER+SPEED_XY+SPEED_Z+ DO_ACTION);
         buf[i++]=(byte)(mask&255);
 
         buf[i++]=(byte)index;
-        buf[i++]=(byte)timer;
+        buf[i++]=(byte)timer_;
 
-        final double k=10;
+        final double k=1;
         int sxy=(int)Math.abs(speed*k);
         oldSXY=sxy;
-        buf[i++]=(byte)(sxy&255);
+        buf[i++]=(byte)((int)speed&255);
 
         int sz=(int)(speedZ*k);
-        buf[i++]=(byte)sz;
+        buf[i++]=(byte)(sz&255);
         oldSZ=sz;
 
         load_int4buf(buf,i,lat);
@@ -138,7 +145,7 @@ public class GeoDot {
         d=cam_ang;
         d*= 0.70555555555555555555555555555556;
         buf[i++]=(byte)d;
-        buf[i++]=(byte) action;
+        buf[i++]=(byte) action_;
 
 
         return i;
@@ -152,13 +159,13 @@ public class GeoDot {
         int prog_mask=0;
 
         buf[i++]=(byte)index;
-        if (oldTimer!=timer){
-            oldTimer=timer;
+        if (oldTimer!=timer_){
+            oldTimer=timer_;
             prog_mask|=TIMER;
-            buf[i++]=(byte)timer;
+            buf[i++]=(byte)timer_;
         }
 
-        final double k=10;
+        final double k=1;
         int sxy=(int)Math.abs(speed*k);
 
         if (oldSXY!=sxy) {
@@ -204,10 +211,10 @@ public class GeoDot {
             buf[i++]=(byte)d;
         }
 
-        if (old_action != action){
-            old_action = action;
+        if (old_action != action_){
+            old_action = action_;
             prog_mask|= DO_ACTION;
-            buf[i++]=(byte) action;
+            buf[i++]=(byte) action_;
         }
 
 

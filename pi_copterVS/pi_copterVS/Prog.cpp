@@ -141,14 +141,9 @@ void ProgClass::loop(){
 
 	if (go_next == false) {
 
-
-
-		
-
-
 		if (timer == 0) {
 			if (altFlag == false)
-				altFlag = (alt == old_alt) || (abs(Mpu.get_Est_Alt() - Autopilot.fly_at_altitude()) <= (ACCURACY_Z));
+				altFlag = (alt == old_alt) || (fabs(Mpu.get_Est_Alt() - Autopilot.fly_at_altitude()) <= (ACCURACY_Z));
 
 			if (distFlag == false) {
 				if (next_y == old_y && next_x == old_x) {
@@ -156,7 +151,7 @@ void ProgClass::loop(){
 				}
 				else {
 					const float advance_dist = Stabilization.getDist_XY(max_speed_xy);
-					const float acur = max(max(ACCURACY_XY, GPS.loc.accuracy_hor_pos_), advance_dist);
+					const float acur = fmax(fmax(ACCURACY_XY, GPS.loc.accuracy_hor_pos_), advance_dist);
 					distFlag = Stabilization.get_dist2goal() <= acur;
 				}
 			}
@@ -322,7 +317,7 @@ bool ProgClass::getIntersection(float &x, float &y){
 				dx = x1 - xx;
 				dy = y1 - yy;
 				const float dist1 = dx*dx + dy*dy;
-				dist2line = (float)(1.0 + sqrt(min(dist2, dist1)));
+				dist2line = (float)(1.0 + sqrt(fmin(dist2, dist1)));
 			}else
 				dist2line = (float)(1.0 + sqrt(xx * xx + yy * yy));
 
@@ -345,7 +340,7 @@ bool ProgClass::getIntersection(float &x, float &y){
 	float temp = SGN(dy)*dx*discriminant;
 	const float ix1 = (D*dy + temp)*rdr2;
 	const float ix2 = (D*dy - temp)*rdr2;
-	temp = abs(dy)*discriminant;
+	temp = fabs(dy)*discriminant;
 	const float iy1 = (-D*dx + temp)*rdr2;
 	const float iy2 = (-D*dx - temp)*rdr2;
 
@@ -374,53 +369,46 @@ void ProgClass::clear(){
 	init();
 }
 
-bool ProgClass::load_next(bool loadf){
+bool ProgClass::load_next(bool loadf) {
 	old_x = next_x;
 	old_y = next_y;
 	old_alt = alt;
-	if (prog_data_index >= prog_data_size || steps_count <= step_index){
+	if (prog_data_index >= prog_data_size || steps_count <= step_index) {
 		return false;
 	}
 	step_index++;
-//	printf("\nNext\n");
+	//	printf("\nNext\n");
 
-	int wi = prog_data_index+1;
-
-	if (prog[prog_data_index] & TIMER){
+	int wi = prog_data_index + 1;
+	if (prog[prog_data_index] & TIMER) {
 		timer = prog[wi++];
 	}
+	
 
-#define K01 0.1f
-	if (prog[prog_data_index] & SPEED_XY){
-		
-		max_speed_xy = K01*(float)prog[wi++];
+	if (prog[prog_data_index] & SPEED_XY) {
+		max_speed_xy = fabs(prog[wi++]);
 		if (max_speed_xy < 1)
 			max_speed_xy = 1;
+		if (max_speed_xy > MAX_HOR_SPEED)
+			max_speed_xy = MAX_HOR_SPEED;
 		if (loadf)
 			Stabilization.max_speed_xy = max_speed_xy;
 	}
+	
+	if (prog[prog_data_index] & SPEED_Z) {
+		float speedZ = fabs(prog[wi++]);
+		if (speedZ < 1)
+			speedZ = 1;
+		if (speedZ > MAX_VER_SPEED_PLUS)
+			speedZ = MAX_VER_SPEED_PLUS;
 
-	if (prog[prog_data_index] & SPEED_Z){
-		const float speedZ = K01* (int8_t)prog[wi++];
-		
-		if (speedZ >= 0) {
-			max_speedZ_P = max(speedZ, 0.15f);
-			max_speedZ_M = MAX_VER_SPEED_MINUS;
-			if (loadf) {
-				Stabilization.max_speedZ_P = max_speedZ_P;
-				Stabilization.max_speedZ_M = max_speedZ_M;
-			}
-		}
-		else {
-			max_speedZ_P = MAX_VER_SPEED_PLUS;
-			max_speedZ_M = speedZ;
-			if (loadf) {
-				Stabilization.max_speedZ_P = max_speedZ_P;
-				Stabilization.max_speedZ_M = max_speedZ_M;
-			}
+		max_speedZ_P = speedZ;
+		max_speedZ_M = MAX_VER_SPEED_MINUS*(speedZ/ MAX_VER_SPEED_PLUS);
+		if (loadf) {
+			Stabilization.max_speedZ_P = max_speedZ_P;
+			Stabilization.max_speedZ_M = max_speedZ_M;
 		}
 		
-
 		//printf("max speedZ %f\n", speedZ);
 	}
 
@@ -511,20 +499,22 @@ bool ProgClass::add(byte*buf)
 	
 	if (buf[0] & TIMER){
 		prog[pi++] = buf[i++];
-		//printf("timer=%i\n",buf[i-1]);
+		//cout << "timer " << (int)buf[i - 1] << endl;
 	}
 
 	if (buf[0] & SPEED_XY){
 		prog[pi++] = buf[i++];
-		//printf("speedXY=%f\n",K01*buf[i-1]);
+		//cout << "speedXY "<<(int)buf[i - 1] << endl;
 	}
 	if (buf[0] & SPEED_Z){
 		prog[pi++] = buf[i++];
-	    //printf("speedZ=%f\n",K01*(int8_t)buf[i-1]);   
+		//cout <<"speedZ "<< (int)buf[i - 1] << endl;
 	}
 
 	if (buf[0] & LAT_LON){
 		*(uint64_t*)&prog[pi] = *(uint64_t*)&buf[i];
+		//cout << "LAT " << *(int32_t*)& prog[pi] << endl;
+		//cout << "LON " << *(int32_t*)& prog[pi+4] << endl;
 		pi += 8;
 		i += 8;
 	}
@@ -532,32 +522,32 @@ bool ProgClass::add(byte*buf)
 
 	if (buf[0] & DIRECTION){
 		prog[pi++] = buf[i++];
-		//printf("direction=%i\n", buf[i - 1]);
+		//cout << "dirrection " << (int)buf[i - 1] << endl;
 	}
 	
 
 	if (buf[0] & ALTITUDE){
-		*(uint64_t*)&prog[pi] = *(uint64_t*)&buf[i];
+		*(uint16_t*)&prog[pi] = *(uint16_t*)&buf[i];
 		pi += 2;
 		i += 2;
-		//printf("alt %i\n", buf[i-2]|(buf[i-1]<<8));
+		//cout << "altitude " << (int) *(uint16_t*)& buf[i - 2] << endl;
 
 	}
 
 	if (buf[0] & CAMERA_ANGLE){
 		prog[pi++] = buf[i++];
-		//printf("camera angle=%i\n", buf[i - 1]);
+		//cout << "cam_angle " << (int)buf[i - 1] << endl;
 	}
 
 	if (buf[0] & DO_ACTION){
 		prog[pi++] = buf[i++];
-		printf("action=%i\n",buf[i-1]);
+		//cout << "action " << (int)buf[i - 1] << endl;
 	}
 
 	if (steps_count == 0){
 		prog_steps_count_must_be = *(uint16_t*)&buf[i];
 		i+=2;
-		cout << "prog steps=" << prog_steps_count_must_be << "\t"<<Mpu.timed << endl;
+		//cout << "prog steps=" << prog_steps_count_must_be << "\t"<<Mpu.timed << endl;
 	}
 	
 	prog_data_size = pi;

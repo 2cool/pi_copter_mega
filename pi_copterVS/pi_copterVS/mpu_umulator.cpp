@@ -281,18 +281,18 @@ void EmuClass::update(const float fm_[4], double dt) {
 
 
 			if (w[i][0] >= 0 && w[i][3] >= 0) {
-				w03[i] = min(w[i][0], w[i][3]);
+				w03[i] = fmin(w[i][0], w[i][3]);
 			}
 			else if (w[i][0] < 0 && w[i][3] < 0) {
-				w03[i] = max(w[i][0], w[i][3]);
+				w03[i] = fmax(w[i][0], w[i][3]);
 			}
 			else
 				w03[i] = 0;
 			if (w[i][1] >= 0 && w[i][2] >= 0) {
-				w12[i] = min(w[i][1], w[i][2]);
+				w12[i] = fmin(w[i][1], w[i][2]);
 			}
 			else if (w[i][1] < 0 && w[i][2] < 0) {
-				w12[i] = max(w[i][1], w[i][2]);
+				w12[i] = fmax(w[i][1], w[i][2]);
 			}
 			else
 				w12[i] = 0;
@@ -317,9 +317,9 @@ void EmuClass::update(const float fm_[4], double dt) {
 
 
 
-	gyro_res[YAW] = gyro[YAW] * abs(gyro[YAW])*f_gyro_k[Z];
-	gyro_res[ROLL] = gyro[ROLL] * abs(gyro[ROLL])*f_gyro_k[X];
-	gyro_res[PITCH] = gyro[PITCH] * abs(gyro[PITCH])*f_gyro_k[Y];
+	gyro_res[YAW] = gyro[YAW] * fabs(gyro[YAW])*f_gyro_k[Z];
+	gyro_res[ROLL] = gyro[ROLL] * fabs(gyro[ROLL])*f_gyro_k[X];
+	gyro_res[PITCH] = gyro[PITCH] * fabs(gyro[PITCH])*f_gyro_k[Y];
 
 
 
@@ -380,9 +380,9 @@ void EmuClass::update(const float fm_[4], double dt) {
 	speed[Y] += acc[Y] * dt;
 	speed[Z] += acc[Z] * dt;
 
-	resistenceF[X] = speed[X] * abs(speed[X]) * f_speed_k[X];
-	resistenceF[Y] = speed[Y] * abs(speed[Y]) * f_speed_k[Y];
-	resistenceF[Z] = speed[Z] * abs(speed[Z]) * f_speed_k[Z];
+	resistenceF[X] = speed[X] * fabs(speed[X]) * f_speed_k[X];
+	resistenceF[Y] = speed[Y] * fabs(speed[Y]) * f_speed_k[Y];
+	resistenceF[Z] = speed[Z] * fabs(speed[Z]) * f_speed_k[Z];
 
 	pos[X] += speed[X] * dt;
 	pos[Y] += speed[Y] * dt;

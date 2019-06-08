@@ -37,9 +37,9 @@ $
 * i2c_write(uint8_t slave_addr, uint8_t reg_addr, uint8_t length, uint8_t const *data)
 * i2c_read(uint8_t slave_addr, uint8_t reg_addr, uint8_t length, uint8_t *data)
 * delay_ms(uint32_t num_ms)
-* min(int a, int b)
+* fmin(int a, int b)
 */
-#define min(a,b) ((a)<(b)?(a):(b))
+
 #define i2c_write   writeBytes
 #define i2c_read(a,b,c,d)    (readBytes(a,b,c,d)!=-1?0:1)
 #define delay_ms(a)    usleep(a*1000)
@@ -1332,7 +1332,7 @@ uint8_t mpu_set_sample_rate(uint16_t rate)
 		st.chip_cfg.sample_rate = 1000 / (1 + data);
 
 #ifdef AK89xx_SECONDARY
-		mpu_set_compass_sample_rate(min(st.chip_cfg.compass_sample_rate, MAX_COMPASS_SAMPLE_RATE));
+		mpu_set_compass_sample_rate(fmin(st.chip_cfg.compass_sample_rate, MAX_COMPASS_SAMPLE_RATE));
 #endif
 
 		/* Automatically set LPF to 1/2 sampling rate. */
@@ -2332,7 +2332,7 @@ uint8_t mpu_load_firmware(uint16_t length, const uint8_t *firmware,
 		return 1;
 	for (ii = 0; ii < length; ii += this_write)
 	{
-		this_write = min(LOAD_CHUNK, length - ii);
+		this_write = fmin(LOAD_CHUNK, length - ii);
 		for (jj = 0; jj < LOAD_CHUNK; jj++) pgm_buf[jj] = firmware[ii + jj];//pgm_read_byte(firmware + ii + jj);
 		if (mpu_write_mem(ii, this_write, pgm_buf))
 			return 1;

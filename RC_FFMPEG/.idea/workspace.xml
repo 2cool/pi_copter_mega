@@ -6,56 +6,38 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="FPV" />
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="UPADD" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b79624cd-cb7a-47df-b554-aa6316b37993" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../fpv/fpv/bin/ARM/Debug/fpv.out" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/bin/ARM/Debug/fpv.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fpv/fpv/fpv.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/fpv.vcxproj.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../fpv/fpv/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fpv/fpv/obj/ARM/Debug/LastRemoteTarget.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/obj/ARM/Debug/LastRemoteTarget.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../fpv/fpv/obj/ARM/Debug/fpv.log" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/obj/ARM/Debug/fpv.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fpv/fpv/obj/ARM/Debug/fpv.tlog/compile.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/obj/ARM/Debug/fpv.tlog/compile.write.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fpv/fpv/obj/ARM/Debug/fpv.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/obj/ARM/Debug/fpv.tlog/link.write.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Autopilot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Autopilot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Balance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Balance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Location.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Location.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/MS5611.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/MS5611.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Prog.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Prog.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Prog.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Prog.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Stabilization.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Stabilization.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Telemetry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Telemetry.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/WProgram.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/WProgram.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/commander.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/commander.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/define.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/define.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/inv_mpu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/inv_mpu.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu_umulator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu_umulator.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.LinkUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.LinkUpToDateFile.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/bin/ARM/Debug/pi_copter_wifi.out" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/bin/ARM/Debug/pi_copter_wifi.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-11341636.CompileUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-11341636.CopySourcesUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-11341636.LinkUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-11341636.Local_Remote_PathMapping.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-11341636.RemoteProjectDirFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-1922555431.CompileUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-1922555431.CopySourcesUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-1922555431.LinkUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-1922555431.Local_Remote_PathMapping.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-1922555431.RemoteProjectDirFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-263017476.Local_Remote_PathMapping.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/-263017476.Local_Remote_PathMapping.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/296911998.CompileUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/296911998.CopySourcesUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/296911998.LinkUpToDateFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/296911998.Local_Remote_PathMapping.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/296911998.RemoteProjectDirFile.tlog" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/pi_copter_wifi.Build.CppClean.log" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copter_wifi/pi_copter_wifi/obj/ARM/Debug/pi_copter_wifi.Build.CppClean.log" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -73,19 +55,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3410">
-              <caret line="353" column="9" selection-start-line="353" selection-start-column="9" selection-end-line="353" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Img_button.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="29" column="16" selection-start-line="29" selection-start-column="16" selection-end-line="29" selection-end-column="16" />
+            <state relative-caret-position="4267">
+              <caret line="256" column="22" selection-start-line="256" selection-start-column="22" selection-end-line="256" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -93,17 +66,29 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4896">
-              <caret line="288" column="41" selection-start-line="288" selection-start-column="33" selection-end-line="288" selection-end-column="41" />
+            <state relative-caret-position="1802">
+              <caret line="106" column="28" selection-start-line="106" selection-start-column="28" selection-end-line="106" selection-end-column="28" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="210" column="7" selection-start-line="210" selection-start-column="7" selection-end-line="210" selection-end-column="7" />
+            <state relative-caret-position="357">
+              <caret line="265" column="35" selection-start-line="265" selection-start-column="35" selection-end-line="265" selection-end-column="35" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4624">
+              <caret line="289" column="15" selection-start-line="289" selection-start-column="8" selection-end-line="289" selection-end-column="15" />
             </state>
           </provider>
         </entry>
@@ -111,55 +96,56 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3655">
-              <caret line="215" selection-start-line="215" selection-end-line="215" />
+            <state relative-caret-position="459">
+              <caret line="126" column="32" selection-start-line="126" selection-start-column="32" selection-end-line="126" selection-end-column="32" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java">
+        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2567">
-              <caret line="156" column="22" selection-start-line="156" selection-start-column="22" selection-end-line="156" selection-end-column="22" />
+            <state relative-caret-position="17">
+              <caret line="72" column="28" selection-start-line="72" selection-start-column="28" selection-end-line="72" selection-end-column="28" />
             </state>
           </provider>
+          <provider editor-type-id="android-designer2" />
         </entry>
       </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>head_less_</find>
-      <find>TIM</find>
-      <find>M_ON_T</find>
-      <find>motors_on_time</find>
-      <find>/</find>
-      <find>track.kml</find>
-      <find>Load log</find>
-      <find>eled_prog</find>
-      <find>CAMERA_ANGLE</find>
-      <find>cam_ang</find>
-      <find>photo</find>
-      <find>fpv</find>
-      <find>fpv_code</find>
-      <find>fpv_zoom</find>
-      <find>photo_</find>
-      <find>fpv_photo_video</find>
-      <find>showMap</find>
-      <find>main_DrawView</find>
-      <find>Override</find>
-      <find>main_onDraw</find>
-      <find>DrawView.fpv_.set</find>
-      <find>playVideo</find>
-      <find>DrawView.fpv_.set(false);</find>
-      <find>FFUtils</find>
-      <find>startFPV_Video</find>
-      <find>fpv_start_stop</find>
       <find>DrawView.fpv_.set(false)</find>
       <find>reopen_fpv=DrawView.fpv_.is_pressed();</find>
       <find>fpv_</find>
       <find>startActivity</find>
+      <find>GeoDot</find>
+      <find>edit</find>
+      <find>sProg</find>
+      <find>active</find>
+      <find>action</find>
+      <find>timer</find>
+      <find>drawDot</find>
+      <find>selectedDot</find>
+      <find>speedProgress</find>
+      <find>vspeedProgress</find>
+      <find>speed</find>
+      <find>speed_</find>
+      <find>LED6</find>
+      <find>PHOTO_360</find>
+      <find>6</find>
+      <find>textX</find>
+      <find>fullTime</find>
+      <find>ib_add</find>
+      <find>dDist</find>
+      <find>distance</find>
+      <find>distance_</find>
+      <find>addDot_</find>
+      <find>bearing</find>
+      <find>dAlt</find>
+      <find>tx</find>
+      <find>ib_edit</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -171,15 +157,16 @@
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Monitor.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java" />
-        <option value="$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/widget/FFVideoView.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Settings.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java" />
+        <option value="$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" />
       </list>
     </option>
   </component>
@@ -195,6 +182,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -216,31 +206,18 @@
             <path>
               <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ffplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="myTools" type="462c0819:PsiDirectoryNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
             </path>
             <path>
               <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ffplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="RC_FFMPEG" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="ffplayer" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="widget" type="462c0819:PsiDirectoryNode" />
+              <item name="res" type="d4f16f75:AndroidResFolderNode" />
+              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -349,7 +326,7 @@
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.15085287" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.15085287" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -364,7 +341,7 @@
       <window_info anchor="bottom" id="Terminal" order="4" weight="0.32978722" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="6" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Build" order="7" weight="0.44870564" />
+      <window_info anchor="bottom" id="Build" order="7" visible="true" weight="0.3835091" />
       <window_info anchor="bottom" id="Find" order="8" />
       <window_info anchor="bottom" id="Android Profiler" order="9" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
@@ -373,8 +350,26 @@
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info anchor="right" id="Assistant" order="5" weight="0.16902314" />
-      <window_info anchor="right" id="Preview" order="6" />
+      <window_info anchor="right" id="Preview" order="6" weight="0.32995737" />
     </layout>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java</url>
+          <line>39</line>
+          <properties />
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java</url>
+          <line>459</line>
+          <properties />
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Joystick.java">
@@ -391,13 +386,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2011">
-          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Disk.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="349">
@@ -405,36 +393,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-172">
-          <caret line="231" column="47" selection-start-line="231" selection-start-column="47" selection-end-line="231" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/test.xml">
-      <provider selected="true" editor-type-id="android-designer2" />
       <provider editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="179" column="31" selection-start-line="179" selection-start-column="31" selection-end-line="179" selection-end-column="31" />
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/LogReader.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="42" column="34" selection-start-line="42" selection-start-column="25" selection-end-line="42" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
         </state>
       </provider>
     </entry>
@@ -484,6 +450,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="210" column="7" selection-start-line="210" selection-start-column="7" selection-end-line="210" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Img_button.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
@@ -491,38 +464,68 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="353" column="9" selection-start-line="353" selection-start-column="9" selection-end-line="353" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2494">
+          <caret line="231" column="47" selection-start-line="231" selection-start-column="47" selection-end-line="231" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/InetMaps.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2738" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4896">
-          <caret line="288" column="41" selection-start-line="288" selection-start-column="33" selection-end-line="288" selection-end-column="41" />
+        <state relative-caret-position="1802">
+          <caret line="106" column="28" selection-start-line="106" selection-start-column="28" selection-end-line="106" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4624">
+          <caret line="289" column="15" selection-start-line="289" selection-start-column="8" selection-end-line="289" selection-end-column="15" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3655">
-          <caret line="215" selection-start-line="215" selection-end-line="215" />
+        <state relative-caret-position="459">
+          <caret line="126" column="32" selection-start-line="126" selection-start-column="32" selection-end-line="126" selection-end-column="32" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="72" column="28" selection-start-line="72" selection-start-column="28" selection-end-line="72" selection-end-column="28" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2567">
-          <caret line="156" column="22" selection-start-line="156" selection-start-column="22" selection-end-line="156" selection-end-column="22" />
+        <state relative-caret-position="4267">
+          <caret line="256" column="22" selection-start-line="256" selection-start-column="22" selection-end-line="256" selection-end-column="22" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3410">
-          <caret line="353" column="9" selection-start-line="353" selection-start-column="9" selection-end-line="353" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="210" column="7" selection-start-line="210" selection-start-column="7" selection-end-line="210" selection-end-column="7" />
+        <state relative-caret-position="357">
+          <caret line="265" column="35" selection-start-line="265" selection-start-column="35" selection-end-line="265" selection-end-column="35" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
