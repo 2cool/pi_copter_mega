@@ -128,6 +128,7 @@
             android:layout_row="7"
             android:layout_column="0"
             android:max="300"
+            android:min="15"
             android:layout_columnSpan="3" />
 
         <EditText

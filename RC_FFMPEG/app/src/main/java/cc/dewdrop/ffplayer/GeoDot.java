@@ -4,13 +4,13 @@ package cc.dewdrop.ffplayer;
  * Created by igor on 8/21/2016.
  */
 public class GeoDot {
-
+    static public final int LED0=0,LED1=1,LED2=2,LED3=3,LED4=4,LED5=5,LED6=6,PHOTO=7,START_VIDEO=8,STOP_VIDEO=9,PHOTO_360=10,NOTHING=11;
     static public final int LAT_LON = 1, DIRECTION = 2, ALTITUDE = 4,  CAMERA_ANGLE = 8, TIMER = 16,SPEED_XY=32,SPEED_Z=64, DO_ACTION =128;
 
     public int index;
     public double tx,ty;
     public double alt,direction,timer_,cam_ang,dDist,dAlt;
-    public int action_;
+    public int action_, cam_zoom =0;
     double speed=0,speedZ=0;
     public int lat,lon;
 
@@ -25,7 +25,7 @@ public class GeoDot {
                 Math.PI / 2)/ (Math.PI / 180.0);
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    GeoDot(int index, double tx, double ty,double _timer,double _alt, double _dir, double _cam_ang,double dDist,double dAlt, double speed, double speedZ,int action){
+    GeoDot(int index, double tx, double ty,double _timer,double _alt, double _dir, double _cam_ang,double dDist,double dAlt, double speed, double speedZ,int action, int zoom){
         this.index=index;
         this.tx=tx;
         this.ty=ty;
@@ -41,6 +41,7 @@ public class GeoDot {
         this.speed=speed;
         this.speedZ=speedZ;
         this.action_ = action;
+        this.cam_zoom=zoom;
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     GeoDot(String str){
@@ -215,6 +216,8 @@ public class GeoDot {
             old_action = action_;
             prog_mask|= DO_ACTION;
             buf[i++]=(byte) action_;
+            if (action_>=PHOTO && action_<=PHOTO_360)
+                buf[i++]=50;//(byte) (this.cam_zoom&255);
         }
 
 

@@ -49,13 +49,40 @@ shmPTR->fpv_code = *(int16_t*)(buf + i);
 
 
 
+long zoom_time=0;
+uint8_t zoom_cam, old_zoom = -1, old_zoom1 = -1;
 
-
-void ProgClass::takePhoto() {
-	shmPTR->fpv_code = 769;
-//769
+bool zoom_control() {
+	if (zoom_time > 0 && millis() < zoom_time)
+		return true;
+	if (zoom_cam != old_zoom1) {
+		shmPTR->fpv_zoom = zoom_cam+1;
+		shmPTR->fpv_code = 0;
+		cout << "do_zoom "<< (int)zoom_cam<<endl;
+		old_zoom1 = zoom_cam;
+		zoom_time = millis() + 5000;
+		return true;
+	}
+	zoom_time = 0;
+	return false;
 }
+bool ProgClass::do_cam_action(const uint16_t code) {
+	if (zoom_control() == false) {
+		shmPTR->fpv_code = code;
+		cout << "do_action " << code << endl;
+		return false;
+	}
+	else
+		return true;
+}
+bool ProgClass::takePhoto() { return do_cam_action(769); }
+	
+bool ProgClass::startVideo() {return do_cam_action(513);}
+bool ProgClass::stopVideo()  {return do_cam_action(514);}
 
+
+
+void ProgClass::cameraZoom() { shmPTR->fpv_code = zoom_cam; }
 
 
 void ProgClass::takePhoto360() {
@@ -69,21 +96,22 @@ void ProgClass::takePhoto360() {
 		return;
 	}
 	if (millis() >= cam_time) {
-		takePhoto();
-		Autopilot.setYaw(cam_yaw);
-		cam_time = millis() + 4000;
-		cam_yaw += 22.5;
-		if (cam_yaw > 360) {
-			if (cam_pitch == 0) {
-				cam_yaw = 0;
-				cam_pitch += 30;
-				Autopilot.setYaw(cam_yaw);
-				Autopilot.set_gimBalPitch(cam_pitch);
-				cam_time = millis() + 6000;
-			}
-			else {
-				cam_time = 0;
-				do_action = false;
+		if (takePhoto() == false) {
+			Autopilot.setYaw(cam_yaw);
+			cam_time = millis() + 4000;
+			cam_yaw += 22.5;
+			if (cam_yaw > 360) {
+				if (cam_pitch == 0) {
+					cam_yaw = 0;
+					cam_pitch += 30;
+					Autopilot.setYaw(cam_yaw);
+					Autopilot.set_gimBalPitch(cam_pitch);
+					cam_time = millis() + 6000;
+				}
+				else {
+					cam_time = 0;
+					do_action = false;
+				}
 			}
 		}
 	}
@@ -97,17 +125,13 @@ void ProgClass::Do_Action() {
 	else 
 		switch (action) {
 			case PHOTO:
-				takePhoto();
-				do_action = false;
+				do_action=takePhoto();
 				break;
-			
 			case START_VIDEO:
-				//513
-				do_action = false;
+				do_action=startVideo();
 				break;
 			case STOP_VIDEO:
-				//514
-				do_action = false;
+				do_action = stopVideo();
 				break;
 			case PHOTO360:
 				takePhoto360();
@@ -230,7 +254,9 @@ else
 }
 
 bool ProgClass::start(){
+	old_zoom1=old_zoom = -1;
 	if (Autopilot.program_is_loaded() && program_is_OK()){
+		old_zoom1 = old_zoom = -1;
 		step_index = 0;
 		prog_data_index = 0;
 		time4step2done = 0;
@@ -450,15 +476,28 @@ bool ProgClass::load_next(bool loadf) {
 
 #define TIME2TEKE_PHOTO360 160
 #define TIME2TEKE_PHOTO_OR_START_VIDEO 2
+#define TIME4ZOOM 5
 
 	if (prog[prog_data_index] & DO_ACTION) {
 		action = prog[wi++];
 		do_action =  !(action == DO_NOTHIN);
 		if (do_action) {
-			if (action >= PHOTO && action <= STOP_VIDEO && timer < TIME2TEKE_PHOTO_OR_START_VIDEO)
-				timer = TIME2TEKE_PHOTO_OR_START_VIDEO;
-			if (!loadf && action == PHOTO360 && timer < TIME2TEKE_PHOTO360)
+			if (action >= PHOTO && action <= PHOTO360) {
+				zoom_cam = prog[wi++];
+				cout << "zoom_loaded=" << (int)zoom_cam << endl;
+				if (timer < TIME2TEKE_PHOTO_OR_START_VIDEO)
+					timer = TIME2TEKE_PHOTO_OR_START_VIDEO;
+				
+				if (zoom_cam != old_zoom) {
+					old_zoom = zoom_cam;
+					if (timer < TIME4ZOOM)
+						timer = TIME4ZOOM;
+				}
+			}
+			if (!loadf && action == PHOTO360 && timer < TIME2TEKE_PHOTO360) {
 				timer = TIME2TEKE_PHOTO360;
+			}
+			
 		}
 		else
 			do_action == false; // temp//not used
@@ -540,7 +579,14 @@ bool ProgClass::add(byte*buf)
 	}
 
 	if (buf[0] & DO_ACTION){
-		prog[pi++] = buf[i++];
+		prog[pi] = buf[i++];
+		if (prog[pi] >= PHOTO && prog[pi] <= PHOTO360) {
+			pi++;
+			prog[pi] = buf[i++];
+			cout << "= zoom =" << (int)prog[pi] << endl;
+		}
+		pi++;
+			
 		//cout << "action " << (int)buf[i - 1] << endl;
 	}
 

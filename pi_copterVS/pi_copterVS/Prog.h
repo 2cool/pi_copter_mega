@@ -34,8 +34,11 @@ class ProgClass
 	 float max_speed_xy,timer;
 	 float max_speedZ_P, max_speedZ_M;
 	 void takePhoto360();
-	 void takePhoto();
-
+	 bool takePhoto();
+	 bool startVideo();
+	 bool stopVideo();
+	 void cameraZoom();
+	 bool do_cam_action(const uint16_t code);
 	 void Do_Action();
  public:
 	 bool intersactionFlag;

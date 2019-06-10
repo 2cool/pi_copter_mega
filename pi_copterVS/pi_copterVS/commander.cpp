@@ -277,7 +277,7 @@ bool CommanderClass::input(){
 					mega_i2c.beep_code(B_COMMAND_RECEIVED);
 				}
 				else if (msg.find(m_FPV) == 0) {
-					cout << "FPV\n";
+					//cout << "FPV\n";
 					shmPTR->fpv_adr = *(buf+i++);
 					shmPTR->fpv_port = *(int16_t*)(buf + i);
 					i += 2;

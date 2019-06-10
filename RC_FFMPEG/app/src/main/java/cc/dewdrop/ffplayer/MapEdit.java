@@ -15,7 +15,11 @@ import android.widget.TextView;
 /**
  * Created by igor on 8/26/2016.
  */
+
+
 public class MapEdit extends Activity {
+
+
     static public boolean active=false;
     private EditText e_Prog, eTimer,eSpeed,eVSpeed,eAltitude,eCamAng;
     static private SeekBar sTimer, sSpeed, sVSpeed,sAltitude,sCamAng, sProg;
@@ -148,11 +152,15 @@ public class MapEdit extends Activity {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-                   // Programmer.timer=progress;
-                    Programmer.timer=progress;
-                    Programmer.dot[DrawMap.selectedDot].timer_=progress;
-                    Update();
-                    Programmer.timer=0;
+                    if (Programmer.dot[DrawMap.selectedDot].action_!=GeoDot.PHOTO_360) {
+                        Programmer.timer = progress;
+                        Programmer.action_ = Programmer.dot[DrawMap.selectedDot].action_;
+
+                        Programmer.dot[DrawMap.selectedDot].timer_ = progress;
+                        Update();
+                        Programmer.timer = 0;
+                        Programmer.action_ = GeoDot.LED6;
+                    }
                 }
                 inListener--;
             }
@@ -193,17 +201,24 @@ public class MapEdit extends Activity {
                 if (++inListener==1) {
                     Programmer.action_=progress;
                     Programmer.dot[DrawMap.selectedDot].action_=progress;
-                    if (progress==Programmer.PHOTO_360) {
+                    if (progress==GeoDot.PHOTO_360) {
                         if (Programmer.dot[DrawMap.selectedDot].timer_ < 120) {
                             Programmer.timer = 120;
                             Programmer.dot[DrawMap.selectedDot].timer_ = 120;
                         }
                     }else{
-                        Programmer.timer = 0;
-                        Programmer.dot[DrawMap.selectedDot].timer_ = 0;
+                        if (progress>=GeoDot.PHOTO && progress<=GeoDot.STOP_VIDEO) {
+                            Programmer.timer = 5;
+                            Programmer.dot[DrawMap.selectedDot].timer_ = 5;
+                        }else{
+                            Programmer.timer = 0;
+                            Programmer.dot[DrawMap.selectedDot].timer_ = 0;
+                        }
+
                     }
                     Update();
-                    Programmer.action_=Programmer.LED6;
+                    Programmer.timer = 0;
+                    Programmer.action_=GeoDot.LED6;
                 }
                 inListener--;
             }

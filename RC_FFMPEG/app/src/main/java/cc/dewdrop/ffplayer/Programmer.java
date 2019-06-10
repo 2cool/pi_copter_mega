@@ -15,13 +15,13 @@ public class Programmer {
 
 
     static public final String prog_names[]={"led0","led1","led2","led3","led4","led5","led6","photo","start video","stop video","360photo","nothing1"};
-    static public final int LED0=0,LED1=1,LED2=2,LED3=3,LED4=4,LED5=5,LED6=6,PHOTO=7,START_VIDEO=8,STOP_VIDEO=9,PHOTO_360=10,NOTHING=11;
+
 
     public static int timer=0;
     public static double speed_=10,speedZ_=5;
    // static final public double maxSpeed=10,maxUpSpeed=5,maxDownSpeed=-3;
-    static public int cam_ang=35;
-    static public int action_=LED6;
+    static public int cam_ang=35,cam_zoom=50;
+    static public int action_=GeoDot.LED6;
     static double fullDist;
     public static double direction = 0;
     static public double altitude=50,distance;
@@ -88,7 +88,7 @@ public class Programmer {
             speed_=10;
             speedZ_=5;
             cam_ang=35;
-            action_=LED6;
+            action_=GeoDot.LED6;
         }
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -149,7 +149,7 @@ public class Programmer {
        // speed=maxSpeed*speedHK;
        // speedZ=speedVK*((altitude-oldAltitude>0)?maxUpSpeed:maxDownSpeed);
         altitude=alt;
-        GeoDot d=new GeoDot(progSize,x,y,timer,altitude,direction,cam_ang,distance,altitude-oldAltitude,speed_, speedZ_, _action);
+        GeoDot d=new GeoDot(progSize,x,y,timer,altitude,direction,cam_ang,distance,altitude-oldAltitude,speed_, speedZ_, _action,cam_zoom);
 
         return d;
     }

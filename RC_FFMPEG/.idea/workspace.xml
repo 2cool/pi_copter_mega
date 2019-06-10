@@ -12,7 +12,18 @@
   <component name="ChangeListManager">
     <list default="true" id="b79624cd-cb7a-47df-b554-aa6316b37993" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Prog.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Prog.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Prog.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Prog.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/commander.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/commander.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/define.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/define.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,8 +43,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3842">
-              <caret line="256" column="22" selection-start-line="256" selection-start-column="22" selection-end-line="256" selection-end-column="22" />
+            <state relative-caret-position="188">
+              <caret line="151" column="137" selection-start-line="151" selection-start-column="129" selection-end-line="151" selection-end-column="137" />
             </state>
           </provider>
         </entry>
@@ -41,17 +52,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
+            <state relative-caret-position="1624">
               <caret line="106" column="28" selection-start-line="106" selection-start-column="28" selection-end-line="106" selection-end-column="28" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="101" column="60" selection-start-line="101" selection-start-column="60" selection-end-line="101" selection-end-column="60" />
+            <state relative-caret-position="349">
+              <caret line="157" selection-start-line="157" selection-end-line="157" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -71,17 +82,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2142">
-              <caret line="126" column="32" selection-start-line="126" selection-start-column="32" selection-end-line="126" selection-end-column="32" />
+            <state relative-caret-position="411">
+              <caret line="219" column="30" selection-start-line="219" selection-start-column="30" selection-end-line="219" selection-end-column="30" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="129" column="28" selection-start-line="129" selection-start-column="28" selection-end-line="129" selection-end-column="28" />
+            <state relative-caret-position="309">
+              <caret line="130" column="27" selection-start-line="130" selection-start-column="27" selection-end-line="130" selection-end-column="27" />
             </state>
           </provider>
           <provider editor-type-id="android-designer2" />
@@ -91,10 +102,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>DrawView.fpv_.set(false)</find>
-      <find>reopen_fpv=DrawView.fpv_.is_pressed();</find>
-      <find>fpv_</find>
-      <find>startActivity</find>
       <find>GeoDot</find>
       <find>edit</find>
       <find>sProg</find>
@@ -108,7 +115,6 @@
       <find>speed</find>
       <find>speed_</find>
       <find>LED6</find>
-      <find>PHOTO_360</find>
       <find>6</find>
       <find>textX</find>
       <find>fullTime</find>
@@ -121,6 +127,11 @@
       <find>dAlt</find>
       <find>tx</find>
       <find>ib_edit</find>
+      <find>PHOTO_360</find>
+      <find>LED2</find>
+      <find>action_</find>
+      <find>STOP_VIDEO</find>
+      <find>cam_zoom</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -140,8 +151,8 @@
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" />
       </list>
     </option>
   </component>
@@ -299,7 +310,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.15085287" />
@@ -326,18 +336,12 @@
       <window_info anchor="right" id="Theme Preview" order="3" />
       <window_info anchor="right" id="Palette&#9;" order="4" />
       <window_info anchor="right" id="Assistant" order="5" weight="0.16902314" />
-      <window_info active="true" anchor="right" id="Preview" order="6" visible="true" weight="0.32995737" />
+      <window_info anchor="right" id="Preview" order="6" weight="0.32995737" />
     </layout>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java</url>
-          <line>39</line>
-          <properties />
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java</url>
           <line>459</line>
@@ -466,44 +470,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2142">
-          <caret line="126" column="32" selection-start-line="126" selection-start-column="32" selection-end-line="126" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
+        <state relative-caret-position="1624">
           <caret line="106" column="28" selection-start-line="106" selection-start-column="28" selection-end-line="106" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Programmer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3842">
-          <caret line="256" column="22" selection-start-line="256" selection-start-column="22" selection-end-line="256" selection-end-column="22" />
+        <state relative-caret-position="188">
+          <caret line="151" column="137" selection-start-line="151" selection-start-column="129" selection-end-line="151" selection-end-column="137" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/GeoDot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="101" column="60" selection-start-line="101" selection-start-column="60" selection-end-line="101" selection-end-column="60" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="411">
+          <caret line="219" column="30" selection-start-line="219" selection-start-column="30" selection-end-line="219" selection-end-column="30" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="129" column="28" selection-start-line="129" selection-start-column="28" selection-end-line="129" selection-end-column="28" />
+        <state relative-caret-position="309">
+          <caret line="130" column="27" selection-start-line="130" selection-start-column="27" selection-end-line="130" selection-end-column="27" />
         </state>
       </provider>
       <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="349">
+          <caret line="157" selection-start-line="157" selection-end-line="157" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
     </entry>
   </component>
 </project>
