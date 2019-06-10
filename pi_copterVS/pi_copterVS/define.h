@@ -54,11 +54,8 @@
 //#define ON_MAX_G_MOTORS_OFF
 #endif
 
-#define MAX_HIGHT_ERROR_TO_FALL 100
+//#define MAX_HIGHT_ERROR_TO_FALL 100
 #define MAX_DIST_ERROR_TO_FALL 200
-#define e_TOO_STRONG_WIND "TSW"
-#define e_TOO_HIGHT_FROM_NEED "HFN"
-
 #define NO_GPS_DATA 10
 
 #define MIN_ACUR_HOR_POS_2_START 5
@@ -74,7 +71,7 @@
 
 #define MAX_HOR_SPEED 10
 #define MAX_VER_SPEED_PLUS 5
-#define MAX_VER_SPEED_MINUS -3
+#define MAX_VER_SPEED_MINUS -5
 
 #define ACCURACY_XY 3
 #define ACCURACY_Z 3
@@ -107,7 +104,9 @@
 #define wrap_180(x) (x < -180 ? x+360 : (x > 180 ? x - 360: x))
 #define wrap_PI(x) (x < -PI ? x+TWO_PI : (x > PI ? x - TWO_PI: x))
 
-
+#define e_TOO_STRONG_WIND "TSW"
+//#define e_TOO_HIGHT_FROM_NEED "HFN"
+#define e_BAROMETR_ERROR "BER"
 #define SETTINGS_ARRAY_SIZE 10
 #define SETTINGS_IS_OK 1
 #define SETTINGS_ERROR 0

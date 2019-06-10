@@ -228,7 +228,7 @@ public class DrawMap extends View {
         double x=(double)screenP.x*Math.pow(2,i);
         double y=(double)screenP.y*Math.pow(2,i);
 
-        dist=prog.addDot_(x,y,Programmer.altitude,Programmer.speed_,Programmer.speedZ_,1000,0,6);
+        dist=prog.addDot_(x,y,Programmer.altitude,Programmer.speed_,Programmer.speedZ_,1000,Programmer.timer,Programmer.action_,Programmer.cam_zoom);
         if (dist>=0)
             fullDist+=dist;
         // jTextFieldFullLen.setText(Integer.toString((int)fullDist));

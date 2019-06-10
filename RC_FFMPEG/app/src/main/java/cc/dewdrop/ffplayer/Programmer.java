@@ -20,7 +20,7 @@ public class Programmer {
     public static int timer=0;
     public static double speed_=10,speedZ_=5;
    // static final public double maxSpeed=10,maxUpSpeed=5,maxDownSpeed=-3;
-    static public int cam_ang=35,cam_zoom=50;
+    static public int cam_ang=35,cam_zoom=0;
     static public int action_=GeoDot.LED6;
     static double fullDist;
     public static double direction = 0;
@@ -116,7 +116,7 @@ public class Programmer {
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    static GeoDot add(double x, double y, double alt, double speedHK,double speedVK, double direct,double timer, int _action){
+    static GeoDot add(double x, double y, double alt, double speedHK,double speedVK, double direct,double timer, int _action, int zoom){
         if ( progSize>255) {
             Log.i("MAP","TIMER or SIZE ERROR");
             return null;
@@ -149,13 +149,13 @@ public class Programmer {
        // speed=maxSpeed*speedHK;
        // speedZ=speedVK*((altitude-oldAltitude>0)?maxUpSpeed:maxDownSpeed);
         altitude=alt;
-        GeoDot d=new GeoDot(progSize,x,y,timer,altitude,direction,cam_ang,distance,altitude-oldAltitude,speed_, speedZ_, _action,cam_zoom);
+        GeoDot d=new GeoDot(progSize,x,y,timer,altitude,direction,cam_ang,distance,altitude-oldAltitude,speed_, speedZ_, _action,zoom);
 
         return d;
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    static double addDot_(double x, double y, double altitude, double speedHK, double speedVK, double direct, double timer, int _action){
-        GeoDot gd=add(x,y,altitude,speedHK,speedVK,direct,timer,_action);
+    static double addDot_(double x, double y, double altitude, double speedHK, double speedVK, double direct, double timer, int _action,int zoom){
+        GeoDot gd=add(x,y,altitude,speedHK,speedVK,direct,timer,_action,zoom);
         if (gd==null)
             return -1;
         dot[progSize]=gd;

@@ -21,8 +21,8 @@ public class MapEdit extends Activity {
 
 
     static public boolean active=false;
-    private EditText e_Prog, eTimer,eSpeed,eVSpeed,eAltitude,eCamAng;
-    static private SeekBar sTimer, sSpeed, sVSpeed,sAltitude,sCamAng, sProg;
+    private EditText e_Prog, eTimer,eSpeed,eVSpeed,eAltitude,eCamAng,eZoom;
+    static private SeekBar sTimer, sSpeed, sVSpeed,sAltitude,sCamAng, sProg,sZoom;
     static int inListener=0;
 
 
@@ -86,6 +86,8 @@ public class MapEdit extends Activity {
             sVSpeed.setProgress((int) d.speedZ);
             eAltitude.setText(getNum(d.alt, 2));
             sAltitude.setProgress((int) (d.alt));
+            eZoom.setText(""+d.cam_zoom);
+            sZoom.setProgress(d.cam_zoom);
 
         }
     }
@@ -104,6 +106,8 @@ public class MapEdit extends Activity {
             sVSpeed.setProgress((int) (Programmer.speedZ_));
             eAltitude.setText(getNum(Programmer.altitude, 2));
             sAltitude.setProgress((int) (Programmer.altitude));
+            eZoom.setText(""+Programmer.cam_zoom);
+            sZoom.setProgress(Programmer.cam_zoom);
 
     }
 
@@ -118,31 +122,56 @@ public class MapEdit extends Activity {
 
 
         ((TextView)findViewById(R.id.textViewDistance)).setText(Integer.toString((int)Programmer.distance)+" m.");
-        eTimer=(EditText)findViewById(R.id.editTextTimer);
+        eTimer=findViewById(R.id.editTextTimer);
         eTimer.setEnabled(false);
-        sTimer=(SeekBar)findViewById(R.id.seekBarTimer);
+        sTimer=findViewById(R.id.seekBarTimer);
         // sTimer.setEnabled(false);
 
-        eCamAng=(EditText)findViewById(R.id.editTextCamAng);
+        eCamAng=findViewById(R.id.editTextCamAng);
         eCamAng.setEnabled(false);
-        sCamAng=(SeekBar)findViewById(R.id.seekBarCamAng);
-        sProg =(SeekBar)findViewById(R.id.s_prog);
-        e_Prog =(EditText)findViewById(R.id.e_prog);
+        sCamAng=findViewById(R.id.seekBarCamAng);
+        sProg =findViewById(R.id.s_prog);
+        e_Prog =findViewById(R.id.e_prog);
         e_Prog.setEnabled(false);
-        eSpeed=(EditText)findViewById(R.id.editTextSpeed);
+        eSpeed=findViewById(R.id.editTextSpeed);
 
         eSpeed.setEnabled(false);
-        sSpeed=(SeekBar)findViewById(R.id.seekBarSpeed);
+        sSpeed=findViewById(R.id.seekBarSpeed);
         sSpeed.setProgress(100);
-        eVSpeed=(EditText)findViewById(R.id.editTextVerSpeed);
+        eVSpeed=findViewById(R.id.editTextVerSpeed);
         eVSpeed.setEnabled(false);
-        sVSpeed=(SeekBar)findViewById(R.id.seekBarVerSpeed);
+        sVSpeed=findViewById(R.id.seekBarVerSpeed);
         sVSpeed.setProgress(100);
-        eAltitude=(EditText)findViewById(R.id.editTextAltitude);
+        eAltitude=findViewById(R.id.editTextAltitude);
         eAltitude.setEnabled(false);
-        sAltitude=(SeekBar)findViewById(R.id.seekBarAltitude);
+        sAltitude=findViewById(R.id.seekBarAltitude);
+        eZoom=findViewById(R.id.e_zoom);
+        eZoom.setEnabled(false);
+        sZoom=findViewById(R.id.s_zoom);
+
+
         update(DrawMap.selectedDot);
-//-----------------------------------
+
+        //---------------------------------------------------------------------
+        sZoom.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+                // TODO Auto-generated method stub
+                if (++inListener==1) {
+                    Programmer.cam_zoom=progress;
+                    Programmer.dot[DrawMap.selectedDot].cam_zoom=progress;
+                    Update();
+                }
+                inListener--;
+            }
+        });
+//---------------------------------------------------------------------
         sTimer.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -183,8 +212,6 @@ public class MapEdit extends Activity {
                     Programmer.dot[DrawMap.selectedDot].alt=progress;
                     Programmer.dot[DrawMap.selectedDot].dAlt-=old_alt-progress;
                     Update();
-                    if (DrawMap.selectedDot<Programmer.progSize-1)
-                        Programmer.altitude=Programmer.dot[Programmer.progSize-1].alt;
                 }
                 inListener--;
             }
@@ -236,8 +263,7 @@ public class MapEdit extends Activity {
                     Programmer.cam_ang=(progress-10);
                     Programmer.dot[DrawMap.selectedDot].cam_ang=(progress-10);
                     Update();
-                    if (DrawMap.selectedDot<Programmer.progSize-1)
-                        Programmer.cam_ang=(int)Programmer.dot[Programmer.progSize-1].cam_ang;
+
                 }
                 inListener--;
             }
@@ -257,8 +283,6 @@ public class MapEdit extends Activity {
                     Programmer.dot[DrawMap.selectedDot].speed=progress;
                     Programmer.speed_=progress;
                     Update();
-                    if (DrawMap.selectedDot<Programmer.progSize-1)
-                        Programmer.speed_=(int)Programmer.dot[Programmer.progSize-1].speed;
                 }
                 inListener--;
 
@@ -282,34 +306,13 @@ public class MapEdit extends Activity {
                     Programmer.dot[DrawMap.selectedDot].speedZ=progress;
                     Programmer.speedZ_=progress;
                     Update();
-                    if (DrawMap.selectedDot<Programmer.progSize-1)
-                        Programmer.speedZ_=(int)Programmer.dot[Programmer.progSize-1].speedZ;
                 }
                 inListener--;
 
             }
         });
 //--------------------------------------------------------------------------------------
-      /*  eCamAng.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (++inListener==1) {
-                    String st=s.toString();
-                    if (st.length()>0 && !st.equals("-")) {
-                        Programmer.cam_ang = Integer.parseInt(st);
-                        if (Programmer.cam_ang<-90)
-                            Programmer.cam_ang=-90;
-                        else
-                        if (Programmer.cam_ang>10)
-                            Programmer.cam_ang=10;
-                        Programmer.dot[DrawMap.selectedDot].cam_ang=Programmer.cam_ang;
-                    }
-                }
-                inListener--;
 
-            }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        });*/
     }
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

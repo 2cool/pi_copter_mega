@@ -47,7 +47,7 @@ public class GeoDot {
     GeoDot(String str){
         String s[]=str.split(",");
         int i=0;
-        if (s.length==12) {
+        if (s.length==13) {
             index = Integer.parseInt(s[i++]);
             tx = Integer.parseInt(s[i++]);
             ty = Integer.parseInt(s[i++]);
@@ -64,25 +64,27 @@ public class GeoDot {
          //   speed *= 0.1;
             speedZ = Integer.parseInt(s[i++]);
           //  speedZ *= 0.1;
-            action_=Integer.parseInt(s[i++]);// = (s.length > i) ? action = Integer.parseInt(s[i++]) : 6;
+            action_=Integer.parseInt(s[i++]);
+            cam_zoom=Integer.parseInt(s[i++]);
         }else
             this.index=-1;
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     public String toString(){
         String s="";
-        s+=Integer.toString(index)+",";
-        s+=Integer.toString((int)tx)+",";
-        s+=Integer.toString((int)ty)+",";
-        s+=Integer.toString((int)alt)+",";
-        s+=Integer.toString((int)direction)+",";
-        s+=Integer.toString((int)timer_)+",";
-        s+=Integer.toString((int)cam_ang)+",";
-        s+=Integer.toString((int)dDist)+",";
-        s+=Integer.toString((int)dAlt)+",";
-        s+=Integer.toString((int)(speed))+",";
-        s+=Integer.toString((int)(speedZ))+",";
-        s+=Integer.toString((int) action_);
+        s+=index+",";
+        s+=(int)tx+",";
+        s+=(int)ty+",";
+        s+=(int)alt+",";
+        s+=(int)direction+",";
+        s+=(int)timer_+",";
+        s+=(int)cam_ang+",";
+        s+=(int)dDist+",";
+        s+=(int)dAlt+",";
+        s+=(int)speed+",";
+        s+=(int)speedZ+",";
+        s+=action_+",";
+        s+=cam_zoom;
         return s;
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -217,7 +219,7 @@ public class GeoDot {
             prog_mask|= DO_ACTION;
             buf[i++]=(byte) action_;
             if (action_>=PHOTO && action_<=PHOTO_360)
-                buf[i++]=50;//(byte) (this.cam_zoom&255);
+                buf[i++]=(byte) (this.cam_zoom&255);
         }
 
 

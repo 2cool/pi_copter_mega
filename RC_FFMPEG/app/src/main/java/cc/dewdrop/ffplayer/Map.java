@@ -141,9 +141,9 @@ public class Map extends Activity {
         DrawMap.screenP.x=settings.getInt("screenPX",0);
         DrawMap.screenP.y=settings.getInt("screenPY",0);
         DrawMap.type=settings.getInt("mapName",7);
-        String s=settings.getString("program","");
+        String s=settings.getString("program1","");
         if (s.length()>10)
-            Programmer.load(s);
+           Programmer.load(s);
 
         drawmap = new DrawMap(Map.this);
         drawmap.setBackgroundColor(Color.WHITE);
@@ -163,7 +163,7 @@ public class Map extends Activity {
         editor.putInt("screenPX",DrawMap.screenP.x);
         editor.putInt("screenPY",DrawMap.screenP.y);
         editor.putInt("mapName",DrawMap.type);
-        editor.putString("program",Programmer.get());
+        editor.putString("program1",Programmer.get());
         editor.commit();
 
     }
