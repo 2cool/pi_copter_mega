@@ -24,7 +24,6 @@
 //#define XY_SAFE_AREA 200
 //#define Z_SAFE_AREA 40
 
-
 #define MAX_ACC 7
 //#define DEBUG_MODE
 #define GPS_ALT_MAX_ERROR 30
@@ -36,9 +35,6 @@
 #define pwm_MAX_THROTTLE 32000
 #define pwm_OFF_THROTTLE 16000
 #define  ARDUINO_ADDR 9
-
-
-
 
 //#define FASLE_GPS_STILL
 //#define NO_BATTERY

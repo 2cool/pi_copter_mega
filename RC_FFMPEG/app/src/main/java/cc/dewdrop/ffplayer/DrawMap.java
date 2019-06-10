@@ -228,7 +228,7 @@ public class DrawMap extends View {
         double x=(double)screenP.x*Math.pow(2,i);
         double y=(double)screenP.y*Math.pow(2,i);
 
-        dist=prog.addDot_(x,y,Programmer.altitude,Programmer.speed_,Programmer.speedZ_,1000,Programmer.timer,Programmer.action_,Programmer.cam_zoom);
+        dist=prog.addDot_(x,y,Programmer.altitude,Programmer.speed_,Programmer.speedZ_,1000,0,GeoDot.LED6,Programmer.cam_zoom);
         if (dist>=0)
             fullDist+=dist;
         // jTextFieldFullLen.setText(Integer.toString((int)fullDist));
@@ -448,7 +448,7 @@ public class DrawMap extends View {
 
 
 
-        sg.drawLine(x, y, x+(int)sx, y+(int)sy,yellow);
+        sg.drawLine(x, y, x+(int)sx, y+(int)sy, blue);
         return selected;
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -518,12 +518,14 @@ public class DrawMap extends View {
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     Paint red=new Paint();
-    Paint yellow=new Paint();
+    Paint blue =new Paint();
     private void drawCross(final Canvas c){
         red.setColor(Color.RED);
-        yellow.setColor(Color.BLUE);
+        blue.setColor(Color.BLUE);
         red.setStyle(Paint.Style.STROKE);
-        yellow.setStyle(Paint.Style.STROKE);
+        blue.setStyle(Paint.Style.STROKE);
+        red.setStrokeWidth(5);
+        blue.setStrokeWidth(5);
         float x=r.width>>1;
         float y=r.height>>1;
         c.drawLine(x-10,y,x+10,y,red);

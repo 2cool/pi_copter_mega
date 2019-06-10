@@ -16,12 +16,10 @@ public class Programmer {
 
     static public final String prog_names[]={"led0","led1","led2","led3","led4","led5","led6","photo","start video","stop video","360photo","nothing1"};
 
-
-    public static int timer=0;
     public static double speed_=10,speedZ_=5;
    // static final public double maxSpeed=10,maxUpSpeed=5,maxDownSpeed=-3;
     static public int cam_ang=35,cam_zoom=0;
-    static public int action_=GeoDot.LED6;
+
     static double fullDist;
     public static double direction = 0;
     static public double altitude=50,distance;
@@ -88,7 +86,8 @@ public class Programmer {
             speed_=10;
             speedZ_=5;
             cam_ang=35;
-            action_=GeoDot.LED6;
+            //action_=GeoDot.LED6;
+            //timer=0;
         }
     }
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

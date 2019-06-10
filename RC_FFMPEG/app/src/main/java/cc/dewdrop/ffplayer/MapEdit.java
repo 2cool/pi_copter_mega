@@ -91,25 +91,6 @@ public class MapEdit extends Activity {
 
         }
     }
-    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    protected void Update()
-    {
-            eCamAng.setText(Integer.toString(Programmer.cam_ang));
-            sCamAng.setProgress(Programmer.cam_ang+10);
-            e_Prog.setText(Programmer.prog_names[Programmer.action_]);
-            sProg.setProgress(Programmer.action_);
-            eTimer.setText(Integer.toString(Programmer.timer));
-            sTimer.setProgress(Programmer.timer);
-            eSpeed.setText(""+Programmer.speed_);
-            sSpeed.setProgress((int) (Programmer.speed_));
-            eVSpeed.setText(""+Programmer.speedZ_);
-            sVSpeed.setProgress((int) (Programmer.speedZ_));
-            eAltitude.setText(getNum(Programmer.altitude, 2));
-            sAltitude.setProgress((int) (Programmer.altitude));
-            eZoom.setText(""+Programmer.cam_zoom);
-            sZoom.setProgress(Programmer.cam_zoom);
-
-    }
 
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     @Override
@@ -121,7 +102,7 @@ public class MapEdit extends Activity {
         setContentView(R.layout.dot_edit);
 
 
-        ((TextView)findViewById(R.id.textViewDistance)).setText(Integer.toString((int)Programmer.distance)+" m.");
+        ((TextView)findViewById(R.id.textViewDistance)).setText(((int)Programmer.distance)+" m.");
         eTimer=findViewById(R.id.editTextTimer);
         eTimer.setEnabled(false);
         sTimer=findViewById(R.id.seekBarTimer);
@@ -159,14 +140,12 @@ public class MapEdit extends Activity {
             public void onStopTrackingTouch(SeekBar seekBar) {}
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}
-
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-                    Programmer.cam_zoom=progress;
-                    Programmer.dot[DrawMap.selectedDot].cam_zoom=progress;
-                    Update();
+                    Programmer.dot[DrawMap.selectedDot].cam_zoom=Programmer.cam_zoom=progress;
+                    update(DrawMap.selectedDot);
                 }
                 inListener--;
             }
@@ -182,13 +161,8 @@ public class MapEdit extends Activity {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
                     if (Programmer.dot[DrawMap.selectedDot].action_!=GeoDot.PHOTO_360) {
-                        Programmer.timer = progress;
-                        Programmer.action_ = Programmer.dot[DrawMap.selectedDot].action_;
-
-                        Programmer.dot[DrawMap.selectedDot].timer_ = progress;
-                        Update();
-                        Programmer.timer = 0;
-                        Programmer.action_ = GeoDot.LED6;
+                        Programmer.dot[DrawMap.selectedDot].timer_=progress;
+                        update(DrawMap.selectedDot);
                     }
                 }
                 inListener--;
@@ -206,12 +180,10 @@ public class MapEdit extends Activity {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-
-                    Programmer.altitude=progress;
+                    Programmer.dot[DrawMap.selectedDot].alt=Programmer.altitude=progress;
                     double old_alt=Programmer.dot[DrawMap.selectedDot].alt;
-                    Programmer.dot[DrawMap.selectedDot].alt=progress;
                     Programmer.dot[DrawMap.selectedDot].dAlt-=old_alt-progress;
-                    Update();
+                    update(DrawMap.selectedDot);
                 }
                 inListener--;
             }
@@ -226,26 +198,21 @@ public class MapEdit extends Activity {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-                    Programmer.action_=progress;
                     Programmer.dot[DrawMap.selectedDot].action_=progress;
                     if (progress==GeoDot.PHOTO_360) {
                         if (Programmer.dot[DrawMap.selectedDot].timer_ < 120) {
-                            Programmer.timer = 120;
                             Programmer.dot[DrawMap.selectedDot].timer_ = 120;
                         }
                     }else{
-                        if (progress>=GeoDot.PHOTO && progress<=GeoDot.STOP_VIDEO) {
-                            Programmer.timer = 5;
-                            Programmer.dot[DrawMap.selectedDot].timer_ = 5;
+                        if (progress>=GeoDot.PHOTO && progress<=GeoDot.STOP_VIDEO){
+                            if (Programmer.dot[DrawMap.selectedDot].timer_< 5) {
+                                Programmer.dot[DrawMap.selectedDot].timer_ = 5;
+                            }
                         }else{
-                            Programmer.timer = 0;
                             Programmer.dot[DrawMap.selectedDot].timer_ = 0;
                         }
-
                     }
-                    Update();
-                    Programmer.timer = 0;
-                    Programmer.action_=GeoDot.LED6;
+                    update(DrawMap.selectedDot);
                 }
                 inListener--;
             }
@@ -260,10 +227,8 @@ public class MapEdit extends Activity {
             public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
                 // TODO Auto-generated method stub
                 if (++inListener==1) {
-                    Programmer.cam_ang=(progress-10);
-                    Programmer.dot[DrawMap.selectedDot].cam_ang=(progress-10);
-                    Update();
-
+                    Programmer.dot[DrawMap.selectedDot].cam_ang=Programmer.cam_ang=progress-10;
+                    update(DrawMap.selectedDot);
                 }
                 inListener--;
             }
@@ -280,9 +245,8 @@ public class MapEdit extends Activity {
                 if (++inListener==1) {
                     if (progress==0)
                         progress++;
-                    Programmer.dot[DrawMap.selectedDot].speed=progress;
-                    Programmer.speed_=progress;
-                    Update();
+                    Programmer.dot[DrawMap.selectedDot].speed=Programmer.speed_=progress;
+                    update(DrawMap.selectedDot);
                 }
                 inListener--;
 
@@ -303,9 +267,8 @@ public class MapEdit extends Activity {
                 if (++inListener==1) {
                     if (progress==0)
                         progress++;
-                    Programmer.dot[DrawMap.selectedDot].speedZ=progress;
-                    Programmer.speedZ_=progress;
-                    Update();
+                    Programmer.dot[DrawMap.selectedDot].speedZ=Programmer.speedZ_=progress;
+                    update(DrawMap.selectedDot);
                 }
                 inListener--;
 
