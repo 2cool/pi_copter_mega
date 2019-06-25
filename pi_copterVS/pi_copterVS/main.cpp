@@ -57,7 +57,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 */
  
-#define PROG_VERSION "ver 3.190602\n"
+#define PROG_VERSION "ver 3.190610\n"
 
 
 #define SIM800_F
