@@ -39,10 +39,10 @@ class MpuClass
 	 void log();
 
 	 // MPU control/status vars
-	 uint8_t devStatus;      // return status after each device operation
+	// uint8_t devStatus;      // return status after each device operation
 							 //(0 = success, !0 = error)
-	 uint8_t fifoCount;     // count of all bytes currently in FIFO
-	 uint8_t fifoBuffer[64]; // FIFO storage buffer
+	 //uint8_t fifoCount;     // count of all bytes currently in FIFO
+	 //uint8_t fifoBuffer[64]; // FIFO storage buffer
 
 	 int16_t a[3];              // [x, y, z]            accel vector
 	 int16_t g[3];              // [x, y, z]            gyro vector

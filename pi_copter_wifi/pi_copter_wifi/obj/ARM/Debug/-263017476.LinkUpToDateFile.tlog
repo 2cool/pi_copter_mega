@@ -1,1 +1,1 @@
-g++ -o "/root/projects/pi_copter_wifi/../pi_copter_wifi/bin/ARM/Debug/pi_copter_wifi.out" -Wl,--no-undefined -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack /root/projects/pi_copter_wifi/../pi_copter_wifi/obj/ARM/Debug/main.o -lpthread
+g++ -o "/root/projects/pi_copter_wifi/bin/ARM/Debug/pi_copter_wifi.out" -Wl,--no-undefined -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack /root/projects/pi_copter_wifi/../pi_copter_wifi/obj/ARM/Debug/main.o -lpthread

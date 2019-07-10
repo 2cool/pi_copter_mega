@@ -232,7 +232,7 @@ public class Commander {
 
         //tay=(float)(roll*GRAD2RAD);
         //tax=(float)(pitch*GRAD2RAD);
-
+      //  Log.d("ACC", pitch+" "+roll);
         ax=pitch;
         ay=roll;
 

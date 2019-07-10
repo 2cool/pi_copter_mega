@@ -455,6 +455,7 @@ double angK=0.3;
             pitch += (aPitch - pitch) * f;
             roll += (aRoll - roll) * f;
             //update=DrawView.control_type_acc.is_pressed();
+           // Log.d("ACC", pitch+" "+roll);
 
         }
         else

@@ -32,24 +32,30 @@ touch /var/lock/pi_copter
 # Carry out specific functions when asked to by the system
 case "$1" in
   start)
-	echo "Starting pi_copter "
-	start-stop-daemon -Sbvx /home/start-stop-daemon -Sbvx /home/igor/projects/pi_copterVS/pi_copter $
-	;;
+		echo "Starting pi_copter "
+		start-stop-daemon -Sbvx /home/start-stop-daemon -Sbvx /root/projects/pi_copter 300 100 f y y y y y $
+		;;
   stop)
-	echo "Stopping pi_copter"
+		echo "Stopping pi_copter"
 
-		start-stop-daemon -Kvx /home/igor/projects/pi_copterVS/pi_copter
-	;;
+				start-stop-daemon -Kvx /root/projects/pi_copter
+		;;
   *)
-	echo "Usage: /etc/init.d/blah {start|stop}"
-	exit 1
-	;;
+		echo "Usage: /etc/init.d/blah {start|stop}"
+		exit 1
+		;;
 esac
 
 exit 0
 
 
 Once you've saved your file into the correct location make sure that it's executable by running "chmod 755 /etc/init.d/blah".
+
+update-rc.d blah defaults
+
+
+If you wish to remove the script from the startup sequence in the future run:
+root@skx:/etc/rc2.d# update-rc.d -f  blah remove
 
 Igor Toocool, [27.06.17 00:15]
 root@skx:~# update-rc.d pi_copter defaults
@@ -275,7 +281,7 @@ bool start_wifi = false, start_inet = false, start_loger = false, start_telegram
 void watch_dog() {
 	delay(3000);
 	shmPTR->fpv_run = true;
-	cout << "fpv started\n";	system("nice -n -20 /root/projects/fpv_ &");
+	cout << "fpv started\n";	//system("nice -n -20 /root/projects/fpv_ &");
 	while (shmPTR->run_main) { 
 		
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;

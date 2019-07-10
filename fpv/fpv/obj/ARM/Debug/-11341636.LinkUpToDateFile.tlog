@@ -1,1 +1,0 @@
-g++ -o "/root/projects/fpv/bin/ARM/Debug/fpv.out" -Wl,--no-undefined -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack /root/projects/fpv/obj/ARM/Debug/main.o -lpthread

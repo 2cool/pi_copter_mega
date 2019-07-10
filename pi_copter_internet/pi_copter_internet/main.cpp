@@ -290,21 +290,13 @@ void parse_sms_command() {
 
 /*
 
+apt install gammu
 sudo pico /etc/gammurc
 insert just this:
 
 [gammu]
 device = /dev/ttyS2
 connection = at115200
-
-
-
-[gammu]
-device = /dev/ttyAMA0
-connection = at115200
-
-
-
 
 root@2cool:~# gammu —getsms 0 2
 Location 2, folder "Inbox", SIM memory, Inbox folder
@@ -360,19 +352,22 @@ User Data Header     : Concatenated (linked) message, ID (8 bit) 222, part 2 of 
 повідомлення.
 
 
-
-
-
-
-
-
-
-
-
-
-
 gammu deletesms 0 2 2
 
+
+apt-get install ppp
+/etc/ppp/peers/vodafon115200
+
+connect "/usr/sbin/chat -v -f /etc/chatscripts/gprs -T Bearer"
+/dev/ttyS2
+115200
+noipdefault
+usepeerdns
+defaultroute
+persist
+noauth
+nocrtscts
+local
 
 */
 

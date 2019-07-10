@@ -200,7 +200,7 @@ enum {REDY_FOR_READ_DATA=1,READY_4_WRITE_DATA=2};
 
 void server() {
 	//delay(5000);
-	
+	uint8_t len_buf_0_cnt = 0;
 	new_server();
 	if (wite_connection())
 		return;
@@ -229,6 +229,7 @@ void server() {
 		shmPTR->wifibuffer_data_len_4_read = len;
 
 		if (len > 0) {
+			len_buf_0_cnt = 0;
 			if (shmPTR->connected == 0)
 				shmPTR->client_addr = cli_addr.sin_addr.s_addr;
 			shmPTR->connected++;
@@ -238,15 +239,16 @@ void server() {
 			}
 		}
 		else {
-			if (shmPTR->connected) {
-				if (offline_time == 0)
-					offline_time = millis();
-				cout << "OFFLINE\n";//ERROR reading from socket\n";
-				
+			if (len_buf_0_cnt++ >= 2) {
+				if (shmPTR->connected) {
+					if (offline_time == 0)
+						offline_time = millis();
+					cout << "OFFLINE\n";//ERROR reading from socket\n";
+
+				}
+				if (wite_connection())
+					return;
 			}
-			if (wite_connection())
-				return;
-			
 			continue;
 		}
 		
