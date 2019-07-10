@@ -281,7 +281,7 @@ bool start_wifi = false, start_inet = false, start_loger = false, start_telegram
 void watch_dog() {
 	delay(3000);
 	shmPTR->fpv_run = true;
-	cout << "fpv started\n";	//system("nice -n -20 /root/projects/fpv_ &");
+	cout << "fpv started\n";	system("nice -n -20 /root/projects/fpv_ &");
 	while (shmPTR->run_main) { 
 		
 		uint8_t wifi_cnt = shmPTR->wifi_cnt;

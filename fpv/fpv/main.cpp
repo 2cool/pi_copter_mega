@@ -159,7 +159,7 @@ void delay(unsigned long t) {
 }
 
 
-string wlan_fpv = "wlx7cdd901e13d5";
+string wlan_fpv = "ra0";
 
 
 string stoken;
@@ -277,7 +277,7 @@ void start_ffmpeg_stream() {
 }
 
 
-
+//for MT7601U  https://forum.armbian.com/topic/1819-solved-orange-pi-pc-and-2-ralink-mt7601u-dongle-usb-id-148f7601/
 
 /*
 добавил сюда
@@ -286,8 +286,8 @@ void start_ffmpeg_stream() {
 
 вот это что предотвртило автоматически подключатся 
 
-auto wlx7cdd901e13d5
-iface wlx7cdd901e13d5 inet static
+auto ra0
+iface ra0 inet static
 wireless-essid YDXJ_1234567
 wireless-key 1234567890
 
@@ -299,12 +299,12 @@ network={
 	psk="1234567890"
 }
 
-sudo wpa_supplicant -B -iwlx7cdd901e13d5 -c /etc/wpa_supplicant.conf -Dwext
-sudo dhclient wlx7cdd901e13d5
+sudo wpa_supplicant -B -ira0 -c /etc/wpa_supplicant.conf -Dwext
+sudo dhclient ra0
 
 */
 
-const static string connect2camera = "wpa_supplicant -B -iwlx7cdd901e13d5 -c /etc/camera.conf -Dwext && dhclient wlx7cdd901e13d5";
+const static string connect2camera = "wpa_supplicant -B -ira0 -c /etc/camera.conf -Dwext && dhclient ra0";
 
 
 bool fpv_stream = false;
@@ -333,7 +333,7 @@ int main()
 
 
 
-	//wlx7cdd901e13d5
+	//ra0
 	
 
 
@@ -352,7 +352,7 @@ int main()
 	} while (true);
 	cout << "camera found\n";
 
-	string ret = exec("nice -n -20 ifconfig wlx7cdd901e13d5");
+	string ret = exec("nice -n -20 ifconfig ra0");
 	if (ret.find("192.168.42.") == string::npos) {
 		system(connect2camera.c_str());
 		sleep(4);
