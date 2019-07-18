@@ -1,10 +1,8 @@
 package cc.dewdrop.ffplayer.myTools;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class Joystick {
@@ -17,16 +15,22 @@ public class Joystick {
     private float jx,jy;
     private int index;
     public float getX(){return jx;}
-    public float getY(){return -jy;}
+    public float get_neg_Y(){return -jy;}
     public void setLabel(String s){label=s;}
     public float setJosticX(float x){
-        return jx=(block_X)?0: Math.min(1,Math.max(-1,x));
+
+        jx=(block_X)?0: Math.min(1,Math.max(-1,x));
+
+        return jx;
     }
-    public float setJosticY(float y){
-        return jy=(block_Y)?0: Math.min(1,Math.max(-1,y));
+    public float setJosticY(float y)
+    {
+        jy=(block_Y)?0: Math.min(1,Math.max(-1,y));
+        old_posY=this.y+(y+1)*size*0.5f;
+        return jy;
     }
 
-    private boolean setX(float xp){
+    private boolean setJX(float xp){
         float t_jx=(xp-x - size*0.5f)/(size*0.5f);
         if (t_jx<=1 && t_jx>=-1){
             jx=t_jx;
@@ -35,7 +39,7 @@ public class Joystick {
         }else
             return false;
     }
-    private boolean setY(float yp){
+    private boolean setJY(float yp){
         float t_jy=(yp-y-size*0.5f)/(size*0.5f);
         if (t_jy<=1 && t_jy>=-1){
             jy= t_jy;
@@ -121,10 +125,10 @@ public class Joystick {
                 if (index >= 0) {
                     trackX = event.getX(index);
                     trackY = event.getY(index);
-                    if (setX(trackX - shiftX)) {
+                    if (setJX(trackX - shiftX)) {
                         old_posX = trackX;
                     }
-                    if (setY(trackY - shiftY))
+                    if (setJY(trackY - shiftY))
                         old_posY = trackY;
 
                 }else{
