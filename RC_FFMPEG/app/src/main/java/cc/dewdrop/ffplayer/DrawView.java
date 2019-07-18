@@ -677,7 +677,11 @@ public class DrawView extends View {
         batMon.setVoltage(0.25f*Telemetry.batVolt);
 
 
-        Commander.throttle=0.6f+(j_left.get_neg_Y())/((hold_alt.is_pressed())?2: max_manual_thr_index);
+
+        if (hold_alt.is_pressed()){
+            Commander.throttle=0.5f+j_left.get_neg_Y()/2;
+        }else
+            Commander.throttle=0.6f+j_left.get_neg_Y()/max_manual_thr_index;
 
       //  Log.d("JLEFT",Double.toString(j_left.getY()));
 
