@@ -7,8 +7,8 @@ public class Telemetry {
     public static int get_counter(){return telemetry_couter;}
     static public int batVolt,current;
     static public boolean maxTelemetry=false;
-    static private boolean connected=false;
-    static private boolean motors_is_on=false;
+    static private boolean hom_pos_is_loaded=false;
+    static private int old_motors_status=-1;
     static private long oldMsgTimer;
     static private int motorsONtimer=0;
     static public String motors_on_timer="00:00";
@@ -75,7 +75,6 @@ public class Telemetry {
         old_control_bits=satilites=0;
         r_accuracy_hor_pos=0;
 
-        autoLat=autoLon=0;
         ap_throttle=0.5f;
         batery="";
         F_MIN_VOLT=false;
@@ -507,13 +506,6 @@ public class Telemetry {
 
     }
 
-
-
-
-
-
-
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     static public void bufferReader_(byte buf[],int buf_len){
         //   Log.d("BUFREAD","bufRead");
@@ -543,22 +535,28 @@ public class Telemetry {
         lon=0.0000001*(double)ilon;
         //Log.i("DKDKD",Double.toString(lat)+ " "+Double.toHexString(lon));
         //---------------------------
-        if (connected == false) {
+
+
+        if (hom_pos_is_loaded == false) {
             if (MainActivity.motorsOnF()){
                 Disk.loadLatLonAlt("/sdcard/RC/start_location.save",false);
                 oldlat=lat;
                 oldlon=lon;
+               // Log.d("LOAD","LOAD "+autoLat+", "+autoLon);
             }
-            connected = true;
-        }else
-        if (MainActivity.motorsOnF() && motors_is_on != (MainActivity.motorsOnF()) ){
-            autoLat=oldlat=lat;
-            autoLon=oldlon=lon;
-            Disk.saveLatLonAlt("/sdcard/RC/start_location.save",lat,lon,0);
-
         }
-        if (motors_is_on!=MainActivity.motorsOnF())
-            motors_is_on=MainActivity.motorsOnF();
+        hom_pos_is_loaded = true;
+        if (MainActivity.motorsOnF() && old_motors_status==1) {
+            autoLat = oldlat = lat;
+            autoLon = oldlon = lon;
+            Disk.saveLatLonAlt("/sdcard/RC/start_location.save", lat, lon, 0);
+           // Log.d("LOAD", "SAVE " + autoLat + ", " + autoLon);
+        }
+
+        old_motors_status = MainActivity.motorsOnF()?2:1;
+
+
+
 
 
 
@@ -583,6 +581,7 @@ public class Telemetry {
         if (MainActivity.motorsOnF()){
             //вічисляем растояние до старта
             dist=(autoLat==0 || autoLon==0)?0:dist(autoLat,autoLon,lat,lon);
+          //  Log.d("LOAD","2HOME "+dist+ " "+autoLat + " " + autoLon);
             double dDist=dist(oldlat,oldlon,lat,lon);
             oldlat=lat;
             oldlon=lon;
