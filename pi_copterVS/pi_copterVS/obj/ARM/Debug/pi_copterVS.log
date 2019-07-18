@@ -1,9 +1,36 @@
 ﻿  Validating sources
   Copying sources remotely to '192.168.100.112'
   Validating architecture
-  Validating architecture
   Starting remote build
   Compiling sources:
+  AP_PID.cpp
+  FIND.cpp
+  Location.cpp
+  Autopilot.cpp
+  MS5611.cpp
+  GeoDot.cpp
+  GPS.cpp
+  Log.cpp
+  Balance.cpp
+  Prog.cpp
+  Hmc.cpp
+  MadgwickAHRS.cpp
+  commander.cpp
+  mi2c.cpp
+  I2Cdev.cpp
   main.cpp
+  RC_Filter.cpp
+  debug.cpp
+  inv_mpu.cpp
+  inv_mpu_dmp_motion_driver.cpp
+  WProgram.cpp
+  Settings.cpp
+  Direction.cpp
+  Filter.cpp
+  mpu.cpp
+  Stabilization.cpp
+  MPU6050.cpp
+  Telemetry.cpp
+  mpu_umulator.cpp
   Linking objects
-  pi_copterVS.vcxproj -> C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out
+  pi_copterVS.vcxproj -> C:\Users\Igor\pi_copter_mega\pi_copterVS\pi_copterVS\bin\ARM\Debug\pi_copterVS.out

@@ -102,10 +102,14 @@ public class Joystick {
                 if (index<=0 && gx >= x && gx <= x + size && gy >= y && gy <= y + size) {
                     end();
                     index=pointerIndex;
-                    shiftX = gx - old_posX;//??
-                    shiftY = gy - old_posY;
-                    trackX=old_posX=gx;
-                    trackY=old_posY=gy;
+                    if (!block_X){
+                        shiftX = gx - old_posX;//??
+                        trackX=old_posX=gx;
+                    }
+                    if (!block_Y) {
+                        shiftY = gy - old_posY;
+                        trackY = old_posY = gy;
+                    }
                     ret=true;
                 }
                 break;
@@ -123,13 +127,19 @@ public class Joystick {
                 if (index>=0)
                     index=findPointerIndex(event);
                 if (index >= 0) {
-                    trackX = event.getX(index);
-                    trackY = event.getY(index);
-                    if (setJX(trackX - shiftX)) {
-                        old_posX = trackX;
+                    if (!block_X) {
+                        trackX = event.getX(index);
+                        if (setJX(trackX - shiftX)) {
+                            old_posX = trackX;
+                        }
                     }
-                    if (setJY(trackY - shiftY))
-                        old_posY = trackY;
+
+
+                   if (!block_Y) {
+                       trackY = event.getY(index);
+                       if (setJY(trackY - shiftY))
+                           old_posY = trackY;
+                   }
 
                 }else{
                     end();

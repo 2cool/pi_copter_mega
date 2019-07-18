@@ -1,23 +1,14 @@
 
-
-
-
-
 #ifndef DEFINE_H
-
 #define DEFINE_H
-
 
 #include "glob_header.h" 
 #include "WProgram.h"
 
-
 //#define OFF_MOTOR_IF_LOST_CONNECTION  
 //#define OFF_TIMELAG
 //-----------------------------------------------------------------
-
 //#define FALSE_WIRE
-
 //----------------------------------------------------------------
 //#define ALWAYS_SOUND
 //#define YAW_OFF
