@@ -316,7 +316,7 @@ bool MpuClass::loop(){
 
 	
 
-	float head = Emu.get_heading();
+	float head = wrap_PI(Emu.get_heading()+0);
 
 	float g_yaw = Emu.get_yaw();
 
@@ -490,7 +490,10 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 			}
 		}
 	}
-	accelgyro.getMotion6(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2]);
+	
+	if (accelgyro.getMotion6(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2]) == -1)
+		return ret;
+
 	gyroPitch =  n003 * (float)g[1] - agpitch;
 	gyroRoll =  n003 * (float)g[0] - agroll;
 	gyroYaw =  n003 * (float)g[2] - agyaw;

@@ -12,10 +12,11 @@
   <component name="ChangeListManager">
     <list default="true" id="b79624cd-cb7a-47df-b554-aa6316b37993" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Joystick.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Joystick.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/commander.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/commander.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/define.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/define.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" afterDir="false" />
@@ -35,11 +36,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="88" column="65" selection-start-line="88" selection-start-column="63" selection-end-line="88" selection-end-column="67" />
+            <state relative-caret-position="487">
+              <caret line="679" column="55" selection-start-line="679" selection-start-column="38" selection-end-line="679" selection-end-column="55" />
             </state>
           </provider>
         </entry>
@@ -53,11 +54,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="236">
-              <caret line="583" column="12" selection-start-line="583" selection-start-column="12" selection-end-line="583" selection-end-column="12" />
+            <state relative-caret-position="714">
+              <caret line="676" column="9" selection-start-line="676" selection-start-column="9" selection-end-line="676" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="388">
+              <caret line="210" column="87" selection-start-line="210" selection-start-column="87" selection-end-line="210" selection-end-column="87" />
             </state>
           </provider>
         </entry>
@@ -65,7 +75,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Disk.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="301">
+            <state relative-caret-position="2091">
               <caret line="133" column="26" selection-start-line="133" selection-start-column="26" selection-end-line="133" selection-end-column="26" />
             </state>
           </provider>
@@ -75,10 +85,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>program</find>
-      <find>toString</find>
-      <find>cam_zoom</find>
-      <find>ib_add</find>
       <find>timer</find>
       <find>actions_</find>
       <find>Update</find>
@@ -105,6 +111,10 @@
       <find>dist</find>
       <find>autoLat</find>
       <find>LOAD</find>
+      <find>heading</find>
+      <find>motorsWasOn</find>
+      <find>Commander.headingOffset</find>
+      <find>Telemetry.heading</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -123,10 +133,10 @@
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MapEdit.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/MainActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Joystick.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" />
       </list>
     </option>
   </component>
@@ -143,6 +153,7 @@
     </navigator>
     <panes>
       <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
@@ -173,7 +184,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -282,7 +292,7 @@
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.15031983" />
+      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.15031983" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -291,13 +301,13 @@
       <window_info id="Capture Tool" order="7" />
       <window_info id="Resources Explorer" order="8" />
       <window_info anchor="bottom" id="Run" order="0" weight="0.32981783" />
-      <window_info active="true" anchor="bottom" id="Logcat" order="1" visible="true" weight="0.24544583" />
+      <window_info anchor="bottom" id="Logcat" order="1" weight="0.24544583" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32978722" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.32981783" />
       <window_info anchor="bottom" id="Terminal" order="4" weight="0.32978722" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="6" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Build" order="7" weight="0.1093001" />
+      <window_info anchor="bottom" id="Build" order="7" visible="true" weight="0.1093001" />
       <window_info anchor="bottom" id="Find" order="8" weight="0.32981783" />
       <window_info anchor="bottom" id="Android Profiler" order="9" />
       <window_info anchor="right" id="Capture Analysis" order="0" />
@@ -323,8 +333,8 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/test.xml">
-      <provider editor-type-id="text-editor" />
       <provider selected="true" editor-type-id="android-designer2" />
+      <provider editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/LogReader.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -378,12 +388,12 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/dot_edit.xml">
+      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="208">
           <caret line="123" column="8" selection-start-line="123" selection-start-column="8" selection-end-line="123" selection-end-column="8" />
         </state>
       </provider>
-      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Map.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -430,13 +440,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="845">
-          <caret line="204" column="28" selection-start-line="204" selection-start-column="20" selection-end-line="204" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/Joystick.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -451,13 +454,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Disk.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="301">
-          <caret line="133" column="26" selection-start-line="133" selection-start-column="26" selection-end-line="133" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/FlightTextInfo.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
@@ -465,17 +461,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Disk.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="88" column="65" selection-start-line="88" selection-start-column="63" selection-end-line="88" selection-end-column="67" />
+        <state relative-caret-position="2091">
+          <caret line="133" column="26" selection-start-line="133" selection-start-column="26" selection-end-line="133" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="388">
+          <caret line="210" column="87" selection-start-line="210" selection-start-column="87" selection-end-line="210" selection-end-column="87" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="236">
-          <caret line="583" column="12" selection-start-line="583" selection-start-column="12" selection-end-line="583" selection-end-column="12" />
+        <state relative-caret-position="714">
+          <caret line="676" column="9" selection-start-line="676" selection-start-column="9" selection-end-line="676" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="679" column="55" selection-start-line="679" selection-start-column="38" selection-end-line="679" selection-end-column="55" />
         </state>
       </provider>
     </entry>

@@ -417,7 +417,7 @@ public class DrawView extends View {
             yaw_off.set(head_less_.is_pressed());
             j_left.set_block_X(yaw_off.is_pressed());
             if (head_less_.is_pressed()){
-                heading=(float)(Telemetry.heading-MainActivity.yaw);
+                heading=Telemetry.heading-MainActivity.yaw;
             }else {
               //  Commander.heading=heading = MainActivity.yaw;
                 Commander.heading=heading=Telemetry.heading;
@@ -544,7 +544,7 @@ public class DrawView extends View {
                 Commander.headingOffset = (float) (Telemetry.heading - MainActivity.yaw);
               //  Commander.heading = heading = (float) MainActivity.yaw;
             }else{
-                Commander.heading = heading=(float)Telemetry.heading;
+                Commander.heading = heading=Telemetry.heading;
                 Commander.headingOffset=0;
             }
         }
@@ -652,25 +652,32 @@ public class DrawView extends View {
         if (dt>0.1)
             dt=0.1;
 
-        if (head_less_.is_pressed()){   //old control type
 
-            if (control_type_acc_.is_pressed()) {
-                j_right.setJosticY((float) (ma_pitch));
-                j_right.setJosticX((float) (ma_roll));
+        if ((MainActivity.control_bits&MainActivity.MOTORS_ON)!=0){
+
+            if (head_less_.is_pressed()){   //old control type
+
+                if (control_type_acc_.is_pressed()) {
+                    j_right.setJosticY((float) (ma_pitch));
+                    j_right.setJosticX((float) (ma_roll));
+                }
+                //отключить флаг управления всегда включен
+                Commander.heading=(float)MainActivity.yaw;
+                heading += 45 * j_left.getX() * dt;
+                heading=(float)wrap_180(heading);
+                Commander.headingOffset = heading;
+
+
+                //Log.d("COMM", heading +" "+j_left.getX()+ "dt="+dt);
+
+            }else{                          //new control type
+                if (j_left.getX()!=0)
+                    Commander.heading =  Telemetry.heading; //ok
+                Commander.headingOffset =  j_left.getX()*90;
             }
-            //отключить флаг управления всегда включен
-            Commander.heading=(float)MainActivity.yaw;
-            heading += 45 * j_left.getX() * dt;
-            heading=(float)wrap_180(heading);
-            Commander.headingOffset = heading;
-
-
-            //Log.d("COMM", heading +" "+j_left.getX()+ "dt="+dt);
-
-        }else{                          //new control type
-            if (j_left.getX()!=0)
-                Commander.heading = (float) Telemetry.heading;
-            Commander.headingOffset =  j_left.getX()*90;
+        }else{
+            Commander.headingOffset=0;
+            Commander.heading=heading=Telemetry.heading;
         }
 
 
