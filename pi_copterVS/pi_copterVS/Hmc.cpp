@@ -197,7 +197,11 @@ void HmcClass::loop(){
 	//бельіе ноги
 	int16_t mx,my,mz;
 	
-	readBytes(devAddr, HMC5883L_RA_DATAX_H, 6, buffer); 
+	if (readBytes(devAddr, HMC5883L_RA_DATAX_H, 6, buffer) == -1) {
+		Telemetry.addMessage(e_COMMPAS_RW_ERROR);
+		mega_i2c.beep_code(B_I2C_ERR);
+		return;
+	}
 	if (mode == HMC5883L_MODE_SINGLE) writeByte(devAddr, HMC5883L_RA_MODE, HMC5883L_MODE_SINGLE << (HMC5883L_MODEREG_BIT - HMC5883L_MODEREG_LENGTH + 1));
 	mx = (((int16_t)buffer[0]) << 8) | buffer[1];
 	my = (((int16_t)buffer[4]) << 8) | buffer[5];

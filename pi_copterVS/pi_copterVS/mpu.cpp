@@ -491,8 +491,11 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 		}
 	}
 	
-	if (accelgyro.getMotion6(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2]) == -1)
+	if (accelgyro.getMotion6(&a[0], &a[1], &a[2], &g[0], &g[1], &g[2]) == -1) {
+		Telemetry.addMessage(e_MPU_RW_ERROR);
+		mega_i2c.beep_code(B_I2C_ERR);
 		return ret;
+	}
 
 	gyroPitch =  n003 * (float)g[1] - agpitch;
 	gyroRoll =  n003 * (float)g[0] - agroll;

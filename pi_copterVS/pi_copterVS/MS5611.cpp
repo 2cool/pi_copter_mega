@@ -34,17 +34,16 @@ char RESET = 0x1E;
 
 
 
-int MS5611Class::error(int e) {
-	return -1;
-}
+//int MS5611Class::error(int e) {	return -1;}
 
 
 int MS5611Class::writeReg(char bar_zero) {
 	if (write(fd4S, &bar_zero, 1) != 1) {
 		cout << "write reset 8 bit Failed to write to the i2c bus." << "\t"<<Mpu.timed << endl;
 		bar_task = 0;
-		return error(2);
+		return -1;
 	}
+	return 0;
 }
 
 float MS5611Class::alt() {
@@ -65,10 +64,10 @@ bool MS5611Class::fault() {
 double MS5611Class::getAltitude(const double pressure) {
 	static float old_alt= ALT_NOT_SET;
 	static float gps_barometr_alt_dif = ALT_NOT_SET;
+	static uint init_cnt = 0;
 
-	const float gps_alt = GPS.loc.altitude - gps_barometr_alt_dif;
-
-
+	const float gps_alt =  GPS.loc.altitude - gps_barometr_alt_dif;
+	
 	double alt = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));
 	if (old_alt == ALT_NOT_SET)
 		old_alt = alt;
@@ -80,12 +79,12 @@ double MS5611Class::getAltitude(const double pressure) {
 	else {
 		
 
-		if (GPS.loc.accuracy_hor_pos_ <= MIN_ACUR_HOR_POS_2_START) {
+		if (init_cnt++ > 20 && GPS.loc.accuracy_hor_pos_ <= MIN_ACUR_HOR_POS_2_START) {
 
 			if (gps_barometr_alt_dif == ALT_NOT_SET)
 				gps_barometr_alt_dif = GPS.loc.altitude - altitude_;
 			
-			if (fabs(old_alt - alt) > 4 || fabs(gps_alt - alt) > 4) {
+			if (fabs(old_alt - alt) > 10 || fabs(gps_alt - alt) > 10) {
 				alt = gps_alt;
 				Telemetry.addMessage(e_BAROMETR_ERROR);
 			}
@@ -182,12 +181,23 @@ uint8_t MS5611Class::loop(){
 //----------------------------------------------------
 
 
-
+void MS5611Class::error(const int n) {
+	Telemetry.addMessage(e_BAROMETR_RW_ERROR);
+	mega_i2c.beep_code(B_I2C_ERR);
+	bar_task = 0;
+	cout << "Failed to read-write from the i2c barometr bus #" <<n<<" "<< Mpu.timed << endl;
+	wrong_altitude_cnt++;
+	ct = NORM_CT + NORM_CT;
+}
 
 void MS5611Class::phase0() {
 	bar_D[0] = bar_D[1] = bar_D[2] = 0;
 
-	writeReg(CONV_D2_4096);
+	if (writeReg(CONV_D2_4096) == -1) {
+		error(11);
+		return;
+	}
+
 	b_timeDelay = micros() + ct;
 	bar_task = 1;
 }
@@ -195,13 +205,17 @@ void MS5611Class::phase0() {
 void MS5611Class::phase1()
 {
 	if (micros()  > b_timeDelay) {
+		if (writeReg(bar_zero) == -1) {
+			error(21);
+			return;
+		}
+
 		bar_task = 2;
 		bar_zero = 0;
-		writeReg(bar_zero);
+		
 		bar_h = read(fd4S, &bar_D, 3);
 		if (bar_h != 3) {
-			cout << "Failed to read from the i2c bus " << bar_h << "\t"<<Mpu.timed << endl;
-			error(3);
+			error(22);
 			return;
 		}
 
@@ -218,7 +232,11 @@ void MS5611Class::phase1()
 		}
 		TEMP = TEMP - TEMP2;
 		i_readTemperature = ((int8_t)(TEMP * 0.01));
-		writeReg(CONV_D1_4096);
+
+		if (writeReg(CONV_D1_4096) == -1) {
+			error(23);
+			return;
+		}
 		b_timeDelay = micros() + ct;
 		
 	}
@@ -230,12 +248,17 @@ void MS5611Class::phase2() {
 		bar_task = 0;
 		//openDev();
 		bar_zero = 0;
-		writeReg(bar_zero);
+		if (writeReg(bar_zero) == -1) {
+			error(31);
+			return;
+		}
 
 		bar_h = read(fd4S, &bar_D, 3);
 
-		if (bar_h != 3)
-			cout << "Failed to read from the i2c bus "<< bar_h << "\t"<<Mpu.timed << endl;
+		if (bar_h != 3) {
+			error(32);
+			return;
+		}
 
 		D1 = ((int32_t)bar_D[0] << 16) | ((int32_t)bar_D[1] << 8) | bar_D[2];
 		int32_t dT = D2 - (uint32_t)fc[4] * 256;
@@ -272,9 +295,9 @@ void MS5611Class::phase2() {
 
 		if (tP < 80000 || tP > 107000) {
 			cout << "PRESSURE ERROR " << tP << "\t"<<Mpu.timed << endl;
-			ct = NORM_CT +NORM_CT;
-			wrong_altitude_cnt++;
-			mega_i2c.beep_code(B_BARROMETR_ERR);
+			
+			error(33);
+			return;
 		}
 		else {
 			wrong_altitude_cnt = 0;
@@ -348,12 +371,12 @@ int MS5611Class::init() {
 
 	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {
 		cout << "Failed to open the bus.\n";
-		return error(0);
+		return -1;
 	}
 
 	if (ioctl(fd4S, I2C_SLAVE, MS5611_ADDRESS) < 0) {
 		cout << "Failed to acquire bus access and/or talk to slave.\n";
-		return error(1);
+		return -1;
 	}
 
 	writeReg(RESET);

@@ -45,8 +45,9 @@ void TelemetryClass::addMessage(const string msg, bool and2sms){
 	if (message.length() + msg.length() >= TELEMETRY_BUF_SIZE)
 		return;
 
-	if (message.length() < msg.length() || message.compare(msg)==-1)
+	if (message.length() < msg.length() || message.compare(msg) == -1) {
 		message += msg;
+	}
 
 }
 
@@ -188,7 +189,9 @@ void TelemetryClass::update_voltage() {
 	Emu.battery(m_current,voltage);
 #else
 
-	mega_i2c.getiiiiv((char*)data);
+	if (mega_i2c.getiiiiv((char*)data)==-1)
+		return;
+
 #define max_V 1022
 #define current_k 0.01953125
 //#define current_k 1

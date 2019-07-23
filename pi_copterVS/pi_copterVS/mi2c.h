@@ -129,7 +129,7 @@ public:
 	 void settings(uint16_t overloadTime, uint16_t overloadVal, uint8_t overloadCnt);
 	 void throttle(const float n[]);
 
-	 void getiiiiv(char *iiiiv);
+	 int getiiiiv(char *iiiiv);
 
 	 int get_gps(SEND_I2C *gps_d);
 

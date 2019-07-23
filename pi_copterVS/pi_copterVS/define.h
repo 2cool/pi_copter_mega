@@ -18,7 +18,7 @@
 #define MAX_ACC 7
 //#define DEBUG_MODE
 #define GPS_ALT_MAX_ERROR 30
-#define MAX_BAROMETR_ERRORS 10
+#define MAX_BAROMETR_ERRORS 40
 
 #define WORK_WITH_WIFI
 #define LED_ON
@@ -91,8 +91,12 @@
 #define wrap_180(x) (x < -180 ? x+360 : (x > 180 ? x - 360: x))
 #define wrap_PI(x) (x < -PI ? x+TWO_PI : (x > PI ? x - TWO_PI: x))
 
+
+#define e_ARDUINO_RW_ERROR "ARW"
 #define e_TOO_STRONG_WIND "TSW"
 //#define e_TOO_HIGHT_FROM_NEED "HFN"
+#define e_COMMPAS_RW_ERROR "CRW"
+#define e_BAROMETR_RW_ERROR "BRW"
 #define e_BAROMETR_ERROR "BER"
 #define SETTINGS_ARRAY_SIZE 10
 #define SETTINGS_IS_OK 1
@@ -122,8 +126,8 @@
 #define e_PROG_TOO_LONG_FROM_START "TOO"
 #define e_PROG_TOO_LONG_DISTANCE "TOL"
 #define e_port_R_W_ERROR "PRW"
-#define e_MPU_TOO_LONG "MPU"
-
+#define e_MPU_TOO_LONG "MTL"
+#define e_MPU_RW_ERROR "MRW"
 #define i_OFF_MOTORS     "MD0"
 #define i_CONTROL_FALL   "CNF"
 #define i_MAX_THR        "MXT"

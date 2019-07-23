@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <linux/types.h>
-
+#include "Telemetry.h"
 #include "debug.h"
 #include "define.h"
 #include "mi2c.h"
@@ -197,12 +197,16 @@ void Megai2c::throttle(const float n[]) {
 #else
 	uint16_t pwm_out[5];
 	pwm_out[0] = 0;
-	pwm_out[1] = (uint16_t)(pwm_OFF_THROTTLE + n[0]*pwm_OFF_THROTTLE);
-	pwm_out[2] = (uint16_t)(pwm_OFF_THROTTLE + n[1]*pwm_OFF_THROTTLE);
-	pwm_out[3] = (uint16_t)(pwm_OFF_THROTTLE + n[2]*pwm_OFF_THROTTLE);
-	pwm_out[4] = (uint16_t)(pwm_OFF_THROTTLE + n[3]*pwm_OFF_THROTTLE);
-	char *chBuf = (char*)pwm_out;
-	write(fd, chBuf + 1, 9);
+	pwm_out[1] = (uint16_t)(pwm_OFF_THROTTLE + n[0] * pwm_OFF_THROTTLE);
+	pwm_out[2] = (uint16_t)(pwm_OFF_THROTTLE + n[1] * pwm_OFF_THROTTLE);
+	pwm_out[3] = (uint16_t)(pwm_OFF_THROTTLE + n[2] * pwm_OFF_THROTTLE);
+	pwm_out[4] = (uint16_t)(pwm_OFF_THROTTLE + n[3] * pwm_OFF_THROTTLE);
+	char* chBuf = (char*)pwm_out;
+	if (write(fd, chBuf + 1, 9) == -1) {
+		Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+		cout << "arduino write power error" <<  Mpu.timed  << endl;
+		mega_i2c.beep_code(B_I2C_ERR);
+	}
 #endif
 }
 
@@ -212,13 +216,22 @@ void Megai2c::set_led_color(uint8_t n, uint8_t r, uint8_t g, uint8_t b) {
 	buf[1] = *(char*)&r;
 	buf[2] = *(char*)&g;
 	buf[3] = *(char*)&b;
-	write(fd, buf, 4);
+	if (write(fd, buf, 4) == -1) {
+		Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+		cout << "arduino write LED error" << Mpu.timed << endl;
+		mega_i2c.beep_code(B_I2C_ERR);
+	}
+
 
 }
 void Megai2c::sim800_reset() {
 	char chBuf[] = { 1,16 };
 	shmPTR->sim800_reset_time = millis();
-	write(fd, chBuf, 2);
+	if (write(fd, chBuf, 2) == -1) {
+		Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+		cout << "arduino write sim800 error" << Mpu.timed << endl;
+		mega_i2c.beep_code(B_I2C_ERR);
+	}
 }
 //0.35555555555555555555555555555556 = 1град
 bool Megai2c::gimagl(float pitch, float roll) {  // добавить поворот вмесете с коптером пра опред обст
@@ -232,7 +245,11 @@ bool Megai2c::gimagl(float pitch, float roll) {  // добавить поворот вмесете с к
 		buf[1] = 8;
 		((uint16_t*)buf)[1] = (uint16_t)(pitch);
 		((uint16_t*)buf)[2] = (uint16_t)roll;
-		write(fd, buf + 1, 5);
+		if (write(fd, buf + 1, 5) == -1) {
+			Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+			cout << "arduino write gimbal error" << Mpu.timed << endl;
+			mega_i2c.beep_code(B_I2C_ERR);
+		}
 		return true;
 	}
 	else
@@ -246,8 +263,19 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 
 	char reg = 1;
 	char bit_field;
-	write(fd, &reg, 1);
+	if (write(fd, &reg, 1) == -1) {
+		Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+		cout << "arduino write get_gps error" << Mpu.timed << endl;
+		mega_i2c.beep_code(B_I2C_ERR);
+		return -1;
+	}
 	int res = read(fd, &bit_field, 1);
+	if (res == -1) {
+		Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+		cout << "arduino read get_gps error" << Mpu.timed << endl;
+		mega_i2c.beep_code(B_I2C_ERR);
+		return -1;
+	}
 
 
 	static double last_ring_time = 0;
@@ -271,6 +299,11 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 
 	if (bit_field & 2) {
 		res = read(fd, (char*)gps_d, sizeof(SEND_I2C));
+		if (res == -1) {
+			Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+			cout << "arduino write bit_field & 2 error" << Mpu.timed << endl;
+			mega_i2c.beep_code(B_I2C_ERR);
+		}
 		return res;
 	}
 	else {
@@ -279,10 +312,22 @@ int Megai2c::get_gps(SEND_I2C *gps_d) {
 
 }
 
-void Megai2c::getiiiiv(char *iiiiv) {
+int Megai2c::getiiiiv(char *iiiiv) {
 	char reg = 0;
-	write(fd, &reg, 1);
-	read(fd, (char*)iiiiv, 10);
+	if (write(fd, &reg, 1) == -1) {
+		Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+		cout << "arduino write iiiiv error" << Mpu.timed << endl;
+		mega_i2c.beep_code(B_I2C_ERR);
+		return -1;
+	}
+	
+	if (read(fd, (char*)iiiiv, 10) == -1) {
+		Telemetry.addMessage(e_ARDUINO_RW_ERROR);
+		cout << "arduino read iiiiv error" << Mpu.timed << endl;
+		mega_i2c.beep_code(B_I2C_ERR);
+		return -1;
+	}
+	return 0;
 }
 
 

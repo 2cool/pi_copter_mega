@@ -1,4 +1,4 @@
-C:\Users\Igor\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\Wire\Wire.cpp.o: \
+C:\Users\2coolz\AppData\Local\Temp\VMBuilds\copter_mega\mega_atmega2560\Debug\Wire\Wire.cpp.o: \
  C:\Arduino\hardware\arduino\avr\libraries\Wire\src\Wire.cpp \
  C:\Arduino\hardware\arduino\avr\libraries\Wire\src\utility/twi.h \
  C:\Arduino\hardware\arduino\avr\libraries\Wire\src\Wire.h \
