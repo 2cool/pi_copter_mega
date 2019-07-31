@@ -14,7 +14,14 @@ enum {
 
 
 #define DEFAULT_STATE (Z_STAB|XY_STAB)
-
+/*
+struct Stat_Fields {
+	unsigned short wifi_Str : 8;    // 0..7   (3 bits)
+	unsigned short nMonthDay : 6;    // 0..31  (6 bits)
+	unsigned short nMonth : 5;    // 0..12  (5 bits)
+	unsigned short nYear : 8;    // 0..100 (8 bits)
+};
+*/
 struct Memory {
 
 	bool internet_run,fpv_run,wifi_run;
@@ -22,7 +29,7 @@ struct Memory {
 	uint8_t main_cnt, internet_cnt, wifi_cnt,fpv_cnt;
 
 
-	uint32_t status;
+	uint32_t status;  //0-7 wifi signal,8-11-wifi_error, 12-15-fpv_errors, 16-19 ppp_errors
 	uint32_t control_bits;
 	uint32_t control_bits_4_do;
 

@@ -1,9 +1,6 @@
 package cc.dewdrop.ffplayer;
 
 import android.content.Context;
-import android.net.wifi.WifiConfiguration;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.util.Log;
 
 import java.io.InputStream;
@@ -67,7 +64,7 @@ public class Net {
 
 
     public static boolean net_runing=true;
-    private static  int UDP_SERVER_PORT = 9876;
+    private static  int SERVER_PORT = 9876;
     static private boolean ip_OK=false;
 
     public static String getIpAddress() {
@@ -92,7 +89,7 @@ public class Net {
 
 
     public Net(int port,int timeOut){
-        UDP_SERVER_PORT=port;
+        SERVER_PORT =port;
     }
     public void stop(){
 
@@ -181,11 +178,11 @@ public class Net {
             try {
 
                 copterAddress=InetAddress.getByName(s[IP]);
-                UDP_SERVER_PORT=Integer.parseInt(s[PORT]);
+                SERVER_PORT =Integer.parseInt(s[PORT]);
 
                 do {
                     try {
-                        socket = new Socket(copterAddress, UDP_SERVER_PORT);
+                        socket = new Socket(copterAddress, SERVER_PORT);
                         break;
                     } catch (java.net.SocketException e) {
                         socket.close();

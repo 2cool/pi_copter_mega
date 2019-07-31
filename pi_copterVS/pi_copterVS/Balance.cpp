@@ -137,12 +137,16 @@ void BalanceClass::init()
 	true_throttle = throttle = 0;
 	pitch_roll_stabKP = 2;
 	propeller_lost[0]= propeller_lost[1] = propeller_lost[2] = propeller_lost[3] = false;
-	//set_pitch_roll_pids(0.0017,  0.0001, 0.2);
-	set_pitch_roll_pids(0.001, 0.001, 0.3);
+	//set_pitch_roll_pids(0.0017,  0.0001, 0.2);  //very old
+
+
+	//set_pitch_roll_pids(0.001, 0.001, 0.3);  // 10
+	set_pitch_roll_pids(0.0014, 0.001, 0.3);//9
+
 
 	yaw_stabKP = 2;
 
-	pids[PID_YAW_RATE].kP(0.0017f);
+	pids[PID_YAW_RATE].kP(0.0017f);  //setup for 9 prop
 	pids[PID_YAW_RATE].kI(0.0017f);
 	pids[PID_YAW_RATE].imax(-0.2,0.2);
 

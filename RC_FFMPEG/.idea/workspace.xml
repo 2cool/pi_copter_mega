@@ -11,12 +11,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b79624cd-cb7a-47df-b554-aa6316b37993" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Net.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Net.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/copter_graph.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/copter_graph.vcxproj.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.read.1.tlog" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/graph.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/graph.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.idb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.idb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.ilk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/Adafruit_NeoPixel-master/Adafruit_NeoPixel.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/Adafruit_NeoPixel-master/Adafruit_NeoPixel.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/Adafruit_NeoPixel-master/esp8266.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/Adafruit_NeoPixel-master/esp8266.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/VM_DBG/VM_DBG.cpp.d" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/VM_DBG/VM_DBG.cpp.d" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/VM_DBG/VM_DBG.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/VM_DBG/VM_DBG.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/VM_DBG/VM_mem_check_sam.cpp.d" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/VM_DBG/VM_mem_check_sam.cpp.d" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/VM_DBG/VM_mem_check_sam.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/VM_DBG/VM_mem_check_sam.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/Wire/Wire.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/Wire/Wire.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/Wire/utility/twi.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/Wire/utility/twi.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/board.buildinfo" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/board.buildinfo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.hex" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.hex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.ino.elf" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.ino.elf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.ino.hex" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.ino.hex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.ino.with_bootloader.hex" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.ino.with_bootloader.hex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.with_bootloader.hex" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/copter_mega.with_bootloader.hex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/Debug/gps.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/Debug/gps.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/__vm/Compile.vmps.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/__vm/Compile.vmps.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/__vm/Configuration.Debug.vmps.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/__vm/Configuration.Debug.vmps.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/__vm/Upload.vmps.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/__vm/Upload.vmps.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../copter_mega/copter_mega.ino" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_mega/copter_mega.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fpv/fpv/bin/ARM/Debug/fpv.out" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/bin/ARM/Debug/fpv.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fpv/fpv/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../fpv/fpv/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Balance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Balance.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/commander.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/commander.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/define.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/define.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/glob_header.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/glob_header.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" afterDir="false" />
@@ -36,11 +66,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="487">
               <caret line="679" column="55" selection-start-line="679" selection-start-column="38" selection-end-line="679" selection-end-column="55" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Net.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="184" column="40" lean-forward="true" selection-start-line="184" selection-start-column="40" selection-end-line="184" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -57,7 +96,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="714">
+            <state relative-caret-position="11492">
               <caret line="676" column="9" selection-start-line="676" selection-start-column="9" selection-end-line="676" selection-end-column="9" />
             </state>
           </provider>
@@ -66,7 +105,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
+            <state relative-caret-position="3570">
               <caret line="210" column="87" selection-start-line="210" selection-start-column="87" selection-end-line="210" selection-end-column="87" />
             </state>
           </provider>
@@ -137,6 +176,7 @@
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Net.java" />
       </list>
     </option>
   </component>
@@ -152,9 +192,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane" />
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -184,6 +221,9 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -309,7 +349,7 @@
       <window_info anchor="bottom" id="Version Control" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Build" order="7" visible="true" weight="0.1093001" />
       <window_info anchor="bottom" id="Find" order="8" weight="0.32981783" />
-      <window_info anchor="bottom" id="Android Profiler" order="9" />
+      <window_info anchor="bottom" id="Android Profiler" order="9" show_stripe_button="false" />
       <window_info anchor="right" id="Capture Analysis" order="0" />
       <window_info anchor="right" id="Gradle" order="1" />
       <window_info anchor="right" id="Theme Preview" order="2" />
@@ -454,10 +494,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="487">
+          <caret line="679" column="55" selection-start-line="679" selection-start-column="38" selection-end-line="679" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/myTools/FlightTextInfo.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="272">
           <caret line="21" column="18" selection-start-line="21" selection-start-column="11" selection-end-line="21" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11492">
+          <caret line="676" column="9" selection-start-line="676" selection-start-column="9" selection-end-line="676" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3570">
+          <caret line="210" column="87" selection-start-line="210" selection-start-column="87" selection-end-line="210" selection-end-column="87" />
         </state>
       </provider>
     </entry>
@@ -468,24 +529,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Commander.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Net.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="210" column="87" selection-start-line="210" selection-start-column="87" selection-end-line="210" selection-end-column="87" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="676" column="9" selection-start-line="676" selection-start-column="9" selection-end-line="676" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="487">
-          <caret line="679" column="55" selection-start-line="679" selection-start-column="38" selection-end-line="679" selection-end-column="55" />
+        <state relative-caret-position="340">
+          <caret line="184" column="40" lean-forward="true" selection-start-line="184" selection-start-column="40" selection-end-line="184" selection-end-column="40" />
         </state>
       </provider>
     </entry>

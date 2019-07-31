@@ -22,10 +22,10 @@ service cpufrequtils restart
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-#! /bin/sh
+
 # /etc/init.d/pi_copter
 #
-
+#! /bin/sh
 # Some things that run always
 touch /var/lock/pi_copter
 
@@ -63,7 +63,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 */
  
-#define PROG_VERSION "ver 3.190721\n"
+#define PROG_VERSION "ver 3.190730\n"
 
 
 #define SIM800_F

@@ -35,11 +35,17 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ80
 #define SIM800_RESET 25
 
 
+//d8
 #define OCR0 OCR4C
+//d46
 #define OCR1 OCR5A
+//d5
 #define OCR2 OCR3A
+//d6
 #define OCR3 OCR4A
+//d3
 #define OCR_GP OCR3C
+//d44
 #define OCR_GR OCR5C
 
 volatile uint8_t beep_code = 0;
@@ -394,7 +400,7 @@ void setup()
 	on(48000);
 	OCR0 = OCR1 = OCR2 = OCR3 = pwm_OFF_THROTTLE;
 #endif
-	//Serial.begin(9600);
+	//Serial.begin(115200);
 	//while (!Serial);
 	//SIM800.begin(9600);
 	//Serial.println("HI");
@@ -491,7 +497,7 @@ void loop()
 	}
 
 
-
+	static bool old_pulse = false;
 
 	if (beep_code)
 		beep();
@@ -500,15 +506,21 @@ void loop()
 		ring_to_send |= ring = digitalRead(RING) == LOW;
 
 		if (millis() > 5000 && ring) {
+			unsigned long t = millis() & 255;
+			//bool puls = t <= 127;
 			bool puls = (micros() & (unsigned long)65536) == 0;
-			for (int i = 0; i<8; i++)
-				if (puls)
-					pixels.setPixelColor(i, pixels.Color(col[eRING][0], col[eRING][1], col[eRING][2])); // Moderately bright green pi_copter_color.
-				else
-					pixels.setPixelColor(i, pixels.Color(col[eRING][1],col[eRING][0],  col[eRING][2])); // Moderately bright green pi_copter_color.
-			pixels.show();
-			if (do_sound)
-				digitalWrite(BUZZER, puls);
+			if (puls != old_pulse) {
+				old_pulse = puls;
+				for (int i = 0; i < 8; i++)
+					if (puls)
+						 pixels.setPixelColor(i, pixels.Color(col[eRING][0], col[eRING][1], col[eRING][2])); // Moderately bright green pi_copter_color.
+					else
+						 pixels.setPixelColor(i, pixels.Color(col[eRING][1], col[eRING][0], col[eRING][2])); // Moderately bright green pi_copter_color.
+				//Serial.println(puls);
+				pixels.show();
+				if (do_sound)
+					digitalWrite(BUZZER, puls);
+			}
 			ring_was = true;
 		}
 		else 
