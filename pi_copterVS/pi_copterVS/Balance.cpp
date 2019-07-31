@@ -146,7 +146,7 @@ void BalanceClass::init()
 
 	yaw_stabKP = 2;
 
-	pids[PID_YAW_RATE].kP(0.0017f);  //setup for 9 prop
+	pids[PID_YAW_RATE].kP(0.0017f);  //setup for 9 prop 
 	pids[PID_YAW_RATE].kI(0.0017f);
 	pids[PID_YAW_RATE].imax(-0.2,0.2);
 
