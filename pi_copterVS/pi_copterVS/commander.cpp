@@ -160,8 +160,8 @@ bool CommanderClass::ButtonMessage(string msg){
 
 }
 
-float CommanderClass::getPitch(){ return Autopilot.horizont_onState() ? pitch : 0; }
-float CommanderClass::getRoll(){ return Autopilot.horizont_onState() ? roll : 0; }
+float CommanderClass::getPitch(){ return  pitch; }
+float CommanderClass::getRoll(){ return  roll; }
 
 
 
@@ -199,21 +199,21 @@ float CommanderClass::getYaw() {
 bool CommanderClass::input(){
 
 
-	if (shmPTR->connected==0 || shmPTR->wifibuffer_data_len_4_read ==  0)
+	if (shmPTR->connected==0 || shmPTR->commander_buf_len ==  0)
 		return false;
 	
 	if (Autopilot.busy()) {
-		shmPTR->wifibuffer_data_len_4_read = 0;
+		shmPTR->commander_buf_len = 0;
 		return true;
 	}
 
-	Autopilot.last_time_data_recivedd = Mpu.timed;
-	uint8_t *buf = shmPTR->wifiRbuffer;
-	if (shmPTR->wifibuffer_data_len_4_read >= 12) {
+	Autopilot.last_time_data_recived = Mpu.timed;
+	uint8_t *buf = shmPTR->commander_buf;
+	if (shmPTR->commander_buf_len >= 12) {
 
 		if (Log.writeTelemetry) {
 			Log.block_start(LOG::COMM,true);
-			Log.loadMem(buf, shmPTR->wifibuffer_data_len_4_read,false);
+			Log.loadMem(buf, shmPTR->commander_buf_len,false);
 			Log.block_end(true);
 		}
 
@@ -259,7 +259,7 @@ bool CommanderClass::input(){
 		//	Debug.load(0, pitch, roll);
 		//	Debug.dump();
 			roll = ANGK*(float)i_roll;
-			if ((i + 3) < shmPTR->wifibuffer_data_len_4_read) {
+			if ((i + 3) < shmPTR->commander_buf_len) {
 				string msg = "";
 				msg += *(buf + i++);
 				msg += *(buf + i++);
@@ -291,13 +291,13 @@ bool CommanderClass::input(){
 		else {
 			cout << "COMMANDER ERROR\n";
 		}
-		shmPTR->wifibuffer_data_len_4_read = 0;
+		shmPTR->commander_buf_len = 0;
 		//cout << "Pitch=" << pitch << "; Roll=" << roll << "; Yaw=" << yaw<<endl;
 		return true;
 	}
 	else
 	{
-		shmPTR->wifibuffer_data_len_4_read = 0;
+		shmPTR->commander_buf_len = 0;
 		return true;
 	}
 	

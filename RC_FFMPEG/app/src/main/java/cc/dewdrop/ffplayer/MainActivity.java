@@ -38,7 +38,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
     public static int updateTimeMsec=50;
     public static float pitch=0,roll=0,yaw=0;
     private static boolean runMainUpdate=true;
-    public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, COMPASS_ON=64,HORIZONT_ON=128;
+    public final static int MOTORS_ON=1, CONTROL_FALLING=2,Z_STAB=4,XY_STAB=8,GO2HOME=16,PROGRAM=32, NOT_USED1=64,NOT_USED2=128;
     public final static int MPU_ACC_CALIBR=0x100, MPU_GYRO_CALIBR = 0x200, COMPASS_CALIBR=0x400,
             COMPASS_MOTOR_CALIBR=0x800, SHUTDOWN=0x1000, GIMBAL_PLUS=0x2000,GIMBAL_MINUS=0x4000,
             REBOOT=0x8000,PROGRAM_LOADED= 0x10000,SEC_MASK=0xFF000000;
@@ -46,8 +46,7 @@ public class MainActivity extends Activity  implements SensorEventListener {
     static public int command_bits_=0;
     private static boolean secure_flug=false;
     static boolean prog_is_loaded(){return (PROGRAM_LOADED&control_bits)!=0;}
-    static boolean compassOnF(){return (COMPASS_ON&control_bits)!=0;}
-    static boolean horizontOnF(){return (HORIZONT_ON&control_bits)!=0;}
+
     static boolean progF(){return (PROGRAM&control_bits)!=0;}
     static boolean toHomeF(){return (GO2HOME&control_bits)!=0;}
     static boolean motorsOnF(){return (MOTORS_ON&control_bits)!=0;}
@@ -63,26 +62,10 @@ public class MainActivity extends Activity  implements SensorEventListener {
     public static float [] screenMetrics;
     RelativeLayout rl1;
     static DrawView drawView=null  ;
-
-
-
-
     public static void smartCtrl(){command_bits_|=XY_STAB; }
     public static void Prog(){command_bits_|=PROGRAM; }
     public static void toHome() {command_bits_|=GO2HOME;}
     public static void altHold(){command_bits_|=Z_STAB;}
-    public static void horizonOn(){command_bits_|=HORIZONT_ON;}
-    public static void compassOn(){command_bits_|=COMPASS_ON;}
-
-    public static void compassOn(boolean f){
-        if (f)
-            command_bits_|=COMPASS_ON;
-        else
-            command_bits_&= (0xffffffff)^COMPASS_ON;
-    }
-
-
-
 
     public static void camera_gimb_plus(){
         command_bits_|=GIMBAL_PLUS;

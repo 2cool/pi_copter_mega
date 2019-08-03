@@ -112,7 +112,7 @@ void MS5611Class::log_sens() {
 }
 
 //--------------------------------------------------
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 
 #include "GPS.h"
 
@@ -357,7 +357,7 @@ int MS5611Class::init() {
 
 	powerK = 1;
 
-#ifndef FALSE_WIRE
+#ifndef FLY_EMULATOR
 
 	cout << "Initialize High resolution: MS5611\n";
 
@@ -366,7 +366,7 @@ int MS5611Class::init() {
 	pressure = PRESSURE_AT_0;
 	ms5611_count = 0;
 
-#ifndef FALSE_WIRE
+#ifndef FLY_EMULATOR
 	compensation = true;
 
 	if ((fd4S = open("/dev/i2c-0", O_RDWR)) < 0) {

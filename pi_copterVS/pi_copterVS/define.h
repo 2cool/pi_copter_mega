@@ -8,7 +8,7 @@
 //#define OFF_MOTOR_IF_LOST_CONNECTION  
 //#define OFF_TIMELAG
 //-----------------------------------------------------------------
-//#define FALSE_WIRE
+//#define FLY_EMULATOR
 //----------------------------------------------------------------
 //#define ALWAYS_SOUND
 //#define YAW_OFF
@@ -30,7 +30,7 @@
 //#define FASLE_GPS_STILL
 //#define NO_BATTERY
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 //#define FASLE_GPS_STILL
 //#define MOTORS_OFF
 #define COMPAS_MOTORS_OFF  

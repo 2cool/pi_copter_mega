@@ -39,7 +39,7 @@ void HmcClass::init()
 	//heading = 0;
 	ok = true;
 	calibrated = true;
-#ifndef FALSE_WIRE
+#ifndef FLY_EMULATOR
 
 
 	cout << "Initializing I2C devices...\n";
@@ -169,7 +169,7 @@ void HmcClass::motTest(const float fmx, const float fmy, const float fmz){
 	
 }
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 
 
 void HmcClass::loop(){

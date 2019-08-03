@@ -26,13 +26,13 @@ public class Commander {
     static final public float NO_DATA=Float.POSITIVE_INFINITY;
     static public float sended_ax=0,sended_ay=0;
     static public byte buf[];
-    static public boolean copter_is_busy=true;
+
     static final double GRAD2RAD = 0.01745329251994329576923690768489;
     static final double RAD2GRAD = 57.295779513082320876798154814105;
     static private long last_time=0;
     static public long motors_on_time=0;
     static private void init(){
-        copter_is_busy=true;
+
         settings=false;
         heading=ax=ay=roll=pitch=yaw=0;
         throttle =0.5f;
@@ -56,7 +56,7 @@ public class Commander {
 
 
     static public void new_connection(){
-        copter_is_busy=true;
+
         init();
         Telemetry.init();
     }
@@ -158,10 +158,7 @@ public class Commander {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static public int get(byte buf[]){
 
-        if (copter_is_busy){
 
-            return 4;
-        }
 
         int i=0;
         //   buf[0]=(byte)MainActivity.command_bits_;

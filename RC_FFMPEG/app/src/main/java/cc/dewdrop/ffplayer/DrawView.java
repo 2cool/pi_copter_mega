@@ -85,7 +85,7 @@ public class DrawView extends View {
         photo_.enabled(Commander.link);
         vrc_.enabled(Commander.link);
         do_prog.enabled(MainActivity.prog_is_loaded());
-        ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8) + " | " + (Telemetry.status&255) +" %";
+        ftx.p[ftx.LOC]=constStrLen(Double.toString(Telemetry.lat),8)+"  "+constStrLen(Double.toString(Telemetry.lon),8) + " | -" + (Telemetry.status&255) +"dBm";
         ftx.p[ftx._2HM]="2h: "+Integer.toString((int)Telemetry.dist)+"  h:"+Integer.toString(Telemetry.r_accuracy_hor_pos)+"v:"+Integer.toString(Telemetry.r_acuracy_ver_pos);
         ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),4);
         ftx.p[ftx.VIBR]=constStrLen(Double.toString(Telemetry.vibration/1000),5);
@@ -115,17 +115,7 @@ public class DrawView extends View {
             }
             go_to_home.set(MainActivity.toHomeF());
 //------------------------------------------------------------------------------------------------------
-            if (!(MainActivity.progF() || MainActivity.toHomeF()) && MainActivity.motorsOnF() ) {
 
-                if (!MainActivity.horizontOnF()) //always is on it this mode
-                    MainActivity.horizonOn();
-                if (DrawView.head_less_.is_pressed()){
-                    MainActivity.compassOn(!yaw_off.is_pressed() ^ MainActivity.compassOnF());
-                }else {
-                    if (!MainActivity.compassOnF())
-                        MainActivity.compassOn();
-                }
-            }
 
             smart_ctrl.set(MainActivity.smartCntrF());
             hold_alt.set(MainActivity.altHoldF());
@@ -428,6 +418,7 @@ public class DrawView extends View {
         }
         if (yaw_off.getStat()==3){
             j_left.set_block_X(yaw_off.is_pressed());
+
         }
     }
     void pitch_roll_controls(final MotionEvent event){
@@ -652,20 +643,20 @@ public class DrawView extends View {
         if (dt>0.1)
             dt=0.1;
 
-
+        if (control_type_acc_.is_pressed()) {
+            j_right.setJosticY((float) (ma_pitch));
+            j_right.setJosticX((float) (ma_roll));
+        }
         if ((MainActivity.control_bits&MainActivity.MOTORS_ON)!=0){
 
             if (head_less_.is_pressed()){   //old control type
 
-                if (control_type_acc_.is_pressed()) {
-                    j_right.setJosticY((float) (ma_pitch));
-                    j_right.setJosticX((float) (ma_roll));
-                }
+
                 //отключить флаг управления всегда включен
                 Commander.heading=(float)MainActivity.yaw;
                 heading += 45 * j_left.getX() * dt;
                 heading=(float)wrap_180(heading);
-                Commander.headingOffset = heading;
+                heading=Commander.headingOffset = (yaw_off.is_pressed())?0: heading;
 
 
                 //Log.d("COMM", heading +" "+j_left.getX()+ "dt="+dt);

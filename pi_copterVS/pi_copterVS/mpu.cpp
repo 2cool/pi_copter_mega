@@ -144,7 +144,7 @@ void MpuClass::init()
 
 	cout << "Initializing MPU6050\n";
 
-#ifndef FALSE_WIRE
+#ifndef FLY_EMULATOR
 
 
 
@@ -261,7 +261,7 @@ const float n305 = 3.0518509475e-5;
 
 const float to_98g = 0.0005981445312f;
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 
 
 
@@ -608,7 +608,7 @@ void MpuClass::test_Est_Alt() {
 
 
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 	if (alt <= 0) {
 		est_alt_ = 0;
 		est_speedZ = 0;

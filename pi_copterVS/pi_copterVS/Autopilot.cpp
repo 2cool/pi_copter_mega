@@ -23,8 +23,8 @@ THG out of Perimetr high
 
 
 
-#define WIND_X 5
-#define WIND_Y 1
+#define WIND_X 10
+#define WIND_Y 10
 #define WIND_Z 0.5
 
 
@@ -78,13 +78,13 @@ void AutopilotClass::init(){////////////////////////////////////////////////////
 
 	if (init_shmPTR())
 		return;
-#ifdef FALSE_WIRE
-	Emu.init(1, 1, 0);// WIND_X, WIND_Y, WIND_Z);
+#ifdef FLY_EMULATOR
+	Emu.init(WIND_X, WIND_Y, WIND_Z);
 #endif
 	shmPTR->sim800_reset = false;
 	time_at_startd = old_time_at_startd = 0;
 	lowest_height = shmPTR->lowest_altitude_to_fly;
-	last_time_data_recivedd = 0;
+	last_time_data_recived = 0;
 	
 	Balance.init();
 	MS5611.init();
@@ -213,7 +213,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 
 #ifdef LOST_BEEP
 	
-	if ( GPS.loc.lat_zero!=0 && GPS.loc.lon_zero!=0  && Mpu.timed - last_time_data_recivedd>3 && Mpu.timed - last_beep_timed > 3) {
+	if (last_time_data_recived &&  GPS.loc.lat_zero!=0 && GPS.loc.lon_zero!=0  && Mpu.timed - last_time_data_recived>3 && Mpu.timed - last_beep_timed > 3) {
 		last_beep_timed = Mpu.timed;
 		mega_i2c.beep_code(B_CONNECTION_LOST);
 	}
@@ -244,8 +244,8 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 				go2HomeProc(dt);
 			}
 			else{
-				double timelag = Mpu.timed - last_time_data_recivedd;
-				if (motors_is_on() && timelag > CONNECTION_LOST_TIMEOUT) {
+				double timelag = Mpu.timed - last_time_data_recived;
+				if (last_time_data_recived && motors_is_on() && timelag > CONNECTION_LOST_TIMEOUT) {
 					connectionLost_();
 					return;
 				}
@@ -258,8 +258,8 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 						Commander.data_reset();
 				}
 #endif
-				if (compass_onState())
-					aYaw_ = Commander.get_yaw_minus_offset();
+				
+				aYaw_ = Commander.get_yaw_minus_offset();
 				if (control_bits & Z_STAB){
 					const float thr = Commander.getThrottle();
 					const float speed = (thr - MIDDLE_POSITION) * sens_z;
@@ -552,7 +552,7 @@ bool AutopilotClass::going2HomeStartStop(const bool hower){
 
 
 bool AutopilotClass::holdLocation(const long lat, const long lon){
-	control_bits &= (0xffffffff ^ (COMPASS_ON | HORIZONT_ON));
+	
 	aPitch = aRoll = 0;
 	//if (holdAltitude()){
 
@@ -579,11 +579,10 @@ bool AutopilotClass::holdLocationStartStop(){///////////////////////////////////
 		return holdLocation(GPS.loc.lat_, GPS.loc.lon_);
 	}
 	else{
-		control_bits |= (COMPASS_ON | HORIZONT_ON);
-			control_bits ^=  XY_STAB;
-			Stabilization.resset_xy_integrator();
-			//holdAltitude();
-			return true;
+		control_bits ^=  XY_STAB;
+		Stabilization.resset_xy_integrator();
+		//holdAltitude();
+		return true;
 	}
 	return false;
 }
@@ -599,15 +598,13 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 	
 	if (start){
 		//printf( "\MS5611 err: %f\n",MS5611.getErrorsK());
-#ifndef FALSE_WIRE
+#ifndef FLY_EMULATOR
 		cout << "on ";
 		if (Mpu.timed < 25) {
 			cout << "\n!!!calibrating!!! to end:"<< 25-millis()/1000 <<" sec." << "\t"<<Mpu.timed << endl;
 			mega_i2c.beep_code(B_MS611_ERROR);
 			return false;
 		}
-
-		
 #endif
 		
 
@@ -647,8 +644,6 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 			
 			if (control_bits&XYSTAB)
 				holdLocation(GPS.loc.lat_, GPS.loc.lon_);
-
-			//control_bits |= (HORIZONT_ON | COMPASS_ON);
 
 			Stabilization.resset_z();
 			Stabilization.resset_xy_integrator();
@@ -745,10 +740,15 @@ bool AutopilotClass::off_throttle(const bool force, const string msg){//////////
 }
 
 void AutopilotClass::connectionLost_(){ ///////////////// LOST
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 	//if (true)
 	//	return;
 #endif
+
+	shmPTR->connected = 0;
+	shmPTR->commander_buf_len = 0;
+	shmPTR->telemetry_buf_len = 0;
+
 	cout << "connection lost" << "\t"<<Mpu.timed<<endl;
 	Telemetry.addMessage(e_LOST_CONNECTION);
 	Commander.controls2zero();
@@ -763,7 +763,7 @@ return;
 		if (go2homeState() == false && progState() == false) {
 			aPitch = aRoll = 0;
 
-			if (going2HomeON(true) == false && (Mpu.timed - last_time_data_recivedd) > (CONNECTION_LOST_TIMEOUT*3)) {
+			if (going2HomeON(true) == false && (Mpu.timed - last_time_data_recived) > (CONNECTION_LOST_TIMEOUT*3)) {
 				off_throttle(false, e_NO_GPS_2_LONG);
 			}
 		}
@@ -781,56 +781,6 @@ void AutopilotClass::calibration() {////////////////////////////////////////////
 	cRoll += Commander.roll;
 	Commander.roll = 0;
 	*/
-}
-
-
-
-
-
-/*
-
-
-
-
-if (ctrl_flag == MANUAL){//---------------manual
-	if (flyAtPressure >= SET_HEIGHT_MANUAL){
-		throttle = Commander.throttle;
-		if (throttle > max_throtthle){
-			throttle = max_throtthle;
-		}
-		startThrottle = throttle;
-	}
-	else{
-		addZ = (startThrottle - Commander.throttle) * 12;
-		holdHeight();
-		if (throttle > max_throtthle)
-			throttle = max_throtthle;
-	}
-	if (smart_ctrl == false){
-
-
-		aPitch = Commander.pitch;
-		aRoll = Commander.roll;
-	}
-	else{
-		addX -= (Commander.pitch * 10 + addX)*0.1;
-		addY += (Commander.roll * 10 - addY)*0.1;
-		go2location();
-	}
-	aPitch = correctingAngle(aPitch);
-	aRoll = correctingAngle(aRoll);
-	wdt_mask |= CONTROL;
-
-	*/
-
-void AutopilotClass::compass_tr() {
-	if (!progState() && !go2homeState())
-		control_bits ^= COMPASS_ON;
-}
-
-void AutopilotClass::horizont_tr() {
-	if ((control_bits & GO2HOME) == 0 && (control_bits & PROGRAM) == 0)
-		control_bits ^= HORIZONT_ON;
 }
 
 void AutopilotClass::set_gimBalPitch(const float angle) {
@@ -853,7 +803,6 @@ bool AutopilotClass::start_stop_program(const bool stopHere){
 	if (motors_is_on()) {
 		if (progState()) {
 			control_bits ^= PROGRAM;
-			
 			Prog.clear();
 			Stabilization.setDefaultMaxSpeeds();
 			if (stopHere) {
@@ -890,7 +839,7 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 	//	uint8_t mask = control_bits_^bits;
 	//printf("comm=%i\n", bits);
 
-
+	cout << bits << endl;
 	mega_i2c.beep_code(B_COMMAND_RECEIVED);
 
 	if (MOTORS_ON&bits)  {
@@ -921,16 +870,9 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 
 		if (bits & XY_STAB)
 			holdLocationStartStop();
-
-
-		if (bits & COMPASS_ON)
-			compass_tr();
-
-		if (bits & HORIZONT_ON)
-			horizont_tr();
 	}
 	else 
-		control_bits ^= bits & (COMPASS_ON | HORIZONT_ON | XY_STAB | Z_STAB);
+		control_bits ^= bits & ( XY_STAB | Z_STAB);
 	
 	//-----------------------------------------------
 	if (bits & (MPU_ACC_CALIBR | MPU_GYRO_CALIBR)) {

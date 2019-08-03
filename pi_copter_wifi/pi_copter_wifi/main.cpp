@@ -35,6 +35,12 @@ key_t          ShmKEY;
 int            ShmID;
 struct Memory *shmPTR;
 
+
+
+void delay(int t) {
+	usleep(t * 1000);
+}
+
 int init_shmPTR() {
 	if (shmPTR == 0) {
 
@@ -50,12 +56,6 @@ int init_shmPTR() {
 	return 0;
 }
 
-//thread t;
-
-
-uint64_t offline_time = 0;
-bool newConnection_;
-bool is_connected(void) { return shmPTR->connected>0; }
 string get_client_addres();
 
 
@@ -70,213 +70,76 @@ void pipe_handler(int sig) {
 	cout << "wifi pipe error\n";
 }
 
-
-
-
-uint32_t start_seconds = 0;
-uint32_t millis_g() {
-	timespec t;
-	clock_gettime(CLOCK_REALTIME, &t);
-	uint32_t ret;
-
-	ret = ((t.tv_sec) * 1000) + (t.tv_nsec / 1000000);
-	return ret;
-}
-uint32_t millis() {
-	timespec t;
-	clock_gettime(CLOCK_REALTIME, &t);
-	uint32_t ret;
-	if (start_seconds == 0)
-		start_seconds = t.tv_sec;
-	ret = ((t.tv_sec - start_seconds) * 1000) + (t.tv_nsec / 1000000);
-	return ret;
-}
-
-
-
-int64_t micros(void) {
-	timespec t;
-	clock_gettime(CLOCK_REALTIME, &t);
-	int64_t ret;
-	if (start_seconds == 0)
-		start_seconds = t.tv_sec;
-	ret = ((int64_t)(t.tv_sec - start_seconds) * 1000000) + (t.tv_nsec / 1000);
-	return ret;
-}
-void delay(unsigned long t) {
-	usleep(t * 1000);
-}
-
-int wifi_connections = 0;
-int sockfd, newsockfd, portno;
-socklen_t clilen;
-
+int sockfd;
 struct sockaddr_in serv_addr, cli_addr;
-int n;
 
-#define uchar unsigned char
+int server() {
 
-
-string get_client_addres() {
-	int adr = cli_addr.sin_addr.s_addr;
-	string s = to_string((uchar)(adr & 255)) + "." + to_string((uchar)(255 & (adr >> 8))) + "." + to_string((uchar)(255 & (adr >> 16))) + "." + to_string((uchar)(adr >> 24));
-	return s;
-}
-
-
-
-string log_fname;
-
-void mclose() {
 
 	
-	cout << "server stoped\n";
-	wifi_connections--;
-	close(newsockfd);
-	close(sockfd);
-	cout << "WIFI closed\n";
-}
 
 
+	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 
-
-int new_server() {
-	if (wifi_connections>0)
-		return 0;
-	wifi_connections++;
-	/*
-	string adr;
-	do {
-	delay(1000);
-	adr = get_my_ip_addres();
-	} while ( adr.length() == 0);
-	*/
-
-	
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) {
-		//cout << "ERROR opening socket/n";
-		wifi_connections--;
 		return -1;
 	}
-	bzero((char *)&serv_addr, sizeof(serv_addr));
-	portno = 9876;
-	serv_addr.sin_family = AF_INET;
-
-	serv_addr.sin_addr.s_addr = INADDR_ANY;//inet_addr(adr.c_str());
-	serv_addr.sin_port = htons(portno);
-	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		//cout << "ERROR on binding/n";
-		wifi_connections--;
+	memset(&serv_addr, 0, sizeof(serv_addr));
+	memset(&cli_addr, 0, sizeof(cli_addr));
+	// Filling server information 
+	serv_addr.sin_family = AF_INET; // IPv4 
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_port = htons(9876);
+	//inet_aton("192.168.100.101", (in_addr*)& servaddr.sin_addr.s_addr);
+	// Bind the socket with the server address 
+	if (bind(sockfd, (const struct sockaddr*) & serv_addr, sizeof(serv_addr)) < 0)
 		return -1;
-	}
-	listen(sockfd, 5);
-	clilen = sizeof(cli_addr);
-}
-
-bool wite_connection() {
-	shmPTR->connected = 0;
-	shmPTR->client_addr = 0;
-	shmPTR->wifibuffer_data_len_4_read = 0;
-	shmPTR->wifibuffer_data_len_4_write = 0;
-	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-	if (newsockfd < 0) {
-		cout << "ERROR on accept\n";
-		wifi_connections--;
-		return true;
-	}
+	//char* buffer = (char*)shmPTR->wifiRbuffer;
 
 
-	return false;
-}
+	while (flag == 0 && shmPTR->run_main) {
+		while(shmPTR->commander_buf_len != 0)
+				usleep(10000);
+		int n, len;
+		n = recvfrom(sockfd, (char*)shmPTR->commander_buf, TELEMETRY_BUF_SIZE, MSG_WAITALL, (struct sockaddr*) & cli_addr, (socklen_t*)& len);
 
 
-uint32_t wifiold_t = 0;
-
-
-
-
-enum {REDY_FOR_READ_DATA=1,READY_4_WRITE_DATA=2};
-
-void server() {
-	//delay(5000);
-	uint8_t len_buf_0_cnt = 0;
-	new_server();
-	if (wite_connection())
-		return;
-	while (flag==0 && shmPTR->run_main) {
-
-		// bzero(buffer,256);
-		const uint32_t t = millis();
-		const uint32_t dt = t - wifiold_t;
-		wifiold_t = t;
-
-	//	if (dt < 33)
-	//		delay(33 - dt);
-
-		// if (dt > 35)
-		//  printf("too long %i\n", dt);
-
-
-		while (flag==0 && shmPTR->wifibuffer_data_len_4_read != 0)
-			usleep(20000);
-				
-		int len = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
-		if (len <= 0) {
-			//cout << "ra\n";
-			len = read(newsockfd, shmPTR->wifiRbuffer, TELEMETRY_BUF_SIZE);
-		}
-		shmPTR->wifibuffer_data_len_4_read = len;
-
-		if (len > 0) {
-			len_buf_0_cnt = 0;
-			if (shmPTR->connected == 0)
+		if (n > 0) {
+			//cout << "<<" << n << endl;
+			shmPTR->commander_buf_len = n;
+			if (shmPTR->connected == 0) {
 				shmPTR->client_addr = cli_addr.sin_addr.s_addr;
-			shmPTR->connected++;
-			if (shmPTR->connected == 1) {
+				shmPTR->connected++;
 				cout << "ONLINE\n";
-				offline_time = 0;
+			}
+
+			while (flag == 0 && shmPTR->telemetry_buf_len == 0)
+				usleep(10000);
+			len = shmPTR->telemetry_buf_len;
+			n = sendto(sockfd, (char*)shmPTR->telemetry_buf, len, MSG_CONFIRM, (const struct sockaddr*) & cli_addr, sizeof(cli_addr));
+
+			if (len == n) {
+				shmPTR->telemetry_buf_len = 0;
+				//cout << ">>" << n << endl;
+			}
+			else {
+				fprintf(stderr, "socket() failed: %s\n", strerror(errno));
+				cout << ">>error\n";
 			}
 		}
 		else {
-			if (len_buf_0_cnt++ >= 2) {
-				if (shmPTR->connected) {
-					if (offline_time == 0)
-						offline_time = millis();
-					cout << "OFFLINE\n";//ERROR reading from socket\n";
-
-				}
-				if (wite_connection())
-					return;
-			}
-			continue;
+			fprintf(stderr, "socket() failed: %s\n", strerror(errno));
+			cout << "<<error\n";
 		}
-		
-		while (flag==0 && shmPTR->wifibuffer_data_len_4_write == 0)
-			usleep(20000);
+		static int cnt = 0;
+		//cout << "--------------------- " << cnt << endl;
+		cnt++;
 
-		
-		n = write(newsockfd, shmPTR->wifiWbuffer, shmPTR->wifibuffer_data_len_4_write);
-		if (n <= 0) {
-			//cout << "wa\n";
-			n = write(newsockfd, shmPTR->wifiWbuffer, shmPTR->wifibuffer_data_len_4_write);
-
-		}
-		if (n > 0) {
-			
-			shmPTR->wifibuffer_data_len_4_write = 0;
-		}
-		else{
-			if (shmPTR->connected) {
-
-				cout << "ERROR writing to socket\n";
-				
-			}
-			if (wite_connection())
-				return;
-			
-		}
 	}
+	close(sockfd);
+
+		//////////////////////////
+
+	
 }
 
 
@@ -289,7 +152,7 @@ std::string exec(const std::string cmd) {
 	FILE* pipe = popen(cmd.c_str(), "r");
 	if (!pipe) {
 		//throw std::runtime_error("popen() failed!");
-		cout << "inet pipe brock\n";
+		cout << "wifi: pipe brock\n";
 		return "";
 	}
 	while (!feof(pipe)) {
@@ -303,13 +166,18 @@ std::string exec(const std::string cmd) {
 
 
 //"*  2coolzNET      Infra  11    54 Mbit/s  93      ▂▄▆█  WPA1 WPA2"
+//          Link Quality=5/5  Signal level=-39 dBm  Noise level=-91 dBm
+
 void get_signal_strong() {
-	string ret = exec("nmcli dev wifi | grep 2coolzNET");
-	if (ret.length() >= 20) {
-		string strong = ret.substr(2 + ret.find("/s"), 5);
-		int signal = atoi(strong.c_str());
+	string ret = exec("nice -n -20 iwconfig wlan0 | grep Signal");
+	if (ret.length() > 20) {
+		int beg = ret.find("l=-");
+		int len = ret.substr(beg+3).find("dBm");
+		int signal = atoi(ret.substr(beg+3, len).c_str());
 		shmPTR->status = signal;
 	}
+	//string ret = exec("nmcli dev wifi | grep 2coolzNET");
+	
 }
 
 
@@ -318,22 +186,22 @@ void get_signal_strong() {
 void test_wifi() {
 	int ln = 2;
 	cout << "test wifi work\n";
-	string ret = exec("ifconfig wlan0");
+	string ret = exec("nice -n -20 ifconfig wlan0");
 	int ip;
 	string myIP = "";
 	ip = ret.find("192.168.");
 	if (ip >= 0)
 		myIP = ret.substr(ip, 8 + ret.substr(ip + 8).find(".")) + ".1";
 	if (myIP.length() > 0)
-		ret = exec("ping -w 1 -c 1 " + myIP);
+		ret = exec("nice -n -20 ping -w 1 -c 1 " + myIP);
 	if (ret.find("1 received") == string::npos) {
 		if (--ln <= 0) {
 			//printf( "%s %i\n", ret.c_str(),n);
-			ret = exec("nmcli dev wifi | grep 2coolzNET");
+			ret = exec("nice -n -20 nmcli dev wifi | grep 2coolzNET");
 			if (ret.find(" 2coolzNET ") != string::npos) {
-				exec("ifconfig wlan0 down");
+				exec("nice -n -20 ifconfig wlan0 down");
 				delay(1000);
-				exec("ifconfig wlan0 up");
+				exec("nice -n -20 ifconfig wlan0 up");
 				delay(5000);
 				ln = 2;
 			}
@@ -363,15 +231,9 @@ void watch_d() {
 				errors = 0;
 				old_main_cnt = shmPTR->main_cnt;
 			}
-
-			if (offline_time && millis() - offline_time > 15000) {
-				offline_time = millis();
-				test_wifi();
-			}
-
 			delay(100);
 			cnt_wifi_strong++;
-			cnt_wifi_strong &= 15;
+			cnt_wifi_strong &= 31;
 			if (cnt_wifi_strong == 1)
 			{
 				get_signal_strong();
@@ -415,7 +277,6 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-
 	if (argc == 2) {
 		out = std::ofstream(argv[1]); //откроем файл для вывод
 		coutbuf = std::cout.rdbuf(); //запомним старый буфер
@@ -423,20 +284,18 @@ int main(int argc, char *argv[])
 		std::cerr.rdbuf(out.rdbuf());
 	}
 
-	
-	//cout << "  wifi started...\n";
-
-	
 
 	shmPTR->connected = 0;
 	shmPTR->client_addr = 0;
-	shmPTR->wifibuffer_data_len_4_read = 0;
-	shmPTR->wifibuffer_data_len_4_write = 0;
+	shmPTR->telemetry_buf_len = 0;
+	shmPTR->commander_buf_len = 0;
 
-	//cout << "server started...\n";
-	delay(400);
-	if (flag==0)
-		server();
+	//usleep(1000000)
+	if (flag == 0) {
+		//while (flag == 0 && shmPTR->run_main) {
+			server();
+		//}
+	}
 
 
 	shmdt((void *)shmPTR);

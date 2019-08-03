@@ -11,7 +11,7 @@
 
 void GPSClass::init()
 {	
-#ifndef	FALSE_WIRE
+#ifndef	FLY_EMULATOR
 	loc.last_gps_data_timed = 0;
 #endif
 	if (loc.init() == -1) {
@@ -22,7 +22,7 @@ void GPSClass::init()
 }
 
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 
 
 uint32_t gpsttime = 0;
@@ -84,7 +84,7 @@ void GPSClass::loop(){
 		
 	}
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 		if (Mpu.get_Est_Alt() <= 0){
 			//speedX = speedY = 0;
 	

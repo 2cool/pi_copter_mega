@@ -192,7 +192,7 @@ uint16_t Megai2c::correct(const float n) {    //0-это
 }
 
 void Megai2c::throttle(const float n[]) {
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 	Emu.update(n, Mpu.dt);
 #else
 	uint16_t pwm_out[5];

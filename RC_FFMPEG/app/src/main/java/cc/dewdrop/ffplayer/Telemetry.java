@@ -109,124 +109,7 @@ public class Telemetry {
             messages = msg;
             Log.d("ERRMSG",msg);
         }
-        //
 
-
-
-        if (true)return;
-		/*
-
-		//if (msgg.length()>2)
-          //  Log.i("UPS", "message recived: "+msgg);
-
-		if (msgg.length()>0) {
-			//Log.i("OUT_M",msgg);
-			Disk.write("RECIVED:" + msgg+"\n");
-		}
-
-		int i=0;
-		if (Commander.newConnection_) {
-			if (msgg.startsWith(Commander.BEGIN_CONVERSATION)){
-			//if (msgg.indexOf(Commander.BEGIN_CONVERSATION) == 0) {
-				i = 3;
-				//Commander.newConnection_ = false;
-			} else {
-				Commander.new_connection();
-				Log.i("OUT_M","new connection");
-				return;
-			}
-			//return;
-		}
-		while (msgg.length()>=i+3){
-			String msg=msgg.substring(i,i+3);
-			i+=3;
-
-
-
-			if (msg.indexOf("MOD",0)==0){
-				if (beginConversationGET)
-					Commander.newConnection_ = false;
-				String smod=msgg.substring(i,i+3);
-				i+=3;
-				MainActivity.control_bits=Integer.parseInt(smod);
-
-
-				if (old_control_bits!=MainActivity.control_bits){
-
-					//if (MainActivity.control_bits==MainActivity.MOTORS_OFF){
-					//	Disk.close();
-					//}
-					if ((MainActivity.control_bits&MainActivity.MOTORS_ON)==0){
-						autoLat=0;
-						autoLon=0;
-					}else
-						if ((MainActivity.control_bits&MainActivity.MOTORS_ON)==MainActivity.MOTORS_ON && autoLat==0 && autoLon==0){
-							motorsWasOn=true;
-							autoLat=lat;
-							autoLon=lon;
-						}
-					if ((old_control_bits&MainActivity.GO2HOME)!=(MainActivity.control_bits&MainActivity.GO2HOME)) {
-						if (MainActivity.toHomeF())
-							Commander.throttle = 0.5f;
-						//MainActivity.horizont_on=MainActivity.compass_on=(MainActivity.control_bits&MainActivity.XY_STAB)!=MainActivity.XY_STAB;
-
-					}else if ((old_control_bits&MainActivity.PROGRAM)!=(MainActivity.control_bits&MainActivity.PROGRAM)) {
-						if (MainActivity.progF())
-							Commander.throttle = 0.5f;
-					}else
-
-						if ((old_control_bits&MainActivity.XY_STAB)!=(MainActivity.control_bits&MainActivity.XY_STAB)){
-						//	if (MainActivity.smartCntrF())
-						//		Commander.throttle = 0.5f;
-							//MainActivity.horizont_on=MainActivity.compass_on=(MainActivity.control_bits&MainActivity.XY_STAB)!=MainActivity.XY_STAB;
-						}else
-							if ((old_control_bits&MainActivity.Z_STAB)!=(MainActivity.control_bits&MainActivity.Z_STAB)){
-								if (MainActivity.altHoldF())
-									Commander.throttle = 0.5f;
-								else
-									corectThrottle();
-							}
-
-					old_control_bits=MainActivity.control_bits;
-				}
-				//Log.i("CNTRB",msg+" "+MainActivity.control_bits);
-			}else
-			//добавить передачу жпс акураси через меседж
-			if (msg.indexOf("HLC",0)==0){
-				String locHome[]=msgg.substring(i).split(",",3);
-				int n=locHome[0].length()+1+locHome[1].length();
-				while (n%3!=0)
-					n++;
-				i+=n;
-				autoLat=0.0000001*Integer.parseInt(locHome[0]);
-				autoLon=0.0000001*Integer.parseInt(locHome[1]);
-			}else
-			if (msg.indexOf("UPS",0)==0){
-                //Log.i("UPS","read mess "+msg);
-                parse_settings(msgg, i);
-				i=msgg.lastIndexOf(",",i);
-			}
-
-
-
-		}
-
-		long timems = System.currentTimeMillis();
-		if ((timems-oldTimeMS)>=1000) {
-			if (oldTimeMS == 0) {
-				oldTimeMS = System.currentTimeMillis();
-			}else {
-				if ((old_control_bits&31) >= MainActivity.MOTORS_ON) {
-					motorsONtimer += (int) ((timems - oldTimeMS) / 1000);
-					int minutes=(int)Math.ceil(motorsONtimer/60);
-					int seconds=motorsONtimer-minutes*60;
-					motors_on_timer=Integer.toString(minutes)+":"+((seconds<10)?"0":"")+Integer.toString(seconds);
-				}
-				oldTimeMS = timems;
-			}
-		}
-
-*/
 
     }
 
@@ -510,10 +393,7 @@ public class Telemetry {
     static public void bufferReader_(byte buf[],int buf_len){
         //   Log.d("BUFREAD","bufRead");
         int i=0;
-        Commander.copter_is_busy=(buf_len<=4);
-        if (Commander.copter_is_busy){
-            return;
-        }
+
         //if (buf_len<=4)
         //	return;
         telemetry_couter++;

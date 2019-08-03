@@ -331,6 +331,13 @@ sudo dhclient ra0
 const static string connect2camera = "ifconfig "+wlan_fpv+" up && wpa_supplicant -B -i"+wlan_fpv+" -c /etc/camera.conf -Dwext && dhclient "+ wlan_fpv;
 
 
+
+void sleep3s() {
+	for (int i = 0; i < 15; i++) {
+		delay(200);
+		shmPTR->fpv_cnt++;
+	}
+}
 bool fpv_stream = false;
 int main_cnt_err = 0;
 int main()
@@ -344,7 +351,7 @@ int main()
 	}
 	int clone=shmPTR->fpv_cnt;
 	int old_main_cnt = shmPTR->main_cnt;
-	delay(2000);
+	delay(700);
 	if (clone != shmPTR->fpv_cnt) {
 		cout << "FPV CLONE\n";
 		return 0;
@@ -362,24 +369,25 @@ int main()
 				cout << "camera wifi not found...\n";
 				print = false;
 			}
-			sleep(5);
+			sleep3s();
 		}
 		else
 			break;
-	} while (true);
+
+	} while (shmPTR->fpv_run);
 	cout << "camera found\n";
 
 	string ret = exec("nice -n -20 ifconfig "+ wlan_fpv);
 	if (ret.find("192.168.42.") == string::npos) {
 		system(connect2camera.c_str());
-		sleep(4);
+		sleep3s();
 	}
 	
 	while (open_socket() == -1) 
-		sleep(3);
+		sleep3s();
 	
 	while (connect_to_camera()==-1)
-		sleep(3);
+		sleep3s();
 	int zoom=0;
 	shmPTR->fpv_zoom = 1;
 

@@ -184,7 +184,7 @@ void LocationClass::add2NeedLoc(const double speedX, const double speedY, const 
 //lon 1340.482573727
 
 int LocationClass::init(){
-#ifndef FALSE_WIRE
+#ifndef FLY_EMULATOR
 
 	
 #endif

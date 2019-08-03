@@ -141,7 +141,7 @@ void BalanceClass::init()
 
 
 	//set_pitch_roll_pids(0.001, 0.001, 0.3);  // 10
-	set_pitch_roll_pids(0.0014, 0.001, 0.3);//9
+	set_pitch_roll_pids(0.0012, 0.001, 0.3);//9
 
 
 	yaw_stabKP = 2;
@@ -406,7 +406,7 @@ bool BalanceClass::loop()
 				f_[Hmc.motor_index] = 0.5;
 			}
 			else {
-#ifndef FALSE_WIRE
+#ifndef FLY_EMULATOR
 				if (Mpu.timed - Autopilot.time_at_startd < 5 || Autopilot.time_at_startd - Autopilot.old_time_at_startd > 8) {
 					f_[0] = f_[1] = f_[2] = f_[3] = throttle = true_throttle = 0.3;//
 					//if (Mpu.vibration > 3)

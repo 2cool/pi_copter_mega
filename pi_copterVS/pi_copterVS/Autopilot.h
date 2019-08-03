@@ -74,7 +74,7 @@ class AutopilotClass
 	 double  time_at_startd,old_time_at_startd;
 	 void gimBalRollCorrection();
 	 bool busy() { return (control_bits & (MPU_ACC_CALIBR | MPU_GYRO_CALIBR | COMPASS_CALIBR)); }
-	 volatile double last_time_data_recivedd;
+	 volatile double last_time_data_recived;
 	 void setYaw(const float yaw){aYaw_ = yaw;}
 	 float getGimbalPitch(){ return gimbalPitch; }
 	 void control_falling(const string msg);
@@ -92,13 +92,10 @@ class AutopilotClass
 	 bool go2homeState(){ return control_bits&GO2HOME; }
 	 bool progState(){ return control_bits&PROGRAM; }
 	 bool control_fallingState(){ return control_bits & CONTROL_FALLING; }
-	 bool compass_onState(){ return control_bits&COMPASS_ON; }
-	 bool horizont_onState(){ return control_bits&HORIZONT_ON; }
 	 bool program_is_loaded() { return control_bits & PROGRAM_LOADED; }
 	 void program_is_loaded(bool set);
 	 bool set_control_bits(uint32_t bits);
-	 void compass_tr();
-	 void horizont_tr();
+
 	 float fly_at_altitude() { return flyAtAltitude; }
 	 uint32_t get_control_bits(){ return control_bits; }
 	 //uint8_t mod;  //режим работы 

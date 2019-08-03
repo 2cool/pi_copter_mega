@@ -63,7 +63,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 */
  
-#define PROG_VERSION "ver 3.190730\n"
+#define PROG_VERSION "ver 3.190802\n"
 
 
 #define SIM800_F
@@ -242,7 +242,7 @@ bool loop()
 		if (shmPTR->sim800_reset_time > 0 && shmPTR->sim800_reset_time + 40000 < millis())
 			shmPTR->sim800_reset_time = 0;
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 		usleep(3000);
 #endif
 		return true;
@@ -273,23 +273,19 @@ int printHelp() {
 	cout << "example to write in stdout   : pi_copter 300 100 s n y y y y\n";
 	return -1;
 }
-double last_wifi_reloaded = 0;
+double last_wifi_reloaded = 0, inet_start_cnt=0;
 string stdout_file_ext = "";
-int inet_start_cnt = 0, wifi_start_cnt = 0;
-
+//-----------------------------------------------------------------------------------------
 bool start_wifi = false, start_inet = false, start_loger = false, start_telegram = false;;
-void watch_dog() {
-	delay(3000);
-	shmPTR->fpv_run = true;
-	cout << "fpv started\n";	system("nice -n -20 /root/projects/fpv_ &");
-	while (shmPTR->run_main) { 
-		
-		uint8_t wifi_cnt = shmPTR->wifi_cnt;
-		uint8_t internet_cnt = shmPTR->internet_cnt;
-		delay(6000);
-		uint8_t fpv_cnt = shmPTR->fpv_cnt;
-	/*	if (fpv_cnt == shmPTR->fpv_cnt  && Mpu.timed>15) {
 
+void watch_dog() {
+	delay(10000);
+	while (shmPTR->run_main) {
+		const uint8_t wifi_cnt = shmPTR->wifi_cnt;
+		const uint8_t internet_cnt = shmPTR->internet_cnt;
+		const uint8_t fpv_cnt = shmPTR->fpv_cnt;
+		delay(6000);
+		if (fpv_cnt == shmPTR->fpv_cnt) {
 			cout << "fpv killed\n";
 			shmPTR->fpv_run = false;
 			system("nice -n -20 pkill fpv_");
@@ -297,54 +293,51 @@ void watch_dog() {
 			shmPTR->fpv_run = true;
 			cout << "fpv started\n";
 			system("nice -n -20 /root/projects/fpv_ &");
-
-		}*/
-		
+		}
 		if (start_wifi)
-			if (wifi_cnt == shmPTR->wifi_cnt){//  || ( Mpu.timed - Autopilot.last_time_data_recivedd > 5 && Mpu.timed - last_wifi_reloaded > 30)) {
+			if (wifi_cnt == shmPTR->wifi_cnt || ( Mpu.timed - Autopilot.last_time_data_recived > 60 && Mpu.timed - last_wifi_reloaded > 60)) {
 				last_wifi_reloaded = Mpu.timed;
-				cout << "--------------wifi killed:\t"<<Mpu.timed<<endl;
+				cout << "--------------wifi killed:\t" << Mpu.timed << endl;
 				shmPTR->wifi_run = false;
 				system("nice -n -20 pkill wifi_p");
 				delay(1000);
 				shmPTR->wifi_run = true;
 				cout << "--------------wifi started:\t" << Mpu.timed << endl;;
 				string t = "nice -n -20 /root/projects/wifi_p ";
-
 				t += " &";
-				int ret=system(t.c_str());
-
+				int ret = system(t.c_str());
 			}
-		
+
 		if (start_inet)
 			if (internet_cnt == shmPTR->internet_cnt) {
-				cout << "--------------ppp starting" << "\t"<<Mpu.timed << endl;
+				cout << "--------------ppp starting" << "\t" << Mpu.timed << endl;
 				shmPTR->internet_run = false;
-				
 				system("nice -n -20 pkill ppp_p");
 				delay(1000);
 				shmPTR->internet_run = true;
 				string t = "nice -n -20 /root/projects/ppp_p ";
-				if (start_loger)
-					t += "y";
-				else
-					t += "n";
+				t += ((start_loger) ? "y" : "n");
 				t += " ";
-				if (start_telegram)
-					t += "y";
-				else
-					t += "n";
-				t+=" ";
-				if (stdout_file_ext.length()) {
-					t += stdout_file_ext + "i"+to_string(inet_start_cnt++)+".txt";
-				}
+				t += (start_telegram ? "y" : "n");
+				t += " ";
+				if (stdout_file_ext.length()) 
+					t += stdout_file_ext + "i" + to_string(inet_start_cnt++) + ".txt";
 				t += " &";
 				int ret = system(t.c_str());
-			
+
 			}
-			
+
 	}
 }
+
+
+
+
+
+
+
+
+
 std::ofstream out;
 std::streambuf *coutbuf;// старый буфер
 
@@ -484,7 +477,7 @@ int main(int argc, char *argv[]) {
 #ifdef ALWAYS_SOUND
 	mega_i2c.DO_SOUND = 1;
 #else
-	mega_i2c.DO_SOUND = (string(argv[0]).find("out") == -1) ? 1 : 0;
+	mega_i2c.DO_SOUND =  (string(argv[0]).find("out") == -1) ? 1 : 0;
 #endif
 	mega_i2c.init();
 	string str = string(argv[0]);

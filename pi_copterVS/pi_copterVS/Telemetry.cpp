@@ -42,9 +42,6 @@ static float  f_current = 0;
 void TelemetryClass::addMessage(const string msg, bool and2sms){
 
 	cout << msg << "\t"<<Mpu.timed << endl;;
-	if (message.length() + msg.length() >= TELEMETRY_BUF_SIZE)
-		return;
-
 	if (message.length() < msg.length() || message.compare(msg) == -1) {
 		message += msg;
 	}
@@ -101,7 +98,7 @@ void TelemetryClass::init_()
 	
 	init_shmPTR();
 
-	buf = shmPTR->wifiWbuffer;
+	buf = shmPTR->telemetry_buf;
 	uint32_t power_on_time = 0;
 	
 	
@@ -128,9 +125,10 @@ void TelemetryClass::init_()
 }
 
 uint16_t data[5];
+
 void TelemetryClass::loop()
 {
-
+	
 	if (next_battery_test_timed<Mpu.timed){
 		next_battery_test_timed = Mpu.timed + BAT_timeout;
 		testBatteryVoltage();
@@ -151,11 +149,10 @@ void TelemetryClass::loop()
 			}
 			Log.block_end();
 		}
+		
 	}
 	update_buf();
-
-	
-
+	message = "";
 }
 
 int TelemetryClass::get_voltage4one_cell() { return (int)(voltage / SN); }
@@ -179,7 +176,7 @@ int TelemetryClass::check_time_left_if_go_to_home(){
 }
 
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 #define FULL_FW
 #endif
 
@@ -346,10 +343,10 @@ bool gps_or_acuracy = false;
 
 uint32_t last_update_time=0;
 void TelemetryClass::update_buf() {
-	if (shmPTR->connected == 0 || shmPTR->wifibuffer_data_len_4_write > 0)
+	if (shmPTR->connected == 0 || shmPTR->telemetry_buf_len > 0)
 		return;
 	if (Autopilot.busy()) {
-		shmPTR->wifibuffer_data_len_4_write=4;
+		shmPTR->telemetry_buf_len=4;
 		return;
 	}
 
@@ -398,7 +395,6 @@ void TelemetryClass::update_buf() {
 		loadBUF16(i, message.length());
 		memcpy(&buf[i], message.c_str(), message.length());
 		i += message.length();
-		message = "";
 	}
 	else {
 		buf[i++] = 0;
@@ -407,7 +403,6 @@ void TelemetryClass::update_buf() {
 
 	uint8_t *b;
 	int len;
-
 	do {
 		b = Log.getNext(len);
 		if (len == 0) {
@@ -424,8 +419,7 @@ void TelemetryClass::update_buf() {
 			break;
 
 	} while (true);
-
-	shmPTR->wifibuffer_data_len_4_write = i;
+	shmPTR->telemetry_buf_len = i;
 }
 //nado echo peredat koordinaty starta i visoti ili luche ih androis socharanaet
 

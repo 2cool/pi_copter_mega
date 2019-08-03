@@ -11,7 +11,7 @@
  void  init_millis_micros() {
 	 timespec t;
 	 clock_gettime(CLOCK_REALTIME, &t);
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 	 start_seconds = t.tv_sec - 30L;
 #else
 	 start_seconds = t.tv_sec;

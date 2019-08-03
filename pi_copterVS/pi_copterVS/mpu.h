@@ -23,7 +23,7 @@
 
 #include "define.h"
 
-#ifdef FALSE_WIRE
+#ifdef FLY_EMULATOR
 #include "mpu_umulator.h"
 #endif
 
