@@ -484,7 +484,8 @@ public class Telemetry {
         long t=System.currentTimeMillis();
         double dt=0.001*(double)(t-alt_time);
         alt_time=t;
-        v_speed+=(dalt/dt-v_speed)*0.05;
+        if (dt>0)
+            v_speed+=(dalt/dt-v_speed)*0.05;
         if ((MainActivity.control_bits&MainActivity.MOTORS_ON)==MainActivity.MOTORS_ON){
             relAlt=_alt;
         }

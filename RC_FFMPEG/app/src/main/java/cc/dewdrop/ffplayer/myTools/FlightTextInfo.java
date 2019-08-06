@@ -7,15 +7,15 @@ import android.graphics.Rect;
 
 public class FlightTextInfo {
 
-    public static final int LOC=0,_2HM=1,THR=2,CUR=3,VIBR=4,BAT=5,CAM_ANG=6,CAM_ZOOM=7,VSPEED=8,M_ON_T=9, MESGE=10;
-    final private String name[]={"","2HM: ","THR: ","CUR: ","VBR: ","BAT: ","CAM: ","ZOOM: ","VSP: ","TIM:",  "MSG:"};
-    final private String unt[]={""," m",""," mAh",""," v"," ang",""," m/s"," s",  ""};
+    public static final int LOC=0,_2HM=1,THR=2,CUR=3,VIBR=4,BAT=5,YAW=6,CAM_ANG=7,CAM_ZOOM=8,VSPEED=9,M_ON_T=10, MESGE=11;
+    final private String name[]={"","2HM: ","THR: ","CUR: ","VBR: ","BAT: ","YAW:","CAM: ","ZOOM: ","VSP: ","TIM:",  "MSG:"};
+    final private String unt[]={""," m",""," mAh",""," v"," ang"," ang",""," m/s"," s",  ""};
 
     Rect r;
-    final int FIELDS=11;
+    final int FIELDS=12;
     private Paint[] paint = new Paint[FIELDS];
     public boolean f[]=new boolean[FIELDS];
-    public String p[]={"","","","","","","","","","",""};
+    public String p[]={"","","","","","","","","","","",""};
     public void setPaint(int n, int c){
         paint[n].setColor(c);
     }
@@ -26,6 +26,7 @@ public class FlightTextInfo {
                           boolean current,
                           boolean vibr,
                           boolean bat,
+                          boolean yaw,
                           boolean cam_ang,
                           boolean cam_zoom,
                           boolean vSpeed,
@@ -38,6 +39,7 @@ public class FlightTextInfo {
         f[CUR]=current;
         f[VIBR]=vibr;
         f[BAT]=bat;
+        f[YAW]=yaw;
         f[CAM_ANG]=cam_ang;
         f[CAM_ZOOM]=cam_zoom;
         f[VSPEED]=vSpeed;
@@ -57,6 +59,7 @@ public class FlightTextInfo {
                 break;
             }
         }
+        txt.setTextSize(25);
         Paint txt2=new Paint(txt);
         txt2.setColor(Color.GREEN);
         for (int i=0; i<FIELDS; i++) {

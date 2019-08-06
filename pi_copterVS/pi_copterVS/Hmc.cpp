@@ -319,7 +319,7 @@ void HmcClass::newCalibration(int16_t sh[]){
 			cnt = 0;
 		else
 			cnt++;
-		if (cnt>1000)
+		if (cnt>5000)
 			break;
 		//wdt_reset();
 	}

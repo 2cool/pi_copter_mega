@@ -219,9 +219,14 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 	}
 #endif
 
-	
-
-
+	//-----------------------------------------
+	static int uspd_cnt = 0;
+	if (motors_is_on() && fabs(Mpu.get_roll()) > 110 && Mpu.get_Est_Alt() < 5) {
+		if (uspd_cnt++ > 10)
+			off_throttle(true, "USD");
+	}else
+		uspd_cnt = 0;
+	//-----------------------------------------
 
 	if (MS5611.fault() && motors_is_on() && go2homeState() == 0) {
 		//sim.send_sos(e_BARROMETR_FAULT);

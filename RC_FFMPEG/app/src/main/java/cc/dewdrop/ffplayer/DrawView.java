@@ -90,6 +90,7 @@ public class DrawView extends View {
         ftx.p[ftx.THR]=constStrLen(Double.toString(Telemetry.realThrottle),4);
         ftx.p[ftx.VIBR]=constStrLen(Double.toString(Telemetry.vibration/1000),5);
         ftx.p[ftx.BAT]=constStrLen(Telemetry.batery,3);
+        ftx.p[ftx.YAW]=Integer.toString((int)Telemetry.heading);
         ftx.p[ftx.CAM_ANG]=Integer.toString(Telemetry.gimbalPitch);
         ftx.p[ftx.CAM_ZOOM]=Integer.toString(Commander.fpv_zoom-1);
         ftx.p[ftx.CUR]=Integer.toString((int)(Telemetry.current*Telemetry.batVolt*0.00001f))+"W "+Integer.toString((int)(Telemetry.battery_consumption / 3.6));
@@ -201,6 +202,7 @@ public class DrawView extends View {
 
         ftx=new FlightTextInfo(
                 za_cntrl,
+                true,
                 true,
                 true,
                 true,
