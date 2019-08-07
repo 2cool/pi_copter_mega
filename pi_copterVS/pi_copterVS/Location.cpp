@@ -125,22 +125,40 @@ void LocationClass::updateXY(){
 //////////////////////////////////////////////////////////////
 void LocationClass::proceed(SEND_I2C *d) {
 	last_gps_data_timed = Mpu.timed;
-	shmPTR->accuracy_hor_pos_ =  accuracy_hor_pos_ = (accuracy_hor_pos_ > 99)?99: d->hAcc;
-	shmPTR->accuracy_ver_pos_ = accuracy_ver_pos_ = (accuracy_ver_pos_ > 99)?99: d->vAcc;
-
-
-
-	if (accuracy_hor_pos_ < MIN_ACUR_HOR_POS_4_JAMM)
-		last_gps_accurasy_okd = Mpu.timed;
-
 	dt = last_gps_data_timed - old_iTOWd;
 	dt = (dt < 1.6) ? 0.1 : 0.2;
-
 	old_iTOWd = last_gps_data_timed;
+
+#define REAL_GPS
+#ifdef REAL_GPS
+	shmPTR->accuracy_hor_pos_ = accuracy_hor_pos_ = (accuracy_hor_pos_ > 99) ? 99 : d->hAcc;
+	shmPTR->accuracy_ver_pos_ = accuracy_ver_pos_ = (accuracy_ver_pos_ > 99) ? 99 : d->vAcc;
+	if (accuracy_hor_pos_ < MIN_ACUR_HOR_POS_4_JAMM)
+		last_gps_accurasy_okd = Mpu.timed;
 	shmPTR->gps_altitude_ = d->height;
 	altitude = 0.001*(double)d->height;
 	shmPTR->lat_ = lat_ = d->lat;
 	shmPTR->lon_ = lon_ = d->lon;
+#else
+	shmPTR->accuracy_hor_pos_ = accuracy_hor_pos_ = 1;
+	shmPTR->accuracy_ver_pos_ = accuracy_ver_pos_ = 1;
+	shmPTR->gps_altitude_ = 15000;
+	altitude = 0.001 * 15000;
+
+	shmPTR->lat_ = lat_ = 479079700;shmPTR->lon_ = lon_ = 333320180; //
+	
+
+	//shmPTR->lat_ = lat_ = 479079060;shmPTR->lon_ = lon_ = 333321560; //dvor
+
+
+#endif
+
+
+
+
+
+
+
 
 
 	if (lat_zero == 0 && lon_zero == 0 && accuracy_hor_pos_ < MIN_ACUR_HOR_POS_2_START) {
@@ -156,6 +174,10 @@ void LocationClass::proceed(SEND_I2C *d) {
 	if (Log.writeTelemetry) {
 		Log.block_start(LOG::GPS_SENS);
 		Log.loadSEND_I2C(d);
+		Log.loadFloat((float)dX);
+		Log.loadFloat((float)speedX);
+		Log.loadFloat((float)dY);
+		Log.loadFloat((float)speedY);
 		Log.block_end();
 	}
 

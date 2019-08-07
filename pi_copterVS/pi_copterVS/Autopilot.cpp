@@ -629,7 +629,8 @@ bool AutopilotClass::motors_do_on(const bool start, const string msg){//////////
 				mega_i2c.beep_code(B_GPS_ACCURACY_E);
 				Telemetry.addMessage(e_GPS_ERROR);
 
-				//return false;
+				if (not_start_motors_if_gps_error)
+					return false;
 			}
 			time_at_startd = Mpu.timed;
 			Telemetry.update_voltage();
@@ -844,7 +845,7 @@ bool AutopilotClass::set_control_bits(uint32_t bits) {
 	//	uint8_t mask = control_bits_^bits;
 	//printf("comm=%i\n", bits);
 
-	cout << bits << endl;
+	//cout << bits << endl;
 	mega_i2c.beep_code(B_COMMAND_RECEIVED);
 
 	if (MOTORS_ON&bits)  {

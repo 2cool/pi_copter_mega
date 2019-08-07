@@ -388,7 +388,7 @@ void EmuClass::update(const float fm_[4], double dt) {
 	pos[Y] += speed[Y] * dt;
 	pos[Z] += speed[Z] * dt;
 
-	if (pos[Z] < -0.1) {
+	if (pos[Z] < 0) {
 		
 		pos[Z] = 0;
 		speed[X] = speed[Y] = speed[Z] = 0;
@@ -396,6 +396,7 @@ void EmuClass::update(const float fm_[4], double dt) {
 		gyro[X] = gyro[Y] = gyro[Z] = 0;
 		ang[PITCH] = 0;
 		ang[ROLL] = 0;
+		ang[YAW] = 0;
 		//if (Autopilot.motors_is_on())
 	// 		Autopilot.motors_do_on(false, "S_S");
 	}

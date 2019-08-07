@@ -385,10 +385,7 @@ void TelemetryClass::update_buf() {
 
 
 	float yaw=Mpu.get_yaw();
-
-
-
-	loadBUF8(i, yaw * 0.705555555555f);
+	loadBUF16(i, (int16_t)(yaw * 182.0));
 	loadBUF32(i, shmPTR->status);
 
 	if (message.length() && i + message.length() + 2 < TELEMETRY_BUF_SIZE) {

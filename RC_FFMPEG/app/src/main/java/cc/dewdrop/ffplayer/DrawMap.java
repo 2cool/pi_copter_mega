@@ -416,8 +416,9 @@ public class DrawMap extends View {
         sx=-30*Math.sin(direction-45.0*0.01745329);
         g.drawLine(x-(int)sx, y-(int)sy, x+(int)sx, y+(int)sy,red);
 
-        sy=-15*Math.cos(direction);
-        sx=-15*Math.sin(direction);
+        sy=-150000*Math.cos(direction);
+        sx=-150000*Math.sin(direction);
+        red.setStrokeWidth(1);
         g.drawLine(x, y, x+(int)sx, y+(int)sy,red);
 
     }

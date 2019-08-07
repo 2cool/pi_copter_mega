@@ -31,8 +31,9 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
             {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
             {0.2,0.2,0.2,0.2,0.2,0.2,0.2,1,0.2,0.2},
             {0.2,0.2,0.2,0.2,0.2,0.2,1,0.2,0.2,0.2},
+            {0.2,0.2,0.2,0.2,0.2,0.2,1,0.2,0.2,0.2},
             {1,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
-            {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
+            {0.2,20,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2},
             {0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2}
 
     };
@@ -50,7 +51,7 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
             // mpu
             {_null,_null,_null,_null,_null,_null,_null,_null,_null,_null},
             //compas
-            {"m power on,1,0,100",_null,_null,_null,_null,_null,_null,_null,_null,_null},
+            {"m power on,1,0,100","yaw_correction",_null,_null,_null,_null,_null,_null,_null,_null},
             //rest
             {"vedeoAdr","ppp_inet","telegram",_null,_null,_null,_null,_null,_null,_null}
 
@@ -278,22 +279,29 @@ public class Settings extends Activity implements AdapterView.OnItemSelectedList
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-
         double dk=seek_bar_default_progress;
-
         int i=seekBar.getId()-seek_bar[0].getId();
+        double f = Telemetry.settings[i];
         double maxChange=def_change[menu_n][i];//              seek_bar_default_change;
-        String sf[]=a[menu_n][i].split(",");
-        if (sf.length>=4) {
-           dk= 0.5*Float.parseFloat(sf[1]);
-            maxChange=0.01*Float.parseFloat(sf[3]);
-        }
 
-        double f=Telemetry.settings[i];
-        double k=maxChange*(dk-progress)/dk;
-        f-=f*k;
-       // textV[i].setText(Float.toString((float)(f)));
-        textV[i].setText(String.format("%.5f", f).replace(',','.'));
+        if (maxChange>1){
+            if (progress!=(int)dk) {
+                double p = progress;
+                f = (p - dk) / dk * maxChange;
+            }
+        }else {
+            String sf[] = a[menu_n][i].split(",");
+            if (sf.length >= 4) {
+                dk = 0.5 * Float.parseFloat(sf[1]);
+                maxChange = 0.01 * Float.parseFloat(sf[3]);
+            }
+
+            double k = maxChange * (dk - progress) / dk;
+            f -= f * k;
+            // textV[i].setText(Float.toString((float)(f)));
+
+        }
+        textV[i].setText(String.format("%.5f", f).replace(',', '.'));
     }
 
     @Override

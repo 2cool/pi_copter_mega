@@ -11,7 +11,7 @@
 #include "Autopilot.h"
 #include "Settings.h"
 #include "Balance.h"
-
+#include "mpu.h"
 #include "MS5611.h"
 #include "debug.h"
 #include "Log.h"
@@ -58,18 +58,28 @@ void HmcClass::init()
 
 
 string HmcClass::get_set(){
-	string s = motors_power_on ? "1" : "0";
-	//Out.printf("hmc set:"); Out.println(s);
-	return s;
+
+
+	ostringstream convert;
+	convert << \
+		(motors_power_on ? "1" : "0") << "," << \
+		Mpu.yaw_correction_angle* RAD2GRAD;
+	string ret = convert.str();
+	return string(ret);
+
+	//string s = motors_power_on ? "1" : "0";
+
+//	//Out.printf("hmc set:"); Out.println(s);
+	//return s;
 }
 
 void HmcClass::set(const float buf[]){
 	motors_power_on = (buf[0] > 0);
-	cout << "compas " << buf[0] << endl;
+	float yaw = constrain(buf[1],-20, 20);
+	Mpu.yaw_correction_angle = yaw * GRAD2RAD;
+	cout << "compas " << buf[0] << ","<<buf[1]<<endl;
 }
 //---------------------------------------------------------
-
-
 void HmcClass::log_base() {
 	if (Log.writeTelemetry) {
 		Log.block_start(LOG::HMC_BASE);

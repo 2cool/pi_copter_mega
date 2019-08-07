@@ -66,7 +66,7 @@ double MS5611Class::getAltitude(const double pressure) {
 	static float gps_barometr_alt_dif = ALT_NOT_SET;
 	static uint init_cnt = 0;
 
-	const float gps_alt =  GPS.loc.altitude - gps_barometr_alt_dif;
+#define gps_alt (GPS.loc.altitude - gps_barometr_alt_dif)
 	
 	double alt = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));
 	if (old_alt == ALT_NOT_SET)
@@ -79,7 +79,7 @@ double MS5611Class::getAltitude(const double pressure) {
 	else {
 		
 
-		if (init_cnt++ > 20 && GPS.loc.accuracy_hor_pos_ <= MIN_ACUR_HOR_POS_2_START) {
+		if (init_cnt++ > 20 && GPS.loc.accuracy_ver_pos_ <= 10) {
 
 			if (gps_barometr_alt_dif == ALT_NOT_SET)
 				gps_barometr_alt_dif = GPS.loc.altitude - altitude_;
@@ -90,7 +90,6 @@ double MS5611Class::getAltitude(const double pressure) {
 			}
 			else
 				gps_barometr_alt_dif += (GPS.loc.altitude - alt - gps_barometr_alt_dif) * 0.01;
-
 			old_alt = alt;
 		}
 

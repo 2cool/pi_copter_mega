@@ -119,6 +119,7 @@ void MpuClass::log_emu() {
 //-----------------------------------------------------
 void MpuClass::init()
 {
+	yaw_correction_angle = 6 * GRAD2RAD;
 
 	tiltPower_CF = 0.05;
 	altitude_at_zero = XatZero = YatZero = 0;
@@ -198,7 +199,7 @@ string MpuClass::get_set(){
 	
 	
 	ostringstream convert;
-	//convert<<
+	convert << "0,0";
 		
 	
 	string ret = convert.str();
@@ -522,6 +523,8 @@ bool MpuClass::loop() {//-------------------------------------------------L O O 
 	gyroYaw = -gyroYaw;
 	pitch = -pitch;
 	yaw = -yaw;
+	yaw += yaw_correction_angle;
+	yaw=wrap_PI(yaw);
 
 	sin_cos(yaw, sinYaw, cosYaw);
 	sin_cos(pitch, sinPitch, cosPitch);

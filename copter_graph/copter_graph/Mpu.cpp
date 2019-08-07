@@ -210,7 +210,7 @@ void Mpu::parser(byte buf[], int j, int len, bool filter) {
 	uint64_t itime = loaduint64t(buf, j);
 	j += 8;
 	time = (double)itime *0.001;
-	//if (time > 80)
+	//if (time > 302)
 	//	time--;
 	dt = time - old_time;
 	old_time = time;

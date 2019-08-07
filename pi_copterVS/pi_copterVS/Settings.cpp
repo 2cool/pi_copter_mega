@@ -107,13 +107,13 @@ bool  SettingsClass::readCompasMotorSettings(float base[]) {
 
 
 static float ar_t333[SETTINGS_ARRAY_SIZE + 1];
-float * load(const string  buf, const uint8_t  * filds) {
+float * load(const string  buf, const uint8_t  * filds, const bool deny_zero) {
 
 
 	ar_t333[SETTINGS_ARRAY_SIZE] = SETTINGS_IS_OK;
 	for (int i = 0; i < SETTINGS_ARRAY_SIZE; i++) {
 		string sval = buf.substr(filds[i], filds[i + 1] - filds[i] - 1);
-		if (sval.length() == 1 && sval[0] == '0') {
+		if (deny_zero && sval.length() == 1 && sval[0] == '0') {
 			ar_t333[SETTINGS_ARRAY_SIZE] = SETTINGS_ERROR;
 			cout << " !!!!! " << buf << endl;
 			return ar_t333;
@@ -155,25 +155,25 @@ bool SettingsClass::load_(string buf, bool any_ch) {
 	uint8_t n = (uint8_t)stoi(buf.substr(0, filds[0] - 1));
 	switch (n) {
 	case 0:
-		Balance.set(load(buf, filds));
+		Balance.set(load(buf, filds,true));
 		break;
 	case 1:
-		Stabilization.setZ(load(buf, filds));
+		Stabilization.setZ(load(buf, filds,true));
 		break;
 	case 2:
-		Stabilization.setXY(load(buf, filds));
+		Stabilization.setXY(load(buf, filds,true));
 		break;
 	case 3:
-		Autopilot.set(load(buf, filds));//secure
+		Autopilot.set(load(buf, filds,false));//secure
 		break;
 	case 4:
-		Mpu.set(load(buf, filds));
+		//Mpu.set(load(buf, filds));
 		break;
 	case 5:
-		Hmc.set(load(buf, filds));
+		Hmc.set(load(buf, filds,false));
 		break;
 	case 6:
-		Commander.set(load(buf, filds));
+		//Commander.set(load(buf, filds));
 
 		break;
 	default:
@@ -256,6 +256,7 @@ int SettingsClass::read_all() {
 		char *ret=fgets(buf, 1000, f);
 		if (ret == NULL)
 			break;
+		
 		load_(string(buf),true);
 	}
 
@@ -303,6 +304,10 @@ int SettingsClass::write_all() {
 	fprintf(f, "1,%s", (r0(Stabilization.get_z_set())).c_str());
 	fprintf(f, "2,%s", (r0(Stabilization.get_xy_set())).c_str());
 	fprintf(f, "3,%s", (r0(Autopilot.get_set())).c_str());
+	fprintf(f, "4,%s", (r0(Mpu.get_set())).c_str());
+	fprintf(f, "5,%s", (r0(Hmc.get_set())).c_str());
+	fprintf(f, "6,%s", (r0(Commander.get_set())).c_str());
+
 	//fprintf(f, "4,%s", (Mpu.get_set() + end).c_str());
 	//fprintf(f, "5,%s", (Hmc.get_set() + end).c_str());
 	//fprintf(f, "6,%s", (Commander.get_set() + end).c_str());

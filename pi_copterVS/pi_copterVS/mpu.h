@@ -100,6 +100,7 @@ private:
 	 void getXYRelative2Zero(float&x, float&y) { x -= XatZero; y -= YatZero; }
 	// void set_cos_sin_dir();
 	// double dir_angle_GRAD, cosDirection, sinDirection;
+	 float yaw_correction_angle;
 	 float get_Est_X() { return estX-XatZero; }
 	 float get_Est_Y() { return estY-YatZero; }
 	 float get_Est_SpeedX() { return est_speedX; }

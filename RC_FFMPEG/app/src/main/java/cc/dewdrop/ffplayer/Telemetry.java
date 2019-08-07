@@ -516,7 +516,13 @@ public class Telemetry {
         //	loadBUF16(i, Mpu.vibration * 1000);
 
         gimbalPitch= buf[i++];
-        heading=1.4173228f*(float)buf[i++];
+        heading=load_int16(buf,i);
+        heading/=182.0;
+        i+=2;
+
+
+
+
         status=load_int32(buf,i);
         i+=4;
        // Log.i("STRR","str= "+Integer.toString(status));

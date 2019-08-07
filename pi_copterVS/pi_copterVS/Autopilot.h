@@ -67,7 +67,7 @@ class AutopilotClass
 	 
  public:
 
-
+	 bool not_start_motors_if_gps_error;
 	 int reboot();
 	 int shutdown();
 	 int exit();
