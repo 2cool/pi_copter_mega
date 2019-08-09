@@ -21,10 +21,10 @@ uint32_t def_mode = Z_STAB + XY_STAB;
 
 
 //void Mpu::parser(byte buf[], int j, int len) {
-int GPS_Loger::decode(SEND_I2C*p, bool rotate ) {
+int GPS_Loger::decode(/*SEND_I2C*p, */byte buf[], int i, int len, bool rotate ) {
 
 	
-
+	SEND_I2C* p = (SEND_I2C*)&buf[i];
 	//if (p->hAcc < 10)
 	//	p->hAcc = 10;
 	//old_z = 0, gspeedZ, old_gspeeZ = 0
@@ -67,18 +67,28 @@ int GPS_Loger::decode(SEND_I2C*p, bool rotate ) {
 		lon = n_lon;
 	}
 
+	if (len -  sizeof(SEND_I2C) >= 16) {
+		i += sizeof(SEND_I2C);
+		gx= *(float*)& buf[i]; i += 4;
+		gspeedX = *(float*)& buf[i]; i += 4;
+		gy = *(float*)& buf[i]; i += 4;
+		gspeedY = *(float*)& buf[i]; i += 4;
+	}
+
+
+
 	double distance = mymath.distance_(n_lat, n_lon, lat, lon);
 	double bearing = mymath.bearing_(n_lat, n_lon, lat, lon);
 	yaw = bearing*RAD2GRAD;
 	static double old_distance = 0;
 
-	gy = (distance - old_distance)*sin(bearing);
+	//gy = (distance - old_distance)*sin(bearing);
 	old_distance = distance;
-	gspeedY = (gy) / 0.1;
+	//gspeedY = (gy) / 0.1;
 
 
-	gx = (distance - old_distance)*cos(bearing);
-	gspeedX = (gx) / 0.1;
+	//gx = (distance - old_distance)*cos(bearing);
+	//gspeedX = (gx) / 0.1;
 
 
 	//	lat = n_lat;

@@ -222,7 +222,8 @@ int Graph::parser(byte buf[]) {
 		}
 		case GPS_SENS: {
 			
-			gps_log.decode((SEND_I2C*)&buf[i]);
+			gps_log.decode(buf,i,len);
+			
 			break;
 		}
 

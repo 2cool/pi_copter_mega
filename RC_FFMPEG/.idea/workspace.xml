@@ -11,64 +11,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b79624cd-cb7a-47df-b554-aa6316b37993" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/DrawMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Settings.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Settings.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/cc/dewdrop/ffplayer/Telemetry.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/Mpu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/Mpu.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/copter_graph.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/copter_graph.vcxproj.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Balance.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Balance.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/GPS_Loger.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/GPS_Loger.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/KK.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/KK.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Kalman.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Kalman.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/MYfILTER.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/MYfILTER.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Mpu.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Mpu.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/MyMath.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/MyMath.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Pressure.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Pressure.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Stab.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Stab.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/TButton.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/TButton.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Telemetry.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/Telemetry.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.log" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.obj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.command.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.command.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.read.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/CL.write.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.read.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/copter_graph.tlog/link.write.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.idb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.idb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/copter_graph/x64/Debug/vc142.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.ilk" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../copter_graph/x64/Debug/copter_graph.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Autopilot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Autopilot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Autopilot.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Autopilot.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Hmc.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Hmc.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Hmc.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Hmc.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Location.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Location.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/MS5611.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/MS5611.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Settings.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Settings.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Stabilization.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Stabilization.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Telemetry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/Telemetry.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/bin/ARM/Debug/pi_copterVS.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.h" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu_umulator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/mpu_umulator.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CompileUpToDateFile.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.CopySourcesUpToDateFile.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.LinkUpToDateFile.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.LinkUpToDateFile.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.Local_Remote_PathMapping.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/-263017476.Local_Remote_PathMapping.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/compile.read.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/compile.read.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/compile.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/compile.write.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/link.write.1.tlog" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/link.write.1.tlog" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/pi_copterVS.lastbuildstate" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/obj/ARM/Debug/pi_copterVS.tlog/pi_copterVS.lastbuildstate" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/pi_copterVS.vcxproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/../pi_copterVS/pi_copterVS/pi_copterVS.vcxproj.user" afterDir="false" />
-    </list>
+    <list default="true" id="b79624cd-cb7a-47df-b554-aa6316b37993" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -315,7 +258,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.14925373" />
@@ -329,7 +271,7 @@
       <window_info anchor="bottom" id="Run" order="0" weight="0.32981783" />
       <window_info anchor="bottom" id="Logcat" order="1" weight="0.24544583" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32885906" />
-      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.32885906" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.32885906" />
       <window_info anchor="bottom" id="Terminal" order="4" weight="0.32978722" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="6" show_stripe_button="false" />

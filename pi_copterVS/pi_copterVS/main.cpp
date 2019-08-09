@@ -63,7 +63,7 @@ root@skx:~# update-rc.d pi_copter defaults
 
 */
  
-#define PROG_VERSION "ver 3.190807\n"
+#define PROG_VERSION "ver 3.190809\n"
 
 
 #define SIM800_F
@@ -279,12 +279,12 @@ string stdout_file_ext = "";
 bool start_wifi = false, start_inet = false, start_loger = false, start_telegram = false;;
 
 void watch_dog() {
-	delay(10000);
+	delay(1000);
 	while (shmPTR->run_main) {
 		const uint8_t wifi_cnt = shmPTR->wifi_cnt;
 		const uint8_t internet_cnt = shmPTR->internet_cnt;
 		const uint8_t fpv_cnt = shmPTR->fpv_cnt;
-		delay(6000);
+		delay(3000);
 		if (fpv_cnt == shmPTR->fpv_cnt) {
 			cout << "fpv killed\n";
 			shmPTR->fpv_run = false;

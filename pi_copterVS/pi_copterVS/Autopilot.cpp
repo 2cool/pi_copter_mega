@@ -215,6 +215,7 @@ void AutopilotClass::loop(){////////////////////////////////////////////////////
 	
 	if (last_time_data_recived &&  GPS.loc.lat_zero!=0 && GPS.loc.lon_zero!=0  && Mpu.timed - last_time_data_recived>3 && Mpu.timed - last_beep_timed > 3) {
 		last_beep_timed = Mpu.timed;
+		Telemetry.addMessage(e_LOST_CONNECTION);
 		mega_i2c.beep_code(B_CONNECTION_LOST);
 	}
 #endif

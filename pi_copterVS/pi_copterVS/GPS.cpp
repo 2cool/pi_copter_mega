@@ -156,6 +156,7 @@ static double last_gps_time1d = 0;
 
 		if ( Mpu.timed - loc.last_gps_data_timed > 0.3){
 			if (cnt2l++) {
+				Telemetry.addMessage(e_GPS_ERROR);
 				cout << "gps update error  " << Mpu.timed - loc.last_gps_data_timed << "," << Mpu.timed << "," << loc.last_gps_data_timed << endl;
 				mega_i2c.beep_code(B_GPS_TOO_LONG);
 			}
