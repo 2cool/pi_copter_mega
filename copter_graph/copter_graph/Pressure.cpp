@@ -1,22 +1,44 @@
 #include "stdafx.h"
 #include "Pressure.h"
 #include <math.h>
-void Pressure::init(bool filter, double cf1, double cf2, double cf3)
+
+#include "KalmanFilter.h"
+
+
+
+	//double dt = 1.0 / 30; // Time step
+
+	static Eigen::MatrixXd A(3, 3); // System dynamics matrix
+	static Eigen::MatrixXd C(1, 3); // Output matrix
+	static Eigen::MatrixXd Q(3, 3); // Process noise covariance
+	static Eigen::MatrixXd R(1, 1); // Measurement noise covariance
+	static Eigen::MatrixXd P(3, 3); // Estimate error covariance
+	KalmanFilter *kf;
+
+void Pressure::init()
 {
-	f = filter;
-	cf_alt = cf1;
-	cf_sp = cf2;
-	cf_acc = cf3;
-	min_alt = min_sp=min_a=10000;
-	max_alt = max_sp=max_a=-10000;
-
-	acc = 0;
-	speed = 0;
-	dt = 0;
 
 
-	t_alt = 0;
-	t_sp = 0;
+
+
+	
+
+	// Discrete LTI projectile motion, measuring position only
+	A << 1, dt, 0, 0, 1, dt, 0, 0, 1;
+	C << 1, 0, 0;
+
+	// Reasonable covariance matrices
+	Q << .05, .05, .0, .05, .05, .0, .0, .0, .0;
+	R << 5;
+	P << .1, .1, .1, .1, 10000, 10, .1, 10, 100;
+	kf=new KalmanFilter(dt, A, C, Q, R, P);
+
+	// Construct the filter
+
+	Eigen::VectorXd x0(3);
+	x0 << 0, 0, -9.81;
+	kf->init(0, x0);
+
 }
 int Pressure::view(int &indexes, char buffer[], int &i) {
 	indexes++;
@@ -40,6 +62,10 @@ int Pressure::decode(char buffer[], int &i)
 		t_alt += (t - t_alt)*cf_alt*(dt * 100);
 	else
 		t_alt = t;
+
+
+
+
 
 	max_alt = max(max_alt, t_alt);
 	min_alt = min(min_alt, t_alt);
@@ -75,7 +101,7 @@ int Pressure::decode(char buffer[], int &i)
 
 
 
-void Pressure::parser(byte buf[], int n) {
+void Pressure::parser(byte buf[], int n, bool filter) {
 	float alt=0;
 	temp = buf[n];
 	n++;
@@ -87,6 +113,12 @@ void Pressure::parser(byte buf[], int n) {
 	static double t_alt = 0;
 	if (pressure > 80000 && pressure < 120000) {
 		altitude = (44330.0f * (1.0f - pow(pressure / PRESSURE_AT_0, 0.1902949f)));
+		if (filter) {
+			Eigen::VectorXd y(1);
+			y << altitude;
+			kf->update(y);
+			altitude = kf->state().transpose()[0];
+		}
 		if (old_alt == 0)
 			old_alt=t_alt=told_alt2=told_alt1 = altitude;
 

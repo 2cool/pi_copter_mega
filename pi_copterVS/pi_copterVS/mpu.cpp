@@ -119,7 +119,7 @@ void MpuClass::log_emu() {
 //-----------------------------------------------------
 void MpuClass::init()
 {
-	yaw_correction_angle = 6 * GRAD2RAD;
+	yaw_correction_angle = 19 * GRAD2RAD;
 
 	tiltPower_CF = 0.05;
 	altitude_at_zero = XatZero = YatZero = 0;

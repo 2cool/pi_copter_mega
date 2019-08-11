@@ -8,9 +8,6 @@
 #include <iostream> 
 #include <string> 
 #include "MyMath.h"
-#include "Kalman.h"
-#include "KK.h"
-#include "MYfILTER.h"
 
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
@@ -100,9 +97,7 @@ private:
 	void filter(float src, int dataI, int elementi,float max=4000);
 	float cf;
 	SensorsData *sensors_data;
-	Kalman kalman[ALL_ELEMENTS];
-	MYfILTER maccX, maccY;
-	MYfILTER mgroll;
+
 
 	int decode_Log();
 	char * buffer;
@@ -135,7 +130,7 @@ public:
 	bool flags[ALL_ELEMENTS];
 	Color color[ALL_ELEMENTS];
 	std::wstring name[ALL_ELEMENTS];
-	KK kk0,kk1,kk2,kk3,kk4,kk5;
+
 	float bufkk0[128];
 	int bufff0I = 0;
 

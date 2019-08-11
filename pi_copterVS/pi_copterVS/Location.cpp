@@ -148,7 +148,7 @@ void LocationClass::proceed(SEND_I2C *d) {
 	shmPTR->lat_ = lat_ = 479079700;shmPTR->lon_ = lon_ = 333320180; //
 	
 
-	//shmPTR->lat_ = lat_ = 479079060;shmPTR->lon_ = lon_ = 333321560; //dvor
+	///shmPTR->lat_ = lat_ = 479079060;shmPTR->lon_ = lon_ = 333321560; //dvor
 
 
 #endif

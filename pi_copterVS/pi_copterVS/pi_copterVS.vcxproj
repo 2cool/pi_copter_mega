@@ -73,8 +73,6 @@
     <ClCompile Include="commander.cpp" />
     <ClCompile Include="debug.cpp" />
     <ClCompile Include="Direction.cpp" />
-    <ClCompile Include="Filter.cpp" />
-    <ClCompile Include="FIND.cpp" />
     <ClCompile Include="GeoDot.cpp" />
     <ClCompile Include="GPS.cpp" />
     <ClCompile Include="Hmc.cpp" />
@@ -91,7 +89,6 @@
     <ClCompile Include="MS5611.cpp" />
     <ClCompile Include="Prog.cpp" />
     <ClCompile Include="mi2c.cpp" />
-    <ClCompile Include="RC_Filter.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="Stabilization.cpp" />
     <ClCompile Include="Telemetry.cpp" />
@@ -107,8 +104,6 @@
     <ClInclude Include="Direction.h" />
     <ClInclude Include="dmpKey.h" />
     <ClInclude Include="dmpmap.h" />
-    <ClInclude Include="Filter.h" />
-    <ClInclude Include="FIND.h" />
     <ClInclude Include="GeoDot.h" />
     <ClInclude Include="glob_header.h" />
     <ClInclude Include="GPS.h" />
@@ -127,7 +122,6 @@
     <ClInclude Include="MS5611.h" />
     <ClInclude Include="Prog.h" />
     <ClInclude Include="mi2c.h" />
-    <ClInclude Include="RC_Filter.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Stabilization.h" />
     <ClInclude Include="Telemetry.h" />

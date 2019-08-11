@@ -144,11 +144,9 @@
     <ClInclude Include="gps.h" />
     <ClInclude Include="GPS_Loger.h" />
     <ClInclude Include="graph.h" />
-    <ClInclude Include="Kalman.h" />
-    <ClInclude Include="KK.h" />
+    <ClInclude Include="KalmanFilter.h" />
     <ClInclude Include="Mpu.h" />
     <ClInclude Include="myButton.h" />
-    <ClInclude Include="MYfILTER.h" />
     <ClInclude Include="MyMath.h" />
     <ClInclude Include="Pressure.h" />
     <ClInclude Include="Resource.h" />
@@ -165,11 +163,9 @@
     <ClCompile Include="hmc.cpp" />
     <ClCompile Include="GPS_Loger.cpp" />
     <ClCompile Include="graph.cpp" />
-    <ClCompile Include="Kalman.cpp" />
-    <ClCompile Include="KK.cpp" />
+    <ClCompile Include="KalmanFilter.cpp" />
     <ClCompile Include="Mpu.cpp" />
     <ClCompile Include="myButton.cpp" />
-    <ClCompile Include="MYfILTER.cpp" />
     <ClCompile Include="MyMath.cpp" />
     <ClCompile Include="Pressure.cpp" />
     <ClCompile Include="Stab.cpp" />

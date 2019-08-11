@@ -10,11 +10,8 @@
 #else
 	#include "WProgram.h"
 #endif
-#include "Filter.h"
 #include "I2Cdev.h"
 #include "MPU6050.h"
-
-#include "RC_Filter.h"
 #include "helper_3dmath.h"
 //#include "MotionSensor.h"
 #include "inv_mpu.h"

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "graph.h"
 #include <stdint.h>
-#include "KK.h"
+
 
 #include "Pressure.h"
 #include "GPS_Loger.h"
@@ -48,12 +48,7 @@ bool init_yaw = true;
 
 uint16_t log_bank_size;
 
-void Graph::filter(float src, int dataI, int elementi, float max) {
 
-	if (isnan(src) || abs(src) > max)
-		src = 0;
-	sensors_data[dataI].sd[elementi] = (flags[FILTER] && kalman[elementi].initialized == 77777) ? kalman[elementi].update(src) : src;
-}
 
 
 #define SOME_K 0.9
@@ -211,13 +206,13 @@ int Graph::parser(byte buf[]) {
 
 		case MPU_SENS: {
 			if (len == 5)
-				press.parser(buf,i);
+				press.parser(buf,i, flags[FILTER]);
 			else
 				mpu.parser(buf, i, len, flags[FILTER]);
 			break;
 		}
 		case MS5611_SENS: {
-			press.parser(buf, i);
+			press.parser(buf, i,flags[FILTER]);
 			break;
 		}
 		case GPS_SENS: {
@@ -311,6 +306,8 @@ int Graph::decode_Log() {
 
 	modesI = 0;
 	*/
+
+	press.init();
 
 	int t1 = load_int16_((byte*)buffer, 0);
 	int t2 = load_int16_((byte*)buffer, 2);
@@ -907,8 +904,10 @@ int Graph::update(HDC hdc, RectF rect, double zoom, double pos) {///////////////
 	draw(g, rect, 1, 0, F3);
 	draw(g, rect, 1, 0, THROTTLE);
 
-#define MAX_ALT press.max_alt
-#define MIN_ALT press.min_alt
+#define MAX_ALT 80
+	//press.max_alt
+#define MIN_ALT 75
+	//press.min_alt
 //#define MAX_ALT 130
 //#define MIN_ALT 117
 	draw(g, rect, MAX_ALT, MIN_ALT, SZ);

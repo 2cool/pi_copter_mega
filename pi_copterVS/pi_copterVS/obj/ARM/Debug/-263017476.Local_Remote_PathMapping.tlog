@@ -6,8 +6,6 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Balance.cpp|/root/project
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\commander.cpp|/root/projects/pi_copterVS/commander.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\debug.cpp|/root/projects/pi_copterVS/debug.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Direction.cpp|/root/projects/pi_copterVS/Direction.cpp
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Filter.cpp|/root/projects/pi_copterVS/Filter.cpp
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\FIND.cpp|/root/projects/pi_copterVS/FIND.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\GeoDot.cpp|/root/projects/pi_copterVS/GeoDot.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\GPS.cpp|/root/projects/pi_copterVS/GPS.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Hmc.cpp|/root/projects/pi_copterVS/Hmc.cpp
@@ -24,7 +22,6 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.cpp|/root/pr
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.cpp|/root/projects/pi_copterVS/MS5611.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.cpp|/root/projects/pi_copterVS/Prog.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.cpp|/root/projects/pi_copterVS/mi2c.cpp
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\RC_Filter.cpp|/root/projects/pi_copterVS/RC_Filter.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Settings.cpp|/root/projects/pi_copterVS/Settings.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.cpp|/root/projects/pi_copterVS/Stabilization.cpp
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Telemetry.cpp|/root/projects/pi_copterVS/Telemetry.cpp
@@ -38,8 +35,6 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\define.h|/root/projects/p
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Direction.h|/root/projects/pi_copterVS/Direction.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\dmpKey.h|/root/projects/pi_copterVS/dmpKey.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\dmpmap.h|/root/projects/pi_copterVS/dmpmap.h
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Filter.h|/root/projects/pi_copterVS/Filter.h
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\FIND.h|/root/projects/pi_copterVS/FIND.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\GeoDot.h|/root/projects/pi_copterVS/GeoDot.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\glob_header.h|/root/projects/pi_copterVS/glob_header.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\GPS.h|/root/projects/pi_copterVS/GPS.h
@@ -58,7 +53,6 @@ C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mpu_umulator.h|/root/proj
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\MS5611.h|/root/projects/pi_copterVS/MS5611.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Prog.h|/root/projects/pi_copterVS/Prog.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\mi2c.h|/root/projects/pi_copterVS/mi2c.h
-C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\RC_Filter.h|/root/projects/pi_copterVS/RC_Filter.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Settings.h|/root/projects/pi_copterVS/Settings.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Stabilization.h|/root/projects/pi_copterVS/Stabilization.h
 C:\Users\2coolz\pi_copter_mega\pi_copterVS\pi_copterVS\Telemetry.h|/root/projects/pi_copterVS/Telemetry.h

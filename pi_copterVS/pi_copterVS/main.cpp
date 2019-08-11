@@ -90,9 +90,6 @@ root@skx:~# update-rc.d pi_copter defaults
 #include "define.h"
 
 #include "Log.h"
-//#include "KalmanFilterVector.h"
-#include "Filter.h"
-
 
 #include "debug.h"
 
